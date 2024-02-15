@@ -1,4 +1,4 @@
-package com.example.petstagram.barradeselecciondetipodepublicacion
+package com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.petstagram.R
 import com.example.petstagram.atras.Atras
+import com.example.petstagram.R
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
+import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.categorias.Categorias
 import com.google.relay.compose.MainAxisAlignment

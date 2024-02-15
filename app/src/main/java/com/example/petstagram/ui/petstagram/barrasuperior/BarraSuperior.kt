@@ -14,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.petstagram.R
-import com.example.petstagram.accesoaperfil.AccesoAperfil
+import com.example.petstagram.ui.petstagram.accesoaperfil.AccesoAperfil
 import com.example.petstagram.atras.Atras
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment

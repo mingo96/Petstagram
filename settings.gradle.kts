@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PetstagramConLogica"
+rootProject.name = "Petstagram"
 include(":app")
  

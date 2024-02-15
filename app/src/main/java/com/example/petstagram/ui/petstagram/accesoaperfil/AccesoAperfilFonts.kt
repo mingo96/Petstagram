@@ -1,2 +1,2 @@
-package com.example.petstagram.accesoaperfil
+package com.example.petstagram.ui.petstagram.accesoaperfil
 

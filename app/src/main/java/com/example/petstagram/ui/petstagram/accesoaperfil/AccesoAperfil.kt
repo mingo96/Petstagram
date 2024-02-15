@@ -1,4 +1,4 @@
-package com.example.petstagram.accesoaperfil
+package com.example.petstagram.ui.petstagram.accesoaperfil
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
