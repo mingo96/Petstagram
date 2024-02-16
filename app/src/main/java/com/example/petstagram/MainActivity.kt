@@ -1,5 +1,7 @@
 package com.example.petstagram
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.Menu
 import androidx.activity.ComponentActivity
@@ -15,12 +17,15 @@ import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
 import com.example.petstagram.perfil.Perfil
 import com.example.petstagram.perfilpropio.PerfilPropio
+import com.example.petstagram.ui.petstagram.seccioncomentarios.SeccionComentarios
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.VisualizarCategoria
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
                 // A surface container using the 'background' color from the theme
@@ -28,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginEnMovil()
+                    SeccionComentarios()
                 }
             }
         }

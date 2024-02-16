@@ -1,9 +1,11 @@
 package com.example.petstagram.categorias
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,11 +24,15 @@ import com.google.relay.compose.RelayContainerScope
  */
 @Composable
 fun Categorias(modifier: Modifier = Modifier) {
-    TopLevel(modifier = modifier) {
-        CategoriaInstance()
-        CategoriaInstance()
-        CategoriaInstance()
-        CategoriaInstance()
+    BoxWithConstraints {
+        val anchomax = maxWidth
+        TopLevel(modifier = modifier) {
+            CategoriaInstance(modifier.width(anchomax))
+            CategoriaInstance(modifier.width(anchomax))
+            CategoriaInstance(modifier.width(anchomax))
+            CategoriaInstance(modifier.width(anchomax))
+        }
+
     }
 }
 
@@ -35,14 +41,16 @@ fun Categorias(modifier: Modifier = Modifier) {
 private fun CategoriasPreview() {
     MaterialTheme {
         RelayContainer {
-            Categorias(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            Categorias(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
     }
 }
 
 @Composable
 fun CategoriaInstance(modifier: Modifier = Modifier) {
-    Categoria(modifier = modifier.requiredWidth(IntrinsicSize.Max))
+    Categoria(modifier = modifier)
 }
 
 @Composable
@@ -61,6 +69,8 @@ fun TopLevel(
         scrollable = true,
         itemSpacing = 8.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
