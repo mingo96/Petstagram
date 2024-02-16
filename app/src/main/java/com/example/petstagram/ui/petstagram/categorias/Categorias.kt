@@ -24,9 +24,9 @@ import com.google.relay.compose.RelayContainerScope
 fun Categorias(modifier: Modifier = Modifier) {
     TopLevel(modifier = modifier) {
         CategoriaInstance()
-        Categoria1()
-        Categoria2()
-        Categoria3()
+        CategoriaInstance()
+        CategoriaInstance()
+        CategoriaInstance()
     }
 }
 
@@ -42,21 +42,6 @@ private fun CategoriasPreview() {
 
 @Composable
 fun CategoriaInstance(modifier: Modifier = Modifier) {
-    Categoria(modifier = modifier.requiredWidth(IntrinsicSize.Max))
-}
-
-@Composable
-fun Categoria1(modifier: Modifier = Modifier) {
-    Categoria(modifier = modifier.requiredWidth(IntrinsicSize.Max))
-}
-
-@Composable
-fun Categoria2(modifier: Modifier = Modifier) {
-    Categoria(modifier = modifier.requiredWidth(IntrinsicSize.Max))
-}
-
-@Composable
-fun Categoria3(modifier: Modifier = Modifier) {
     Categoria(modifier = modifier.requiredWidth(IntrinsicSize.Max))
 }
 

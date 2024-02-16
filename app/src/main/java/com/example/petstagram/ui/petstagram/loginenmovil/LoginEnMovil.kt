@@ -89,7 +89,7 @@ fun RectanguloDeCorte(modifier: Modifier = Modifier) {
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
     CuadroTexto(
         variacion = Variacion.Bienvenida,
-        modifier = modifier.requiredWidth(234.0.dp)
+        modifier = modifier.fillMaxWidth()
     )
 }
 

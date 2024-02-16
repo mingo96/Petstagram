@@ -1,8 +1,10 @@
 package com.example.petstagram.barrasuperior
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.MaterialTheme
@@ -43,16 +45,22 @@ fun BarraSuperior(
             AccesoAPerfilAccesoAPerfil()
             ImagenDeslizableVarianteSimple()
         }
-        Variante.ConMenu -> TopLevelVarianteConMenu(modifier = modifier) {
-            AccesoAPerfilAccesoAPerfil()
-            IconosVarianteConMenu(modifier = Modifier.rowWeight(1.0f)) {
-                ContenedorDeslizarVarianteConMenu(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)) {
-                    ImagenDeslizableVarianteConMenu()
-                }
-                ContenedorAtrasVarianteConMenu(modifier = Modifier.rowWeight(1.0f)) {
-                    AtrasAtras()
+        Variante.ConMenu ->BoxWithConstraints {
+            val altomax = maxHeight
+            TopLevelVarianteConMenu(modifier = modifier) {
+                AccesoAPerfilAccesoAPerfil(modifier = Modifier.height(altomax.times(0.65f)))
+                IconosVarianteConMenu(modifier = Modifier.height(altomax.times(0.35f))) {
+                    ContenedorDeslizarVarianteConMenu(modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)) {
+                        ImagenDeslizableVarianteConMenu()
+                    }
+                    ContenedorAtrasVarianteConMenu(modifier = Modifier.rowWeight(1.0f)) {
+                        AtrasAtras(Modifier.height(altomax.times(0.35f)))
+                    }
                 }
             }
+
         }
     }
 }
@@ -83,7 +91,9 @@ fun ImagenDeslizableVarianteSimple(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.barra_superior_imagen_deslizable),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -118,7 +128,9 @@ fun ImagenDeslizableVarianteConMenu(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.barra_superior_imagen_deslizable),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -138,13 +150,16 @@ fun ContenedorDeslizarVarianteConMenu(
         ),
         itemSpacing = 10.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
 @Composable
 fun AtrasAtras(modifier: Modifier = Modifier) {
-    Atras(modifier = modifier.requiredWidth(56.0.dp).requiredHeight(48.0.dp))
+    Atras(modifier = modifier
+        .requiredWidth(56.0.dp))
 }
 
 @Composable
@@ -168,7 +183,7 @@ fun IconosVarianteConMenu(
     RelayContainer(
         arrangement = RelayContainerArrangement.Row,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).requiredHeight(48.0.dp)
+        modifier = modifier.fillMaxWidth(1.0f)
     )
 }
 

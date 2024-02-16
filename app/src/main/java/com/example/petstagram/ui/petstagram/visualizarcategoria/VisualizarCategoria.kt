@@ -1,7 +1,9 @@
 package com.example.petstagram.visualizarcategoria
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.MaterialTheme
@@ -27,10 +29,13 @@ import com.google.relay.compose.RelayContainerScope
  */
 @Composable
 fun VisualizarCategoria(modifier: Modifier = Modifier) {
-    TopLevel(modifier = modifier) {
-        BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f))
-        CuadroTextoInstance()
-        PublicacionesInstance(modifier = Modifier.rowWeight(1.0f))
+    BoxWithConstraints {
+        val AlturaTotal = maxHeight
+        TopLevel(modifier = modifier) {
+            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.2225f)))
+            CuadroTextoInstance(modifier.requiredHeight(AlturaTotal.times(0.05f)))
+            PublicacionesInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.825f)))
+        }
     }
 }
 
@@ -39,7 +44,9 @@ fun VisualizarCategoria(modifier: Modifier = Modifier) {
 private fun VisualizarCategoriaPreview() {
     MaterialTheme {
         RelayContainer {
-            VisualizarCategoria(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            VisualizarCategoria(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
     }
 }
@@ -56,13 +63,14 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier) {
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
     CuadroTexto(
         variacion = Variacion.PublicacionesCategoria,
-        modifier = modifier.requiredWidth(296.0.dp)
+        modifier = modifier
     )
 }
 
 @Composable
 fun PublicacionesInstance(modifier: Modifier = Modifier) {
-    Publicaciones(modifier = modifier.fillMaxWidth(1.0f).requiredHeight(692.0.dp))
+    Publicaciones(modifier = modifier
+        .fillMaxWidth(1.0f))
 }
 
 @Composable
@@ -79,8 +87,10 @@ fun TopLevel(
         ),
         mainAxisAlignment = MainAxisAlignment.End,
         scrollable = true,
-        itemSpacing = 8.0,
+        itemSpacing = 24.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

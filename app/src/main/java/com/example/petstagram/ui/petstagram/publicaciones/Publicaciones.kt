@@ -1,13 +1,16 @@
 package com.example.petstagram.publicaciones
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.petstagram.publicacion.Publicacion
 import com.google.relay.compose.MainAxisAlignment
@@ -22,11 +25,15 @@ import com.google.relay.compose.RelayContainerScope
  */
 @Composable
 fun Publicaciones(modifier: Modifier = Modifier) {
-    TopLevel(modifier = modifier) {
-        PublicacionInstance(modifier = Modifier.rowWeight(1.0f))
-        Publicacion1(modifier = Modifier.rowWeight(1.0f))
-        Publicacion2(modifier = Modifier.rowWeight(1.0f))
-        Publicacion3(modifier = Modifier.rowWeight(1.0f))
+    BoxWithConstraints {
+        val anchoMax = maxWidth
+        TopLevel(modifier = modifier.width(maxWidth)) {
+            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
+            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
+            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
+            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
+            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
+        }
     }
 }
 
@@ -35,29 +42,17 @@ fun Publicaciones(modifier: Modifier = Modifier) {
 private fun PublicacionesPreview() {
     MaterialTheme {
         RelayContainer {
-            Publicaciones(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            Publicaciones(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
     }
 }
 
 @Composable
-fun PublicacionInstance(modifier: Modifier = Modifier) {
-    Publicacion(modifier = modifier.fillMaxWidth(1.0f).requiredHeight(358.0.dp))
-}
-
-@Composable
-fun Publicacion1(modifier: Modifier = Modifier) {
-    Publicacion(modifier = modifier.fillMaxWidth(1.0f).requiredHeight(358.0.dp))
-}
-
-@Composable
-fun Publicacion2(modifier: Modifier = Modifier) {
-    Publicacion(modifier = modifier.fillMaxWidth(1.0f).requiredHeight(358.0.dp))
-}
-
-@Composable
-fun Publicacion3(modifier: Modifier = Modifier) {
-    Publicacion(modifier = modifier.fillMaxWidth(1.0f).requiredHeight(358.0.dp))
+fun PublicacionInstance(modifier: Modifier = Modifier, ancho : Dp) {
+    Publicacion(modifier = modifier
+        .fillMaxWidth(1.0f).width(ancho))
 }
 
 @Composable
@@ -76,6 +71,8 @@ fun TopLevel(
         scrollable = true,
         itemSpacing = 8.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

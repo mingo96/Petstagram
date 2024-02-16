@@ -1,9 +1,12 @@
 package com.example.petstagram.perfil
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +20,8 @@ import com.example.petstagram.fotoperfil.FotoPerfil
 import com.example.petstagram.fotoperfil.Size
 import com.example.petstagram.opcionperfil.OpcionPerfil
 import com.example.petstagram.publicaciones.Publicaciones
+import com.example.petstagram.visualizarcategoria.BarraSuperiorInstance
+import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 
@@ -28,12 +33,15 @@ import com.google.relay.compose.RelayContainerScope
  */
 @Composable
 fun Perfil(modifier: Modifier = Modifier) {
-    TopLevel(modifier = modifier) {
-        BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f))
-        CuadroTextoInstance(modifier = Modifier.rowWeight(1.0f))
-        FotoPerfilInstance()
-        OpcionPerfilInstance()
-        PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f))
+    BoxWithConstraints {
+        val AlturaTotal = maxHeight
+        TopLevel(modifier = modifier) {
+            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.23f)))
+            CuadroTextoInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.06f)))
+            FotoPerfilInstance(modifier.height(AlturaTotal.times(0.30f)).width(AlturaTotal.times(0.30f)))
+            OpcionPerfilInstance(modifier.height(AlturaTotal.times(0.06f)))
+            PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
+        }
     }
 }
 
@@ -64,18 +72,18 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 fun FotoPerfilInstance(modifier: Modifier = Modifier) {
     FotoPerfil(
         size = Size.Enorme,
-        modifier = modifier.requiredWidth(216.0.dp).requiredHeight(216.0.dp)
+        modifier = modifier
     )
 }
 
 @Composable
 fun OpcionPerfilInstance(modifier: Modifier = Modifier) {
-    OpcionPerfil(modifier = modifier.requiredWidth(312.0.dp).requiredHeight(48.0.dp))
+    OpcionPerfil(modifier = modifier.requiredWidth(312.0.dp))
 }
 
 @Composable
 fun PublicacionesCuenta(modifier: Modifier = Modifier) {
-    Publicaciones(modifier = modifier.fillMaxWidth(1.0f).requiredHeight(472.0.dp))
+    Publicaciones(modifier = modifier.fillMaxWidth(1.0f))
 }
 
 @Composable

@@ -82,13 +82,6 @@ fun TopLevel(
             blue = 217
         ),
         mainAxisAlignment = MainAxisAlignment.Start,
-        strokeWidth = 1.0,
-        strokeColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
         content = content,
         modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
