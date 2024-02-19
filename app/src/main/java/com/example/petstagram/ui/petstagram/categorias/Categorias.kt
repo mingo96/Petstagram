@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,10 +28,10 @@ fun Categorias(modifier: Modifier = Modifier) {
     BoxWithConstraints {
         val anchomax = maxWidth
         TopLevel(modifier = modifier) {
-            CategoriaInstance(modifier.width(anchomax))
-            CategoriaInstance(modifier.width(anchomax))
-            CategoriaInstance(modifier.width(anchomax))
-            CategoriaInstance(modifier.width(anchomax))
+            CategoriaInstance(Modifier.width(anchomax))
+            CategoriaInstance(Modifier.width(anchomax))
+            CategoriaInstance(Modifier.width(anchomax))
+            CategoriaInstance(Modifier.width(anchomax))
         }
 
     }
@@ -71,6 +72,6 @@ fun TopLevel(
         content = content,
         modifier = modifier
             .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
+            .wrapContentHeight()
     )
 }

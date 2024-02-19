@@ -5,11 +5,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.categorias.Categorias
@@ -25,46 +24,33 @@ import com.google.relay.compose.ScrollAnchor
  * Generated code; do not edit directly
  */
 @Composable
-fun MenuPrincipal(modifier: Modifier = Modifier) {
+fun MenuPrincipal(modifier: Modifier = Modifier, navController: NavHostController) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val mayorAltura = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.22f)))
-            BarraTipoNotificacion(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.07f)))
+            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.22f)), navController = navController)
+            BarraTipoNotificacion(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.07f)),navController = navController)
             CategoriasInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.84f)))
         }
     }
 
 }
 
-@Preview(widthDp = 360, heightDp = 800)
+
 @Composable
-private fun MenuPrincipalPreview() {
-    MaterialTheme {
-        RelayContainer {
-            MenuPrincipal(modifier = Modifier
-                .rowWeight(1.0f)
-                .columnWeight(1.0f))
-        }
-    }
+fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostController) {
+    BarraSuperior(modifier = modifier.fillMaxWidth(1.0f),navController = navController)
 }
 
 @Composable
-fun BarraSuperiorInstance(modifier: Modifier = Modifier) {
-    BarraSuperior(modifier = modifier.fillMaxWidth(1.0f))
-}
-
-@Composable
-fun BarraTipoNotificacion(modifier: Modifier = Modifier) {
-    BarraDeSeleccionDeTipoDePublicacion(modifier = modifier.fillMaxWidth(1.0f))
+fun BarraTipoNotificacion(modifier: Modifier = Modifier, navController: NavHostController) {
+    BarraDeSeleccionDeTipoDePublicacion(modifier = modifier.fillMaxWidth(1.0f),navController = navController)
 }
 
 @Composable
 fun CategoriasInstance(modifier: Modifier = Modifier) {
 
-    Categorias(modifier = modifier
-        .fillMaxWidth()
-    )
+    Categorias(modifier = modifier)
 
 }
 

@@ -1,5 +1,6 @@
 package com.example.petstagram.ui.petstagram.accesoaperfil
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
@@ -12,6 +13,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -27,23 +29,14 @@ import com.google.relay.compose.RelayImage
  * Generated code; do not edit directly
  */
 @Composable
-fun AccesoAperfil(modifier: Modifier = Modifier) {
+fun AccesoAperfil(modifier: Modifier = Modifier, navController: NavHostController) {
     TopLevel(modifier = modifier) {
-        ImagenPerfil()
-        ImagenGaleria()
-        ImagenPuerta()
+        ImagenPerfil(Modifier.clickable { navController.navigate("perfilPropio") })
+        ImagenGaleria(Modifier.clickable { navController.navigate("publicaciones") })
+        ImagenPuerta(Modifier.clickable { navController.navigate("login") })
     }
 }
 
-@Preview(widthDp = 360, heightDp = 112)
-@Composable
-private fun AccesoAperfilPreview() {
-    MaterialTheme {
-        RelayContainer {
-            AccesoAperfil(modifier = Modifier.rowWeight(1.0f))
-        }
-    }
-}
 
 @Composable
 fun ImagenPerfil(modifier: Modifier = Modifier) {

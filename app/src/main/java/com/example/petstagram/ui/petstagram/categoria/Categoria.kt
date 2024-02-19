@@ -243,6 +243,6 @@ fun TopLevel(
             blue = 35
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight()
     )
 }

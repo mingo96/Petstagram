@@ -1,10 +1,10 @@
 package com.example.petstagram.loginenmovil
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.cuadrotexto.CuadroTexto
 import com.example.petstagram.cuadrotexto.Variacion
@@ -30,7 +31,7 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun LoginEnMovil(modifier: Modifier = Modifier) {
+fun LoginEnMovil(modifier: Modifier = Modifier, navController: NavHostController) {
     TopLevel(modifier = modifier) {
         ImagenInicioSesion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         RectanguloDeCorte(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
@@ -38,18 +39,8 @@ fun LoginEnMovil(modifier: Modifier = Modifier) {
             CuadroTextoInstance()
             CuadroTexto1(modifier = Modifier.rowWeight(1.0f))
             CuadroTexto2(modifier = Modifier.rowWeight(1.0f))
-            CuadroTexto3(modifier = Modifier.rowWeight(1.0f))
-            CuadroTexto4(modifier = Modifier.rowWeight(1.0f))
-        }
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 800)
-@Composable
-private fun LoginEnMovilPreview() {
-    MaterialTheme {
-        RelayContainer {
-            LoginEnMovil(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            CuadroTexto3(modifier = Modifier.rowWeight(1.0f).clickable { navController.navigate("categorias") })
+            CuadroTexto4(modifier = Modifier.rowWeight(1.0f).clickable { navController.navigate("categorias") })
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.petstagram.barrasuperior
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -7,14 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ui.petstagram.accesoaperfil.AccesoAperfil
 import com.example.petstagram.atras.Atras
@@ -38,17 +38,21 @@ enum class Variante {
 @Composable
 fun BarraSuperior(
     modifier: Modifier = Modifier,
-    variante: Variante = Variante.Simple
+    variante: Variante = Variante.Simple,
+    navController: NavHostController
 ) {
     when (variante) {
         Variante.Simple -> TopLevelVarianteSimple(modifier = modifier) {
-            AccesoAPerfilAccesoAPerfil()
+            AccesoAPerfilAccesoAPerfil(navController = navController)
             ImagenDeslizableVarianteSimple()
         }
         Variante.ConMenu ->BoxWithConstraints {
             val altomax = maxHeight
             TopLevelVarianteConMenu(modifier = modifier) {
-                AccesoAPerfilAccesoAPerfil(modifier = Modifier.height(altomax.times(0.65f)))
+                AccesoAPerfilAccesoAPerfil(
+                    modifier = Modifier.height(altomax.times(0.65f)),
+                    navController = navController
+                )
                 IconosVarianteConMenu(modifier = Modifier.height(altomax.times(0.35f))) {
                     ContenedorDeslizarVarianteConMenu(modifier = Modifier
                         .rowWeight(1.0f)
@@ -56,7 +60,7 @@ fun BarraSuperior(
                         ImagenDeslizableVarianteConMenu()
                     }
                     ContenedorAtrasVarianteConMenu(modifier = Modifier.rowWeight(1.0f)) {
-                        AtrasAtras(Modifier.height(altomax.times(0.35f)))
+                        AtrasAtras(Modifier.height(altomax.times(0.35f)).clickable { navController.navigateUp() })
                     }
                 }
             }
@@ -65,25 +69,10 @@ fun BarraSuperior(
     }
 }
 
-@Preview(widthDp = 360, heightDp = 168)
-@Composable
-private fun BarraSuperiorVarianteSimplePreview() {
-    MaterialTheme {
-        BarraSuperior(variante = Variante.Simple)
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 168)
-@Composable
-private fun BarraSuperiorVarianteConMenuPreview() {
-    MaterialTheme {
-        BarraSuperior(variante = Variante.ConMenu)
-    }
-}
 
 @Composable
-fun AccesoAPerfilAccesoAPerfil(modifier: Modifier = Modifier) {
-    AccesoAperfil(modifier = modifier.requiredWidth(360.0.dp))
+fun AccesoAPerfilAccesoAPerfil(modifier: Modifier = Modifier, navController: NavHostController) {
+    AccesoAperfil(modifier = modifier.requiredWidth(360.0.dp),navController = navController)
 }
 
 @Composable

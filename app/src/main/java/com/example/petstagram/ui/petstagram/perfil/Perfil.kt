@@ -4,15 +4,13 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.CuadroTexto
@@ -20,8 +18,6 @@ import com.example.petstagram.fotoperfil.FotoPerfil
 import com.example.petstagram.fotoperfil.Size
 import com.example.petstagram.opcionperfil.OpcionPerfil
 import com.example.petstagram.publicaciones.Publicaciones
-import com.example.petstagram.visualizarcategoria.BarraSuperiorInstance
-import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 
@@ -32,11 +28,11 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Perfil(modifier: Modifier = Modifier) {
+fun Perfil(modifier: Modifier = Modifier, navController: NavHostController) {
     BoxWithConstraints {
         val AlturaTotal = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.23f)))
+            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.23f)), navController = navController)
             CuadroTextoInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.06f)))
             FotoPerfilInstance(modifier.height(AlturaTotal.times(0.30f)).width(AlturaTotal.times(0.30f)))
             OpcionPerfilInstance(modifier.height(AlturaTotal.times(0.06f)))
@@ -45,21 +41,14 @@ fun Perfil(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(widthDp = 360, heightDp = 800)
-@Composable
-private fun PerfilPreview() {
-    MaterialTheme {
-        RelayContainer {
-            Perfil(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
-        }
-    }
-}
+
 
 @Composable
-fun BarraSuperiorInstance(modifier: Modifier = Modifier) {
+fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostController) {
     BarraSuperior(
+        modifier = modifier.fillMaxWidth(1.0f),
         variante = Variante.ConMenu,
-        modifier = modifier.fillMaxWidth(1.0f)
+        navController = navController
     )
 }
 

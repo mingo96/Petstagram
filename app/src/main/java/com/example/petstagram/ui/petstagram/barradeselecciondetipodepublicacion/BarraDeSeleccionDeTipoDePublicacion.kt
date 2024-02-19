@@ -1,5 +1,6 @@
 package com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.petstagram.atras.Atras
 import com.example.petstagram.R
 import com.google.relay.compose.MainAxisAlignment
@@ -45,7 +47,8 @@ enum class Seleccionado {
 @Composable
 fun BarraDeSeleccionDeTipoDePublicacion(
     modifier: Modifier = Modifier,
-    seleccionado: Seleccionado = Seleccionado.Publicaciones
+    seleccionado: Seleccionado = Seleccionado.Publicaciones,
+    navController: NavHostController
 ) {
     when (seleccionado) {
         Seleccionado.Publicaciones -> TopLevelSeleccionadoPublicaciones(modifier = modifier) {
@@ -74,7 +77,7 @@ fun BarraDeSeleccionDeTipoDePublicacion(
                     )
                 )
             }
-            AtrasAtras()
+            AtrasAtras(Modifier.clickable { navController.navigateUp() })
         }
         Seleccionado.Adopcion -> TopLevelSeleccionadoAdopcion(modifier = modifier) {
             PublicacionNoSeleccionadoSeleccionadoAdopcion {
@@ -107,21 +110,7 @@ fun BarraDeSeleccionDeTipoDePublicacion(
     }
 }
 
-@Preview(widthDp = 329, heightDp = 48)
-@Composable
-private fun BarraDeSeleccionDeTipoDePublicacionSeleccionadoPublicacionesPreview() {
-    MaterialTheme {
-        BarraDeSeleccionDeTipoDePublicacion(seleccionado = Seleccionado.Publicaciones)
-    }
-}
 
-@Preview(widthDp = 329, heightDp = 48)
-@Composable
-private fun BarraDeSeleccionDeTipoDePublicacionSeleccionadoAdopcionPreview() {
-    MaterialTheme {
-        BarraDeSeleccionDeTipoDePublicacion(seleccionado = Seleccionado.Adopcion)
-    }
-}
 
 @Composable
 fun IconoSeleccionadoPublicaciones(modifier: Modifier = Modifier) {

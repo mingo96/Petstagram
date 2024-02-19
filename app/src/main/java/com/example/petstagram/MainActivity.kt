@@ -3,7 +3,6 @@ package com.example.petstagram
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.view.Menu
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
 import com.example.petstagram.perfil.Perfil
 import com.example.petstagram.perfilpropio.PerfilPropio
-import com.example.petstagram.ui.petstagram.seccioncomentarios.SeccionComentarios
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.VisualizarCategoria
 
@@ -33,7 +34,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SeccionComentarios()
+                    val navController = rememberNavController()
+
+                    NavHost(navController = navController, startDestination = "login"){
+                        composable("login"){
+                            LoginEnMovil(navController = navController)
+                        }
+                        composable("categorias"){
+                            MenuPrincipal(navController = navController)
+                        }
+                        composable("publicaciones"){
+                            VisualizarCategoria(navController = navController)
+                        }
+                        composable("perfilAjeno"){
+                            Perfil(navController = navController)
+                        }
+                        composable("perfilPropio"){
+                            PerfilPropio(navController = navController)
+                        }
+                    }
+
                 }
             }
         }
