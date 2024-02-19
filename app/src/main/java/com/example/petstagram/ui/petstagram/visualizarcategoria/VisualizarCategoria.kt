@@ -29,7 +29,7 @@ fun VisualizarCategoria(modifier: Modifier = Modifier, navController: NavHostCon
     BoxWithConstraints {
         val AlturaTotal = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.2225f)), navController)
+            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.2225f)), navController = navController)
             CuadroTextoInstance(modifier.requiredHeight(AlturaTotal.times(0.05f)))
             PublicacionesInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.825f)))
         }
@@ -39,7 +39,7 @@ fun VisualizarCategoria(modifier: Modifier = Modifier, navController: NavHostCon
 
 
 @Composable
-fun BarraSuperiorInstance(modifier: Modifier = Modifier) {
+fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostController) {
     BarraSuperior(
         modifier = modifier.fillMaxWidth(1.0f),
         variante = Variante.ConMenu,
