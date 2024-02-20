@@ -2,11 +2,15 @@ package com.example.petstagram.loginenmovil
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -19,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -59,53 +64,66 @@ fun LoginEnMovil(
         mutableStateOf("usuario@gmail.com")
     }
 
-    val accesoUsuario : ()->String = {usuario}
+    val accesoUsuario: () -> String = { usuario }
 
-    val cambioTextoUsuario : (String)->Unit = {usuario = it}
+    val cambioTextoUsuario: (String) -> Unit = { usuario = it }
 
-    val accesoPasswd : ()->String = {passwd}
+    val accesoPasswd: () -> String = { passwd }
 
-    val cambioTextoPasswd : (String)->Unit = {passwd = it}
+    val cambioTextoPasswd: (String) -> Unit = { passwd = it }
 
     val context =
         LocalContext.current.applicationContext
 
-
-    TopLevel(modifier = modifier) {
-        ImagenInicioSesion(modifier = Modifier
-            .rowWeight(1.0f)
-            .columnWeight(1.0f))
-        RectanguloDeCorte(modifier = Modifier
-            .rowWeight(1.0f)
-            .columnWeight(1.0f))
-        TopLevelSynth(modifier = Modifier
-            .rowWeight(1.0f)
-            .columnWeight(1.0f)) {
-            CuadroTextoInstance()
-            CuadroTextoNombreUsuario(modifier = Modifier.rowWeight(1.0f), accesoTexto = accesoUsuario, cambiarTexto = cambioTextoUsuario)
-            CuadroTextoPassword(modifier = Modifier.rowWeight(1.0f), accesoTexto = accesoPasswd, cambiarTexto = cambioTextoPasswd)
-            CuadroTexto3(
+    BoxWithConstraints {
+        val maxAncho = maxWidth
+        TopLevel(modifier = Modifier.fillMaxSize()) {
+            ImagenInicioSesion(
                 modifier = Modifier
                     .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+            )
+            RectanguloDeCorte(modifier = Modifier.width(maxAncho))
+            TopLevelSynth(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+            ) {
+                CuadroTextoInstance()
+                CuadroTextoNombreUsuario(
+                    modifier = Modifier.rowWeight(1.0f),
+                    accesoTexto = accesoUsuario,
+                    cambiarTexto = cambioTextoUsuario
+                )
+                CuadroTextoPassword(
+                    modifier = Modifier.rowWeight(1.0f),
+                    accesoTexto = accesoPasswd,
+                    cambiarTexto = cambioTextoPasswd
+                )
+                CuadroTexto3(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .clickable {
+                            viewModel.registrarse(
+                                usuario = usuario,
+                                password = passwd,
+                                context = context
+                            ) { navController.navigate("categorias") }
+                        }
+                )
+                CuadroTexto4(modifier = Modifier
+                    .rowWeight(1.0f)
                     .clickable {
-                        viewModel.registrarse(
+                        viewModel.iniciarSesion(
                             usuario = usuario,
                             password = passwd,
                             context = context
                         ) { navController.navigate("categorias") }
                     }
-            )
-            CuadroTexto4(modifier = Modifier
-                .rowWeight(1.0f)
-                .clickable {
-                    viewModel.iniciarSesion(
-                        usuario = usuario,
-                        password = passwd,
-                        context = context
-                    ) { navController.navigate("categorias") }
-                }
-            )
+                )
+            }
         }
+
     }
 }
 
@@ -156,13 +174,21 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CuadroTextoNombreUsuario(modifier: Modifier = Modifier, accesoTexto: ()->String, cambiarTexto: (String) -> Unit) {
+fun CuadroTextoNombreUsuario(
+    modifier: Modifier = Modifier,
+    accesoTexto: () -> String,
+    cambiarTexto: (String) -> Unit
+) {
     OutlinedTextField(
         value = accesoTexto.invoke(),
         onValueChange = cambiarTexto,
-        textStyle = TextStyle(fontSize = 20.0.sp,
-        fontFamily = inter,
-        lineHeight = 1.2102272033691406.em),
+        textStyle = TextStyle(
+            fontSize = 20.0.sp,
+            fontFamily = inter,
+            lineHeight = 1.2102272033691406.em,
+            color = Color.Black
+        ),
+        shape = RoundedCornerShape(5),
         modifier = modifier
             .fillMaxWidth(1.0f)
             .wrapContentHeight(
@@ -176,9 +202,9 @@ fun CuadroTextoNombreUsuario(modifier: Modifier = Modifier, accesoTexto: ()->Str
                     red = 225,
                     green = 196,
                     blue = 1
-                )
+                ),
+                shape = RoundedCornerShape(5)
             )
-
     )
 }
 
@@ -192,9 +218,12 @@ fun CuadroTextoPassword(
     OutlinedTextField(
         value = accesoTexto.invoke(),
         onValueChange = cambiarTexto,
-        textStyle = TextStyle(fontSize = 20.0.sp,
+        textStyle = TextStyle(
+            fontSize = 20.0.sp,
             fontFamily = inter,
-            lineHeight = 1.2102272033691406.em),
+            lineHeight = 1.2102272033691406.em,
+            color = Color.Black
+        ),
         modifier = modifier
             .fillMaxWidth(1.0f)
             .wrapContentHeight(
@@ -208,8 +237,10 @@ fun CuadroTextoPassword(
                     red = 225,
                     green = 196,
                     blue = 1
-                )
+                ),
+                shape = RoundedCornerShape(5),
             ),
+        shape = RoundedCornerShape(5),
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
     )
