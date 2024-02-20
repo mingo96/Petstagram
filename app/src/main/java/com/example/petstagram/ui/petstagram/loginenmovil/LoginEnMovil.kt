@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -66,6 +67,10 @@ fun LoginEnMovil(
 
     val cambioTextoPasswd : (String)->Unit = {passwd = it}
 
+    val context =
+        LocalContext.current.applicationContext
+
+
     TopLevel(modifier = modifier) {
         ImagenInicioSesion(modifier = Modifier
             .rowWeight(1.0f)
@@ -84,8 +89,9 @@ fun LoginEnMovil(
                     .rowWeight(1.0f)
                     .clickable {
                         viewModel.registrarse(
-                            usuario,
-                            passwd
+                            usuario = usuario,
+                            password = passwd,
+                            context = context
                         ) { navController.navigate("categorias") }
                     }
             )
@@ -93,8 +99,9 @@ fun LoginEnMovil(
                 .rowWeight(1.0f)
                 .clickable {
                     viewModel.iniciarSesion(
-                        usuario,
-                        passwd
+                        usuario = usuario,
+                        password = passwd,
+                        context = context
                     ) { navController.navigate("categorias") }
                 }
             )
