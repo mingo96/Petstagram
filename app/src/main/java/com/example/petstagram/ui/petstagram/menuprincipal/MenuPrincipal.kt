@@ -30,7 +30,7 @@ fun MenuPrincipal(modifier: Modifier = Modifier, navController: NavHostControlle
         TopLevel(modifier = modifier) {
             BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.22f)), navController = navController)
             BarraTipoNotificacion(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.07f)),navController = navController)
-            CategoriasInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.84f)))
+            CategoriasInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.84f)), navController = navController)
         }
     }
 
@@ -48,9 +48,9 @@ fun BarraTipoNotificacion(modifier: Modifier = Modifier, navController: NavHostC
 }
 
 @Composable
-fun CategoriasInstance(modifier: Modifier = Modifier) {
+fun CategoriasInstance(modifier: Modifier = Modifier, navController: NavHostController) {
 
-    Categorias(modifier = modifier)
+    Categorias(modifier = modifier, navController = navController)
 
 }
 

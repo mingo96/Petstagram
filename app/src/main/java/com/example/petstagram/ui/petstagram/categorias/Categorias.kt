@@ -1,17 +1,13 @@
 package com.example.petstagram.categorias
 
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.example.petstagram.categoria.Categoria
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -24,34 +20,22 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Categorias(modifier: Modifier = Modifier) {
+fun Categorias(modifier: Modifier = Modifier, navController: NavHostController) {
     BoxWithConstraints {
         val anchomax = maxWidth
         TopLevel(modifier = modifier) {
-            CategoriaInstance(Modifier.width(anchomax))
-            CategoriaInstance(Modifier.width(anchomax))
-            CategoriaInstance(Modifier.width(anchomax))
-            CategoriaInstance(Modifier.width(anchomax))
+            CategoriaInstance(Modifier.width(anchomax), navController = navController)
+            CategoriaInstance(Modifier.width(anchomax), navController = navController)
+            CategoriaInstance(Modifier.width(anchomax), navController = navController)
+            CategoriaInstance(Modifier.width(anchomax), navController = navController)
         }
 
     }
 }
 
-@Preview(widthDp = 360, heightDp = 688)
 @Composable
-private fun CategoriasPreview() {
-    MaterialTheme {
-        RelayContainer {
-            Categorias(modifier = Modifier
-                .rowWeight(1.0f)
-                .columnWeight(1.0f))
-        }
-    }
-}
-
-@Composable
-fun CategoriaInstance(modifier: Modifier = Modifier) {
-    Categoria(modifier = modifier)
+fun CategoriaInstance(modifier: Modifier = Modifier, navController: NavHostController) {
+    Categoria(modifier = modifier, navController = navController)
 }
 
 @Composable

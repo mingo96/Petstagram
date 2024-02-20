@@ -1,5 +1,6 @@
 package com.example.petstagram.categoria
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
@@ -36,7 +38,7 @@ import com.google.relay.compose.RelayText
  * Generated code; do not edit directly
  */
 @Composable
-fun Categoria(modifier: Modifier = Modifier) {
+fun Categoria(modifier: Modifier = Modifier, navController: NavHostController) {
     TopLevel(modifier = modifier) {
         ContendorImagen(modifier = Modifier.rowWeight(1.0f)) {
             ImagenGenerica(
@@ -50,25 +52,16 @@ fun Categoria(modifier: Modifier = Modifier) {
             )
         }
         Botones(modifier = Modifier.rowWeight(1.0f)) {
-            BotonAccesoPublicaciones(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)) {
+            BotonAccesoPublicaciones(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f).clickable { navController.navigate("publicaciones") }) {
                 TextoCategoria()
             }
-            BotonMas(modifier = Modifier.columnWeight(1.0f)) {
+            BotonMas(modifier = Modifier.columnWeight(1.0f).clickable { navController.navigate("nuevaPublicacion") }) {
                 CuadroSumar(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
             }
         }
     }
 }
 
-@Preview(widthDp = 360, heightDp = 256)
-@Composable
-private fun CategoriaPreview() {
-    MaterialTheme {
-        RelayContainer {
-            Categoria(modifier = Modifier.rowWeight(1.0f))
-        }
-    }
-}
 
 @Composable
 fun ImagenGenerica(modifier: Modifier = Modifier) {

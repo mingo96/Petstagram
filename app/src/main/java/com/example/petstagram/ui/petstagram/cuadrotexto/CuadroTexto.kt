@@ -31,7 +31,12 @@ enum class Variacion {
     Clave,
     PublicacionesCategoria,
     Registro,
-    InicioSesion
+    InicioSesion,
+    CrearPublicacion,
+    SeleccionarRecurso,
+    TituloPublicacion,
+    CategoriaPublicacion,
+    Publicar
 }
 
 /**
@@ -73,6 +78,21 @@ fun CuadroTexto(
         }
         Variacion.InicioSesion -> TopLevelVariacionInicioSesion(modifier = modifier) {
             TextoInicioSesionVariacionInicioSesion(modifier = Modifier.rowWeight(1.0f))
+        }
+        Variacion.CrearPublicacion -> TopLevelVariacionCrearPublicacion(modifier = modifier) {
+            TextoCrearPublicacionVariacionCrearPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+        }
+        Variacion.SeleccionarRecurso -> TopLevelVariacionSeleccionarRecurso(modifier = modifier) {
+            TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+        }
+        Variacion.TituloPublicacion -> TopLevelVariacionTituloPublicacion(modifier = modifier) {
+            TextoTituloPublicacionVariacionTituloPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+        }
+        Variacion.CategoriaPublicacion -> TopLevelVariacionCategoriaPublicacion(modifier = modifier) {
+            TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+        }
+        Variacion.Publicar -> TopLevelVariacionPublicar(modifier = modifier) {
+            TextoPublicarVariacionPublicar(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
     }
 }
@@ -116,7 +136,7 @@ private fun CuadroTextoVariacionTuPerfilPreview() {
     }
 }
 
-@Preview(widthDp = 351, heightDp = 58)
+@Preview(widthDp = 296, heightDp = 58)
 @Composable
 private fun CuadroTextoVariacionUsuarioPreview() {
     MaterialTheme {
@@ -142,7 +162,7 @@ private fun CuadroTextoVariacionTusPublicacionesPreview() {
     }
 }
 
-@Preview(widthDp = 351, heightDp = 58)
+@Preview(widthDp = 296, heightDp = 58)
 @Composable
 private fun CuadroTextoVariacionClavePreview() {
     MaterialTheme {
@@ -168,7 +188,7 @@ private fun CuadroTextoVariacionPublicacionesCategoriaPreview() {
     }
 }
 
-@Preview(widthDp = 351, heightDp = 58)
+@Preview(widthDp = 296, heightDp = 58)
 @Composable
 private fun CuadroTextoVariacionRegistroPreview() {
     MaterialTheme {
@@ -181,13 +201,78 @@ private fun CuadroTextoVariacionRegistroPreview() {
     }
 }
 
-@Preview(widthDp = 351, heightDp = 58)
+@Preview(widthDp = 296, heightDp = 58)
 @Composable
 private fun CuadroTextoVariacionInicioSesionPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
                 variacion = Variacion.InicioSesion,
+                modifier = Modifier.rowWeight(1.0f)
+            )
+        }
+    }
+}
+
+@Preview(widthDp = 280, heightDp = 40)
+@Composable
+private fun CuadroTextoVariacionCrearPublicacionPreview() {
+    MaterialTheme {
+        RelayContainer {
+            CuadroTexto(
+                variacion = Variacion.CrearPublicacion,
+                modifier = Modifier.rowWeight(1.0f)
+            )
+        }
+    }
+}
+
+@Preview(widthDp = 296, heightDp = 40)
+@Composable
+private fun CuadroTextoVariacionSeleccionarRecursoPreview() {
+    MaterialTheme {
+        RelayContainer {
+            CuadroTexto(
+                variacion = Variacion.SeleccionarRecurso,
+                modifier = Modifier.rowWeight(1.0f)
+            )
+        }
+    }
+}
+
+@Preview(widthDp = 296, heightDp = 40)
+@Composable
+private fun CuadroTextoVariacionTituloPublicacionPreview() {
+    MaterialTheme {
+        RelayContainer {
+            CuadroTexto(
+                variacion = Variacion.TituloPublicacion,
+                modifier = Modifier.rowWeight(1.0f)
+            )
+        }
+    }
+}
+
+@Preview(widthDp = 296, heightDp = 40)
+@Composable
+private fun CuadroTextoVariacionCategoriaPublicacionPreview() {
+    MaterialTheme {
+        RelayContainer {
+            CuadroTexto(
+                variacion = Variacion.CategoriaPublicacion,
+                modifier = Modifier.rowWeight(1.0f)
+            )
+        }
+    }
+}
+
+@Preview(widthDp = 296, heightDp = 40)
+@Composable
+private fun CuadroTextoVariacionPublicarPreview() {
+    MaterialTheme {
+        RelayContainer {
+            CuadroTexto(
+                variacion = Variacion.Publicar,
                 modifier = Modifier.rowWeight(1.0f)
             )
         }
@@ -327,7 +412,7 @@ fun TextoEmailVariacionUsuario(modifier: Modifier = Modifier) {
         fontSize = 35.0.sp,
         fontFamily = inter,
         height = 1.2102272033691406.em,
-        maxLines = 1,
+        maxLines = -1,
         modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
             align = Alignment.CenterVertically,
             unbounded = true
@@ -566,6 +651,220 @@ fun TopLevelVariacionInicioSesion(
             green = 0,
             blue = 0
         ),
+        content = content,
+        modifier = modifier.fillMaxWidth(1.0f)
+    )
+}
+
+@Composable
+fun TextoCrearPublicacionVariacionCrearPublicacion(modifier: Modifier = Modifier) {
+    RelayText(
+        content = "Crear Publicacion",
+        fontSize = 20.0.sp,
+        fontFamily = inter,
+        color = Color(
+            alpha = 255,
+            red = 225,
+            green = 196,
+            blue = 1
+        ),
+        height = 1.2102272033691406.em,
+        fontWeight = FontWeight(700.0.toInt()),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = -1,
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
+            align = Alignment.CenterVertically,
+            unbounded = true
+        )
+    )
+}
+
+@Composable
+fun TopLevelVariacionCrearPublicacion(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        arrangement = RelayContainerArrangement.Row,
+        padding = PaddingValues(all = 8.0.dp),
+        itemSpacing = 10.0,
+        radius = 5.0,
+        content = content,
+        modifier = modifier.fillMaxWidth(1.0f)
+    )
+}
+
+@Composable
+fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modifier) {
+    RelayText(
+        content = "Seleccionar recurso",
+        fontSize = 20.0.sp,
+        fontFamily = inter,
+        color = Color(
+            alpha = 255,
+            red = 255,
+            green = 255,
+            blue = 255
+        ),
+        height = 1.2102272033691406.em,
+        fontWeight = FontWeight(700.0.toInt()),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = -1,
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
+            align = Alignment.CenterVertically,
+            unbounded = true
+        )
+    )
+}
+
+@Composable
+fun TopLevelVariacionSeleccionarRecurso(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        backgroundColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        arrangement = RelayContainerArrangement.Row,
+        padding = PaddingValues(all = 8.0.dp),
+        itemSpacing = 10.0,
+        radius = 5.0,
+        content = content,
+        modifier = modifier.fillMaxWidth(1.0f)
+    )
+}
+
+@Composable
+fun TextoTituloPublicacionVariacionTituloPublicacion(modifier: Modifier = Modifier) {
+    RelayText(
+        content = "Titulo publicacion",
+        fontSize = 20.0.sp,
+        fontFamily = inter,
+        color = Color(
+            alpha = 255,
+            red = 255,
+            green = 255,
+            blue = 255
+        ),
+        height = 1.2102272033691406.em,
+        fontWeight = FontWeight(700.0.toInt()),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = -1,
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
+            align = Alignment.CenterVertically,
+            unbounded = true
+        )
+    )
+}
+
+@Composable
+fun TopLevelVariacionTituloPublicacion(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        backgroundColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        arrangement = RelayContainerArrangement.Row,
+        padding = PaddingValues(all = 8.0.dp),
+        itemSpacing = 10.0,
+        radius = 5.0,
+        content = content,
+        modifier = modifier.fillMaxWidth(1.0f)
+    )
+}
+
+@Composable
+fun TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier: Modifier = Modifier) {
+    RelayText(
+        content = "Categoria de la publicacion",
+        fontSize = 20.0.sp,
+        fontFamily = inter,
+        color = Color(
+            alpha = 255,
+            red = 255,
+            green = 255,
+            blue = 255
+        ),
+        height = 1.2102272033691406.em,
+        fontWeight = FontWeight(700.0.toInt()),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = -1,
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
+            align = Alignment.CenterVertically,
+            unbounded = true
+        )
+    )
+}
+
+@Composable
+fun TopLevelVariacionCategoriaPublicacion(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        backgroundColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        arrangement = RelayContainerArrangement.Row,
+        padding = PaddingValues(all = 8.0.dp),
+        itemSpacing = 10.0,
+        radius = 5.0,
+        content = content,
+        modifier = modifier.fillMaxWidth(1.0f)
+    )
+}
+
+@Composable
+fun TextoPublicarVariacionPublicar(modifier: Modifier = Modifier) {
+    RelayText(
+        content = "Publicar",
+        fontSize = 20.0.sp,
+        fontFamily = inter,
+        color = Color(
+            alpha = 255,
+            red = 255,
+            green = 255,
+            blue = 255
+        ),
+        height = 1.2102272033691406.em,
+        fontWeight = FontWeight(700.0.toInt()),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = -1,
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
+            align = Alignment.CenterVertically,
+            unbounded = true
+        )
+    )
+}
+
+@Composable
+fun TopLevelVariacionPublicar(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        backgroundColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        arrangement = RelayContainerArrangement.Row,
+        padding = PaddingValues(all = 8.0.dp),
+        itemSpacing = 10.0,
+        radius = 5.0,
         content = content,
         modifier = modifier.fillMaxWidth(1.0f)
     )
