@@ -1,17 +1,14 @@
 package com.example.petstagram.publicar
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.petstagram.ViewModels.PrincipalViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.CuadroTexto
@@ -28,7 +25,11 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicar(modifier: Modifier = Modifier, navController: NavHostController) {
+fun Publicar(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    viewModel: PrincipalViewModel
+) {
     TopLevel(modifier = modifier) {
         BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f), navController = navController)
         CuadroTextoInstance()

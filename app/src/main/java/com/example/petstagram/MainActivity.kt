@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.ViewModels.AuthViewModel
+import com.example.petstagram.ViewModels.PrincipalViewModel
 import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
 import com.example.petstagram.perfil.Perfil
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
-        val viewModel : AuthViewModel by viewModels()
+        val authViewModel : AuthViewModel by viewModels()
+        val principalViewModel : PrincipalViewModel by viewModels()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
@@ -47,22 +49,22 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = "login"){
                         composable("login"){
-                            LoginEnMovil(navController = navController, viewModel = viewModel)
+                            LoginEnMovil(navController = navController, viewModel = authViewModel)
                         }
                         composable("categorias"){
-                            MenuPrincipal(navController = navController)
+                            MenuPrincipal(navController = navController, viewModel = principalViewModel)
                         }
                         composable("publicaciones"){
-                            VisualizarCategoria(navController = navController)
+                            VisualizarCategoria(navController = navController, viewModel = principalViewModel)
                         }
                         composable("perfilAjeno"){
-                            Perfil(navController = navController)
+                            Perfil(navController = navController, viewModel = principalViewModel)
                         }
                         composable("perfilPropio"){
-                            PerfilPropio(navController = navController)
+                            PerfilPropio(navController = navController, viewModel = principalViewModel)
                         }
                         composable("nuevaPublicacion"){
-                            Publicar(navController = navController)
+                            Publicar(navController = navController, viewModel = principalViewModel)
                         }
                     }
 

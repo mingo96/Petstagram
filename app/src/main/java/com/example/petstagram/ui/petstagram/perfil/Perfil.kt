@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.petstagram.ViewModels.PrincipalViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.CuadroTexto
@@ -28,7 +29,11 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Perfil(modifier: Modifier = Modifier, navController: NavHostController) {
+fun Perfil(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    viewModel: PrincipalViewModel
+) {
     BoxWithConstraints {
         val AlturaTotal = maxHeight
         TopLevel(modifier = modifier) {
