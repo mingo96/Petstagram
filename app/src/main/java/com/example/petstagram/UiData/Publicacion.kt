@@ -4,6 +4,7 @@ import com.example.petstagram.guardar.GuardarPulsado
 import com.example.petstagram.like.Pulsado
 
 class Publicacion (
+    var id : String = "",
     val usuarioCreador:Perfil,
     val comentarios :MutableList<Comentario> = mutableListOf(),
     val recursoPublicacion :String= "",

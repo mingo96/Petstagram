@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.petstagram.ViewModels.ViewModelPrueba
+import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
 import com.example.petstagram.perfil.Perfil
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
-        val viewModel : ViewModelPrueba by viewModels()
+        val viewModel : AuthViewModel by viewModels()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {

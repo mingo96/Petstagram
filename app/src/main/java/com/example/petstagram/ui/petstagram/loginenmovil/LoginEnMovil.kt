@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,7 +34,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
-import com.example.petstagram.ViewModels.ViewModelPrueba
+import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.cuadrotexto.CuadroTexto
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.cuadrotexto.inter
@@ -55,22 +54,15 @@ import com.google.relay.compose.RelayVector
 fun LoginEnMovil(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: ViewModelPrueba
+    viewModel: AuthViewModel
 ) {
-    var usuario by rememberSaveable {
-        mutableStateOf("usuario@gmail.com")
-    }
-    var passwd by rememberSaveable {
-        mutableStateOf("usuario@gmail.com")
-    }
+    val accesoUsuario: () -> String = { viewModel.usuario }
 
-    val accesoUsuario: () -> String = { usuario }
+    val cambioTextoUsuario: (String) -> Unit = { viewModel.cambiaUsuario(it) }
 
-    val cambioTextoUsuario: (String) -> Unit = { usuario = it }
+    val accesoPasswd: () -> String = { viewModel.password }
 
-    val accesoPasswd: () -> String = { passwd }
-
-    val cambioTextoPasswd: (String) -> Unit = { passwd = it }
+    val cambioTextoPasswd: (String) -> Unit = { viewModel.cambiaPassword(it) }
 
     val context =
         LocalContext.current.applicationContext
@@ -105,8 +97,6 @@ fun LoginEnMovil(
                         .rowWeight(1.0f)
                         .clickable {
                             viewModel.registrarse(
-                                usuario = usuario,
-                                password = passwd,
                                 context = context
                             ) { navController.navigate("categorias") }
                         }
@@ -115,8 +105,6 @@ fun LoginEnMovil(
                     .rowWeight(1.0f)
                     .clickable {
                         viewModel.iniciarSesion(
-                            usuario = usuario,
-                            password = passwd,
                             context = context
                         ) { navController.navigate("categorias") }
                     }
