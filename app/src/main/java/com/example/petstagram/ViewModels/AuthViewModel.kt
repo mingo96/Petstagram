@@ -7,10 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.petstagram.UiData.Perfil
+import com.example.petstagram.UiData.Profile
+import com.example.petstagram.data.AuthUiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
@@ -20,70 +22,89 @@ class AuthViewModel : ViewModel() {
 
     private val db = Firebase.firestore
 
-    var usuario by mutableStateOf("usuario@gmail.com")
+    var state: AuthUiState = AuthUiState.Base
+
+    var user by mutableStateOf("usuario@gmail.com")
         private set
 
-    fun cambiaUsuario(nuevoTexto:String){
-        usuario = nuevoTexto
+    fun userTextChange(newText:String){
+        user = newText
     }
 
     var password by mutableStateOf("contraseña")
         private set
 
-    fun cambiaPassword(nuevoTexto:String){
-        password = nuevoTexto
+    fun passwordTextChange(newText:String){
+        password = newText
     }
 
-    fun iniciarSesion(context: Context, exito : ()-> Unit){
+    fun login(context: Context, onSuccess : ()-> Unit){
+        state = AuthUiState.isLoading
         this.viewModelScope.launch {
-            auth.signInWithEmailAndPassword(usuario, password)
+            auth.signInWithEmailAndPassword(user, password)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful)
-                        exito.invoke()
-                    else Toast.makeText(context,"credenciales incorrectos", Toast.LENGTH_SHORT).show()
+                    if (task.isSuccessful) {
+                        db.collection("Users")
+                            .whereEqualTo("mail", user).get().addOnSuccessListener {
+                                val user = it.first().toObject(Profile::class.java)
+                                onSuccess.invoke()
+                                state = AuthUiState.Success(user)
+                            }
+                    }
+                    else {
+                        Toast.makeText(context, "credenciales incorrectos", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
         }
     }
 
-    fun registrarse(context: Context, exito : ()-> Unit){
-        if(usuario.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()))
+    fun register(context: Context, onSuccess : ()-> Unit){
+        state  = AuthUiState.isLoading
+        if(user.isValidEmail())
             this.viewModelScope.launch {
-            auth.createUserWithEmailAndPassword(usuario, password)
+            auth.createUserWithEmailAndPassword(user, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        persistirUsuario(usuario)
-                        exito.invoke()
+                        persistUser(user)
+                        onSuccess.invoke()
                     }
                     else Toast.makeText(context,"credenciales incorrectos", Toast.LENGTH_SHORT).show()
 
                 }
         }
+        else Toast.makeText(context,"formato de correo no valido", Toast.LENGTH_SHORT).show()
     }
 
+    private fun String.isValidEmail():Boolean{
+        return this.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()) && user != "usuario@gmail.com"
+    }
 
-    fun persistirUsuario(correo: String){
+    fun persistUser(mail: String){
         val id = auth.currentUser?.uid
         viewModelScope.launch {
 
-            val perfil = Perfil(id = id.toString(), correo = correo, nombreUsuario = correo.split("@")[0])
+            val profile = Profile(id = id.toString(), mail = mail, userName = mail.split("@")[0])
 
-            crearUsuario(perfil)
+            createUser(profile)
 
         }
 
     }
 
 
-    private fun crearUsuario(perfil: Perfil){
-        db.collection("Usuarios")
-        .whereEqualTo("nombreUsuario",perfil.nombreUsuario)
+    private fun createUser(profile: Profile){
+        db.collection("Users")
+        .whereEqualTo("userName",profile.userName)
         .get().addOnCompleteListener {
             if (!it.result.isEmpty) {
-                perfil.nombreUsuario += "1"
-                crearUsuario(perfil)
-            }else
+                profile.userName += "1"
+                createUser(profile)
+            }else {
                 db.collection("Usuarios")
-                    .add(perfil)
+                    .add(profile)
+                state = AuthUiState.Success(profile)
+            }
         }
     }
 

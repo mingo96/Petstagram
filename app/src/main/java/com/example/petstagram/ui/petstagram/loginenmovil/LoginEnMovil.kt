@@ -1,6 +1,7 @@
 package com.example.petstagram.loginenmovil
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,17 +9,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -38,6 +37,8 @@ import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.cuadrotexto.CuadroTexto
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.cuadrotexto.inter
+import com.example.petstagram.data.AuthUiState
+import com.google.relay.compose.BoxScopeInstanceImpl.align
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -56,19 +57,21 @@ fun LoginEnMovil(
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
-    val accesoUsuario: () -> String = { viewModel.usuario }
+    val accesoUsuario: () -> String = { viewModel.user }
 
-    val cambioTextoUsuario: (String) -> Unit = { viewModel.cambiaUsuario(it) }
+    val cambioTextoUsuario: (String) -> Unit = { viewModel.userTextChange(it) }
 
     val accesoPasswd: () -> String = { viewModel.password }
 
-    val cambioTextoPasswd: (String) -> Unit = { viewModel.cambiaPassword(it) }
+    val cambioTextoPasswd: (String) -> Unit = { viewModel.passwordTextChange(it) }
 
     val context =
         LocalContext.current.applicationContext
 
+
     BoxWithConstraints {
         val maxAncho = maxWidth
+
         TopLevel(modifier = Modifier.fillMaxSize()) {
             ImagenInicioSesion(
                 modifier = Modifier
@@ -82,21 +85,27 @@ fun LoginEnMovil(
                     .columnWeight(1.0f)
             ) {
                 CuadroTextoInstance()
-                CuadroTextoNombreUsuario(
-                    modifier = Modifier.rowWeight(1.0f),
-                    accesoTexto = accesoUsuario,
-                    cambiarTexto = cambioTextoUsuario
-                )
-                CuadroTextoPassword(
-                    modifier = Modifier.rowWeight(1.0f),
-                    accesoTexto = accesoPasswd,
-                    cambiarTexto = cambioTextoPasswd
-                )
+
+                if(viewModel.state == AuthUiState.isLoading){
+                    CircularProgressIndicator(modifier = Modifier
+                        .size(150.dp))
+                }else {
+                    CuadroTextoNombreUsuario(
+                        modifier = Modifier.rowWeight(1.0f),
+                        accesoTexto = accesoUsuario,
+                        cambiarTexto = cambioTextoUsuario
+                    )
+                    CuadroTextoPassword(
+                        modifier = Modifier.rowWeight(1.0f),
+                        accesoTexto = accesoPasswd,
+                        cambiarTexto = cambioTextoPasswd
+                    )
+                }
                 CuadroTexto3(
                     modifier = Modifier
                         .rowWeight(1.0f)
                         .clickable {
-                            viewModel.registrarse(
+                            viewModel.register(
                                 context = context
                             ) { navController.navigate("categorias") }
                         }
@@ -104,14 +113,13 @@ fun LoginEnMovil(
                 CuadroTexto4(modifier = Modifier
                     .rowWeight(1.0f)
                     .clickable {
-                        viewModel.iniciarSesion(
+                        viewModel.login(
                             context = context
                         ) { navController.navigate("categorias") }
                     }
                 )
             }
         }
-
     }
 }
 
@@ -176,14 +184,23 @@ fun CuadroTextoNombreUsuario(
             lineHeight = 1.2102272033691406.em,
             color = Color.Black
         ),
-        shape = RoundedCornerShape(5),
+        shape = RoundedCornerShape(10),
         modifier = modifier
             .fillMaxWidth(1.0f)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = true
             )
-            .padding(PaddingValues(all = 8.0.dp))
+            .border(
+                width = 2.dp,
+                shape = RoundedCornerShape(10.dp),
+                color = Color(
+                    alpha = 38,
+                    red = 0,
+                    green = 0,
+                    blue = 0
+                )
+            )
             .background(
                 Color(
                     alpha = 255,
@@ -191,7 +208,7 @@ fun CuadroTextoNombreUsuario(
                     green = 196,
                     blue = 1
                 ),
-                shape = RoundedCornerShape(5)
+                shape = RoundedCornerShape(10)
             )
     )
 }
@@ -218,7 +235,16 @@ fun CuadroTextoPassword(
                 align = Alignment.CenterVertically,
                 unbounded = true
             )
-            .padding(PaddingValues(all = 8.0.dp))
+            .border(
+                width = 2.dp,
+                shape = RoundedCornerShape(10.dp),
+                color = Color(
+                    alpha = 38,
+                    red = 0,
+                    green = 0,
+                    blue = 0
+                )
+            )
             .background(
                 Color(
                     alpha = 255,
@@ -226,9 +252,9 @@ fun CuadroTextoPassword(
                     green = 196,
                     blue = 1
                 ),
-                shape = RoundedCornerShape(5),
+                shape = RoundedCornerShape(10),
             ),
-        shape = RoundedCornerShape(5),
+        shape = RoundedCornerShape(10),
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
     )

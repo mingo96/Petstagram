@@ -18,7 +18,7 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 
 // Design to select for Like
-enum class Pulsado {
+enum class Pressed {
     False,
     True
 }
@@ -32,13 +32,13 @@ enum class Pulsado {
 @Composable
 fun Like(
     modifier: Modifier = Modifier,
-    pulsado: Pulsado = Pulsado.False
+    pressed: Pressed = Pressed.False
 ) {
-    when (pulsado) {
-        Pulsado.False -> TopLevelPulsadoFalse(modifier = modifier) {
+    when (pressed) {
+        Pressed.False -> TopLevelPulsadoFalse(modifier = modifier) {
             ImagenLikePulsadoFalse()
         }
-        Pulsado.True -> TopLevelPulsadoTrue(modifier = modifier) {
+        Pressed.True -> TopLevelPulsadoTrue(modifier = modifier) {
             ImagenLikePulsadoTrue()
         }
     }
@@ -50,7 +50,7 @@ private fun LikePulsadoFalsePreview() {
     MaterialTheme {
         RelayContainer {
             Like(
-                pulsado = Pulsado.False,
+                pressed = Pressed.False,
                 modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
             )
         }
@@ -63,7 +63,7 @@ private fun LikePulsadoTruePreview() {
     MaterialTheme {
         RelayContainer {
             Like(
-                pulsado = Pulsado.True,
+                pressed = Pressed.True,
                 modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
             )
         }

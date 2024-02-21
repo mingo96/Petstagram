@@ -15,9 +15,8 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 
 // Design to select for Guardar
-enum class GuardarPulsado {
-    No,
-    Si
+enum class SavePressed {
+    No, Si
 }
 
 /**
@@ -29,13 +28,13 @@ enum class GuardarPulsado {
 @Composable
 fun Guardar(
     modifier: Modifier = Modifier,
-    guardarPulsado: GuardarPulsado = GuardarPulsado.No
+    savePressed: SavePressed = SavePressed.No
 ) {
-    when (guardarPulsado) {
-        GuardarPulsado.No -> TopLevelGuardarPulsadoNo(modifier = modifier) {
+    when (savePressed) {
+        SavePressed.No -> TopLevelGuardarPulsadoNo(modifier = modifier) {
             ImagenGuardarGuardarPulsadoNo(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
-        GuardarPulsado.Si -> TopLevelGuardarPulsadoSi(modifier = modifier) {
+        SavePressed.Si -> TopLevelGuardarPulsadoSi(modifier = modifier) {
             ImagenGuardarGuardarPulsadoSi(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
     }
@@ -47,7 +46,7 @@ private fun GuardarGuardarPulsadoNoPreview() {
     MaterialTheme {
         RelayContainer {
             Guardar(
-                guardarPulsado = GuardarPulsado.No,
+                savePressed = SavePressed.No,
                 modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
             )
         }
@@ -60,7 +59,7 @@ private fun GuardarGuardarPulsadoSiPreview() {
     MaterialTheme {
         RelayContainer {
             Guardar(
-                guardarPulsado = GuardarPulsado.Si,
+                savePressed = SavePressed.Si,
                 modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
             )
         }
