@@ -5,9 +5,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
+import com.example.petstagram.UiData.Category
+import com.example.petstagram.ViewModels.PrincipalViewModel
 import com.example.petstagram.categoria.Categoria
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -20,22 +25,37 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Categorias(modifier: Modifier = Modifier, navController: NavHostController) {
+fun Categorias(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    categoryViewModel: PrincipalViewModel
+) {
+    LaunchedEffect(Unit){
+        categoryViewModel.fetchCategories()
+    }
     BoxWithConstraints {
         val anchomax = maxWidth
+        val categories by categoryViewModel.categories.collectAsState()
         TopLevel(modifier = modifier) {
-            CategoriaInstance(Modifier.width(anchomax), navController = navController)
-            CategoriaInstance(Modifier.width(anchomax), navController = navController)
-            CategoriaInstance(Modifier.width(anchomax), navController = navController)
-            CategoriaInstance(Modifier.width(anchomax), navController = navController)
+            for (i in categories){
+                CategoriaInstance(Modifier.width(anchomax),
+                    navController = navController,
+                    category = i,
+                    viewModel = categoryViewModel)
+            }
         }
 
     }
 }
 
 @Composable
-fun CategoriaInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    Categoria(modifier = modifier, navController = navController)
+fun CategoriaInstance(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    category: Category,
+    viewModel: PrincipalViewModel
+) {
+    Categoria(modifier = modifier, navController = navController, category = category, viewModel = viewModel)
 }
 
 @Composable

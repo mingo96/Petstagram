@@ -660,7 +660,7 @@ fun TopLevelVariacionInicioSesion(
 fun TextoCrearPublicacionVariacionCrearPublicacion(modifier: Modifier = Modifier) {
     RelayText(
         content = "Crear Publicacion",
-        fontSize = 20.0.sp,
+        fontSize = 30.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -668,7 +668,7 @@ fun TextoCrearPublicacionVariacionCrearPublicacion(modifier: Modifier = Modifier
             green = 196,
             blue = 1
         ),
-        height = 1.2102272033691406.em,
+        height = 1.2102272510528564.em,
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
@@ -690,7 +690,7 @@ fun TopLevelVariacionCrearPublicacion(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
 }
 
@@ -698,7 +698,7 @@ fun TopLevelVariacionCrearPublicacion(
 fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modifier) {
     RelayText(
         content = "Seleccionar recurso",
-        fontSize = 20.0.sp,
+        fontSize = 26.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -706,7 +706,7 @@ fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modi
             green = 255,
             blue = 255
         ),
-        height = 1.2102272033691406.em,
+        height = 1.2102272510528564.em,
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
@@ -734,7 +734,7 @@ fun TopLevelVariacionSeleccionarRecurso(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
 }
 
@@ -742,7 +742,7 @@ fun TopLevelVariacionSeleccionarRecurso(
 fun TextoTituloPublicacionVariacionTituloPublicacion(modifier: Modifier = Modifier) {
     RelayText(
         content = "Titulo publicacion",
-        fontSize = 20.0.sp,
+        fontSize = 26.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -750,7 +750,7 @@ fun TextoTituloPublicacionVariacionTituloPublicacion(modifier: Modifier = Modifi
             green = 255,
             blue = 255
         ),
-        height = 1.2102272033691406.em,
+        height = 1.2102272510528564.em,
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
@@ -778,7 +778,7 @@ fun TopLevelVariacionTituloPublicacion(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
 }
 
@@ -786,7 +786,7 @@ fun TopLevelVariacionTituloPublicacion(
 fun TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier: Modifier = Modifier) {
     RelayText(
         content = "Categoria de la publicacion",
-        fontSize = 20.0.sp,
+        fontSize = 24.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -794,7 +794,7 @@ fun TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier: Modifier = 
             green = 255,
             blue = 255
         ),
-        height = 1.2102272033691406.em,
+        height = 1.2102272510528564.em,
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
@@ -822,7 +822,7 @@ fun TopLevelVariacionCategoriaPublicacion(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
 }
 
@@ -830,7 +830,7 @@ fun TopLevelVariacionCategoriaPublicacion(
 fun TextoPublicarVariacionPublicar(modifier: Modifier = Modifier) {
     RelayText(
         content = "Publicar",
-        fontSize = 20.0.sp,
+        fontSize = 40.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -866,6 +866,6 @@ fun TopLevelVariacionPublicar(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
 }

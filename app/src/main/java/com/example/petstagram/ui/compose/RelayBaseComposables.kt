@@ -475,7 +475,7 @@ fun RelayContainer(
                         if (scrollable) it
                             .verticalScroll(
                                 enabled = scrollable,
-                                state = ScrollState(360),
+                                state = ScrollState(340),
                                 reverseScrolling = scrollAnchor == ScrollAnchor.End
                             )
                             .padding(scrollPadding)

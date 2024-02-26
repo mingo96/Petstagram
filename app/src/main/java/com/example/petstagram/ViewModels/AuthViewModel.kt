@@ -12,7 +12,6 @@ import com.example.petstagram.data.AuthUiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
@@ -23,6 +22,8 @@ class AuthViewModel : ViewModel() {
     private val db = Firebase.firestore
 
     var state: AuthUiState = AuthUiState.Base
+
+    lateinit var localProfile: Profile
 
     var user by mutableStateOf("usuario@gmail.com")
         private set
@@ -49,6 +50,7 @@ class AuthViewModel : ViewModel() {
                                 val user = it.first().toObject(Profile::class.java)
                                 onSuccess.invoke()
                                 state = AuthUiState.Success(user)
+                                localProfile = user
                             }
                     }
                     else {
@@ -77,7 +79,7 @@ class AuthViewModel : ViewModel() {
     }
 
     private fun String.isValidEmail():Boolean{
-        return this.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()) && user != "usuario@gmail.com"
+        return this.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex())
     }
 
     fun persistUser(mail: String){
@@ -101,8 +103,9 @@ class AuthViewModel : ViewModel() {
                 profile.userName += "1"
                 createUser(profile)
             }else {
-                db.collection("Usuarios")
+                db.collection("Users")
                     .add(profile)
+                localProfile = profile
                 state = AuthUiState.Success(profile)
             }
         }

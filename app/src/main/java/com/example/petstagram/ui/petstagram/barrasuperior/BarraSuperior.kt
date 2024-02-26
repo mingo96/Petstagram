@@ -46,7 +46,8 @@ fun BarraSuperior(
             AccesoAPerfilAccesoAPerfil(navController = navController)
             ImagenDeslizableVarianteSimple()
         }
-        Variante.ConMenu ->BoxWithConstraints {
+        Variante.ConMenu ->
+            BoxWithConstraints {
             val altomax = maxHeight
             TopLevelVarianteConMenu(modifier = modifier) {
                 AccesoAPerfilAccesoAPerfil(

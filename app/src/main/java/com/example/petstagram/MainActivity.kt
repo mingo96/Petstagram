@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
 import com.example.petstagram.perfil.Perfil
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity() {
         analytics = Firebase.analytics
         val authViewModel : AuthViewModel by viewModels()
         val principalViewModel : PrincipalViewModel by viewModels()
+        val publishViewModel :PublishViewModel by viewModels()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
@@ -57,14 +59,16 @@ class MainActivity : ComponentActivity() {
                         composable("publicaciones"){
                             VisualizarCategoria(navController = navController, viewModel = principalViewModel)
                         }
+                        composable("publicar"){
+                            publishViewModel.user = authViewModel.localProfile
+                            publishViewModel.category = principalViewModel.selectedCategory
+                            Publicar(navController = navController , viewModel = publishViewModel)
+                        }
                         composable("perfilAjeno"){
                             Perfil(navController = navController, viewModel = principalViewModel)
                         }
                         composable("perfilPropio"){
                             PerfilPropio(navController = navController, viewModel = principalViewModel)
-                        }
-                        composable("nuevaPublicacion"){
-                            Publicar(navController = navController, viewModel = principalViewModel)
                         }
                     }
 
