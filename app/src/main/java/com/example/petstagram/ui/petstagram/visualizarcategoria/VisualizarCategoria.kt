@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.CuadroTexto
@@ -29,18 +29,27 @@ import com.google.relay.compose.RelayContainerScope
 fun VisualizarCategoria(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: PrincipalViewModel
+    viewModel: PostsViewModel
 ) {
     BoxWithConstraints {
         val AlturaTotal = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.2225f)), navController = navController)
-            CuadroTextoInstance(modifier.requiredHeight(AlturaTotal.times(0.05f)))
-            PublicacionesInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.825f)))
+            BarraSuperiorInstance(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .height(AlturaTotal.times(0.2225f)),
+                navController = navController
+            )
+            CuadroTextoInstance(modifier.requiredHeight(AlturaTotal.times(0.05f)), added = viewModel.statedCategory.name)
+            PublicacionesInstance(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .height(AlturaTotal.times(0.825f)),
+                viewModel = viewModel
+            )
         }
     }
 }
-
 
 
 @Composable
@@ -53,17 +62,21 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 }
 
 @Composable
-fun CuadroTextoInstance(modifier: Modifier = Modifier) {
+fun CuadroTextoInstance(modifier: Modifier = Modifier, added: String) {
     CuadroTexto(
         variacion = Variacion.PublicacionesCategoria,
-        modifier = modifier
+        modifier = modifier,
+        added = added
     )
 }
 
 @Composable
-fun PublicacionesInstance(modifier: Modifier = Modifier) {
-    Publicaciones(modifier = modifier
-        .fillMaxWidth(1.0f))
+fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
+    Publicaciones(
+        modifier = modifier
+            .fillMaxWidth(1.0f),
+        viewModel = viewModel
+    )
 }
 
 @Composable

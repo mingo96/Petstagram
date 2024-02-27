@@ -11,14 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.CuadroTexto
 import com.example.petstagram.fotoperfil.FotoPerfil
 import com.example.petstagram.fotoperfil.Size
 import com.example.petstagram.opcionperfil.OpcionPerfil
-import com.example.petstagram.publicaciones.Publicaciones
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 
@@ -32,7 +31,7 @@ import com.google.relay.compose.RelayContainerScope
 fun Perfil(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: PrincipalViewModel
+    viewModel: CategoriesViewModel
 ) {
     BoxWithConstraints {
         val AlturaTotal = maxHeight
@@ -41,7 +40,7 @@ fun Perfil(
             CuadroTextoInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.06f)))
             FotoPerfilInstance(modifier.height(AlturaTotal.times(0.30f)).width(AlturaTotal.times(0.30f)))
             OpcionPerfilInstance(modifier.height(AlturaTotal.times(0.06f)))
-            PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
+            //PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
         }
     }
 }
@@ -75,10 +74,10 @@ fun OpcionPerfilInstance(modifier: Modifier = Modifier) {
     OpcionPerfil(modifier = modifier.requiredWidth(312.0.dp))
 }
 
-@Composable
-fun PublicacionesCuenta(modifier: Modifier = Modifier) {
-    Publicaciones(modifier = modifier.fillMaxWidth(1.0f))
-}
+//@Composable
+//fun PublicacionesCuenta(modifier: Modifier = Modifier) {
+//    Publicaciones(modifier = modifier.fillMaxWidth(1.0f), viewModel = viewModel)
+//}
 
 @Composable
 fun TopLevel(

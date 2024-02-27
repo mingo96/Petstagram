@@ -11,12 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.cuadrotexto.CuadroTexto
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.menuprincipal.BarraSuperiorInstance
 import com.example.petstagram.perfil.FotoPerfilInstance
-import com.example.petstagram.publicaciones.Publicaciones
 import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -31,7 +30,7 @@ import com.google.relay.compose.RelayContainerScope
 fun PerfilPropio(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: PrincipalViewModel
+    viewModel: CategoriesViewModel
 ) {
     BoxWithConstraints {
         val AlturaTotal = maxHeight
@@ -40,7 +39,7 @@ fun PerfilPropio(
             CuadroTextoInstance(Modifier.height(AlturaTotal.times(0.06f)))
             FotoPerfilInstance(Modifier.height(AlturaTotal.times(0.30f)).width(AlturaTotal.times(0.30f)))
             CuadroTexto1(Modifier.height(AlturaTotal.times(0.06f)))
-            PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
+            //PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
         }
     }
 
@@ -52,23 +51,23 @@ fun PerfilPropio(
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.TuPerfil,
-        modifier = modifier.requiredWidth(94.0.dp)
+        modifier = modifier.requiredWidth(94.0.dp),
+        variacion = Variacion.TuPerfil
     )
 }
 
 @Composable
 fun CuadroTexto1(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.TusPublicaciones,
-        modifier = modifier.requiredWidth(186.0.dp)
+        modifier = modifier.requiredWidth(186.0.dp),
+        variacion = Variacion.TusPublicaciones
     )
 }
 
-@Composable
-fun PublicacionesCuenta(modifier: Modifier = Modifier) {
-    Publicaciones(modifier)
-}
+//@Composable
+//fun PublicacionesCuenta(modifier: Modifier = Modifier) {
+//    Publicaciones(modifier, viewModel)
+//}
 
 @Composable
 fun TopLevel(

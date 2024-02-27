@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.categorias.Categorias
@@ -28,7 +28,7 @@ import com.google.relay.compose.ScrollAnchor
 fun MenuPrincipal(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: PrincipalViewModel
+    viewModel: CategoriesViewModel
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val mayorAltura = maxHeight
@@ -59,7 +59,7 @@ fun BarraTipoNotificacion(modifier: Modifier = Modifier, navController: NavHostC
 fun CategoriasInstance(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    categoryViewModel: PrincipalViewModel
+    categoryViewModel: CategoriesViewModel
 ) {
 
     Categorias(modifier = modifier,

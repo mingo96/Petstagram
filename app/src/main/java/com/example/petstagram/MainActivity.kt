@@ -17,7 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.ViewModels.AuthViewModel
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.CategoriesViewModel
+import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
@@ -37,8 +38,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
         val authViewModel : AuthViewModel by viewModels()
-        val principalViewModel : PrincipalViewModel by viewModels()
+        val categoriesViewModel : CategoriesViewModel by viewModels()
         val publishViewModel :PublishViewModel by viewModels()
+        val postsViewModel : PostsViewModel by viewModels()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
@@ -54,21 +56,24 @@ class MainActivity : ComponentActivity() {
                             LoginEnMovil(navController = navController, viewModel = authViewModel)
                         }
                         composable("categorias"){
-                            MenuPrincipal(navController = navController, viewModel = principalViewModel)
+                            categoriesViewModel.fetchCategories()
+                            MenuPrincipal(navController = navController, viewModel = categoriesViewModel)
                         }
                         composable("publicaciones"){
-                            VisualizarCategoria(navController = navController, viewModel = principalViewModel)
+                            postsViewModel.statedCategory = categoriesViewModel.selectedCategory
+                            postsViewModel.fetchPosts()
+                            VisualizarCategoria(navController = navController, viewModel = postsViewModel)
                         }
                         composable("publicar"){
                             publishViewModel.user = authViewModel.localProfile
-                            publishViewModel.category = principalViewModel.selectedCategory
+                            publishViewModel.category = categoriesViewModel.selectedCategory
                             Publicar(navController = navController , viewModel = publishViewModel)
                         }
                         composable("perfilAjeno"){
-                            Perfil(navController = navController, viewModel = principalViewModel)
+                            Perfil(navController = navController, viewModel = categoriesViewModel)
                         }
                         composable("perfilPropio"){
-                            PerfilPropio(navController = navController, viewModel = principalViewModel)
+                            PerfilPropio(navController = navController, viewModel = categoriesViewModel)
                         }
                     }
 

@@ -7,17 +7,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.example.petstagram.UiData.Post
 import com.example.petstagram.fotoperfil.FotoPerfil
 import com.example.petstagram.guardar.Guardar
 import com.example.petstagram.like.Like
@@ -44,13 +43,14 @@ enum class Variacion {
 @Composable
 fun CuadroInfo(
     modifier: Modifier = Modifier,
-    variacion: Variacion = Variacion.Default
+    variacion: Variacion = Variacion.Default,
+    added: Post
 ) {
     when (variacion) {
         Variacion.Default -> TopLevelVariacionDefault(modifier = modifier) {}
         Variacion.Superior -> TopLevelVariacionSuperior(modifier = modifier) {
-            FotoPerfilSizePeque()
-            TextoNombrePerfilVariacionSuperior()
+            FotoPerfilSizePeque(picture = added.profilePic())
+            TextoNombrePerfilVariacionSuperior(added = added.creatorUser!!.userName)
             OpcionesOpciones()
         }
         Variacion.Inferior -> TopLevelVariacionInferior(modifier = modifier) {
@@ -61,45 +61,6 @@ fun CuadroInfo(
                 }
             }
             GuardarGuardarPulsadoNo()
-        }
-    }
-}
-
-@Preview(widthDp = 395, heightDp = 48)
-@Composable
-private fun CuadroInfoVariacionDefaultPreview() {
-    MaterialTheme {
-        RelayContainer {
-            CuadroInfo(
-                variacion = Variacion.Default,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
-            )
-        }
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 48)
-@Composable
-private fun CuadroInfoVariacionSuperiorPreview() {
-    MaterialTheme {
-        RelayContainer {
-            CuadroInfo(
-                variacion = Variacion.Superior,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
-            )
-        }
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 48)
-@Composable
-private fun CuadroInfoVariacionInferiorPreview() {
-    MaterialTheme {
-        RelayContainer {
-            CuadroInfo(
-                variacion = Variacion.Inferior,
-                modifier = Modifier.rowWeight(1.0f)
-            )
         }
     }
 }
@@ -123,14 +84,14 @@ fun TopLevelVariacionDefault(
 }
 
 @Composable
-fun FotoPerfilSizePeque(modifier: Modifier = Modifier) {
+fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
     FotoPerfil(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
 }
 
 @Composable
-fun TextoNombrePerfilVariacionSuperior(modifier: Modifier = Modifier) {
+fun TextoNombrePerfilVariacionSuperior(modifier: Modifier = Modifier, added: String) {
     RelayText(
-        content = "\${nombrePerfil}",
+        content = "$added",
         fontSize = 15.0.sp,
         fontFamily = inter,
         color = Color(

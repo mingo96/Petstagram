@@ -3,15 +3,15 @@ package com.example.petstagram.publicaciones
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.example.petstagram.UiData.Post
+import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.publicacion.Publicacion
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -24,35 +24,24 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicaciones(modifier: Modifier = Modifier) {
+fun Publicaciones(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
     BoxWithConstraints {
+        val posts by viewModel.posts.collectAsState()
         val anchoMax = maxWidth
         TopLevel(modifier = modifier.width(maxWidth)) {
-            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
-            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
-            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
-            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
-            PublicacionInstance(modifier = Modifier.rowWeight(1.0f),anchoMax)
-        }
-    }
-}
-
-@Preview(widthDp = 344, heightDp = 752)
-@Composable
-private fun PublicacionesPreview() {
-    MaterialTheme {
-        RelayContainer {
-            Publicaciones(modifier = Modifier
-                .rowWeight(1.0f)
-                .columnWeight(1.0f))
+            for (i in posts){
+                PublicacionInstance(ancho = anchoMax, post = i)
+            }
         }
     }
 }
 
 @Composable
-fun PublicacionInstance(modifier: Modifier = Modifier, ancho : Dp) {
+fun PublicacionInstance(modifier: Modifier = Modifier, ancho: Dp, post: Post) {
     Publicacion(modifier = modifier
-        .fillMaxWidth(1.0f).width(ancho))
+        .fillMaxWidth(1.0f)
+        .width(ancho),
+        post = post)
 }
 
 @Composable

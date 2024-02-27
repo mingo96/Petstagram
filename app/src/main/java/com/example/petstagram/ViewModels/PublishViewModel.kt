@@ -51,7 +51,6 @@ class PublishViewModel : ViewModel() {
     fun postPost(){
         val newPost = Post()
         newPost.title = postTitle
-        newPost.postResource = ""
         newPost.category = category
         newPost.creatorUser = user
         db.collection("Posts")

@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.R
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -43,7 +43,7 @@ fun Categoria(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     category: Category,
-    viewModel: PrincipalViewModel
+    viewModel: CategoriesViewModel
 ) {
     TopLevel(modifier = modifier) {
         ContendorImagen(modifier = Modifier.rowWeight(1.0f)) {
@@ -61,6 +61,7 @@ fun Categoria(
                 .rowWeight(1.0f)
                 .columnWeight(1.0f)
                 .clickable {
+                    viewModel.selectedCategory = category
                     navController.navigate("publicaciones")
                 }) {
                 TextoCategoria(texto = category.name)

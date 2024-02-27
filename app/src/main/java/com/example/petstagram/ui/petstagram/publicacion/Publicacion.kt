@@ -3,15 +3,14 @@ package com.example.petstagram.publicacion
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.petstagram.R
+import com.example.petstagram.UiData.Post
 import com.example.petstagram.cuadroinfo.CuadroInfo
 import com.example.petstagram.cuadroinfo.Variacion
 import com.google.relay.compose.MainAxisAlignment
@@ -26,34 +25,25 @@ import com.google.relay.compose.RelayImage
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicacion(modifier: Modifier = Modifier) {
+fun Publicacion(modifier: Modifier = Modifier, post: Post) {
     TopLevel(modifier = modifier) {
-        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f))
-        ImagenPublicacion(modifier = Modifier.rowWeight(1.0f))
-        BotonesPublicacion(modifier = Modifier.rowWeight(1.0f))
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 360)
-@Composable
-private fun PublicacionPreview() {
-    MaterialTheme {
-        RelayContainer {
-            Publicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
-        }
+        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
+        ImagenPublicacion(modifier = Modifier.rowWeight(1.0f), post = post)
+        BotonesPublicacion(modifier = Modifier.rowWeight(1.0f), post = post)
     }
 }
 
 @Composable
-fun CuadroInfoInstance(modifier: Modifier = Modifier) {
+fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
     CuadroInfo(
         variacion = Variacion.Superior,
-        modifier = modifier.fillMaxWidth(1.0f).requiredHeight(48.0.dp)
+        modifier = modifier.fillMaxWidth(1.0f).requiredHeight(48.0.dp),
+        added = post
     )
 }
 
 @Composable
-fun ImagenPublicacion(modifier: Modifier = Modifier) {
+fun ImagenPublicacion(modifier: Modifier = Modifier, post: Post) {
     RelayImage(
         image = painterResource(R.drawable.publicacion_imagen_publicacion),
         contentScale = ContentScale.Crop,
@@ -62,10 +52,11 @@ fun ImagenPublicacion(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BotonesPublicacion(modifier: Modifier = Modifier) {
+fun BotonesPublicacion(modifier: Modifier = Modifier, post: Post) {
     CuadroInfo(
+        modifier = modifier.fillMaxWidth(1.0f).requiredHeight(48.0.dp),
         variacion = Variacion.Inferior,
-        modifier = modifier.fillMaxWidth(1.0f).requiredHeight(48.0.dp)
+        added = post
     )
 }
 

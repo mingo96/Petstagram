@@ -38,7 +38,6 @@ import com.example.petstagram.cuadrotexto.CuadroTexto
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.data.AuthUiState
-import com.google.relay.compose.BoxScopeInstanceImpl.align
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -163,8 +162,8 @@ fun RectanguloDeCorte(modifier: Modifier = Modifier) {
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.Bienvenida,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        variacion = Variacion.Bienvenida
     )
 }
 
@@ -263,16 +262,16 @@ fun CuadroTextoPassword(
 @Composable
 fun CuadroTexto3(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.Registro,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f),
+        variacion = Variacion.Registro
     )
 }
 
 @Composable
 fun CuadroTexto4(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.InicioSesion,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f),
+        variacion = Variacion.InicioSesion
     )
 }
 

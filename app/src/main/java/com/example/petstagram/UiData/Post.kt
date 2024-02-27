@@ -9,7 +9,6 @@ class Post ()
     var title : String = ""
     lateinit var category : Category
     var creatorUser: Profile? = null
-    var postResource :String= ""
     var saved : SavePressed = SavePressed.No
     var like : Pressed = Pressed.False
 

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.ViewModels.PrincipalViewModel
+import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.categoria.Categoria
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -28,7 +28,7 @@ import com.google.relay.compose.RelayContainerScope
 fun Categorias(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    categoryViewModel: PrincipalViewModel
+    categoryViewModel: CategoriesViewModel
 ) {
     LaunchedEffect(Unit){
         categoryViewModel.fetchCategories()
@@ -53,7 +53,7 @@ fun CategoriaInstance(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     category: Category,
-    viewModel: PrincipalViewModel
+    viewModel: CategoriesViewModel
 ) {
     Categoria(modifier = modifier, navController = navController, category = category, viewModel = viewModel)
 }

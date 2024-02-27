@@ -1,26 +1,19 @@
 package com.example.petstagram.publicar
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -109,10 +102,10 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.CrearPublicacion,
         modifier = modifier
             .requiredWidth(296.0.dp)
-            .requiredHeight(80.0.dp)
+            .requiredHeight(80.0.dp),
+        variacion = Variacion.CrearPublicacion
     )
 }
 
@@ -157,30 +150,30 @@ fun CuadroTextoNombreUsuario(
 @Composable
 fun CuadroTexto1(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.TituloPublicacion,
         modifier = modifier
             .requiredWidth(296.0.dp)
-            .requiredHeight(80.0.dp)
+            .requiredHeight(80.0.dp),
+        variacion = Variacion.TituloPublicacion
     )
 }
 
 @Composable
 fun CuadroTexto2(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.SeleccionarRecurso,
         modifier = modifier
             .requiredWidth(296.0.dp)
-            .requiredHeight(80.0.dp)
+            .requiredHeight(80.0.dp),
+        variacion = Variacion.SeleccionarRecurso
     )
 }
 
 @Composable
 fun CuadroTexto3(modifier: Modifier = Modifier) {
     CuadroTexto(
-        variacion = Variacion.Publicar,
         modifier = modifier
             .requiredWidth(296.0.dp)
-            .requiredHeight(80.0.dp)
+            .requiredHeight(80.0.dp),
+        variacion = Variacion.Publicar
     )
 }
 

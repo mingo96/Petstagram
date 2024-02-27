@@ -49,7 +49,8 @@ enum class Variacion {
 @Composable
 fun CuadroTexto(
     modifier: Modifier = Modifier,
-    variacion: Variacion = Variacion.NombreUsuario
+    variacion: Variacion = Variacion.NombreUsuario,
+    added: String = ""
 ) {
     when (variacion) {
         Variacion.NombreUsuario -> TopLevelVariacionNombreUsuario(modifier = modifier) {
@@ -71,7 +72,7 @@ fun CuadroTexto(
             TextoClaveVariacionClave(modifier = Modifier.rowWeight(1.0f))
         }
         Variacion.PublicacionesCategoria -> TopLevelVariacionPublicacionesCategoria(modifier = modifier) {
-            TextoPubCategoriaVariacionPublicacionesCategoria(modifier = Modifier.rowWeight(1.0f))
+            TextoPubCategoriaVariacionPublicacionesCategoria(modifier = Modifier.rowWeight(1.0f), added)
         }
         Variacion.Registro -> TopLevelVariacionRegistro(modifier = modifier) {
             TextoRegistroVariacionRegistro(modifier = Modifier.rowWeight(1.0f))
@@ -103,8 +104,8 @@ private fun CuadroTextoVariacionNombreUsuarioPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.NombreUsuario,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.NombreUsuario
             )
         }
     }
@@ -116,8 +117,8 @@ private fun CuadroTextoVariacionBienvenidaPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.Bienvenida,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.Bienvenida
             )
         }
     }
@@ -129,8 +130,8 @@ private fun CuadroTextoVariacionTuPerfilPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.TuPerfil,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.TuPerfil
             )
         }
     }
@@ -142,8 +143,8 @@ private fun CuadroTextoVariacionUsuarioPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.Usuario,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.Usuario
             )
         }
     }
@@ -155,8 +156,8 @@ private fun CuadroTextoVariacionTusPublicacionesPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.TusPublicaciones,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.TusPublicaciones
             )
         }
     }
@@ -168,8 +169,8 @@ private fun CuadroTextoVariacionClavePreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.Clave,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.Clave
             )
         }
     }
@@ -181,8 +182,8 @@ private fun CuadroTextoVariacionPublicacionesCategoriaPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.PublicacionesCategoria,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.PublicacionesCategoria
             )
         }
     }
@@ -194,8 +195,8 @@ private fun CuadroTextoVariacionRegistroPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.Registro,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.Registro
             )
         }
     }
@@ -207,8 +208,8 @@ private fun CuadroTextoVariacionInicioSesionPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.InicioSesion,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.InicioSesion
             )
         }
     }
@@ -220,8 +221,8 @@ private fun CuadroTextoVariacionCrearPublicacionPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.CrearPublicacion,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.CrearPublicacion
             )
         }
     }
@@ -233,8 +234,8 @@ private fun CuadroTextoVariacionSeleccionarRecursoPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.SeleccionarRecurso,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.SeleccionarRecurso
             )
         }
     }
@@ -246,8 +247,8 @@ private fun CuadroTextoVariacionTituloPublicacionPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.TituloPublicacion,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.TituloPublicacion
             )
         }
     }
@@ -259,8 +260,8 @@ private fun CuadroTextoVariacionCategoriaPublicacionPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.CategoriaPublicacion,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.CategoriaPublicacion
             )
         }
     }
@@ -272,8 +273,8 @@ private fun CuadroTextoVariacionPublicarPreview() {
     MaterialTheme {
         RelayContainer {
             CuadroTexto(
-                variacion = Variacion.Publicar,
-                modifier = Modifier.rowWeight(1.0f)
+                modifier = Modifier.rowWeight(1.0f),
+                variacion = Variacion.Publicar
             )
         }
     }
@@ -535,9 +536,9 @@ fun TopLevelVariacionClave(
 }
 
 @Composable
-fun TextoPubCategoriaVariacionPublicacionesCategoria(modifier: Modifier = Modifier) {
+fun TextoPubCategoriaVariacionPublicacionesCategoria(modifier: Modifier = Modifier, added: String) {
     RelayText(
-        content = "Publicaciones de la categoria \${categoria}",
+        content = "Publicaciones de la categoria ${added}",
         fontSize = 18.0.sp,
         fontFamily = inter,
         color = Color(
