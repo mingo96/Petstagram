@@ -56,7 +56,7 @@ class PublishViewModel : ViewModel() {
         db.collection("Posts")
             .add(newPost).addOnSuccessListener {
                 pushResource(it.id)
-                newPost.id = it.id
+                db.collection("Posts").document(it.id).update("id", it.id)
                 postTitle = "Titulo Publicacion"
                 _resource.value = Uri.EMPTY
             }

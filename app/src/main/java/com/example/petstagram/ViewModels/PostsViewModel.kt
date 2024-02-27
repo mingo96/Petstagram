@@ -30,6 +30,8 @@ class PostsViewModel : ViewModel() {
 
     val posts : StateFlow<List<Pair<String, Post>>> = _posts
 
+    var ids = _posts.value.map { it.second.id }
+
     private var indexesOfPosts = 10L
 
     fun fetchPosts(){
@@ -38,6 +40,7 @@ class PostsViewModel : ViewModel() {
             _posts.collect{
 
                 val posts = mutableListOf<Pair<String, Post>>()
+
                 db.collection("Posts")
                     .whereEqualTo("category", statedCategory.name)
                     .limit(indexesOfPosts)
@@ -46,7 +49,9 @@ class PostsViewModel : ViewModel() {
                     .addOnSuccessListener { querySnapshot ->
                         if (!querySnapshot.isEmpty){
                             for (catJson in querySnapshot.documents){
-                                if(catJson.id !in _posts.value.map { it.second.id }){
+                                if(catJson.id !in ids){
+                                    ids+=catJson.id
+                                    Log.i("askdjhgvasdioajv", "${catJson.id} + $ids")
                                     val castedPost = catJson.toObject(Post::class.java)
 
                                     storageRef.child("/PostImages/${catJson.id}").downloadUrl.addOnSuccessListener { uri ->
@@ -56,11 +61,12 @@ class PostsViewModel : ViewModel() {
                             }
                         }
                     }
-                delay(3000)
-                _posts.value+=posts
-                if (_posts.value.count().toLong() ==indexesOfPosts)
-                    indexesOfPosts+=3
+                delay(4000)
+                _posts.value+=(posts-_posts.value)
+                if (_posts.value.count().toLong() >=indexesOfPosts)
+                    indexesOfPosts+=10
             }
+
         }
     }
 

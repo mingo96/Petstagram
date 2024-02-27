@@ -46,6 +46,7 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 @Composable
 fun ImagenPublicacion(modifier: Modifier = Modifier, post: Post, imageUrl: String) {
     AsyncImage(
+        modifier = modifier.fillMaxWidth(),
         model = imageUrl,
         contentDescription = post.title,
         contentScale = ContentScale.Crop
