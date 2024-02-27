@@ -1,5 +1,6 @@
 package com.example.petstagram.publicaciones
 
+import android.util.Log
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,18 +31,25 @@ fun Publicaciones(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
         val anchoMax = maxWidth
         TopLevel(modifier = modifier.width(maxWidth)) {
             for (i in posts){
-                PublicacionInstance(ancho = anchoMax, post = i)
+                Log.i(i.first, i.second.id)
+                PublicacionInstance(ancho = anchoMax, post = i.second, url = i.first)
             }
         }
     }
 }
 
 @Composable
-fun PublicacionInstance(modifier: Modifier = Modifier, ancho: Dp, post: Post) {
+fun PublicacionInstance(
+    modifier: Modifier = Modifier,
+    ancho: Dp,
+    post: Post,
+    url: String
+) {
     Publicacion(modifier = modifier
         .fillMaxWidth(1.0f)
         .width(ancho),
-        post = post)
+        post = post,
+        imageUrl = url)
 }
 
 @Composable

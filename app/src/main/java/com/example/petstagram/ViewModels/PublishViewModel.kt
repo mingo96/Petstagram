@@ -51,11 +51,12 @@ class PublishViewModel : ViewModel() {
     fun postPost(){
         val newPost = Post()
         newPost.title = postTitle
-        newPost.category = category
+        newPost.category = category.name
         newPost.creatorUser = user
         db.collection("Posts")
             .add(newPost).addOnSuccessListener {
                 pushResource(it.id)
+                newPost.id = it.id
                 postTitle = "Titulo Publicacion"
                 _resource.value = Uri.EMPTY
             }

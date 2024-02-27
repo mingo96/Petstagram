@@ -3,20 +3,21 @@ package com.example.petstagram.publicacion
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.petstagram.R
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.UiData.Post
+import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.cuadroinfo.CuadroInfo
 import com.example.petstagram.cuadroinfo.Variacion
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
-import com.google.relay.compose.RelayImage
 
 /**
  * publicacion
@@ -25,10 +26,10 @@ import com.google.relay.compose.RelayImage
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicacion(modifier: Modifier = Modifier, post: Post) {
+fun Publicacion(modifier: Modifier = Modifier, post: Post, imageUrl: String) {
     TopLevel(modifier = modifier) {
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
-        ImagenPublicacion(modifier = Modifier.rowWeight(1.0f), post = post)
+        ImagenPublicacion(modifier = Modifier.rowWeight(1.0f), post = post, imageUrl = imageUrl)
         BotonesPublicacion(modifier = Modifier.rowWeight(1.0f), post = post)
     }
 }
@@ -43,11 +44,11 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 }
 
 @Composable
-fun ImagenPublicacion(modifier: Modifier = Modifier, post: Post) {
-    RelayImage(
-        image = painterResource(R.drawable.publicacion_imagen_publicacion),
-        contentScale = ContentScale.Crop,
-        modifier = modifier.fillMaxWidth(1.0f).requiredHeight(264.0.dp)
+fun ImagenPublicacion(modifier: Modifier = Modifier, post: Post, imageUrl: String) {
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = post.title,
+        contentScale = ContentScale.Crop
     )
 }
 
