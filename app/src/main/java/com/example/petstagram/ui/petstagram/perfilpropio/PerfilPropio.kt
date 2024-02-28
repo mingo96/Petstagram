@@ -1,5 +1,8 @@
 package com.example.petstagram.perfilpropio
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,14 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
-import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.ProfilesViewModel
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.menuprincipal.BarraSuperiorInstance
 import com.example.petstagram.perfil.FotoPerfilInstance
 import com.example.petstagram.publicaciones.Publicaciones
-import com.example.petstagram.visualizarcategoria.PublicacionesInstance
 import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -49,8 +50,17 @@ fun PerfilPropio(
 ) {
     LaunchedEffect(key1 = viewModel){
         viewModel.fetchPosts()
+        viewModel.keepUpWithUserInfo()
     }
+
+    val sourceSelecter = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
+        if(uri != null)viewModel.setResource(uri)
+    }
+
+    val profilePicObserver by viewModel.resource.observeAsState()
+
     val isLoading by viewModel.isLoading.observeAsState()
+
     BoxWithConstraints {
         val height = maxHeight
         TopLevel(modifier = modifier) {
@@ -70,8 +80,9 @@ fun PerfilPropio(
                 FotoPerfilInstance(
                     Modifier
                         .height(height.times(0.30f))
-                        .width(height.times(0.30f)))
-                BotonEditar {
+                        .width(height.times(0.30f)),
+                    url = profilePicObserver.orEmpty())
+                BotonEditar(Modifier.clickable { sourceSelecter.launch("*/*") }) {
                     CirculoEditar()
                     BotonEditarSynth {
                         ImagenEditar()
@@ -85,7 +96,6 @@ fun PerfilPropio(
                         .rowWeight(1.0f)
                         .height(height.times(0.825f))
                         .fillMaxWidth(0.8f))
-
             else
                 PublicacionesInstance(
                     modifier = Modifier

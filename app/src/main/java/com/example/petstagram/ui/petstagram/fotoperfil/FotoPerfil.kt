@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.AsyncImage
 import com.example.petstagram.R
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -29,14 +30,19 @@ enum class Size {
 @Composable
 fun FotoPerfilBase(
     modifier: Modifier = Modifier,
-    size: Size = Size.Peque
+    size: Size = Size.Peque,
+    added :String= ""
 ) {
     when (size) {
         Size.Peque -> TopLevelSizePeque(modifier = modifier) {
-            FotoSizePeque(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            ProfilePic(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f), url = added)
         }
         Size.Enorme -> TopLevelSizeEnorme(modifier = modifier) {
-            FotoSizeEnorme(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            ProfilePic(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f), url = added)
         }
     }
 }
@@ -48,7 +54,9 @@ private fun FotoPerfilSizePequePreview() {
         RelayContainer {
             FotoPerfilBase(
                 size = Size.Peque,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -61,18 +69,22 @@ private fun FotoPerfilSizeEnormePreview() {
         RelayContainer {
             FotoPerfilBase(
                 size = Size.Enorme,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
 }
 
 @Composable
-fun FotoSizePeque(modifier: Modifier = Modifier) {
+fun FotoSizePeque(modifier: Modifier = Modifier, url: String) {
     RelayImage(
         image = painterResource(R.drawable.foto_perfil_foto),
         contentScale = ContentScale.Crop,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -91,17 +103,28 @@ fun TopLevelSizePeque(
         isStructured = false,
         radius = 16.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
 @Composable
-fun FotoSizeEnorme(modifier: Modifier = Modifier) {
-    RelayImage(
-        image = painterResource(R.drawable.foto_perfil_foto),
-        contentScale = ContentScale.Crop,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
-    )
+fun ProfilePic(modifier: Modifier = Modifier, url: String) {
+    if(url == "")
+        RelayImage(
+            image = painterResource(R.drawable.foto_perfil_foto),
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                .fillMaxWidth(1.0f)
+                .fillMaxHeight(1.0f)
+        )
+    else
+        AsyncImage(model = url,
+            contentDescription = "profilePic",
+            modifier = modifier,
+            contentScale = ContentScale.Crop
+        )
 }
 
 @Composable
@@ -119,6 +142,8 @@ fun TopLevelSizeEnorme(
         isStructured = false,
         radius = 120.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

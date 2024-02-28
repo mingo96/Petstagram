@@ -1,6 +1,7 @@
 package com.example.petstagram.ViewModels
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,8 +69,9 @@ class AuthViewModel : ViewModel() {
             auth.createUserWithEmailAndPassword(user, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        persistUser(user)
-                        onSuccess.invoke()
+                        persistUser(user){
+                            onSuccess.invoke()
+                        }
                     }
                     else Toast.makeText(context,"credenciales incorrectos", Toast.LENGTH_SHORT).show()
 
@@ -82,31 +84,35 @@ class AuthViewModel : ViewModel() {
         return this.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex())
     }
 
-    fun persistUser(mail: String){
-        val id = auth.currentUser?.uid
+    fun persistUser(mail: String, onEnd: () -> Unit){
+        val id = auth.currentUser!!.uid
         viewModelScope.launch {
 
-            val profile = Profile(id = id.toString(), mail = mail, userName = mail.split("@")[0])
+            val profile = Profile(authId = id,id = "", mail = mail, userName = mail.split("@")[0])
 
-            createUser(profile)
+            createUser(profile){onEnd.invoke()}
 
         }
 
     }
 
 
-    private fun createUser(profile: Profile){
+    private fun createUser(profile: Profile, onEnd: () -> Unit = {}){
         db.collection("Users")
         .whereEqualTo("userName",profile.userName)
-        .get().addOnCompleteListener {
-            if (!it.result.isEmpty) {
+        .get().addOnCompleteListener { usernames ->
+                if (!usernames.result.isEmpty) {
                 profile.userName += "1"
                 createUser(profile)
-            }else {
+                }else {
                 db.collection("Users")
-                    .add(profile)
-                localProfile = profile
-                state = AuthUiState.Success(profile)
+                    .add(profile).addOnSuccessListener {
+                        profile.id = it.id
+                        localProfile = profile
+                        state = AuthUiState.Success(profile)
+                        db.collection("Users").document(it.id).update("id", it.id)
+                        onEnd.invoke()
+                    }
             }
         }
     }

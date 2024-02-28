@@ -86,14 +86,8 @@ fun TopLevelVariacionDefault(
 
 @Composable
 fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
-    if (picture != "")
-        AsyncImage(model = picture,
-            modifier = modifier
-                .requiredWidth(32.0.dp)
-                .requiredHeight(32.0.dp),
-            contentDescription = "foto de perfil")
-    else
-        FotoPerfilBase(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
+    FotoPerfilBase(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp),
+        added = picture)
 }
 
 @Composable

@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                             Perfil(navController = navController, viewModel = profilesViewModel)
                         }
                         composable("perfilPropio"){
-                            profilesViewModel.selfProfile = authViewModel.localProfile
+                            profilesViewModel.selfId = authViewModel.localProfile.id
                             PerfilPropio(navController = navController, viewModel = profilesViewModel)
                         }
                     }

@@ -31,7 +31,6 @@ fun Publicaciones(modifier: Modifier = Modifier, posts : StateFlow<List<Pair<Str
         val anchoMax = maxWidth
         TopLevel(modifier = modifier.width(maxWidth)) {
             for (i in postsState){
-                Log.i(i.first, i.second.id)
                 PublicacionInstance(modifier = Modifier.width(anchoMax), post = i.second, url = i.first)
             }
         }

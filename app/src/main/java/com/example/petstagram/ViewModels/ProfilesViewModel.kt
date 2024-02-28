@@ -1,5 +1,7 @@
 package com.example.petstagram.ViewModels
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,11 +10,13 @@ import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ProfilesViewModel : ViewModel() {
@@ -21,9 +25,9 @@ class ProfilesViewModel : ViewModel() {
 
     val storageRef = Firebase.storage.reference
 
-    lateinit var selfProfile: Profile
+    var selfId = ""
 
-    lateinit var seenProfile: Profile
+    var _selfProfile = MutableStateFlow<Profile>(Profile())
 
     private val _isloading = MutableLiveData(true)
 
@@ -37,6 +41,11 @@ class ProfilesViewModel : ViewModel() {
 
     private var indexesOfPosts = 10L
 
+    private var _resource = MutableLiveData<String>()
+
+    val resource :LiveData<String> = _resource
+
+
     fun fetchPosts(){
         viewModelScope.launch {
 
@@ -45,19 +54,19 @@ class ProfilesViewModel : ViewModel() {
                 //_posts va recolectando de la coleccion Posts
                 db.collection("Posts")
                     //filtros
-                    .whereEqualTo("creatorUser", selfProfile)
+                    .whereEqualTo("creatorUser", _selfProfile.value)
                     .orderBy("postedDate", Query.Direction.DESCENDING)
                     //la máxima a sacar es indexesOfPosts, para no sacar cada entrada a la primera
                     .limit(indexesOfPosts)
                     .get()
                     .addOnSuccessListener { querySnapshot ->
+
                         if (!querySnapshot.isEmpty){
                             //si no está vacío
                             for (postJson in querySnapshot.documents){
                                 if(postJson.id !in ids){
                                     //si no está ya en las ids
                                     ids+=postJson.id
-
                                     val castedPost = postJson.toObject(Post::class.java)
 
                                     //obtenemos la url de la imagen, una vez hecho la añadimos a _posts
@@ -75,6 +84,30 @@ class ProfilesViewModel : ViewModel() {
                     indexesOfPosts+=10
             }
 
+        }
+    }
+
+    fun setResource(uri: Uri) {
+        storageRef.child("ProfilePictures/${_selfProfile.value.id}").putFile(uri).addOnSuccessListener {
+            storageRef.child("/ProfilePictures/${_selfProfile.value.id}").downloadUrl.addOnSuccessListener {
+                _selfProfile.value.profilePic = it.toString()
+                db.collection("Users").document(_selfProfile.value.id).update("profilePic", it.toString())
+
+            }
+        }
+    }
+
+    fun keepUpWithUserInfo() {
+        viewModelScope.launch {
+            _selfProfile.collect{
+                db.collection("Users").whereEqualTo("id", selfId).get()
+                    .addOnSuccessListener {
+                        _selfProfile.value = it.documents[0].toObject(Profile::class.java)!!
+                        _resource.value = _selfProfile.value.profilePic
+                    }
+
+                delay(10000)
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.petstagram.perfil
 
+import android.net.Uri
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.petstagram.ViewModels.ProfilesViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
@@ -36,9 +38,16 @@ fun Perfil(
     BoxWithConstraints {
         val AlturaTotal = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.23f)), navController = navController)
-            CuadroTextoInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.06f)))
-            FotoPerfilInstance(modifier.height(AlturaTotal.times(0.30f)).width(AlturaTotal.times(0.30f)))
+            BarraSuperiorInstance(modifier = Modifier
+                .rowWeight(1.0f)
+                .height(AlturaTotal.times(0.23f)), navController = navController)
+            CuadroTextoInstance(modifier = Modifier
+                .rowWeight(1.0f)
+                .height(AlturaTotal.times(0.06f)))
+            FotoPerfilInstance(
+                modifier
+                    .height(AlturaTotal.times(0.30f))
+                    .width(AlturaTotal.times(0.30f)))
             OpcionPerfilInstance(modifier.height(AlturaTotal.times(0.06f)))
             //PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
         }
@@ -62,10 +71,11 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FotoPerfilInstance(modifier: Modifier = Modifier) {
+fun FotoPerfilInstance(modifier: Modifier = Modifier, url : String = "") {
     FotoPerfilBase(
         size = Size.Enorme,
-        modifier = modifier
+        modifier = modifier,
+        added = url
     )
 }
 
@@ -94,6 +104,8 @@ fun TopLevel(
         scrollable = true,
         itemSpacing = 24.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
