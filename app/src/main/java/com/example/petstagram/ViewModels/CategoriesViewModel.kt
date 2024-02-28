@@ -1,5 +1,8 @@
 package com.example.petstagram.ViewModels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
@@ -12,14 +15,19 @@ import kotlinx.coroutines.launch
 
 class CategoriesViewModel : ViewModel() {
 
+    /**Firebase Firestore reference*/
     private val db = Firebase.firestore
 
+    /**list of [Category] to be shown*/
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
+    /**visible version of [_categories]*/
     val categories: StateFlow<List<Category>> = _categories
 
-    lateinit var selectedCategory: Category
+    /**selected [Category]*/
+    var selectedCategory: Category by mutableStateOf(Category())
 
+    /**gets executed once at Launch, tells [_categories] to keep collecting info from [db]*/
     fun fetchCategories() {
         viewModelScope.launch {
 
@@ -28,10 +36,10 @@ class CategoriesViewModel : ViewModel() {
                 val categories = mutableListOf<Category>()
                 db.collection("Categories")
                     .get()
-                    .addOnCompleteListener {
-                        if (it.isSuccessful && !it.result.isEmpty) {
-                            for (catJson in it.result) {
-                                val castedCategory = catJson.toObject(Category::class.java)
+                    .addOnSuccessListener {
+                        if (!it.isEmpty) {
+                            for (catJson in it.documents) {
+                                val castedCategory = catJson.toObject(Category::class.java)!!
                                 categories.add(castedCategory)
                             }
                         }
