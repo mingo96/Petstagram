@@ -42,27 +42,28 @@ class PostsViewModel : ViewModel() {
                 val posts = mutableListOf<Pair<String, Post>>()
 
                 db.collection("Posts")
+                    .orderBy("postedDate", Query.Direction.DESCENDING)
                     .whereEqualTo("category", statedCategory.name)
                     .limit(indexesOfPosts)
-                    .orderBy("postedDate", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener { querySnapshot ->
                         if (!querySnapshot.isEmpty){
-                            for (catJson in querySnapshot.documents){
-                                if(catJson.id !in ids){
-                                    ids+=catJson.id
-                                    Log.i("askdjhgvasdioajv", "${catJson.id} + $ids")
-                                    val castedPost = catJson.toObject(Post::class.java)
+                            for (postJson in querySnapshot.documents){
+                                if(postJson.id !in ids){
+                                    ids+=postJson.id
 
-                                    storageRef.child("/PostImages/${catJson.id}").downloadUrl.addOnSuccessListener { uri ->
-                                        posts.add(Pair(uri.toString(), castedPost!!))
+                                    val castedPost = postJson.toObject(Post::class.java)
+
+                                    storageRef.child("/PostImages/${postJson.id}").downloadUrl.addOnSuccessListener { uri ->
+                                        _posts.value+=(Pair(uri.toString(), castedPost!!))
+                                        _posts.value = _posts.value.sortedBy { it.second.postedDate }.reversed()
                                     }
                                 }
                             }
                         }
                     }
                 delay(4000)
-                _posts.value+=(posts-_posts.value)
+
                 if (_posts.value.count().toLong() >=indexesOfPosts)
                     indexesOfPosts+=10
             }
