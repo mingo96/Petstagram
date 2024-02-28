@@ -74,28 +74,36 @@ class OwnProfileViewModel : ViewModel() {
     /**visible version of [_resource]*/
     val resource :LiveData<String> = _resource
 
+    /**it tells if we are loading, so if we go out and in the view again we dont
+     * start another collect, it is set to true until the collection ends*/
+    private var alreadyLoading by mutableStateOf(false)
+
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
     fun fetchPosts(){
-        viewModelScope.launch {
+        if (!alreadyLoading) {
+            alreadyLoading = true
+            viewModelScope.launch {
 
-            _posts.collect{
+                _posts.collect {
 
-                if (!_isEditing.value!!) {
-                    getFirebasePosts()
+                    if (!_isEditing.value!!) {
+                        getFirebasePosts()
+                    }
+                    delay(4000)
+                    _isloading.value = (_posts.value.isEmpty())
+                    if (_posts.value.count().toLong() >= indexesOfPosts)
+                        indexesOfPosts += 10
+                    //order the list
+                    _posts.value = _posts.value.sortedBy { it.second.postedDate }
+                        .reversed()
+
                 }
-                delay(4000)
-                _isloading.value = (_posts.value.isEmpty())
-                if (_posts.value.count().toLong() >= indexesOfPosts)
-                    indexesOfPosts += 10
-                //order the list
-                _posts.value = _posts.value.sortedBy { it.second.postedDate }
-                .reversed()
+
 
             }
-
-
+            alreadyLoading = false
         }
     }
 
@@ -221,6 +229,7 @@ class OwnProfileViewModel : ViewModel() {
 
                 delay(15000)
             }
+
         }
     }
 

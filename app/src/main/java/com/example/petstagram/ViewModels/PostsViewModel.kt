@@ -1,7 +1,6 @@
 package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -49,6 +48,10 @@ class PostsViewModel : ViewModel() {
     /**actual content of [Post]s and their Uri Strings*/
     private val _posts = MutableStateFlow<List<Pair<String, Post>>>(emptyList())
 
+    /**it tells if we are loading, so if we go out and in the view again we dont
+     * start another collect, it is set to true until the collection ends*/
+    private var alreadyLoading by mutableStateOf(false)
+
     /**visible version of [_posts]*/
     val posts : StateFlow<List<Pair<String, Post>>> = _posts
 
@@ -60,38 +63,42 @@ class PostsViewModel : ViewModel() {
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
-        viewModelScope.launch {
+        if (!alreadyLoading) {
+            alreadyLoading = true
+            viewModelScope.launch {
 
-            _posts
-                //we make it so it doesnt load more if we get out of the app
-                .stateIn(
-                viewModelScope,
-                started = SharingStarted.WhileSubscribed(10000),
-                0
-            )
-                .collect{
+                _posts
+                    //we make it so it doesnt load more if we get out of the app
+                    .stateIn(
+                        viewModelScope,
+                        started = SharingStarted.WhileSubscribed(10000),
+                        0
+                    )
+                    .collect {
 
-                //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
-                //if it has already been loaded
+                        //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
+                        //if it has already been loaded
 
-                if (locallySaved.contains(statedCategory)) {
-                    _posts.value = locallySaved[statedCategory]!!
-                    indexesOfPosts = _posts.value.count().toLong()
-                } else {
-                    indexesOfPosts = 10L
-                    locallySaved[statedCategory] = _posts.value
-                }
+                        if (locallySaved.contains(statedCategory)) {
+                            _posts.value = locallySaved[statedCategory]!!
+                            indexesOfPosts = _posts.value.count().toLong()
+                        } else {
+                            indexesOfPosts = 10L
+                            locallySaved[statedCategory] = _posts.value
+                        }
 
-                delay(2000)
-                getPostsFromFirebase()
-                delay(4000)
-                //if we dont have any post yet, we are loading
-                _isloading.value = (_posts.value.isEmpty())
-                if (_posts.value.count().toLong() >= indexesOfPosts)
-                    indexesOfPosts += 10
+                        delay(2000)
+                        getPostsFromFirebase()
+                        delay(4000)
+                        //if we dont have any post yet, we are loading
+                        _isloading.value = (_posts.value.isEmpty())
+                        if (_posts.value.count().toLong() >= indexesOfPosts)
+                            indexesOfPosts += 10
+
+                    }
 
             }
-
+            alreadyLoading = false
         }
     }
 
