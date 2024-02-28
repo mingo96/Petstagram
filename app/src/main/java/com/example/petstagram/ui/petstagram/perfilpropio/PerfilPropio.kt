@@ -2,6 +2,8 @@ package com.example.petstagram.perfilpropio
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,22 +12,32 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.ProfilesViewModel
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
+import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.menuprincipal.BarraSuperiorInstance
 import com.example.petstagram.perfil.FotoPerfilInstance
 import com.example.petstagram.publicaciones.Publicaciones
@@ -57,9 +69,17 @@ fun PerfilPropio(
         if(uri != null)viewModel.setResource(uri)
     }
 
+    val thisContext =(LocalContext.current)
+
     val profilePicObserver by viewModel.resource.observeAsState()
 
     val isLoading by viewModel.isLoading.observeAsState()
+
+    val editing by viewModel.isEditing.observeAsState()
+
+    val accessText : ()->String = { viewModel.getUserNameText() }
+
+    val changeText :(String)->Unit = {viewModel.editUserName(it)}
 
     BoxWithConstraints {
         val height = maxHeight
@@ -68,8 +88,10 @@ fun PerfilPropio(
                 .rowWeight(1.0f)
                 .height(height.times(0.23f)),navController = navController)
             ContenedorNombreUsuario(Modifier.height(height.times(0.06f))) {
-                YourUserName()
-                BotonEditarNombreUsuario {
+                YourUserName(editing = editing!!, accesoTexto = accessText, cambiarTexto = changeText)
+                BotonEditarNombreUsuario(Modifier.clickable {
+                    viewModel.editUserNameClicked(thisContext)
+                }) {
                     CirculoEditarNombreUsuario()
                     BotonEditarNombreUsuarioSynth {
                         ImagenCambiarNombreUsuario()
@@ -244,12 +266,56 @@ fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: ProfilesView
         posts = viewModel.posts
     )
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YourUserName(modifier: Modifier = Modifier) {
-    Label(
-        modifier = modifier.requiredWidth(94.0.dp),
-        variacion = Variacion.TuPerfil
-    )
+fun YourUserName(modifier: Modifier = Modifier,
+                 editing : Boolean,
+                 accesoTexto:()->String,
+                 cambiarTexto : (String)->Unit) {
+
+    if (editing)
+        OutlinedTextField(
+            value = accesoTexto.invoke(),
+            onValueChange = cambiarTexto,
+            textStyle = TextStyle(
+                fontSize = 20.0.sp,
+                fontFamily = inter,
+                lineHeight = 1.2102272033691406.em,
+                color = Color.Black
+            ),
+            shape = RoundedCornerShape(10),
+            modifier = modifier
+                .fillMaxWidth(0.7f)
+                .wrapContentHeight(
+                    align = Alignment.CenterVertically,
+                    unbounded = true
+                )
+                .border(
+                    width = 2.dp,
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color(
+                        alpha = 38,
+                        red = 0,
+                        green = 0,
+                        blue = 0
+                    )
+                )
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 225,
+                        green = 196,
+                        blue = 1
+                    ),
+                    shape = RoundedCornerShape(10)
+                )
+        )
+
+    else
+        Label(
+            modifier = modifier.requiredWidth(94.0.dp),
+            variacion = Variacion.TuPerfil
+        )
 }
 
 @Composable
@@ -259,11 +325,6 @@ fun YourPostsLabel(modifier: Modifier = Modifier) {
         variacion = Variacion.TusPublicaciones
     )
 }
-
-//@Composable
-//fun PublicacionesCuenta(modifier: Modifier = Modifier) {
-//    Publicaciones(modifier, viewModel)
-//}
 
 @Composable
 fun TopLevel(
