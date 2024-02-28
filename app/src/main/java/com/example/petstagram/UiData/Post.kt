@@ -11,11 +11,8 @@ class Post ()
     var id : String = ""
     var title : String = ""
     var category =""
-    var creatorUser: Profile? = null
+    var creatorUser: String = ""
     var typeOfMedia:String = ""
     var postedDate : Date = Date.from(Instant.now())
 
-    fun profilePic(): String {
-        return creatorUser!!.profilePic
-    }
 }

@@ -1,38 +1,33 @@
 package com.example.petstagram.ViewModels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Post
-import com.google.firebase.firestore.Filter
+import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+class ProfilesViewModel : ViewModel() {
 
-class PostsViewModel : ViewModel() {
+    val db = Firebase.firestore
 
-    private val db = Firebase.firestore
+    val storageRef = Firebase.storage.reference
 
-    private val storageRef = Firebase.storage.getReferenceFromUrl("gs://petstagram-2e298.appspot.com")
+    lateinit var selfProfile: Profile
 
-    lateinit var statedCategory: Category
+    lateinit var seenProfile: Profile
 
     private val _isloading = MutableLiveData(true)
 
-    val isLoading :LiveData<Boolean> = _isloading
-
-    val locallySaved = mutableMapOf<Category, List<Pair<String,Post>>>()
+    val isLoading : LiveData<Boolean> = _isloading
 
     private val _posts = MutableStateFlow<List<Pair<String, Post>>>(emptyList())
 
@@ -45,20 +40,13 @@ class PostsViewModel : ViewModel() {
     fun fetchPosts(){
         viewModelScope.launch {
 
-            if (locallySaved.contains(statedCategory)){
-                _posts.value = locallySaved[statedCategory]!!
-            }else{
-                locallySaved[statedCategory] = _posts.value
-            }
-
             _posts.collect{
-
 
                 //_posts va recolectando de la coleccion Posts
                 db.collection("Posts")
                     //filtros
                     .orderBy("postedDate", Query.Direction.DESCENDING)
-                    .whereEqualTo("category", statedCategory.name)
+                    .whereEqualTo("creatorUser", selfProfile.id)
                     //la máxima a sacar es indexesOfPosts, para no sacar cada entrada a la primera
                     .limit(indexesOfPosts)
                     .get()
@@ -76,7 +64,6 @@ class PostsViewModel : ViewModel() {
                                     storageRef.child("/PostImages/${postJson.id}").downloadUrl.addOnSuccessListener { uri ->
                                         _posts.value+=(Pair(uri.toString(), castedPost!!))
                                         _posts.value = _posts.value.sortedBy { it.second.postedDate }.reversed()
-                                        locallySaved[statedCategory] = _posts.value
                                     }
                                 }
                             }
@@ -90,6 +77,5 @@ class PostsViewModel : ViewModel() {
 
         }
     }
-
 
 }

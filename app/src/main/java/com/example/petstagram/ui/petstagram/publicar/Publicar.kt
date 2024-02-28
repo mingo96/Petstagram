@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -61,7 +63,7 @@ fun Publicar(
 ) {
 
     val sourceSelecter = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
-        viewModel.setResource(uri)
+        if(uri != null)viewModel.setResource(uri)
     }
 
     val uriObserver by viewModel.resource.observeAsState()
@@ -86,16 +88,17 @@ fun Publicar(
                     navController.navigateUp()
                 }
             })
-
-            if (uriObserver!!.uriFormat().contains("image"))
-                Image(painter = rememberAsyncImagePainter(model = uriObserver),
-                    contentDescription = "foto seleccionada",
-                    contentScale = ContentScale.Fit,
-                    modifier = modifier.height(maxAltura.times(0.3f))
-                )
-            else if( uriObserver != null&&uriObserver != Uri.EMPTY){
+            if( uriObserver != null&&uriObserver != Uri.EMPTY)
                 DisplayVideo(source = uriObserver.toString(), modifier = modifier)
-            }
+            else
+                if (uriObserver!!.uriFormat().contains("image"))
+                    Image(painter = rememberAsyncImagePainter(model = uriObserver),
+                        contentDescription = "foto seleccionada",
+                        contentScale = ContentScale.Fit,
+                        modifier = modifier.height(maxAltura.times(0.3f))
+                    )
+                else
+                    CircularProgressIndicator(Modifier.padding(bottom = 16.dp).height(40.dp))
         }
     }
 

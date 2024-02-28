@@ -60,7 +60,7 @@ class PublishViewModel : ViewModel() {
                 newPost.title = postTitle
                 newPost.category = category.name
                 newPost.typeOfMedia = if (isImage) "image" else if(isVideo) "video" else "unknown"
-                newPost.creatorUser = user
+                newPost.creatorUser = user.id
                 db.collection("Posts")
                     .add(newPost).addOnSuccessListener {
                         pushResource(it.id)
