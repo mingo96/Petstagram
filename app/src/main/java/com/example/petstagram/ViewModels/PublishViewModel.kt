@@ -2,7 +2,6 @@ package com.example.petstagram.ViewModels
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +16,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
-import kotlin.coroutines.coroutineContext
 
 class PublishViewModel : ViewModel() {
 
@@ -38,6 +36,9 @@ class PublishViewModel : ViewModel() {
     var resource :LiveData<Uri> =_resource
     var postCategory by mutableStateOf("")
 
+    val toleratedFormat =
+        arrayOf("JPEG", "PNG", "GIF", "TIFF", "BMP", "RAW","MP4", "AVI", "MKV", "FLV", "MOV", "WMV")
+
 
 
     fun changeTitle(input:String){
@@ -48,20 +49,29 @@ class PublishViewModel : ViewModel() {
         return postTitle
     }
 
-    fun postPost(){
-        if (resource.value!= null && resource.value != Uri.EMPTY && postTitle!= "Titulo Publicacion") {
-            val newPost = Post()
-            newPost.title = postTitle
-            newPost.category = category.name
-            newPost.creatorUser = user
-            db.collection("Posts")
-                .add(newPost).addOnSuccessListener {
-                    pushResource(it.id)
-                    db.collection("Posts").document(it.id).update("id", it.id)
-                    postTitle = "Titulo Publicacion"
-                    _resource.value = Uri.EMPTY
-                }
+    fun postPost(onSuccess : ()->Unit){
+        Log.i("askdhjyafvsdjk", uriFormat())
+        if (resource.value!= null &&
+            resource.value != Uri.EMPTY &&
+            (uriFormat().contains("video")||uriFormat().contains("image")) &&
+            postTitle!= "Titulo Publicacion") {
+                val newPost = Post()
+                newPost.title = postTitle
+                newPost.category = category.name
+                newPost.creatorUser = user
+                db.collection("Posts")
+                    .add(newPost).addOnSuccessListener {
+                        pushResource(it.id)
+                        db.collection("Posts").document(it.id).update("id", it.id)
+                        postTitle = "Titulo Publicacion"
+                        _resource.value = Uri.EMPTY
+                    }
+            onSuccess.invoke()
         }
+    }
+
+    fun uriFormat(): String {
+        return resource.value.toString().split("/").last().split(".").last()
     }
 
     fun pushResource(id:String): UploadTask {

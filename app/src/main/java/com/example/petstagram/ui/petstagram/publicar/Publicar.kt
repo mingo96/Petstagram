@@ -73,10 +73,11 @@ fun Publicar(
             CuadroTextoInstance()
             CuadroTextoNombreUsuario(accesoTexto = { viewModel.getTitle()}, cambiarTexto = {viewModel.changeTitle(it)})
             CuadroTexto2(modifier.clickable {
-                launcher.launch("image/*") })
+                launcher.launch("*/*") })
             CuadroTexto3(modifier.clickable {
-                viewModel.postPost()
-                navController.navigateUp()
+                viewModel.postPost{
+                    navController.navigateUp()
+                }
             })
 
             Image(painter = rememberAsyncImagePainter(model = observarUri),
