@@ -11,7 +11,7 @@ class Post ()
     var id : String = ""
     var title : String = ""
     var category =""
-    var creatorUser: String = ""
+    var creatorUser: Profile? = null
     var typeOfMedia:String = ""
     var postedDate : Date = Date.from(Instant.now())
 

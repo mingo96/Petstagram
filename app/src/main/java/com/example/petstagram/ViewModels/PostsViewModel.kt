@@ -47,7 +47,9 @@ class PostsViewModel : ViewModel() {
 
             if (locallySaved.contains(statedCategory)){
                 _posts.value = locallySaved[statedCategory]!!
+                indexesOfPosts = _posts.value.count().toLong()
             }else{
+                indexesOfPosts = 10L
                 locallySaved[statedCategory] = _posts.value
             }
 

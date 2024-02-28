@@ -49,7 +49,7 @@ fun CuadroInfo(
     when (variacion) {
         Variacion.Default -> TopLevelVariacionDefault(modifier = modifier) {}
         Variacion.Superior -> TopLevelVariacionSuperior(modifier = modifier) {
-            FotoPerfilSizePeque(picture = added.profilePic())
+            FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
             TextoNombrePerfilVariacionSuperior(added = added.creatorUser!!.userName)
             OpcionesOpciones()
         }
@@ -91,7 +91,7 @@ fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
 @Composable
 fun TextoNombrePerfilVariacionSuperior(modifier: Modifier = Modifier, added: String) {
     RelayText(
-        content = "$added",
+        content = added,
         fontSize = 15.0.sp,
         fontFamily = inter,
         color = Color(

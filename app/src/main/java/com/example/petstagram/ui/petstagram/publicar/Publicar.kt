@@ -88,17 +88,21 @@ fun Publicar(
                     navController.navigateUp()
                 }
             })
-            if( uriObserver != null&&uriObserver != Uri.EMPTY)
-                DisplayVideo(source = uriObserver.toString(), modifier = modifier)
-            else
-                if (uriObserver!!.uriFormat().contains("image"))
+
+            if(uriObserver == null||uriObserver== Uri.EMPTY){
+                CircularProgressIndicator(Modifier.padding(bottom = 16.dp).height(40.dp))
+            }else{
+                if (uriObserver!!.uriFormat().contains("video")){
+                    DisplayVideo(source = uriObserver.toString(), modifier = modifier)
+                }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),
                         contentDescription = "foto seleccionada",
                         contentScale = ContentScale.Fit,
                         modifier = modifier.height(maxAltura.times(0.3f))
                     )
-                else
-                    CircularProgressIndicator(Modifier.padding(bottom = 16.dp).height(40.dp))
+                }
+            }
+
         }
     }
 

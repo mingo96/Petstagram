@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("publicaciones"){
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
-                            postsViewModel.fetchPosts()
                             DisplayCategory(navController = navController, viewModel = postsViewModel)
                         }
                         composable("publicar"){

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -34,6 +35,10 @@ fun DisplayCategory(
     navController: NavHostController,
     viewModel: PostsViewModel
 ) {
+    LaunchedEffect(viewModel){
+        viewModel.fetchPosts()
+    }
+
     val isLoading by viewModel.isLoading.observeAsState()
     BoxWithConstraints {
         val height = maxHeight
@@ -48,10 +53,11 @@ fun DisplayCategory(
             CategoryText(modifier.requiredHeight(height.times(0.05f)), added = viewModel.statedCategory.name)
 
             if (isLoading!!)
-                CircularProgressIndicator(modifier
-                    .rowWeight(1.0f)
-                    .height(height.times(0.825f))
-                    .fillMaxWidth(0.8f))
+                CircularProgressIndicator(
+                    modifier
+                        .rowWeight(1.0f)
+                        .height(height.times(0.825f))
+                        .fillMaxWidth(0.8f))
 
             else
                 PublicacionesInstance(
