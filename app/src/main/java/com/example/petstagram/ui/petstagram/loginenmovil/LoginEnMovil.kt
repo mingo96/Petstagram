@@ -18,6 +18,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -56,6 +58,8 @@ fun LoginEnMovil(
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
+
+
     val accesoUsuario: () -> String = { viewModel.user }
 
     val cambioTextoUsuario: (String) -> Unit = { viewModel.userTextChange(it) }
@@ -66,6 +70,8 @@ fun LoginEnMovil(
 
     val context =
         LocalContext.current.applicationContext
+
+    val state by viewModel.state.observeAsState()
 
 
     BoxWithConstraints {
@@ -85,7 +91,7 @@ fun LoginEnMovil(
             ) {
                 CuadroTextoInstance()
 
-                if(viewModel.state == AuthUiState.isLoading){
+                if(state == AuthUiState.IsLoading){
                     CircularProgressIndicator(modifier = Modifier
                         .size(150.dp))
                 }else {
