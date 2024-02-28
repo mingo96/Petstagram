@@ -55,7 +55,7 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun SomeonesProfile(
+fun MyProfile(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: OwnProfileViewModel
@@ -125,7 +125,6 @@ fun SomeonesProfile(
                         .height(height.times(0.48f)),
                     viewModel = viewModel
                 )
-            //PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.petstagram.ViewModels
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,6 +81,7 @@ class OwnProfileViewModel : ViewModel() {
             _posts.collect{
 
                 if (!_isEditing.value!!) {
+                    Log.i("oisudfgs8", "${isEditing.value}")
                     //_posts va recolectando de la coleccion Posts
                     getFirebasePosts()
                 }
@@ -137,10 +139,9 @@ class OwnProfileViewModel : ViewModel() {
 
     /**given a JSON, saves its [Post] info and its url*/
     private fun savePostAndUrl(postJson : DocumentSnapshot) {
-        //si no está ya en las ids
+
         val castedPost = postJson.toObject(Post::class.java)
 
-        //obtenemos la url de la imagen, una vez hecho la añadimos a _posts
         storageRef.child("/PostImages/${postJson.id}")
             .downloadUrl.addOnSuccessListener { uri ->
                 _posts.value += (Pair(uri.toString(), castedPost!!))
@@ -152,12 +153,18 @@ class OwnProfileViewModel : ViewModel() {
 
     /**if [userName] is valid, updates the username of this [_selfProfile]*/
     private fun pushNewUserName(){
-        if (userName!=_selfProfile.value.userName)
+        if (userName!=_selfProfile.value.userName) {
+            _selfProfile.value.userName = userName
             db.collection("Users")
                 .document(_selfProfile.value.id).update("userName", userName)
                 .addOnCompleteListener {
+                    //i don't think im supposed to need to do this but it doesn't work if i dont
+                    for (i in _posts.value) {
+                        db.collection("posts").document(i.second.id).update("creatorUser", _selfProfile.value)
+                    }
                     _isEditing.value = !_isEditing.value!!
                 }
+        }
     }
 
     /**edit [userName]
@@ -189,7 +196,6 @@ class OwnProfileViewModel : ViewModel() {
     fun keepUpWithUserInfo() {
         viewModelScope.launch {
             _selfProfile.collect{
-                if (!_isEditing.value!!)
                     db.collection("Users").whereEqualTo("id", selfId).get()
                     .addOnSuccessListener {
                         _selfProfile.value = it.documents[0].toObject(Profile::class.java)!!

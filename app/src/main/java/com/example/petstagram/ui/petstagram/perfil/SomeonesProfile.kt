@@ -28,25 +28,25 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun MyProfile(
+fun SomeonesProfile(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: OwnProfileViewModel
 ) {
     BoxWithConstraints {
-        val AlturaTotal = maxHeight
+        val height = maxHeight
         TopLevel(modifier = modifier) {
             BarraSuperiorInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .height(AlturaTotal.times(0.23f)), navController = navController)
+                .height(height.times(0.23f)), navController = navController)
             CuadroTextoInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .height(AlturaTotal.times(0.06f)))
+                .height(height.times(0.06f)))
             FotoPerfilInstance(
                 modifier
-                    .height(AlturaTotal.times(0.30f))
-                    .width(AlturaTotal.times(0.30f)))
-            OpcionPerfilInstance(modifier.height(AlturaTotal.times(0.06f)))
+                    .height(height.times(0.30f))
+                    .width(height.times(0.30f)))
+            OpcionPerfilInstance(modifier.height(height.times(0.06f)))
             //PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
         }
     }

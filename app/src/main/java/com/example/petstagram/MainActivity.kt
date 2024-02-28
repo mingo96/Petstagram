@@ -23,8 +23,8 @@ import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.loginenmovil.PhoneLogin
 import com.example.petstagram.menuprincipal.CategoriesMenu
-import com.example.petstagram.perfil.MyProfile
-import com.example.petstagram.perfilpropio.SomeonesProfile
+import com.example.petstagram.perfil.SomeonesProfile
+import com.example.petstagram.perfilpropio.MyProfile
 import com.example.petstagram.publicar.NewPostScreen
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
@@ -58,7 +58,6 @@ class MainActivity : ComponentActivity() {
                             PhoneLogin(navController = navController, viewModel = authViewModel)
                         }
                         composable("categorias"){
-                            categoriesViewModel.fetchCategories()
                             CategoriesMenu(navController = navController, viewModel = categoriesViewModel)
                         }
                         composable("publicaciones"){
@@ -71,11 +70,11 @@ class MainActivity : ComponentActivity() {
                             NewPostScreen(navController = navController , viewModel = publishViewModel)
                         }
                         composable("perfilAjeno"){
-                            MyProfile(navController = navController, viewModel = ownProfileViewModel)
+                            SomeonesProfile(navController = navController, viewModel = ownProfileViewModel)
                         }
                         composable("perfilPropio"){
                             ownProfileViewModel.selfId = authViewModel.localProfile.id
-                            SomeonesProfile(navController = navController, viewModel = ownProfileViewModel)
+                            MyProfile(navController = navController, viewModel = ownProfileViewModel)
                         }
                     }
 

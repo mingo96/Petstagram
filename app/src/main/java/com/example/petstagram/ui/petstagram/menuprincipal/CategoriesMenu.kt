@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
@@ -30,13 +31,22 @@ fun CategoriesMenu(
     navController: NavHostController,
     viewModel: CategoriesViewModel
 ) {
+    LaunchedEffect(key1 = viewModel){
+
+        viewModel.fetchCategories()
+    }
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        val mayorAltura = maxHeight
+        val height = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.22f)), navController = navController)
-            BarraTipoNotificacion(modifier = Modifier.rowWeight(1.0f).requiredHeight(mayorAltura.times(0.07f)),navController = navController)
-            CategoriasInstance(modifier = Modifier.rowWeight(1.0f)
-                .requiredHeight(mayorAltura.times(0.84f)),
+            BarraSuperiorInstance(modifier = Modifier
+                .rowWeight(1.0f)
+                .requiredHeight(height.times(0.22f)), navController = navController)
+            BarraTipoNotificacion(modifier = Modifier
+                .rowWeight(1.0f)
+                .requiredHeight(height.times(0.07f)),navController = navController)
+            CategoriasInstance(modifier = Modifier
+                .rowWeight(1.0f)
+                .requiredHeight(height.times(0.84f)),
                 navController = navController,
                 categoryViewModel = viewModel)
         }
