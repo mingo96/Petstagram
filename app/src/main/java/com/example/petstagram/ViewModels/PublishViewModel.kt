@@ -50,14 +50,16 @@ class PublishViewModel : ViewModel() {
     }
 
     fun postPost(onSuccess : ()->Unit){
-        Log.i("askdhjyafvsdjk", uriFormat())
+        val isVideo = uriFormat().contains("video")
+        val isImage = uriFormat().contains("image")
         if (resource.value!= null &&
             resource.value != Uri.EMPTY &&
-            (uriFormat().contains("video")||uriFormat().contains("image")) &&
+            (isVideo||isImage) &&
             postTitle!= "Titulo Publicacion") {
                 val newPost = Post()
                 newPost.title = postTitle
                 newPost.category = category.name
+                newPost.typeOfMedia = if (isImage) "image" else if(isVideo) "video" else "unknown"
                 newPost.creatorUser = user
                 db.collection("Posts")
                     .add(newPost).addOnSuccessListener {

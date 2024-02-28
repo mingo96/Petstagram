@@ -32,7 +32,7 @@ fun Publicaciones(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
         TopLevel(modifier = modifier.width(maxWidth)) {
             for (i in posts){
                 Log.i(i.first, i.second.id)
-                PublicacionInstance(ancho = anchoMax, post = i.second, url = i.first)
+                PublicacionInstance(modifier = Modifier.width(anchoMax), post = i.second, url = i.first)
             }
         }
     }
@@ -41,15 +41,13 @@ fun Publicaciones(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
 @Composable
 fun PublicacionInstance(
     modifier: Modifier = Modifier,
-    ancho: Dp,
     post: Post,
     url: String
 ) {
     Publicacion(modifier = modifier
-        .fillMaxWidth(1.0f)
-        .width(ancho),
+        .fillMaxWidth(1.0f),
         post = post,
-        imageUrl = url)
+        url = url)
 }
 
 @Composable
