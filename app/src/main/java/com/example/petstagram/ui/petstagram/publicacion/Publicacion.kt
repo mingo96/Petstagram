@@ -1,6 +1,8 @@
 package com.example.petstagram.publicacion
 
+import android.media.session.PlaybackState
 import androidx.annotation.OptIn
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +11,8 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -17,8 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.LoadControl
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
@@ -65,14 +71,17 @@ fun PostSource(modifier: Modifier = Modifier, post: Post, url: String) {
             contentScale = ContentScale.Crop
         )
     }else{
-        val mediaPlayer = ExoPlayer.Builder(LocalContext.current).build()
+        val context = LocalContext.current
+        val mediaPlayer = remember {
+            ExoPlayer.Builder(context).build()
+        }
         val media = MediaItem.fromUri(url)
+
         LaunchedEffect(media) {
             mediaPlayer.setMediaItem(media)
-            mediaPlayer.pause()
-            //mediaPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-
+            mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
             mediaPlayer.prepare()
+
         }
         DisposableEffect(Unit) {
             onDispose {
@@ -85,10 +94,15 @@ fun PostSource(modifier: Modifier = Modifier, post: Post, url: String) {
                 PlayerView(ctx).apply {
                     player = mediaPlayer
                     resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    useController = false
                 }
             },
             modifier = modifier
-                .fillMaxWidth().fillMaxHeight()
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .clickable {
+                    mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
+                }
         )
     }
 }
