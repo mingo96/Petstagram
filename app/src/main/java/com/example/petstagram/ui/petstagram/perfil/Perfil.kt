@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
-import com.example.petstagram.cuadrotexto.CuadroTexto
+import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.fotoperfil.FotoPerfil
 import com.example.petstagram.fotoperfil.Size
 import com.example.petstagram.opcionperfil.OpcionPerfil
@@ -58,7 +58,7 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
-    CuadroTexto(modifier = modifier.fillMaxWidth(1.0f))
+    Label(modifier = modifier.fillMaxWidth(1.0f))
 }
 
 @Composable

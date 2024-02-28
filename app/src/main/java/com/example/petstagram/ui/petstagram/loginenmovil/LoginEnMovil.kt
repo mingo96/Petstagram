@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.AuthViewModel
-import com.example.petstagram.cuadrotexto.CuadroTexto
+import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.data.AuthUiState
@@ -161,7 +161,7 @@ fun RectanguloDeCorte(modifier: Modifier = Modifier) {
 
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier.fillMaxWidth(),
         variacion = Variacion.Bienvenida
     )
@@ -261,7 +261,7 @@ fun CuadroTextoPassword(
 
 @Composable
 fun CuadroTexto3(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier.fillMaxWidth(1.0f),
         variacion = Variacion.Registro
     )
@@ -269,7 +269,7 @@ fun CuadroTexto3(modifier: Modifier = Modifier) {
 
 @Composable
 fun CuadroTexto4(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier.fillMaxWidth(1.0f),
         variacion = Variacion.InicioSesion
     )

@@ -10,13 +10,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import com.example.petstagram.UiData.Post
-import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.publicacion.Publicacion
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * publicaciones
@@ -25,12 +25,12 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicaciones(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
+fun Publicaciones(modifier: Modifier = Modifier, posts : StateFlow<List<Pair<String, Post>>>) {
     BoxWithConstraints {
-        val posts by viewModel.posts.collectAsState()
+        val postsState by posts.collectAsState()
         val anchoMax = maxWidth
         TopLevel(modifier = modifier.width(maxWidth)) {
-            for (i in posts){
+            for (i in postsState){
                 Log.i(i.first, i.second.id)
                 PublicacionInstance(modifier = Modifier.width(anchoMax), post = i.second, url = i.first)
             }

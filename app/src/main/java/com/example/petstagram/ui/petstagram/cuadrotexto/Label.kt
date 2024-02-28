@@ -47,7 +47,7 @@ enum class Variacion {
  * Generated code; do not edit directly
  */
 @Composable
-fun CuadroTexto(
+fun Label(
     modifier: Modifier = Modifier,
     variacion: Variacion = Variacion.NombreUsuario,
     added: String = ""
@@ -103,7 +103,7 @@ fun CuadroTexto(
 private fun CuadroTextoVariacionNombreUsuarioPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.NombreUsuario
             )
@@ -116,7 +116,7 @@ private fun CuadroTextoVariacionNombreUsuarioPreview() {
 private fun CuadroTextoVariacionBienvenidaPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.Bienvenida
             )
@@ -129,7 +129,7 @@ private fun CuadroTextoVariacionBienvenidaPreview() {
 private fun CuadroTextoVariacionTuPerfilPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.TuPerfil
             )
@@ -142,7 +142,7 @@ private fun CuadroTextoVariacionTuPerfilPreview() {
 private fun CuadroTextoVariacionUsuarioPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.Usuario
             )
@@ -155,7 +155,7 @@ private fun CuadroTextoVariacionUsuarioPreview() {
 private fun CuadroTextoVariacionTusPublicacionesPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.TusPublicaciones
             )
@@ -168,7 +168,7 @@ private fun CuadroTextoVariacionTusPublicacionesPreview() {
 private fun CuadroTextoVariacionClavePreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.Clave
             )
@@ -181,7 +181,7 @@ private fun CuadroTextoVariacionClavePreview() {
 private fun CuadroTextoVariacionPublicacionesCategoriaPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.PublicacionesCategoria
             )
@@ -194,7 +194,7 @@ private fun CuadroTextoVariacionPublicacionesCategoriaPreview() {
 private fun CuadroTextoVariacionRegistroPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.Registro
             )
@@ -207,7 +207,7 @@ private fun CuadroTextoVariacionRegistroPreview() {
 private fun CuadroTextoVariacionInicioSesionPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.InicioSesion
             )
@@ -220,7 +220,7 @@ private fun CuadroTextoVariacionInicioSesionPreview() {
 private fun CuadroTextoVariacionCrearPublicacionPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.CrearPublicacion
             )
@@ -233,7 +233,7 @@ private fun CuadroTextoVariacionCrearPublicacionPreview() {
 private fun CuadroTextoVariacionSeleccionarRecursoPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.SeleccionarRecurso
             )
@@ -246,7 +246,7 @@ private fun CuadroTextoVariacionSeleccionarRecursoPreview() {
 private fun CuadroTextoVariacionTituloPublicacionPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.TituloPublicacion
             )
@@ -259,7 +259,7 @@ private fun CuadroTextoVariacionTituloPublicacionPreview() {
 private fun CuadroTextoVariacionCategoriaPublicacionPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.CategoriaPublicacion
             )
@@ -272,7 +272,7 @@ private fun CuadroTextoVariacionCategoriaPublicacionPreview() {
 private fun CuadroTextoVariacionPublicarPreview() {
     MaterialTheme {
         RelayContainer {
-            CuadroTexto(
+            Label(
                 modifier = Modifier.rowWeight(1.0f),
                 variacion = Variacion.Publicar
             )

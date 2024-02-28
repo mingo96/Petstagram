@@ -13,8 +13,6 @@ class Post ()
     var category =""
     var creatorUser: Profile? = null
     var typeOfMedia:String = ""
-    var saved : SavePressed = SavePressed.No
-    var like : Pressed = Pressed.False
     var postedDate : Date = Date.from(Instant.now())
 
     fun profilePic(): String {

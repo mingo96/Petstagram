@@ -31,13 +31,13 @@ class PublishViewModel : ViewModel() {
 
     private val db = Firebase.firestore
 
-    var postTitle by mutableStateOf("Titulo Publicación")
+    private var postTitle by mutableStateOf("Titulo Publicación")
     private var _resource = MutableLiveData(Uri.EMPTY)
     var resource :LiveData<Uri> =_resource
     var postCategory by mutableStateOf("")
 
-    val toleratedFormat =
-        arrayOf("JPEG", "PNG", "GIF", "TIFF", "BMP", "RAW","MP4", "AVI", "MKV", "FLV", "MOV", "WMV")
+    //val toleratedFormat =
+    //    arrayOf("JPEG", "PNG", "GIF", "TIFF", "BMP", "RAW","MP4", "AVI", "MKV", "FLV", "MOV", "WMV")
 
 
 
@@ -50,8 +50,8 @@ class PublishViewModel : ViewModel() {
     }
 
     fun postPost(onSuccess : ()->Unit){
-        val isVideo = uriFormat().contains("video")
-        val isImage = uriFormat().contains("image")
+        val isVideo = resource.value!!.uriFormat().contains("video")
+        val isImage = resource.value!!.uriFormat().contains("image")
         if (resource.value!= null &&
             resource.value != Uri.EMPTY &&
             (isVideo||isImage) &&
@@ -72,8 +72,8 @@ class PublishViewModel : ViewModel() {
         }
     }
 
-    fun uriFormat(): String {
-        return resource.value.toString().split("/").last().split(".").last()
+    fun Uri.uriFormat(): String {
+        return this.toString().split("/").last().split(".").last()
     }
 
     fun pushResource(id:String): UploadTask {

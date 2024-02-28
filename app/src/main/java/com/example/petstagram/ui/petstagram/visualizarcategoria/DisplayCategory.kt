@@ -5,14 +5,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
-import com.example.petstagram.cuadrotexto.CuadroTexto
+import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.publicaciones.Publicaciones
 import com.google.relay.compose.MainAxisAlignment
@@ -26,27 +29,37 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun VisualizarCategoria(
+fun DisplayCategory(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: PostsViewModel
 ) {
+    val isLoading by viewModel.isLoading.observeAsState()
     BoxWithConstraints {
-        val AlturaTotal = maxHeight
+        val height = maxHeight
         TopLevel(modifier = modifier) {
             BarraSuperiorInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(AlturaTotal.times(0.2225f)),
+                    .height(height.times(0.2225f)),
                 navController = navController
             )
-            CuadroTextoInstance(modifier.requiredHeight(AlturaTotal.times(0.05f)), added = viewModel.statedCategory.name)
-            PublicacionesInstance(
-                modifier = Modifier
+
+            CategoryText(modifier.requiredHeight(height.times(0.05f)), added = viewModel.statedCategory.name)
+
+            if (isLoading!!)
+                CircularProgressIndicator(modifier
                     .rowWeight(1.0f)
-                    .height(AlturaTotal.times(0.825f)),
-                viewModel = viewModel
-            )
+                    .height(height.times(0.825f))
+                    .fillMaxWidth(0.8f))
+
+            else
+                PublicacionesInstance(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .height(height.times(0.825f)),
+                    viewModel = viewModel
+                )
         }
     }
 }
@@ -62,8 +75,8 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 }
 
 @Composable
-fun CuadroTextoInstance(modifier: Modifier = Modifier, added: String) {
-    CuadroTexto(
+fun CategoryText(modifier: Modifier = Modifier, added: String) {
+    Label(
         variacion = Variacion.PublicacionesCategoria,
         modifier = modifier,
         added = added
@@ -75,7 +88,7 @@ fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: PostsViewMod
     Publicaciones(
         modifier = modifier
             .fillMaxWidth(1.0f),
-        viewModel = viewModel
+        posts = viewModel.posts
     )
 }
 

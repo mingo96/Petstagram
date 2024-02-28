@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.cuadroinfo.CuadroInfo
 import com.example.petstagram.cuadroinfo.Variacion
+import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -71,40 +72,7 @@ fun PostSource(modifier: Modifier = Modifier, post: Post, url: String) {
             contentScale = ContentScale.Crop
         )
     }else{
-        val context = LocalContext.current
-        val mediaPlayer = remember {
-            ExoPlayer.Builder(context).build()
-        }
-        val media = MediaItem.fromUri(url)
-
-        LaunchedEffect(media) {
-            mediaPlayer.setMediaItem(media)
-            mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
-            mediaPlayer.prepare()
-
-        }
-        DisposableEffect(Unit) {
-            onDispose {
-                mediaPlayer.release()
-            }
-        }
-
-        AndroidView(
-            factory = { ctx ->
-                PlayerView(ctx).apply {
-                    player = mediaPlayer
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    useController = false
-                }
-            },
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clickable {
-                    mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
-                }
-        )
-    }
+        DisplayVideo(source = url, modifier = modifier)}
 }
 
 @Composable

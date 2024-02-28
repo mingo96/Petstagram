@@ -26,7 +26,7 @@ import com.example.petstagram.perfil.Perfil
 import com.example.petstagram.perfilpropio.PerfilPropio
 import com.example.petstagram.publicar.Publicar
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
-import com.example.petstagram.visualizarcategoria.VisualizarCategoria
+import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         composable("publicaciones"){
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
                             postsViewModel.fetchPosts()
-                            VisualizarCategoria(navController = navController, viewModel = postsViewModel)
+                            DisplayCategory(navController = navController, viewModel = postsViewModel)
                         }
                         composable("publicar"){
                             publishViewModel.user = authViewModel.localProfile

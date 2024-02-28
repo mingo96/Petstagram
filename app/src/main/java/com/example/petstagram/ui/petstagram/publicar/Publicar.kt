@@ -1,5 +1,6 @@
 package com.example.petstagram.publicar
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -15,25 +16,32 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
-import com.example.petstagram.cuadrotexto.CuadroTexto
+import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.cuadrotexto.inter
+import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -52,13 +60,12 @@ fun Publicar(
     viewModel: PublishViewModel
 ) {
 
-
-
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){uri ->
+    val sourceSelecter = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
         viewModel.setResource(uri)
     }
 
-    val observarUri by viewModel.resource.observeAsState()
+    val uriObserver by viewModel.resource.observeAsState()
+
     BoxWithConstraints {
         val maxAltura = maxHeight
         TopLevel(modifier = modifier) {
@@ -73,22 +80,31 @@ fun Publicar(
             CuadroTextoInstance()
             CuadroTextoNombreUsuario(accesoTexto = { viewModel.getTitle()}, cambiarTexto = {viewModel.changeTitle(it)})
             CuadroTexto2(modifier.clickable {
-                launcher.launch("*/*") })
+                sourceSelecter.launch("*/*") })
             CuadroTexto3(modifier.clickable {
                 viewModel.postPost{
                     navController.navigateUp()
                 }
             })
 
-            Image(painter = rememberAsyncImagePainter(model = observarUri),
-                contentDescription = "foto seleccionada",
-                contentScale = ContentScale.Fit,
-                modifier = modifier.height(maxAltura.times(0.3f))
-            )
+            if (uriObserver!!.uriFormat().contains("image"))
+                Image(painter = rememberAsyncImagePainter(model = uriObserver),
+                    contentDescription = "foto seleccionada",
+                    contentScale = ContentScale.Fit,
+                    modifier = modifier.height(maxAltura.times(0.3f))
+                )
+            else if( uriObserver != null&&uriObserver != Uri.EMPTY){
+                DisplayVideo(source = uriObserver.toString(), modifier = modifier)
+            }
         }
     }
 
 
+}
+
+
+fun Uri.uriFormat(): String {
+    return this.toString().split("/").last().split(".").last()
 }
 
 @Composable
@@ -102,7 +118,7 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
@@ -150,7 +166,7 @@ fun CuadroTextoNombreUsuario(
 
 @Composable
 fun CuadroTexto1(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
@@ -160,7 +176,7 @@ fun CuadroTexto1(modifier: Modifier = Modifier) {
 
 @Composable
 fun CuadroTexto2(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
@@ -170,7 +186,7 @@ fun CuadroTexto2(modifier: Modifier = Modifier) {
 
 @Composable
 fun CuadroTexto3(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),

@@ -1,6 +1,8 @@
 package com.example.petstagram.ViewModels
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
@@ -25,6 +27,10 @@ class PostsViewModel : ViewModel() {
     private val storageRef = Firebase.storage.getReferenceFromUrl("gs://petstagram-2e298.appspot.com")
 
     lateinit var statedCategory: Category
+
+    private val _isloading = MutableLiveData(true)
+
+    val isLoading :LiveData<Boolean> = _isloading
 
     private val _posts = MutableStateFlow<List<Pair<String, Post>>>(emptyList())
 
@@ -63,7 +69,7 @@ class PostsViewModel : ViewModel() {
                         }
                     }
                 delay(4000)
-
+                _isloading.value = (_posts.value.isEmpty())
                 if (_posts.value.count().toLong() >=indexesOfPosts)
                     indexesOfPosts+=10
             }

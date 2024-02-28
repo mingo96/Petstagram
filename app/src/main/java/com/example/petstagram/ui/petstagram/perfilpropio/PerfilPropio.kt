@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.CategoriesViewModel
-import com.example.petstagram.cuadrotexto.CuadroTexto
+import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.menuprincipal.BarraSuperiorInstance
 import com.example.petstagram.perfil.FotoPerfilInstance
@@ -50,7 +50,7 @@ fun PerfilPropio(
 
 @Composable
 fun CuadroTextoInstance(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier.requiredWidth(94.0.dp),
         variacion = Variacion.TuPerfil
     )
@@ -58,7 +58,7 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 
 @Composable
 fun CuadroTexto1(modifier: Modifier = Modifier) {
-    CuadroTexto(
+    Label(
         modifier = modifier.requiredWidth(186.0.dp),
         variacion = Variacion.TusPublicaciones
     )
