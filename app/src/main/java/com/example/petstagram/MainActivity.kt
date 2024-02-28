@@ -21,11 +21,11 @@ import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
-import com.example.petstagram.loginenmovil.LoginEnMovil
-import com.example.petstagram.menuprincipal.MenuPrincipal
-import com.example.petstagram.perfil.Perfil
-import com.example.petstagram.perfilpropio.PerfilPropio
-import com.example.petstagram.publicar.Publicar
+import com.example.petstagram.loginenmovil.PhoneLogin
+import com.example.petstagram.menuprincipal.CategoriesMenu
+import com.example.petstagram.perfil.MyProfile
+import com.example.petstagram.perfilpropio.SomeonesProfile
+import com.example.petstagram.publicar.NewPostScreen
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.firebase.Firebase
@@ -55,11 +55,11 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = "login"){
                         composable("login"){
-                            LoginEnMovil(navController = navController, viewModel = authViewModel)
+                            PhoneLogin(navController = navController, viewModel = authViewModel)
                         }
                         composable("categorias"){
                             categoriesViewModel.fetchCategories()
-                            MenuPrincipal(navController = navController, viewModel = categoriesViewModel)
+                            CategoriesMenu(navController = navController, viewModel = categoriesViewModel)
                         }
                         composable("publicaciones"){
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
@@ -68,14 +68,14 @@ class MainActivity : ComponentActivity() {
                         composable("publicar"){
                             publishViewModel.user = authViewModel.localProfile
                             publishViewModel.category = categoriesViewModel.selectedCategory
-                            Publicar(navController = navController , viewModel = publishViewModel)
+                            NewPostScreen(navController = navController , viewModel = publishViewModel)
                         }
                         composable("perfilAjeno"){
-                            Perfil(navController = navController, viewModel = ownProfileViewModel)
+                            MyProfile(navController = navController, viewModel = ownProfileViewModel)
                         }
                         composable("perfilPropio"){
                             ownProfileViewModel.selfId = authViewModel.localProfile.id
-                            PerfilPropio(navController = navController, viewModel = ownProfileViewModel)
+                            SomeonesProfile(navController = navController, viewModel = ownProfileViewModel)
                         }
                     }
 

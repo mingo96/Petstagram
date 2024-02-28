@@ -18,30 +18,24 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.Label
-import com.example.petstagram.cuadrotexto.Variacion
+import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.google.relay.compose.MainAxisAlignment
@@ -56,7 +50,7 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicar(
+fun NewPostScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: PublishViewModel
@@ -129,7 +123,7 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
-        variacion = Variacion.CrearPublicacion
+        variation = Variation.CreatePost
     )
 }
 
@@ -177,7 +171,7 @@ fun CuadroTexto1(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
-        variacion = Variacion.TituloPublicacion
+        variation = Variation.PostTitle
     )
 }
 
@@ -187,7 +181,7 @@ fun CuadroTexto2(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
-        variacion = Variacion.SeleccionarRecurso
+        variation = Variation.SelectResource
     )
 }
 
@@ -197,7 +191,7 @@ fun CuadroTexto3(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredWidth(296.0.dp)
             .requiredHeight(80.0.dp),
-        variacion = Variacion.Publicar
+        variation = Variation.Publish
     )
 }
 

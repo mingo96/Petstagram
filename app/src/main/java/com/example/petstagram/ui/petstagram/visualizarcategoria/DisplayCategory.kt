@@ -17,7 +17,7 @@ import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.Label
-import com.example.petstagram.cuadrotexto.Variacion
+import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.publicaciones.Publicaciones
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -84,7 +84,7 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 @Composable
 fun CategoryText(modifier: Modifier = Modifier, added: String) {
     Label(
-        variacion = Variacion.PublicacionesCategoria,
+        variation = Variation.CategoryPosts,
         modifier = modifier,
         added = added
     )

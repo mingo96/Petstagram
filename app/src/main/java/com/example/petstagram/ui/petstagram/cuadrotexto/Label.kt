@@ -22,21 +22,21 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
 
 // Design to select for CuadroTexto
-enum class Variacion {
-    NombreUsuario,
-    Bienvenida,
-    TuPerfil,
-    Usuario,
-    TusPublicaciones,
-    Clave,
-    PublicacionesCategoria,
-    Registro,
-    InicioSesion,
-    CrearPublicacion,
-    SeleccionarRecurso,
-    TituloPublicacion,
-    CategoriaPublicacion,
-    Publicar
+enum class Variation {
+    UserName,
+    Petstagram,
+    YourProfile,
+    User,
+    YourPosts,
+    Password,
+    CategoryPosts,
+    Register,
+    Login,
+    CreatePost,
+    SelectResource,
+    PostTitle,
+    PostCategory,
+    Publish
 }
 
 /**
@@ -49,55 +49,56 @@ enum class Variacion {
 @Composable
 fun Label(
     modifier: Modifier = Modifier,
-    variacion: Variacion = Variacion.NombreUsuario,
+    variation: Variation = Variation.UserName,
     added: String = ""
 ) {
-    when (variacion) {
-        Variacion.NombreUsuario -> TopLevelVariacionNombreUsuario(modifier = modifier) {
+    when (variation) {
+        Variation.UserName -> TopLevelVariacionNombreUsuario(modifier = modifier) {
             TextoNombreUsuarioVariacionNombreUsuario(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
-        Variacion.Bienvenida -> TopLevelVariacionBienvenida(modifier = modifier) {
+        Variation.Petstagram -> TopLevelVariacionBienvenida(modifier = modifier) {
             TextoBienvenidaVariacionBienvenida(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.TuPerfil -> TopLevelVariacionTuPerfil(modifier = modifier) {
+        Variation.YourProfile -> TopLevelVariacionTuPerfil(modifier = modifier) {
             TextoTuPerfilVariacionTuPerfil(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.Usuario -> TopLevelVariacionUsuario(modifier = modifier) {
+        Variation.User -> TopLevelVariacionUsuario(modifier = modifier) {
             TextoEmailVariacionUsuario(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.TusPublicaciones -> TopLevelVariacionTusPublicaciones(modifier = modifier) {
+        Variation.YourPosts -> TopLevelVariacionTusPublicaciones(modifier = modifier) {
             TextoTusPublicacionesVariacionTusPublicaciones(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.Clave -> TopLevelVariacionClave(modifier = modifier) {
+        Variation.Password -> TopLevelVariacionClave(modifier = modifier) {
             TextoClaveVariacionClave(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.PublicacionesCategoria -> TopLevelVariacionPublicacionesCategoria(modifier = modifier) {
+        Variation.CategoryPosts -> TopLevelVariacionPublicacionesCategoria(modifier = modifier) {
             TextoPubCategoriaVariacionPublicacionesCategoria(modifier = Modifier.rowWeight(1.0f), added)
         }
-        Variacion.Registro -> TopLevelVariacionRegistro(modifier = modifier) {
+        Variation.Register -> TopLevelVariacionRegistro(modifier = modifier) {
             TextoRegistroVariacionRegistro(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.InicioSesion -> TopLevelVariacionInicioSesion(modifier = modifier) {
+        Variation.Login -> TopLevelVariacionInicioSesion(modifier = modifier) {
             TextoInicioSesionVariacionInicioSesion(modifier = Modifier.rowWeight(1.0f))
         }
-        Variacion.CrearPublicacion -> TopLevelVariacionCrearPublicacion(modifier = modifier) {
+        Variation.CreatePost -> TopLevelVariacionCrearPublicacion(modifier = modifier) {
             TextoCrearPublicacionVariacionCrearPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
-        Variacion.SeleccionarRecurso -> TopLevelVariacionSeleccionarRecurso(modifier = modifier) {
+        Variation.SelectResource -> TopLevelVariacionSeleccionarRecurso(modifier = modifier) {
             TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
-        Variacion.TituloPublicacion -> TopLevelVariacionTituloPublicacion(modifier = modifier) {
+        Variation.PostTitle -> TopLevelVariacionTituloPublicacion(modifier = modifier) {
             TextoTituloPublicacionVariacionTituloPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
-        Variacion.CategoriaPublicacion -> TopLevelVariacionCategoriaPublicacion(modifier = modifier) {
+        Variation.PostCategory -> TopLevelVariacionCategoriaPublicacion(modifier = modifier) {
             TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
-        Variacion.Publicar -> TopLevelVariacionPublicar(modifier = modifier) {
+        Variation.Publish -> TopLevelVariacionPublicar(modifier = modifier) {
             TextoPublicarVariacionPublicar(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
     }
 }
 
+//IM NOT REFACTORING ALLAT
 @Preview(widthDp = 281, heightDp = 40)
 @Composable
 private fun CuadroTextoVariacionNombreUsuarioPreview() {
@@ -105,7 +106,7 @@ private fun CuadroTextoVariacionNombreUsuarioPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.NombreUsuario
+                variation = Variation.UserName
             )
         }
     }
@@ -118,7 +119,7 @@ private fun CuadroTextoVariacionBienvenidaPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.Bienvenida
+                variation = Variation.Petstagram
             )
         }
     }
@@ -131,7 +132,7 @@ private fun CuadroTextoVariacionTuPerfilPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.TuPerfil
+                variation = Variation.YourProfile
             )
         }
     }
@@ -144,7 +145,7 @@ private fun CuadroTextoVariacionUsuarioPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.Usuario
+                variation = Variation.User
             )
         }
     }
@@ -157,7 +158,7 @@ private fun CuadroTextoVariacionTusPublicacionesPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.TusPublicaciones
+                variation = Variation.YourPosts
             )
         }
     }
@@ -170,7 +171,7 @@ private fun CuadroTextoVariacionClavePreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.Clave
+                variation = Variation.Password
             )
         }
     }
@@ -183,7 +184,7 @@ private fun CuadroTextoVariacionPublicacionesCategoriaPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.PublicacionesCategoria
+                variation = Variation.CategoryPosts
             )
         }
     }
@@ -196,7 +197,7 @@ private fun CuadroTextoVariacionRegistroPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.Registro
+                variation = Variation.Register
             )
         }
     }
@@ -209,7 +210,7 @@ private fun CuadroTextoVariacionInicioSesionPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.InicioSesion
+                variation = Variation.Login
             )
         }
     }
@@ -222,7 +223,7 @@ private fun CuadroTextoVariacionCrearPublicacionPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.CrearPublicacion
+                variation = Variation.CreatePost
             )
         }
     }
@@ -235,7 +236,7 @@ private fun CuadroTextoVariacionSeleccionarRecursoPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.SeleccionarRecurso
+                variation = Variation.SelectResource
             )
         }
     }
@@ -248,7 +249,7 @@ private fun CuadroTextoVariacionTituloPublicacionPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.TituloPublicacion
+                variation = Variation.PostTitle
             )
         }
     }
@@ -261,7 +262,7 @@ private fun CuadroTextoVariacionCategoriaPublicacionPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.CategoriaPublicacion
+                variation = Variation.PostCategory
             )
         }
     }
@@ -274,7 +275,7 @@ private fun CuadroTextoVariacionPublicarPreview() {
         RelayContainer {
             Label(
                 modifier = Modifier.rowWeight(1.0f),
-                variacion = Variacion.Publicar
+                variation = Variation.Publish
             )
         }
     }

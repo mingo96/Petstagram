@@ -25,7 +25,7 @@ import com.google.relay.compose.ScrollAnchor
  * Generated code; do not edit directly
  */
 @Composable
-fun MenuPrincipal(
+fun CategoriesMenu(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: CategoriesViewModel

@@ -28,7 +28,7 @@ import com.google.relay.compose.RelayContainerScope
  * Generated code; do not edit directly
  */
 @Composable
-fun Perfil(
+fun MyProfile(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: OwnProfileViewModel

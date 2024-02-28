@@ -37,7 +37,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.cuadrotexto.Label
-import com.example.petstagram.cuadrotexto.Variacion
+import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.data.AuthUiState
 import com.google.relay.compose.MainAxisAlignment
@@ -53,20 +53,20 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun LoginEnMovil(
+fun PhoneLogin(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
 
 
-    val accesoUsuario: () -> String = { viewModel.user }
+    val userValue: () -> String = { viewModel.user }
 
-    val cambioTextoUsuario: (String) -> Unit = { viewModel.userTextChange(it) }
+    val userOnChange: (String) -> Unit = { viewModel.userTextChange(it) }
 
-    val accesoPasswd: () -> String = { viewModel.password }
+    val passwordValue: () -> String = { viewModel.password }
 
-    val cambioTextoPasswd: (String) -> Unit = { viewModel.passwordTextChange(it) }
+    val passwordOnChange: (String) -> Unit = { viewModel.passwordTextChange(it) }
 
     val context =
         LocalContext.current.applicationContext
@@ -75,38 +75,38 @@ fun LoginEnMovil(
 
 
     BoxWithConstraints {
-        val maxAncho = maxWidth
+        val statedWidth = maxWidth
 
         TopLevel(modifier = Modifier.fillMaxSize()) {
-            ImagenInicioSesion(
+            LoginImage(
                 modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
             )
-            RectanguloDeCorte(modifier = Modifier.width(maxAncho))
+            DiagonalRectangle(modifier = Modifier.width(statedWidth))
             TopLevelSynth(
                 modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
             ) {
-                CuadroTextoInstance()
+                WelcomeText()
 
                 if(state == AuthUiState.IsLoading){
                     CircularProgressIndicator(modifier = Modifier
                         .size(150.dp))
                 }else {
-                    CuadroTextoNombreUsuario(
+                    UserText(
                         modifier = Modifier.rowWeight(1.0f),
-                        accesoTexto = accesoUsuario,
-                        cambiarTexto = cambioTextoUsuario
+                        textAccess = userValue,
+                        changeText = userOnChange
                     )
-                    CuadroTextoPassword(
+                    PasswordText(
                         modifier = Modifier.rowWeight(1.0f),
-                        accesoTexto = accesoPasswd,
-                        cambiarTexto = cambioTextoPasswd
+                        textAccess = passwordValue,
+                        changeText = passwordOnChange
                     )
                 }
-                CuadroTexto3(
+                RegisterTextButton(
                     modifier = Modifier
                         .rowWeight(1.0f)
                         .clickable {
@@ -115,7 +115,7 @@ fun LoginEnMovil(
                             ) { navController.navigate("categorias") }
                         }
                 )
-                CuadroTexto4(modifier = Modifier
+                LogInTextButton(modifier = Modifier
                     .rowWeight(1.0f)
                     .clickable {
                         viewModel.login(
@@ -129,9 +129,9 @@ fun LoginEnMovil(
 }
 
 @Composable
-fun ImagenInicioSesion(modifier: Modifier = Modifier) {
+fun LoginImage(modifier: Modifier = Modifier) {
     RelayImage(
-        image = painterResource(R.drawable.login_en_movil_imagen_inicio_sesion),
+        image = painterResource(R.drawable.login_image),
         contentScale = ContentScale.Crop,
         modifier = modifier
             .padding(
@@ -148,9 +148,9 @@ fun ImagenInicioSesion(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RectanguloDeCorte(modifier: Modifier = Modifier) {
+fun DiagonalRectangle(modifier: Modifier = Modifier) {
     RelayVector(
-        vector = painterResource(R.drawable.login_en_movil_rectangulo_de_corte),
+        vector = painterResource(R.drawable.diagonal_rectangle),
         modifier = modifier
             .padding(
                 paddingValues = PaddingValues(
@@ -166,23 +166,23 @@ fun RectanguloDeCorte(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CuadroTextoInstance(modifier: Modifier = Modifier) {
+fun WelcomeText(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier.fillMaxWidth(),
-        variacion = Variacion.Bienvenida
+        variation = Variation.Petstagram
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CuadroTextoNombreUsuario(
+fun UserText(
     modifier: Modifier = Modifier,
-    accesoTexto: () -> String,
-    cambiarTexto: (String) -> Unit
+    textAccess: () -> String,
+    changeText: (String) -> Unit
 ) {
     OutlinedTextField(
-        value = accesoTexto.invoke(),
-        onValueChange = cambiarTexto,
+        value = textAccess.invoke(),
+        onValueChange = changeText,
         textStyle = TextStyle(
             fontSize = 20.0.sp,
             fontFamily = inter,
@@ -220,14 +220,14 @@ fun CuadroTextoNombreUsuario(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CuadroTextoPassword(
+fun PasswordText(
     modifier: Modifier = Modifier,
-    accesoTexto: () -> String,
-    cambiarTexto: (String) -> Unit
+    textAccess: () -> String,
+    changeText: (String) -> Unit
 ) {
     OutlinedTextField(
-        value = accesoTexto.invoke(),
-        onValueChange = cambiarTexto,
+        value = textAccess.invoke(),
+        onValueChange = changeText,
         textStyle = TextStyle(
             fontSize = 20.0.sp,
             fontFamily = inter,
@@ -266,18 +266,18 @@ fun CuadroTextoPassword(
 }
 
 @Composable
-fun CuadroTexto3(modifier: Modifier = Modifier) {
+fun RegisterTextButton(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier.fillMaxWidth(1.0f),
-        variacion = Variacion.Registro
+        variation = Variation.Register
     )
 }
 
 @Composable
-fun CuadroTexto4(modifier: Modifier = Modifier) {
+fun LogInTextButton(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier.fillMaxWidth(1.0f),
-        variacion = Variacion.InicioSesion
+        variation = Variation.Login
     )
 }
 

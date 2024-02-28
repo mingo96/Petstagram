@@ -36,7 +36,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.cuadrotexto.Label
-import com.example.petstagram.cuadrotexto.Variacion
+import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.menuprincipal.BarraSuperiorInstance
 import com.example.petstagram.perfil.FotoPerfilInstance
@@ -55,7 +55,7 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun PerfilPropio(
+fun SomeonesProfile(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: OwnProfileViewModel
@@ -314,7 +314,7 @@ fun YourUserName(modifier: Modifier = Modifier,
     else
         Label(
             modifier = modifier.requiredWidth(94.0.dp),
-            variacion = Variacion.TuPerfil
+            variation = Variation.YourProfile
         )
 }
 
@@ -322,7 +322,7 @@ fun YourUserName(modifier: Modifier = Modifier,
 fun YourPostsLabel(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier.requiredWidth(186.0.dp),
-        variacion = Variacion.TusPublicaciones
+        variation = Variation.YourPosts
     )
 }
 
