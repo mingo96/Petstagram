@@ -18,7 +18,7 @@ import com.google.firebase.storage.ktx.storage
 class PublishViewModel : ViewModel() {
 
 
-    /**Firebase Storage reference*/
+    /**Firebase Storage reference, since it will only push, doesnt need a route*/
     private var storageRef = Firebase.storage.reference
 
     /**[Profile] of the user posting*/
@@ -76,7 +76,7 @@ class PublishViewModel : ViewModel() {
     /**sends the created [Post] to the [db]
      * @param post the post about to be persisted
      * @param onSuccess code given for execution once we're finished*/
-    fun persistPost(post: Post, onSuccess: () -> Unit){
+    private fun persistPost(post: Post, onSuccess: () -> Unit){
 
         db.collection("Posts")
             .add(post).addOnSuccessListener {
@@ -89,13 +89,13 @@ class PublishViewModel : ViewModel() {
     }
 
     /**local function created to get the [Uri] extension*/
-    fun Uri.uriFormat(): String {
+    private fun Uri.uriFormat(): String {
         return this.toString().split("/").last().split(".").last()
     }
 
     /**simply sends the file in [_resource]
      * @param id the name the file will have (same as post)*/
-    fun pushResource(id:String): UploadTask {
+    private fun pushResource(id:String): UploadTask {
         return storageRef.child("PostImages/$id").putFile(_resource.value!!)
     }
 

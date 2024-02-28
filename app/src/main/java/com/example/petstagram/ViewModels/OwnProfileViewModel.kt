@@ -2,7 +2,6 @@ package com.example.petstagram.ViewModels
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,16 +25,16 @@ import kotlinx.coroutines.launch
 class OwnProfileViewModel : ViewModel() {
 
     /**Firebase FireStore reference*/
-    val db = Firebase.firestore
+    private val db = Firebase.firestore
 
     /**Firebase Storage reference*/
-    val storageRef = Firebase.storage.reference
+    private val storageRef = Firebase.storage.reference
 
     /**id of our profile, to keep up with the user data*/
     var selfId by mutableStateOf("")
 
     /**our profile*/
-    private var _selfProfile = MutableStateFlow<Profile>(Profile())
+    private var _selfProfile = MutableStateFlow(Profile())
 
     /**indicates still loading the first bunch of posts*/
     private val _isloading = MutableLiveData(true)
@@ -97,7 +96,7 @@ class OwnProfileViewModel : ViewModel() {
     fun editUserNameClicked(context : Context){
         if (!_isEditing.value!!){
             //if we were not editing, just set the username to the profile one and set _isEditing to true
-            userName = _selfProfile.value.userName.toString()
+            userName = _selfProfile.value.userName
             _isEditing.value = !_isEditing.value!!
         }else{
             //if editing already, searches for any profile with the given username
@@ -113,7 +112,7 @@ class OwnProfileViewModel : ViewModel() {
     }
 
     /**gets the posts JSON filtering by [_selfProfile]*/
-    fun getFirebasePosts(){
+    private fun getFirebasePosts(){
         db.collection("Posts")
             //filters
             .whereEqualTo("creatorUser", _selfProfile.value)
@@ -152,7 +151,7 @@ class OwnProfileViewModel : ViewModel() {
     }
 
     /**if [userName] is valid, updates the username of this [_selfProfile]*/
-    fun pushNewUserName(){
+    private fun pushNewUserName(){
         if (userName!=_selfProfile.value.userName)
             db.collection("Users")
                 .document(_selfProfile.value.id).update("userName", userName)
