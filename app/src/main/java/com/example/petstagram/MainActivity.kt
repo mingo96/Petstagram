@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ViewModels.PostsViewModel
-import com.example.petstagram.ViewModels.ProfilesViewModel
+import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.loginenmovil.LoginEnMovil
 import com.example.petstagram.menuprincipal.MenuPrincipal
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         val categoriesViewModel : CategoriesViewModel by viewModels()
         val publishViewModel :PublishViewModel by viewModels()
         val postsViewModel : PostsViewModel by viewModels()
-        val profilesViewModel : ProfilesViewModel by viewModels()
+        val ownProfileViewModel : OwnProfileViewModel by viewModels()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
@@ -71,11 +71,11 @@ class MainActivity : ComponentActivity() {
                             Publicar(navController = navController , viewModel = publishViewModel)
                         }
                         composable("perfilAjeno"){
-                            Perfil(navController = navController, viewModel = profilesViewModel)
+                            Perfil(navController = navController, viewModel = ownProfileViewModel)
                         }
                         composable("perfilPropio"){
-                            profilesViewModel.selfId = authViewModel.localProfile.id
-                            PerfilPropio(navController = navController, viewModel = profilesViewModel)
+                            ownProfileViewModel.selfId = authViewModel.localProfile.id
+                            PerfilPropio(navController = navController, viewModel = ownProfileViewModel)
                         }
                     }
 

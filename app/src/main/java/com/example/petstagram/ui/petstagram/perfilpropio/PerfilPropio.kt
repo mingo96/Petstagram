@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
-import com.example.petstagram.ViewModels.ProfilesViewModel
+import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.cuadrotexto.inter
@@ -58,7 +58,7 @@ import com.google.relay.compose.RelayVector
 fun PerfilPropio(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: ProfilesViewModel
+    viewModel: OwnProfileViewModel
 ) {
     LaunchedEffect(key1 = viewModel){
         viewModel.fetchPosts()
@@ -259,7 +259,7 @@ fun ImagenEditar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: ProfilesViewModel) {
+fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
     Publicaciones(
         modifier = modifier
             .fillMaxWidth(1.0f),

@@ -1,6 +1,5 @@
 package com.example.petstagram.perfil
 
-import android.net.Uri
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import com.example.petstagram.ViewModels.ProfilesViewModel
+import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.Label
@@ -33,7 +31,7 @@ import com.google.relay.compose.RelayContainerScope
 fun Perfil(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: ProfilesViewModel
+    viewModel: OwnProfileViewModel
 ) {
     BoxWithConstraints {
         val AlturaTotal = maxHeight
