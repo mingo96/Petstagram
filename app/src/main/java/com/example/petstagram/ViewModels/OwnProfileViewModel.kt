@@ -82,7 +82,6 @@ class OwnProfileViewModel : ViewModel() {
 
             _posts.collect{
 
-                delay(4000)
                 if (!_isEditing.value!!) {
                     getFirebasePosts()
                 }
@@ -133,8 +132,6 @@ class OwnProfileViewModel : ViewModel() {
         storageRef.child("/PostImages/${postJson.id}")
             .downloadUrl.addOnSuccessListener { uri ->
                 _posts.value += (Pair(uri.toString(), castedPost!!))
-
-
             }
     }
 
@@ -201,15 +198,28 @@ class OwnProfileViewModel : ViewModel() {
      * only updates if we are not editing, the name we're writing could be overWritten*/
     fun keepUpWithUserInfo() {
         viewModelScope.launch {
-            _selfProfile.collect{
+            _selfProfile
+                //we make it so it doesnt load more if we get out of the app
+                .stateIn(
+                    viewModelScope,
+                    started = SharingStarted.WhileSubscribed(10000),
+                    0
+                )
+                .collect{
 
+                Log.i("Profile", "loading user data")
+                delay(1000)
                 db.collection("Users").whereEqualTo("id", selfId).get()
                 .addOnSuccessListener {
-                    _selfProfile.value = it.documents[0].toObject(Profile::class.java)!!
+                    val newVal = it.documents[0].toObject(Profile::class.java)!!
+                    if (newVal != _selfProfile.value){
+                        _selfProfile.value = newVal
+                    }
                     _resource.value = _selfProfile.value.profilePic
+                    fetchPosts()
                 }
 
-                delay(10000)
+                delay(15000)
             }
         }
     }

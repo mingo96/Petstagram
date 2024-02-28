@@ -62,7 +62,14 @@ class PostsViewModel : ViewModel() {
     fun startLoadingPosts(){
         viewModelScope.launch {
 
-            _posts.collect{
+            _posts
+                //we make it so it doesnt load more if we get out of the app
+                .stateIn(
+                viewModelScope,
+                started = SharingStarted.WhileSubscribed(10000),
+                0
+            )
+                .collect{
 
                 //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
                 //if it has already been loaded
@@ -82,8 +89,6 @@ class PostsViewModel : ViewModel() {
                 _isloading.value = (_posts.value.isEmpty())
                 if (_posts.value.count().toLong() >= indexesOfPosts)
                     indexesOfPosts += 10
-
-
 
             }
 

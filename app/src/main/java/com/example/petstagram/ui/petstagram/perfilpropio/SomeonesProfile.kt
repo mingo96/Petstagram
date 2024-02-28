@@ -61,8 +61,9 @@ fun MyProfile(
     navController: NavHostController,
     viewModel: OwnProfileViewModel
 ) {
+
+    //tells the
     LaunchedEffect(key1 = viewModel){
-        viewModel.fetchPosts()
         viewModel.keepUpWithUserInfo()
     }
 
