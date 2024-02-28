@@ -4,21 +4,36 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.petstagram.R
+import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.ProfilesViewModel
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variacion
 import com.example.petstagram.menuprincipal.BarraSuperiorInstance
 import com.example.petstagram.perfil.FotoPerfilInstance
+import com.example.petstagram.publicaciones.Publicaciones
+import com.example.petstagram.visualizarcategoria.PublicacionesInstance
 import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
+import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
+import com.google.relay.compose.RelayImage
+import com.google.relay.compose.RelayVector
 
 /**
  * perfil propio
@@ -32,13 +47,52 @@ fun PerfilPropio(
     navController: NavHostController,
     viewModel: ProfilesViewModel
 ) {
+    LaunchedEffect(key1 = viewModel){
+        viewModel.fetchPosts()
+    }
+    val isLoading by viewModel.isLoading.observeAsState()
     BoxWithConstraints {
-        val AlturaTotal = maxHeight
+        val height = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.23f)),navController = navController)
-            CuadroTextoInstance(Modifier.height(AlturaTotal.times(0.06f)))
-            FotoPerfilInstance(Modifier.height(AlturaTotal.times(0.30f)).width(AlturaTotal.times(0.30f)))
-            CuadroTexto1(Modifier.height(AlturaTotal.times(0.06f)))
+            BarraSuperiorInstance(modifier = Modifier
+                .rowWeight(1.0f)
+                .height(height.times(0.23f)),navController = navController)
+            ContenedorNombreUsuario(Modifier.height(height.times(0.06f))) {
+                YourUserName()
+                BotonEditarNombreUsuario {
+                    CirculoEditarNombreUsuario()
+                    BotonEditarNombreUsuarioSynth {
+                        ImagenCambiarNombreUsuario()
+                    }
+                }
+            }
+            ContenedorImagen {
+                FotoPerfilInstance(
+                    Modifier
+                        .height(height.times(0.30f))
+                        .width(height.times(0.30f)))
+                BotonEditar {
+                    CirculoEditar()
+                    BotonEditarSynth {
+                        ImagenEditar()
+                    }
+                }
+            }
+            YourPostsLabel(Modifier.height(height.times(0.06f)))
+            if (isLoading!!)
+                CircularProgressIndicator(
+                    modifier
+                        .rowWeight(1.0f)
+                        .height(height.times(0.825f))
+                        .fillMaxWidth(0.8f))
+
+            else
+                PublicacionesInstance(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .height(height.times(0.48f)),
+                    viewModel = viewModel
+                )
             //PublicacionesCuenta(modifier = Modifier.rowWeight(1.0f).height(AlturaTotal.times(0.48f)))
         }
     }
@@ -46,10 +100,142 @@ fun PerfilPropio(
 }
 
 
-
+@Composable
+fun ContenedorNombreUsuario(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        arrangement = RelayContainerArrangement.Row,
+        itemSpacing = 24.0,
+        content = content,
+        modifier = modifier
+    )
+}
 
 @Composable
-fun CuadroTextoInstance(modifier: Modifier = Modifier) {
+fun BotonEditarNombreUsuario(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        isStructured = false,
+        content = content,
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
+    )
+}
+
+@Composable
+fun BotonEditarNombreUsuarioSynth(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        arrangement = RelayContainerArrangement.Row,
+        content = content,
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
+            .alpha(alpha = 100.0f)
+    )
+}
+
+@Composable
+fun ImagenCambiarNombreUsuario(modifier: Modifier = Modifier) {
+    RelayImage(
+        image = painterResource(R.drawable.perfil_propio_imagen_cambiar_nombre_usuario),
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+            .requiredWidth(18.0.dp)
+            .requiredHeight(18.0.dp)
+    )
+}
+
+@Composable
+fun CirculoEditarNombreUsuario(modifier: Modifier = Modifier) {
+    RelayVector(
+        vector = painterResource(R.drawable.perfil_propio_circulo_editar_nombre_usuario),
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
+    )
+}
+
+@Composable
+fun ContenedorImagen(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        arrangement = RelayContainerArrangement.Row,
+        itemSpacing = 24.0,
+        content = content,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun BotonEditar(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        isStructured = false,
+        content = content,
+        modifier = modifier
+            .requiredWidth(48.0.dp)
+            .requiredHeight(48.0.dp)
+    )
+}
+
+@Composable
+fun CirculoEditar(modifier: Modifier = Modifier) {
+    RelayVector(
+        vector = painterResource(R.drawable.perfil_propio_circulo_editar),
+        modifier = modifier
+            .requiredWidth(48.0.dp)
+            .requiredHeight(48.0.dp)
+    )
+}
+
+@Composable
+fun BotonEditarSynth(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        arrangement = RelayContainerArrangement.Row,
+        content = content,
+        modifier = modifier
+            .requiredWidth(48.0.dp)
+            .requiredHeight(48.0.dp)
+            .alpha(alpha = 100.0f)
+    )
+}
+
+@Composable
+fun ImagenEditar(modifier: Modifier = Modifier) {
+    RelayImage(
+        image = painterResource(R.drawable.perfil_propio_imagen_editar),
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
+    )
+}
+
+@Composable
+fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: ProfilesViewModel) {
+    Publicaciones(
+        modifier = modifier
+            .fillMaxWidth(1.0f),
+        posts = viewModel.posts
+    )
+}
+@Composable
+fun YourUserName(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier.requiredWidth(94.0.dp),
         variacion = Variacion.TuPerfil
@@ -57,7 +243,7 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CuadroTexto1(modifier: Modifier = Modifier) {
+fun YourPostsLabel(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier.requiredWidth(186.0.dp),
         variacion = Variacion.TusPublicaciones
@@ -84,6 +270,8 @@ fun TopLevel(
         scrollable = true,
         itemSpacing = 24.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

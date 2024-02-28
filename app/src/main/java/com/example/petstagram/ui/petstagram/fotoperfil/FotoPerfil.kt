@@ -27,7 +27,7 @@ enum class Size {
  * Generated code; do not edit directly
  */
 @Composable
-fun FotoPerfil(
+fun FotoPerfilBase(
     modifier: Modifier = Modifier,
     size: Size = Size.Peque
 ) {
@@ -46,7 +46,7 @@ fun FotoPerfil(
 private fun FotoPerfilSizePequePreview() {
     MaterialTheme {
         RelayContainer {
-            FotoPerfil(
+            FotoPerfilBase(
                 size = Size.Peque,
                 modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
             )
@@ -59,7 +59,7 @@ private fun FotoPerfilSizePequePreview() {
 private fun FotoPerfilSizeEnormePreview() {
     MaterialTheme {
         RelayContainer {
-            FotoPerfil(
+            FotoPerfilBase(
                 size = Size.Enorme,
                 modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
             )

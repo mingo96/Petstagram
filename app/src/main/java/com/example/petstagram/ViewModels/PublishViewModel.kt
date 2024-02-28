@@ -58,7 +58,7 @@ class PublishViewModel : ViewModel() {
             postTitle!= "Titulo Publicacion") {
                 val newPost = Post()
                 newPost.title = postTitle
-                newPost.category = category.name
+                newPost.category = category
                 newPost.typeOfMedia = if (isImage) "image" else if(isVideo) "video" else "unknown"
                 newPost.creatorUser = user
                 db.collection("Posts")

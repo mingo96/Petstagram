@@ -16,8 +16,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.petstagram.UiData.Post
-import com.example.petstagram.fotoperfil.FotoPerfil
+import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
 import com.example.petstagram.like.Like
 import com.example.petstagram.opciones.Opciones
@@ -85,7 +86,14 @@ fun TopLevelVariacionDefault(
 
 @Composable
 fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
-    FotoPerfil(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
+    if (picture != "")
+        AsyncImage(model = picture,
+            modifier = modifier
+                .requiredWidth(32.0.dp)
+                .requiredHeight(32.0.dp),
+            contentDescription = "foto de perfil")
+    else
+        FotoPerfilBase(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
 }
 
 @Composable

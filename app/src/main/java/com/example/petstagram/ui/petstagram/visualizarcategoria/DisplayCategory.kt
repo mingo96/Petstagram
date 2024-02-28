@@ -36,10 +36,11 @@ fun DisplayCategory(
     viewModel: PostsViewModel
 ) {
     LaunchedEffect(viewModel){
-        viewModel.fetchPosts()
+        viewModel.startLoadingPosts()
     }
 
     val isLoading by viewModel.isLoading.observeAsState()
+
     BoxWithConstraints {
         val height = maxHeight
         TopLevel(modifier = modifier) {

@@ -1,22 +1,18 @@
 package com.example.petstagram.ViewModels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Post
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -42,7 +38,7 @@ class PostsViewModel : ViewModel() {
 
     private var indexesOfPosts = 10L
 
-    fun fetchPosts(){
+    fun startLoadingPosts(){
         viewModelScope.launch {
 
             if (locallySaved.contains(statedCategory)){
@@ -60,7 +56,7 @@ class PostsViewModel : ViewModel() {
                 db.collection("Posts")
                     //filtros
                     .orderBy("postedDate", Query.Direction.DESCENDING)
-                    .whereEqualTo("category", statedCategory.name)
+                    .whereEqualTo("category", statedCategory)
                     //la máxima a sacar es indexesOfPosts, para no sacar cada entrada a la primera
                     .limit(indexesOfPosts)
                     .get()

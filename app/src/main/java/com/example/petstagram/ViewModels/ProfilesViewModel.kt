@@ -45,8 +45,8 @@ class ProfilesViewModel : ViewModel() {
                 //_posts va recolectando de la coleccion Posts
                 db.collection("Posts")
                     //filtros
+                    .whereEqualTo("creatorUser", selfProfile)
                     .orderBy("postedDate", Query.Direction.DESCENDING)
-                    .whereEqualTo("creatorUser", selfProfile.id)
                     //la máxima a sacar es indexesOfPosts, para no sacar cada entrada a la primera
                     .limit(indexesOfPosts)
                     .get()

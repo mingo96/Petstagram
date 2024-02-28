@@ -15,7 +15,7 @@ import com.example.petstagram.ViewModels.ProfilesViewModel
 import com.example.petstagram.barrasuperior.BarraSuperior
 import com.example.petstagram.barrasuperior.Variante
 import com.example.petstagram.cuadrotexto.Label
-import com.example.petstagram.fotoperfil.FotoPerfil
+import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.fotoperfil.Size
 import com.example.petstagram.opcionperfil.OpcionPerfil
 import com.google.relay.compose.RelayContainer
@@ -63,7 +63,7 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 
 @Composable
 fun FotoPerfilInstance(modifier: Modifier = Modifier) {
-    FotoPerfil(
+    FotoPerfilBase(
         size = Size.Enorme,
         modifier = modifier
     )

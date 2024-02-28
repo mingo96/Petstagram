@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.petstagram.R
-import com.example.petstagram.fotoperfil.FotoPerfil
+import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.like.Like
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -132,7 +132,7 @@ fun ContenidoComentario(modifier: Modifier = Modifier) {
 
 @Composable
 fun FotoPerfilInstance(modifier: Modifier = Modifier) {
-    FotoPerfil(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
+    FotoPerfilBase(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
 }
 
 @Composable
