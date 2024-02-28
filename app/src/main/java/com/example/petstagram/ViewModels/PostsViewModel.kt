@@ -1,6 +1,7 @@
 package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +18,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
@@ -59,15 +62,16 @@ class PostsViewModel : ViewModel() {
     fun startLoadingPosts(){
         viewModelScope.launch {
 
-
             _posts.collect{
 
                 //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
                 //if it has already been loaded
-                if (locallySaved.contains(statedCategory)){
+
+                Log.i("asdkjavdajk","recargando")
+                if (locallySaved.contains(statedCategory)) {
                     _posts.value = locallySaved[statedCategory]!!
                     indexesOfPosts = _posts.value.count().toLong()
-                }else{
+                } else {
                     indexesOfPosts = 10L
                     locallySaved[statedCategory] = _posts.value
                 }
@@ -77,8 +81,11 @@ class PostsViewModel : ViewModel() {
                 delay(4000)
                 //if we dont have any post yet, we are loading
                 _isloading.value = (_posts.value.isEmpty())
-                if (_posts.value.count().toLong() >=indexesOfPosts)
-                    indexesOfPosts+=10
+                if (_posts.value.count().toLong() >= indexesOfPosts)
+                    indexesOfPosts += 10
+                Log.i("asdkjavdajk","recargando2")
+
+
             }
 
         }

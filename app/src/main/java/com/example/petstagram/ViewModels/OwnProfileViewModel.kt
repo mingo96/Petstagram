@@ -20,7 +20,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class OwnProfileViewModel : ViewModel() {
@@ -80,38 +82,23 @@ class OwnProfileViewModel : ViewModel() {
 
             _posts.collect{
 
-                if (!_isEditing.value!!) {
-                    Log.i("oisudfgs8", "${isEditing.value}")
-                    //_posts va recolectando de la coleccion Posts
-                    getFirebasePosts()
-                }
-                delay(4000)
-                _isloading.value = (_posts.value.isEmpty())
-                if (_posts.value.count().toLong() >=indexesOfPosts)
-                    indexesOfPosts+=10
+                    if (!_isEditing.value!!) {
+                        Log.i("oisudfgs8", "${isEditing.value}")
+                        //_posts va recolectando de la coleccion Posts
+                        getFirebasePosts()
+                    }
+                    delay(4000)
+                    _isloading.value = (_posts.value.isEmpty())
+                    if (_posts.value.count().toLong() >= indexesOfPosts)
+                        indexesOfPosts += 10
+
+
             }
+
 
         }
     }
 
-    /**gets executed when we click te button for editing [userName]*/
-    fun editUserNameClicked(context : Context){
-        if (!_isEditing.value!!){
-            //if we were not editing, just set the username to the profile one and set _isEditing to true
-            userName = _selfProfile.value.userName
-            _isEditing.value = !_isEditing.value!!
-        }else{
-            //if editing already, searches for any profile with the given username
-            db.collection("Users").whereEqualTo("userName", userName).get().addOnSuccessListener {
-                if (it.isEmpty){
-                    //case there's not someone with that username, we push the Update the username
-                    pushNewUserName()
-                }else
-                    //case someone already has this name, we show it with a toast
-                    Toast.makeText(context,"nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
     /**gets the posts JSON filtering by [_selfProfile]*/
     private fun getFirebasePosts(){
@@ -149,6 +136,25 @@ class OwnProfileViewModel : ViewModel() {
                 _posts.value = _posts.value.sortedBy { it.second.postedDate }
                         .reversed()
             }
+    }
+
+    /**gets executed when we click te button for editing [userName]*/
+    fun editUserNameClicked(context : Context){
+        if (!_isEditing.value!!){
+            //if we were not editing, just set the username to the profile one and set _isEditing to true
+            userName = _selfProfile.value.userName
+            _isEditing.value = !_isEditing.value!!
+        }else{
+            //if editing already, searches for any profile with the given username
+            db.collection("Users").whereEqualTo("userName", userName).get().addOnSuccessListener {
+                if (it.isEmpty){
+                    //case there's not someone with that username, we push the Update the username
+                    pushNewUserName()
+                }else
+                //case someone already has this name, we show it with a toast
+                    Toast.makeText(context,"nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     /**if [userName] is valid, updates the username of this [_selfProfile]*/
@@ -196,11 +202,12 @@ class OwnProfileViewModel : ViewModel() {
     fun keepUpWithUserInfo() {
         viewModelScope.launch {
             _selfProfile.collect{
-                    db.collection("Users").whereEqualTo("id", selfId).get()
-                    .addOnSuccessListener {
-                        _selfProfile.value = it.documents[0].toObject(Profile::class.java)!!
-                        _resource.value = _selfProfile.value.profilePic
-                    }
+
+                db.collection("Users").whereEqualTo("id", selfId).get()
+                .addOnSuccessListener {
+                    _selfProfile.value = it.documents[0].toObject(Profile::class.java)!!
+                    _resource.value = _selfProfile.value.profilePic
+                }
 
                 delay(10000)
             }

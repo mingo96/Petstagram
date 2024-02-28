@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.publicacion.Publicacion
 import com.google.relay.compose.MainAxisAlignment
@@ -27,7 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun Publicaciones(modifier: Modifier = Modifier, posts : StateFlow<List<Pair<String, Post>>>) {
     BoxWithConstraints {
-        val postsState by posts.collectAsState()
+        val postsState by posts.collectAsStateWithLifecycle()
         val anchoMax = maxWidth
         TopLevel(modifier = modifier.width(maxWidth)) {
             for (i in postsState){

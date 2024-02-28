@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -65,7 +66,7 @@ fun MyProfile(
         viewModel.keepUpWithUserInfo()
     }
 
-    val sourceSelecter = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
+    val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
         if(uri != null)viewModel.setResource(uri)
     }
 
@@ -104,7 +105,7 @@ fun MyProfile(
                         .height(height.times(0.30f))
                         .width(height.times(0.30f)),
                     url = profilePicObserver.orEmpty())
-                BotonEditar(Modifier.clickable { sourceSelecter.launch("*/*") }) {
+                BotonEditar(Modifier.clickable { sourceSelector.launch("*/*") }) {
                     CirculoEditar()
                     BotonEditarSynth {
                         ImagenEditar()
@@ -122,7 +123,7 @@ fun MyProfile(
                 PublicacionesInstance(
                     modifier = Modifier
                         .rowWeight(1.0f)
-                        .height(height.times(0.48f)),
+                        .height(height),
                     viewModel = viewModel
                 )
         }
@@ -259,6 +260,7 @@ fun ImagenEditar(modifier: Modifier = Modifier) {
 
 @Composable
 fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
+
     Publicaciones(
         modifier = modifier
             .fillMaxWidth(1.0f),
