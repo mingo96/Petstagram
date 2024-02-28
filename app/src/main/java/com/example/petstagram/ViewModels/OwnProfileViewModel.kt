@@ -82,16 +82,17 @@ class OwnProfileViewModel : ViewModel() {
 
             _posts.collect{
 
-                    if (!_isEditing.value!!) {
-                        Log.i("oisudfgs8", "${isEditing.value}")
-                        //_posts va recolectando de la coleccion Posts
-                        getFirebasePosts()
-                    }
-                    delay(4000)
-                    _isloading.value = (_posts.value.isEmpty())
-                    if (_posts.value.count().toLong() >= indexesOfPosts)
-                        indexesOfPosts += 10
-
+                delay(4000)
+                if (!_isEditing.value!!) {
+                    getFirebasePosts()
+                }
+                delay(4000)
+                _isloading.value = (_posts.value.isEmpty())
+                if (_posts.value.count().toLong() >= indexesOfPosts)
+                    indexesOfPosts += 10
+                //order the list
+                _posts.value = _posts.value.sortedBy { it.second.postedDate }
+                .reversed()
 
             }
 
@@ -132,9 +133,8 @@ class OwnProfileViewModel : ViewModel() {
         storageRef.child("/PostImages/${postJson.id}")
             .downloadUrl.addOnSuccessListener { uri ->
                 _posts.value += (Pair(uri.toString(), castedPost!!))
-                //order the list
-                _posts.value = _posts.value.sortedBy { it.second.postedDate }
-                        .reversed()
+
+
             }
     }
 

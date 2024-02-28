@@ -67,7 +67,6 @@ class PostsViewModel : ViewModel() {
                 //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
                 //if it has already been loaded
 
-                Log.i("asdkjavdajk","recargando")
                 if (locallySaved.contains(statedCategory)) {
                     _posts.value = locallySaved[statedCategory]!!
                     indexesOfPosts = _posts.value.count().toLong()
@@ -76,14 +75,14 @@ class PostsViewModel : ViewModel() {
                     locallySaved[statedCategory] = _posts.value
                 }
 
-                //_posts va recolectando de la coleccion Posts
+                delay(2000)
                 getPostsFromFirebase()
                 delay(4000)
                 //if we dont have any post yet, we are loading
                 _isloading.value = (_posts.value.isEmpty())
                 if (_posts.value.count().toLong() >= indexesOfPosts)
                     indexesOfPosts += 10
-                Log.i("asdkjavdajk","recargando2")
+
 
 
             }
