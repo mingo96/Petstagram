@@ -1,8 +1,11 @@
 package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -43,7 +46,7 @@ class PostsViewModel : ViewModel() {
 
     /*******TO BE TESTED******
      * it's supposed to locally save content for categories when we swap between them*/
-    private val locallySaved by mutableStateOf(mutableMapOf<Category, List<Pair<String, Post>>>())
+    private val locallySaved by mutableStateOf( mutableMapOf<Category, List<Pair<String, Post>>>() )
 
     /**actual content of [Post]s and their Uri Strings*/
     private val _posts = MutableStateFlow<List<Pair<String, Post>>>(emptyList())
@@ -65,7 +68,21 @@ class PostsViewModel : ViewModel() {
     fun startLoadingPosts(){
         if (!alreadyLoading) {
             alreadyLoading = true
+            if (locallySaved.map { it.key.name }.contains(statedCategory.name)) {
+                val localCategory = locallySaved.keys.find { it.name == statedCategory.name }!!
+
+                _posts.value = locallySaved[localCategory]!!
+                indexesOfPosts = _posts.value.count().toLong()+10
+            } else {
+
+
+                indexesOfPosts = 10L
+                _posts.value = emptyList()
+                locallySaved[statedCategory] = emptyList()
+            }
             viewModelScope.launch {
+
+
 
                 _posts
                     //we make it so it doesnt load more if we get out of the app
@@ -78,14 +95,6 @@ class PostsViewModel : ViewModel() {
 
                         //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
                         //if it has already been loaded
-
-                        if (locallySaved.contains(statedCategory)) {
-                            _posts.value = locallySaved[statedCategory]!!
-                            indexesOfPosts = _posts.value.count().toLong()
-                        } else {
-                            indexesOfPosts = 10L
-                            locallySaved[statedCategory] = _posts.value
-                        }
 
                         delay(2000)
                         getPostsFromFirebase()
