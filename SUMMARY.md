@@ -1,3 +1,3 @@
 # Table of contents
 
-* [Petstagram](README.md)
+* [Page](README.md)
