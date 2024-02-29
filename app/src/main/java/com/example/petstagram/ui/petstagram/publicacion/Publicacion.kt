@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ import androidx.media3.exoplayer.LoadControl
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.cuadroinfo.CuadroInfo
 import com.example.petstagram.cuadroinfo.Variacion
@@ -65,9 +67,10 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 @OptIn(UnstableApi::class) @Composable
 fun PostSource(modifier: Modifier = Modifier, post: Post, url: String) {
     if (post.typeOfMedia == "image") {
-        AsyncImage(
+        SubcomposeAsyncImage(
             modifier = modifier.fillMaxWidth(),
             model = url,
+            loading = { CircularProgressIndicator(Modifier.fillMaxWidth().height(400.dp))},
             contentDescription = post.title,
             contentScale = ContentScale.Crop
         )

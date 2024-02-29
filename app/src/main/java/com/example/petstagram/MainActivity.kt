@@ -69,9 +69,10 @@ class MainActivity : ComponentActivity() {
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             NewPostScreen(navController = navController , viewModel = publishViewModel)
                         }
-                        composable("perfilAjeno"){
-                            SomeonesProfile(navController = navController, viewModel = ownProfileViewModel)
-                        }
+                        //not implemented (yet)
+                        //composable("perfilAjeno"){
+                        //    SomeonesProfile(navController = navController, viewModel = ownProfileViewModel)
+                        //}
                         composable("perfilPropio"){
                             ownProfileViewModel.selfId = authViewModel.localProfile.id
                             MyProfile(navController = navController, viewModel = ownProfileViewModel)

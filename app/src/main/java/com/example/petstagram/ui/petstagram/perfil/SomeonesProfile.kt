@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.OwnProfileViewModel
-import com.example.petstagram.barrasuperior.BarraSuperior
-import com.example.petstagram.barrasuperior.Variante
+import com.example.petstagram.barrasuperior.TopBar
+import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.fotoperfil.Size
@@ -42,7 +42,7 @@ fun SomeonesProfile(
             CuadroTextoInstance(modifier = Modifier
                 .rowWeight(1.0f)
                 .height(height.times(0.06f)))
-            FotoPerfilInstance(
+            ProfilePicInstance(
                 modifier
                     .height(height.times(0.30f))
                     .width(height.times(0.30f)))
@@ -56,9 +56,9 @@ fun SomeonesProfile(
 
 @Composable
 fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    BarraSuperior(
+    TopBar(
         modifier = modifier.fillMaxWidth(1.0f),
-        variante = Variante.ConMenu,
+        variant = Variant.WithMenu,
         navController = navController
     )
 }
@@ -69,7 +69,7 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FotoPerfilInstance(modifier: Modifier = Modifier, url : String = "") {
+fun ProfilePicInstance(modifier: Modifier = Modifier, url : String = "") {
     FotoPerfilBase(
         size = Size.Enorme,
         modifier = modifier,

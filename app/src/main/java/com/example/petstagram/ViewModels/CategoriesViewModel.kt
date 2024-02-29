@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,6 +49,11 @@ class CategoriesViewModel : ViewModel() {
                 delay(10000)
             }
         }
+    }
+
+    /**stops loading*/
+    fun stopLoading() {
+        viewModelScope.coroutineContext.cancelChildren()
     }
 
 }

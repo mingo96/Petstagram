@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.PostsViewModel
-import com.example.petstagram.barrasuperior.BarraSuperior
-import com.example.petstagram.barrasuperior.Variante
+import com.example.petstagram.barrasuperior.TopBar
+import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
-import com.example.petstagram.publicaciones.Publicaciones
+import com.example.petstagram.publicaciones.Posts
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -36,23 +36,25 @@ fun DisplayCategory(
     navController: NavHostController,
     viewModel: PostsViewModel
 ) {
+    //starts loading when entering
     LaunchedEffect(viewModel){
         viewModel.startLoadingPosts()
     }
 
-
+    //stops loading when ending activity
     DisposableEffect(Unit) {
         onDispose {
             viewModel.stopLoading()
         }
     }
 
+    /**observable to let the ui if [viewModel] is still loading data*/
     val isLoading by viewModel.isLoading.observeAsState()
 
     BoxWithConstraints {
         val height = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(
+            TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
                     .height(height.times(0.2225f)),
@@ -69,7 +71,7 @@ fun DisplayCategory(
                         .fillMaxWidth(0.8f))
 
             else
-                PublicacionesInstance(
+                PostsInstance(
                     modifier = Modifier
                         .rowWeight(1.0f)
                         .height(height.times(0.825f)),
@@ -79,16 +81,18 @@ fun DisplayCategory(
     }
 }
 
-
+/**pass-by function to display [TopBar]*/
 @Composable
-fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    BarraSuperior(
+fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
+    TopBar(
         modifier = modifier.fillMaxWidth(1.0f),
-        variante = Variante.ConMenu,
+        variant = Variant.WithMenu,
         navController = navController
     )
 }
 
+/**pass-by function to display the text of the category
+ * @param added represents the name of the category*/
 @Composable
 fun CategoryText(modifier: Modifier = Modifier, added: String) {
     Label(
@@ -98,9 +102,10 @@ fun CategoryText(modifier: Modifier = Modifier, added: String) {
     )
 }
 
+/**pass-by function to display [Posts]*/
 @Composable
-fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
-    Publicaciones(
+fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
+    Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
         posts = viewModel.posts

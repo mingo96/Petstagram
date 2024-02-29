@@ -47,10 +47,8 @@ import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayVector
 
 /**
- * login
- *
- * This composable was generated from the UI Package 'login_en_movil'.
- * Generated code; do not edit directly
+ * login, interactuates with [viewModel] to get the user authenticated
+ * @param viewModel controller class for auth
  */
 @Composable
 fun PhoneLogin(
@@ -58,7 +56,6 @@ fun PhoneLogin(
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
-
 
     val userValue: () -> String = { viewModel.user }
 
@@ -71,6 +68,7 @@ fun PhoneLogin(
     val context =
         LocalContext.current.applicationContext
 
+    //state of the authentication
     val state by viewModel.state.observeAsState()
 
 
@@ -173,6 +171,7 @@ fun WelcomeText(modifier: Modifier = Modifier) {
     )
 }
 
+/**just some in-out text field, not too much to see (logic wise)*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserText(
@@ -218,6 +217,7 @@ fun UserText(
     )
 }
 
+/**just some in-out text field, password formatted, not too much to see (logic wise)*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordText(
@@ -265,6 +265,7 @@ fun PasswordText(
     )
 }
 
+/**just some ouput text, not too much to see (logic wise)*/
 @Composable
 fun RegisterTextButton(modifier: Modifier = Modifier) {
     Label(
@@ -273,6 +274,7 @@ fun RegisterTextButton(modifier: Modifier = Modifier) {
     )
 }
 
+/**just some ouput text, not too much to see (logic wise)*/
 @Composable
 fun LogInTextButton(modifier: Modifier = Modifier) {
     Label(

@@ -98,9 +98,9 @@ class PostsViewModel : ViewModel() {
                         //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
                         //if it has already been loaded
 
-                        delay(2000)
+                        delay(1000)
                         getPostsFromFirebase()
-                        delay(4000)
+                        delay(1000)
                         //if we dont have any post yet, we are loading
                         _isloading.value = (_posts.value.isEmpty())
                         if (_posts.value.count().toLong() >= indexesOfPosts)

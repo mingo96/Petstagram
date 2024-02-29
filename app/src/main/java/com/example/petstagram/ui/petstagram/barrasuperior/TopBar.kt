@@ -26,27 +26,24 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 
 // Design to select for BarraSuperior
-enum class Variante {
+enum class Variant {
     Simple,
-    ConMenu
+    WithMenu
 }
 
-/**
- * This composable was generated from the UI Package 'barra_superior'.
- * Generated code; do not edit directly
- */
+/**UI representation for the top bar of the app, interacts with [navController] to navigate*/
 @Composable
-fun BarraSuperior(
+fun TopBar(
     modifier: Modifier = Modifier,
-    variante: Variante = Variante.Simple,
+    variant: Variant = Variant.Simple,
     navController: NavHostController
 ) {
-    when (variante) {
-        Variante.Simple -> TopLevelVarianteSimple(modifier = modifier) {
+    when (variant) {
+        Variant.Simple -> TopLevelVarianteSimple(modifier = modifier) {
             AccesoAPerfilAccesoAPerfil(navController = navController)
             ImagenDeslizableVarianteSimple()
         }
-        Variante.ConMenu ->
+        Variant.WithMenu ->
             BoxWithConstraints {
             val altomax = maxHeight
             TopLevelVarianteConMenu(modifier = modifier) {

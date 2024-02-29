@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.ViewModels.PublishViewModel
-import com.example.petstagram.barrasuperior.BarraSuperior
-import com.example.petstagram.barrasuperior.Variante
+import com.example.petstagram.barrasuperior.TopBar
+import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
@@ -42,13 +42,8 @@ import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 
-/**
- * pantalla para publicar
- *
- *
- * This composable was generated from the UI Package 'publicar'.
- * Generated code; do not edit directly
- */
+/**UI screen to send data to the Server, navigates through [navController] and sends/recieves data
+ * from [viewModel]*/
 @Composable
 fun NewPostScreen(
     modifier: Modifier = Modifier,
@@ -65,25 +60,31 @@ fun NewPostScreen(
     val uriObserver by viewModel.resource.observeAsState()
 
     BoxWithConstraints {
-        val maxAltura = maxHeight
+        val height = maxHeight
         TopLevel(modifier = modifier) {
 
-            BarraSuperiorInstance(
+            TopBarInstance(
                 modifier = Modifier
                     .rowWeight(
                         1.0f
                     )
-                    .height(maxAltura.times(0.23f)), navController = navController
+                    .height(height.times(0.23f)), navController = navController
             )
             CreatePostText()
-            TitleTextInput(accesoTexto = { viewModel.getTitle()}, cambiarTexto = {viewModel.changeTitle(it)})
-            SourceSelectorTextButton(modifier.clickable {
-                sourceSelecter.launch("*/*") })
-            PublishPostTextButton(modifier.clickable {
-                viewModel.postPost{
-                    navController.navigateUp()
+            TitleTextInput(textValue = { viewModel.getTitle()}, changeText = {viewModel.changeTitle(it)})
+            SourceSelectorTextButton(
+                modifier.clickable {
+                    sourceSelecter.launch("*/*")
                 }
-            })
+            )
+
+            PublishPostTextButton(
+                modifier.clickable {
+                    viewModel.postPost{
+                        navController.navigateUp()
+                    }
+                }
+            )
 
             //if the source isnt available yet, just CircularProgressIndicator
             if(uriObserver == null||uriObserver== Uri.EMPTY){
@@ -95,7 +96,7 @@ fun NewPostScreen(
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),
                         contentDescription = "foto seleccionada",
                         contentScale = ContentScale.Fit,
-                        modifier = modifier.height(maxAltura.times(0.3f))
+                        modifier = modifier.height(height.times(0.3f))
                     )
                 }
             }
@@ -106,20 +107,22 @@ fun NewPostScreen(
 
 }
 
-
+/**@return the format this URI has*/
 fun Uri.uriFormat(): String {
     return this.toString().split("/").last().split(".").last()
 }
 
+/**top bar with which you can move in the app*/
 @Composable
-fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    BarraSuperior(
-        variante = Variante.ConMenu,
+fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
+    TopBar(
+        variant = Variant.WithMenu,
         modifier = modifier.fillMaxWidth(1.0f),
         navController = navController
     )
 }
 
+/**pass-by function to call a [Label], not much to see (logic wise)*/
 @Composable
 fun CreatePostText(modifier: Modifier = Modifier) {
     Label(
@@ -130,18 +133,18 @@ fun CreatePostText(modifier: Modifier = Modifier) {
     )
 }
 
-
+/**basic in-out info representation text, not much to see (logic-wise)*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TitleTextInput(
     modifier: Modifier = Modifier,
-    accesoTexto: () -> String,
-    cambiarTexto: (String) -> Unit
+    textValue: () -> String,
+    changeText: (String) -> Unit
 ) {
     OutlinedTextField(
         singleLine = true,
-        value = accesoTexto.invoke(),
-        onValueChange = cambiarTexto,
+        value = textValue.invoke(),
+        onValueChange = changeText,
         textStyle = TextStyle(
             textAlign = TextAlign.Center,
             fontSize = 26.0.sp,
@@ -168,16 +171,7 @@ fun TitleTextInput(
     )
 }
 
-@Composable
-fun CuadroTexto1(modifier: Modifier = Modifier) {
-    Label(
-        modifier = modifier
-            .requiredWidth(296.0.dp)
-            .requiredHeight(80.0.dp),
-        variation = Variation.PostTitle
-    )
-}
-
+/**pass-by function to call a [Label], not much to see (logic-wise)*/
 @Composable
 fun SourceSelectorTextButton(modifier: Modifier = Modifier) {
     Label(
@@ -188,6 +182,8 @@ fun SourceSelectorTextButton(modifier: Modifier = Modifier) {
     )
 }
 
+
+/**pass-by function to call a [Label], not much to see (logic-wise)*/
 @Composable
 fun PublishPostTextButton(modifier: Modifier = Modifier) {
     Label(

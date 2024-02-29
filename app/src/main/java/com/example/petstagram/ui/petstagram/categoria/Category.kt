@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
-import com.example.petstagram.R
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.google.relay.compose.CrossAxisAlignment
@@ -29,24 +27,19 @@ import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
-import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayText
 
-/**
- * categoria
- *
- * This composable was generated from the UI Package 'categoria'.
- * Generated code; do not edit directly
+/**Ui representation of [Category]
  */
 @Composable
-fun Categoria(
+fun Category(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     category: Category,
     viewModel: CategoriesViewModel
 ) {
     TopLevel(modifier = modifier) {
-        ContendorImagen(modifier = Modifier.rowWeight(1.0f)) {
+        ImageContainer(modifier = Modifier.rowWeight(1.0f)) {
             SubcomposeAsyncImage(
                 model = category.categoryImage,
                 loading = {
@@ -56,23 +49,23 @@ fun Categoria(
                 contentScale = ContentScale.Crop
             )
         }
-        Botones(modifier = Modifier.rowWeight(1.0f)) {
-            BotonAccesoPublicaciones(modifier = Modifier
+        Buttons(modifier = Modifier.rowWeight(1.0f)) {
+            PostsAccessButton(modifier = Modifier
                 .rowWeight(1.0f)
                 .columnWeight(1.0f)
                 .clickable {
                     viewModel.selectedCategory = category
                     navController.navigate("publicaciones")
                 }) {
-                TextoCategoria(texto = category.name)
+                CategoryText(texto = category.name)
             }
-            BotonMas(modifier = Modifier
+            AddButton(modifier = Modifier
                 .columnWeight(1.0f)
                 .clickable {
                     viewModel.selectedCategory = category
                     navController.navigate("publicar")
                 }) {
-                CuadroSumar(modifier = Modifier
+                AddText(modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f))
             }
@@ -82,18 +75,7 @@ fun Categoria(
 
 
 @Composable
-fun ImagenGenerica(modifier: Modifier = Modifier) {
-    RelayImage(
-        image = painterResource(R.drawable.categoria_imagen_generica),
-        contentScale = ContentScale.Crop,
-        modifier = modifier
-            .requiredWidth(120.0.dp)
-            .requiredHeight(125.0.dp)
-    )
-}
-
-@Composable
-fun ContendorImagen(
+fun ImageContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -121,7 +103,7 @@ fun ContendorImagen(
 }
 
 @Composable
-fun TextoCategoria(modifier: Modifier = Modifier, texto: String) {
+fun CategoryText(modifier: Modifier = Modifier, texto: String) {
     RelayText(
         content = "Publicaciones de $texto",
         fontSize = 15.0.sp,
@@ -146,7 +128,7 @@ fun TextoCategoria(modifier: Modifier = Modifier, texto: String) {
 }
 
 @Composable
-fun BotonAccesoPublicaciones(
+fun PostsAccessButton(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -175,7 +157,7 @@ fun BotonAccesoPublicaciones(
 }
 
 @Composable
-fun CuadroSumar(modifier: Modifier = Modifier) {
+fun AddText(modifier: Modifier = Modifier) {
     RelayText(
         content = "+",
         fontSize = 40.0.sp,
@@ -194,7 +176,7 @@ fun CuadroSumar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BotonMas(
+fun AddButton(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -229,7 +211,7 @@ fun BotonMas(
 }
 
 @Composable
-fun Botones(
+fun Buttons(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {

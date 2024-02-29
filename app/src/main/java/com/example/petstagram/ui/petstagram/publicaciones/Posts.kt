@@ -1,12 +1,10 @@
 package com.example.petstagram.publicaciones
 
-import android.util.Log
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +14,6 @@ import com.example.petstagram.publicacion.Publicacion
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -26,7 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Generated code; do not edit directly
  */
 @Composable
-fun Publicaciones(modifier: Modifier = Modifier, posts : StateFlow<List<Pair<String, Post>>>) {
+fun Posts(modifier: Modifier = Modifier, posts : StateFlow<List<Pair<String, Post>>>) {
     BoxWithConstraints {
         val postsState by posts.collectAsStateWithLifecycle()
         val anchoMax = maxWidth

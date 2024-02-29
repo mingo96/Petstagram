@@ -18,8 +18,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -39,9 +39,9 @@ import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
-import com.example.petstagram.menuprincipal.BarraSuperiorInstance
-import com.example.petstagram.perfil.FotoPerfilInstance
-import com.example.petstagram.publicaciones.Publicaciones
+import com.example.petstagram.menuprincipal.TopBarInstance
+import com.example.petstagram.perfil.ProfilePicInstance
+import com.example.petstagram.publicaciones.Posts
 import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -49,11 +49,9 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayVector
 
-/**
- * perfil propio
- *
- * This composable was generated from the UI Package 'perfil_propio'.
- * Generated code; do not edit directly
+/**UI screen for the user info and data input (profile pic, username)
+ * @param navController to navigate
+ * @param viewModel to receive and send information
  */
 @Composable
 fun MyProfile(
@@ -62,22 +60,34 @@ fun MyProfile(
     viewModel: OwnProfileViewModel
 ) {
 
-    //tells the
+    //on launch start loading user info
     LaunchedEffect(key1 = viewModel){
         viewModel.keepUpWithUserInfo()
     }
 
+    //on exit stop loading
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopLoading()
+        }
+    }
+
+    /**external activity that returns the local uri of the file the user selects*/
     val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
         if(uri != null)viewModel.setResource(uri)
     }
 
     val thisContext =(LocalContext.current)
 
+    /**actual profile pic*/
     val profilePicObserver by viewModel.resource.observeAsState()
 
+    /**informs UI of changes in loading value*/
     val isLoading by viewModel.isLoading.observeAsState()
 
+    /**informs UI of changes in editing value*/
     val editing by viewModel.isEditing.observeAsState()
+
 
     val accessText : ()->String = { viewModel.getUserNameText() }
 
@@ -86,30 +96,32 @@ fun MyProfile(
     BoxWithConstraints {
         val height = maxHeight
         TopLevel(modifier = modifier) {
-            BarraSuperiorInstance(modifier = Modifier
+            TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
                 .height(height.times(0.23f)),navController = navController)
-            ContenedorNombreUsuario(Modifier.height(height.times(0.06f))) {
-                YourUserName(editing = editing!!, accesoTexto = accessText, cambiarTexto = changeText)
-                BotonEditarNombreUsuario(Modifier.clickable {
-                    viewModel.editUserNameClicked(thisContext)
-                }) {
-                    CirculoEditarNombreUsuario()
-                    BotonEditarNombreUsuarioSynth {
-                        ImagenCambiarNombreUsuario()
+            UserNameContainer(Modifier.height(height.times(0.06f))) {
+                YourUserName(editing = editing!!, textValue = accessText, changeText = changeText)
+                EditUsernameButton(
+                    Modifier.clickable {
+                        viewModel.editUserNameClicked(thisContext)
+                    }
+                ) {
+                    EditUsernameBackgroundCircle()
+                    EditUsernameImageContainer {
+                        EditUsernameImage()
                     }
                 }
             }
-            ContenedorImagen {
-                FotoPerfilInstance(
+            ImageContainer {
+                ProfilePicInstance(
                     Modifier
                         .height(height.times(0.30f))
                         .width(height.times(0.30f)),
                     url = profilePicObserver.orEmpty())
-                BotonEditar(Modifier.clickable { sourceSelector.launch("*/*") }) {
-                    CirculoEditar()
-                    BotonEditarSynth {
-                        ImagenEditar()
+                EditProfilePicButton(Modifier.clickable { sourceSelector.launch("images/*") }) {
+                    EditProfilePicButtonBackgroundCircle()
+                    EditProfilePicImageContainer {
+                        EditProfilePicImage()
                     }
                 }
             }
@@ -121,7 +133,7 @@ fun MyProfile(
                         .height(height.times(0.825f))
                         .fillMaxWidth(0.8f))
             else
-                PublicacionesInstance(
+                PostsInstance(
                     modifier = Modifier
                         .rowWeight(1.0f)
                         .height(height),
@@ -132,9 +144,8 @@ fun MyProfile(
 
 }
 
-
 @Composable
-fun ContenedorNombreUsuario(
+fun UserNameContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -147,7 +158,7 @@ fun ContenedorNombreUsuario(
 }
 
 @Composable
-fun BotonEditarNombreUsuario(
+fun EditUsernameButton(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -161,7 +172,7 @@ fun BotonEditarNombreUsuario(
 }
 
 @Composable
-fun BotonEditarNombreUsuarioSynth(
+fun EditUsernameImageContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -176,7 +187,7 @@ fun BotonEditarNombreUsuarioSynth(
 }
 
 @Composable
-fun ImagenCambiarNombreUsuario(modifier: Modifier = Modifier) {
+fun EditUsernameImage(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.perfil_propio_imagen_cambiar_nombre_usuario),
         contentScale = ContentScale.Crop,
@@ -187,7 +198,7 @@ fun ImagenCambiarNombreUsuario(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CirculoEditarNombreUsuario(modifier: Modifier = Modifier) {
+fun EditUsernameBackgroundCircle(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.perfil_propio_circulo_editar_nombre_usuario),
         modifier = modifier
@@ -197,7 +208,7 @@ fun CirculoEditarNombreUsuario(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ContenedorImagen(
+fun ImageContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -210,7 +221,7 @@ fun ContenedorImagen(
 }
 
 @Composable
-fun BotonEditar(
+fun EditProfilePicButton(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -224,7 +235,7 @@ fun BotonEditar(
 }
 
 @Composable
-fun CirculoEditar(modifier: Modifier = Modifier) {
+fun EditProfilePicButtonBackgroundCircle(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.perfil_propio_circulo_editar),
         modifier = modifier
@@ -234,7 +245,7 @@ fun CirculoEditar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BotonEditarSynth(
+fun EditProfilePicImageContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -249,7 +260,7 @@ fun BotonEditarSynth(
 }
 
 @Composable
-fun ImagenEditar(modifier: Modifier = Modifier) {
+fun EditProfilePicImage(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.perfil_propio_imagen_editar),
         contentScale = ContentScale.Crop,
@@ -259,26 +270,33 @@ fun ImagenEditar(modifier: Modifier = Modifier) {
     )
 }
 
-@Composable
-fun PublicacionesInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
 
-    Publicaciones(
+/**pass-by function to call [Posts], not much to see (logic-wise)*/
+@Composable
+fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
+
+    Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
         posts = viewModel.posts
     )
 }
+
+
+/**text in-out function, not much to see (logic-wise)
+ * @param editing `true` we play a input TextField
+ * @param editing `false` we play default text*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YourUserName(modifier: Modifier = Modifier,
                  editing : Boolean,
-                 accesoTexto:()->String,
-                 cambiarTexto : (String)->Unit) {
+                 textValue:()->String,
+                 changeText : (String)->Unit) {
 
     if (editing)
         OutlinedTextField(
-            value = accesoTexto.invoke(),
-            onValueChange = cambiarTexto,
+            value = textValue.invoke(),
+            onValueChange = changeText,
             textStyle = TextStyle(
                 fontSize = 20.0.sp,
                 fontFamily = inter,
@@ -320,6 +338,8 @@ fun YourUserName(modifier: Modifier = Modifier,
         )
 }
 
+
+/**pass-by function to call a [Label], not much to see (logic-wise)*/
 @Composable
 fun YourPostsLabel(modifier: Modifier = Modifier) {
     Label(

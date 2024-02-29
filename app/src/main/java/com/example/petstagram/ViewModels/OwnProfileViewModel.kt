@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -231,6 +232,10 @@ class OwnProfileViewModel : ViewModel() {
             }
 
         }
+    }
+
+    fun stopLoading() {
+        viewModelScope.coroutineContext.cancelChildren()
     }
 
 }
