@@ -14,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
+import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
@@ -24,12 +25,7 @@ import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 
-/**
- * Pantalla de categoria
- *
- * This composable was generated from the UI Package 'visualizar_categoria'.
- * Generated code; do not edit directly
- */
+/**UI screen to display a [Category] posts*/
 @Composable
 fun DisplayCategory(
     modifier: Modifier = Modifier,
