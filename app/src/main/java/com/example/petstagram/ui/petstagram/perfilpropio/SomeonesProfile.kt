@@ -122,7 +122,7 @@ fun MyProfile(
                         .height(height.times(0.30f))
                         .width(height.times(0.30f)),
                     url = profilePicObserver.orEmpty())
-                EditProfilePicButton(Modifier.clickable { sourceSelector.launch("images/*") }) {
+                EditProfilePicButton(Modifier.clickable { sourceSelector.launch("image/*") }) {
                     EditProfilePicButtonBackgroundCircle()
                     EditProfilePicImageContainer {
                         EditProfilePicImage()

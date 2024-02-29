@@ -173,7 +173,7 @@ class OwnProfileViewModel : ViewModel() {
                     //i don't think im supposed to need to do this but it doesn't work if i dont
                     for (i in _posts.value) {
                         db.collection("Posts").document(i.second.id).update("creatorUser", _selfProfile.value)
-                        i.second.creatorUser!!.userName=userName
+                        i.second.creatorUser=_selfProfile.value
                     }
                     _isEditing.value = !_isEditing.value!!
                     fetchPosts()
@@ -203,7 +203,11 @@ class OwnProfileViewModel : ViewModel() {
                     storageRef.child("/ProfilePictures/${_selfProfile.value.id}").downloadUrl.addOnSuccessListener {
                         _selfProfile.value.profilePic = it.toString()
                         db.collection("Users").document(_selfProfile.value.id)
-                            .update("profilePic", it.toString())
+                            .update("profilePic", it.toString()).addOnSuccessListener {
+                                for (i in _posts.value) {
+                                    db.collection("Posts").document(i.second.id).update("creatorUser", _selfProfile.value)
+                                }
+                            }
 
                     }
                 }
