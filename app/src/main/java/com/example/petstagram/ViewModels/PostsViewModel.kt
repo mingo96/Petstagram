@@ -18,6 +18,8 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -66,9 +68,11 @@ class PostsViewModel : ViewModel() {
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
+
         if (!alreadyLoading) {
             alreadyLoading = true
             if (locallySaved.map { it.key.name }.contains(statedCategory.name)) {
+                //if i dont do this it fails because it has to be the SAME category, same object reference
                 val localCategory = locallySaved.keys.find { it.name == statedCategory.name }!!
 
                 _posts.value = locallySaved[localCategory]!!
@@ -81,9 +85,7 @@ class PostsViewModel : ViewModel() {
                 locallySaved[statedCategory] = emptyList()
             }
             viewModelScope.launch {
-
-
-
+                Log.i("sadiasgf", "se empieza")
                 _posts
                     //we make it so it doesnt load more if we get out of the app
                     .stateIn(
@@ -135,7 +137,6 @@ class PostsViewModel : ViewModel() {
 
     /**given a JSON, saves its [Post] info and its url*/
     private fun savePostAndUrl(postJson: DocumentSnapshot) {
-        ids+=postJson.id
 
         val castedPost = postJson.toObject(Post::class.java)
 
@@ -143,9 +144,21 @@ class PostsViewModel : ViewModel() {
         storageRef.child("/PostImages/${postJson.id}").downloadUrl.addOnSuccessListener { uri ->
             _posts.value+=(Pair(uri.toString(), castedPost!!))
             _posts.value = _posts.value.sortedBy { it.second.postedDate }.reversed()
+            ids+=postJson.id
             locallySaved[statedCategory] = _posts.value
         }
 
+    }
+
+    fun stopLoading() {
+        Log.i("getting", "out")
+        for (i in locallySaved)
+        {
+            Log.i(i.key.name, i.value.size.toString())
+        }
+        Log.i("teniamos", _posts.value.size.toString())
+        Log.i("ids", ids.size.toString())
+        viewModelScope.coroutineContext.cancelChildren()
     }
 
 

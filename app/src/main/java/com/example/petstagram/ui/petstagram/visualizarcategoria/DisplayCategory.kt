@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -37,6 +38,13 @@ fun DisplayCategory(
 ) {
     LaunchedEffect(viewModel){
         viewModel.startLoadingPosts()
+    }
+
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopLoading()
+        }
     }
 
     val isLoading by viewModel.isLoading.observeAsState()

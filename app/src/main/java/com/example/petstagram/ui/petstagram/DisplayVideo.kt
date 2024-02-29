@@ -18,26 +18,33 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 
+/**function that uses [ExoPlayer] to display a video given an Uri in string format
+ * works for local files and urls*/
 @OptIn(UnstableApi::class) @Composable
 fun DisplayVideo(source : String, modifier:Modifier) {
     val context = LocalContext.current
+    //main controller
     val mediaPlayer = remember {
         ExoPlayer.Builder(context).build()
     }
     val media = MediaItem.fromUri(source)
 
+    //on launch set content and basic configuration
     LaunchedEffect(media) {
         mediaPlayer.setMediaItem(media)
         mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
         mediaPlayer.prepare()
-
     }
+
+    //when we get out it releases memory
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer.release()
         }
     }
 
+    //the video itself, they repeat for ever, start stopped, on click you swap between
+    //stopped / playing, basic controller was just too ugly
     AndroidView(
         factory = { ctx ->
             PlayerView(ctx).apply {

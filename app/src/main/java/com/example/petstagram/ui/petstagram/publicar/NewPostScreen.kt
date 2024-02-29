@@ -56,10 +56,12 @@ fun NewPostScreen(
     viewModel: PublishViewModel
 ) {
 
+    //launcher for an external activity that returns the URI of the file you selected
     val sourceSelecter = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
         if(uri != null)viewModel.setResource(uri)
     }
 
+    //uri observed to see it before publishing
     val uriObserver by viewModel.resource.observeAsState()
 
     BoxWithConstraints {
@@ -73,16 +75,17 @@ fun NewPostScreen(
                     )
                     .height(maxAltura.times(0.23f)), navController = navController
             )
-            CuadroTextoInstance()
-            CuadroTextoNombreUsuario(accesoTexto = { viewModel.getTitle()}, cambiarTexto = {viewModel.changeTitle(it)})
-            CuadroTexto2(modifier.clickable {
+            CreatePostText()
+            TitleTextInput(accesoTexto = { viewModel.getTitle()}, cambiarTexto = {viewModel.changeTitle(it)})
+            SourceSelectorTextButton(modifier.clickable {
                 sourceSelecter.launch("*/*") })
-            CuadroTexto3(modifier.clickable {
+            PublishPostTextButton(modifier.clickable {
                 viewModel.postPost{
                     navController.navigateUp()
                 }
             })
 
+            //if the source isnt available yet, just CircularProgressIndicator
             if(uriObserver == null||uriObserver== Uri.EMPTY){
                 CircularProgressIndicator(Modifier.padding(bottom = 16.dp).height(40.dp))
             }else{
@@ -118,7 +121,7 @@ fun BarraSuperiorInstance(modifier: Modifier = Modifier, navController: NavHostC
 }
 
 @Composable
-fun CuadroTextoInstance(modifier: Modifier = Modifier) {
+fun CreatePostText(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
@@ -130,7 +133,7 @@ fun CuadroTextoInstance(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CuadroTextoNombreUsuario(
+fun TitleTextInput(
     modifier: Modifier = Modifier,
     accesoTexto: () -> String,
     cambiarTexto: (String) -> Unit
@@ -176,7 +179,7 @@ fun CuadroTexto1(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CuadroTexto2(modifier: Modifier = Modifier) {
+fun SourceSelectorTextButton(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
@@ -186,7 +189,7 @@ fun CuadroTexto2(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CuadroTexto3(modifier: Modifier = Modifier) {
+fun PublishPostTextButton(modifier: Modifier = Modifier) {
     Label(
         modifier = modifier
             .requiredWidth(296.0.dp)
