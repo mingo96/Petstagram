@@ -25,3 +25,13 @@ description: Pasos seguidos y dificultades encontradas
 13. Optimización de flujos de datos
 14. Gestión de recursos en memoria
 15. Refactorizado y documentación del funcionamiento del codigo
+
+## Dificultades encontradas
+
+(Ordenadas de horrible a molesto)
+
+1. Gestión de estado de UI y flujo de datos estable y práctico
+2. Actualización de datos (las referencias no se actualizan si el referenciado cambia)
+3. Display de video
+4. Ajuste de UI a código
+5. Gestión de indices de busqueda en Firebase
