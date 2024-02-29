@@ -108,7 +108,7 @@ fun NewPostScreen(
                         .padding(bottom = 16.dp)
                         .height(40.dp))
             }else{
-                if (getMimeType(context, uriObserver!!)?.startsWith("/video") == true){
+                if (getMimeType(context, uriObserver!!)?.startsWith("video/") == true){
                     DisplayVideo(source = uriObserver.toString(), modifier = modifier)
                 }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),

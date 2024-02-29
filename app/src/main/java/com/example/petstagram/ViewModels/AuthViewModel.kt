@@ -99,7 +99,11 @@ class AuthViewModel : ViewModel() {
                             onSuccess.invoke()
                         }
                     }
-                    else Toast.makeText(context,"credenciales no válidos", Toast.LENGTH_SHORT).show()
+                    else {
+                        _state.value = AuthUiState.Error
+                        Toast.makeText(context, "credenciales no válidos", Toast.LENGTH_SHORT)
+                            .show()
+                    }
 
                 }
             }

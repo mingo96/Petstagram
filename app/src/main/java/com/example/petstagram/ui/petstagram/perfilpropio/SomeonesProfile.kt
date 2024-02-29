@@ -38,10 +38,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.OwnProfileViewModel
+import com.example.petstagram.barrasuperior.TopBar
+import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
-import com.example.petstagram.menuprincipal.TopBarInstance
 import com.example.petstagram.perfil.ProfilePicInstance
 import com.example.petstagram.publicaciones.Posts
 import com.example.petstagram.visualizarcategoria.TopLevel
@@ -148,6 +149,12 @@ fun MyProfile(
 
 }
 
+
+/**top bar with which you can move in the app*/
+@Composable
+fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
+    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu)
+}
 @Composable
 fun UserNameContainer(
     modifier: Modifier = Modifier,
