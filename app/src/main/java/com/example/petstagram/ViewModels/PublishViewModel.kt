@@ -1,6 +1,10 @@
 package com.example.petstagram.ViewModels
 
+import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -51,26 +55,39 @@ class PublishViewModel : ViewModel() {
         return postTitle
     }
 
+    fun getMimeType(context: Context, uri: Uri): String? {
+        val contentResolver: ContentResolver = context.contentResolver
+        return contentResolver.getType(uri)
+    }
+
     /**posts a [Post] with the info we have (if it is valid)*/
-    fun postPost(onSuccess : ()->Unit){
+    fun postPost(onSuccess : ()->Unit, context : Context){
         //gotta make sure we dont get any document or strange file, atleast one has to be true
-        val isVideo = resource.value!!.uriFormat().contains("video")
-        val isImage = resource.value!!.uriFormat().contains("image")
 
-        if (resource.value!= null &&
-            resource.value != Uri.EMPTY &&
-            (isVideo||isImage) &&
-            postTitle!= "Titulo Publicacion") {
+        val isVideo = getMimeType(context = context,_resource.value!!)?.startsWith("video/")
+        val isImage = getMimeType(context = context,_resource.value!!)?.startsWith("image/")
+        Log.i("intento de seleccion no valido", "$isImage, $isVideo")
 
-            //creates a post with given info
-            val newPost = Post()
-            newPost.title = postTitle
-            newPost.category = category
-            newPost.typeOfMedia = if (isImage) "image" else "video"
-            newPost.creatorUser = user
+        if(isVideo == true || isImage == true) {
+            if (resource.value != null &&
+                resource.value != Uri.EMPTY &&
+                postTitle != "Titulo Publicacion"
+            ) {
 
-            persistPost(newPost, onSuccess)
+                //creates a post with given info
+                val newPost = Post()
+                newPost.title = postTitle
+                newPost.category = category
+                newPost.typeOfMedia = if (isImage == true) "image" else "video"
+                newPost.creatorUser = user
+
+                persistPost(newPost, onSuccess)
+            }
         }
+        else {
+                Log.i("intento de seleccion no valido", "$isImage, $isVideo")
+                Toast.makeText(context, "tipo de archivo no válido", Toast.LENGTH_SHORT).show()
+            }
     }
 
     /**sends the created [Post] to the [db]
@@ -86,11 +103,6 @@ class PublishViewModel : ViewModel() {
                 _resource.value = Uri.EMPTY
                 onSuccess.invoke()
             }
-    }
-
-    /**local function created to get the [Uri] extension*/
-    private fun Uri.uriFormat(): String {
-        return this.toString().split("/").last().split(".").last()
     }
 
     /**simply sends the file in [_resource]

@@ -38,7 +38,8 @@ fun Categories(
         val categories by categoryViewModel.categories.collectAsStateWithLifecycle()
         TopLevel(modifier = modifier) {
             for (i in categories){
-                CategoryInstance(Modifier.width(width),
+                CategoryInstance(
+                    Modifier.width(width),
                     navController = navController,
                     category = i,
                     viewModel = categoryViewModel)
@@ -78,5 +79,6 @@ fun TopLevel(
         modifier = modifier
             .fillMaxWidth(1.0f)
             .wrapContentHeight()
+
     )
 }

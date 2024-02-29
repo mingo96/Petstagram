@@ -1,6 +1,8 @@
 package com.example.petstagram.publicar
 
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -23,12 +25,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toFile
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.ViewModels.PublishViewModel
@@ -51,11 +56,20 @@ fun NewPostScreen(
     viewModel: PublishViewModel
 ) {
 
+
+    val context = LocalContext.current
     //launcher for an external activity that returns the URI of the file you selected
     val sourceSelecter = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
-        if(uri != null)viewModel.setResource(uri)
-    }
+        if(uri != null && uri != Uri.EMPTY) {
 
+            viewModel.setResource(uri)
+        }
+        else {
+            Toast.makeText(context, "selección vacía", Toast.LENGTH_SHORT).show()
+        }
+        Log.i("entrada", uri.toString())
+
+    }
     //uri observed to see it before publishing
     val uriObserver by viewModel.resource.observeAsState()
 
@@ -80,17 +94,21 @@ fun NewPostScreen(
 
             PublishPostTextButton(
                 modifier.clickable {
-                    viewModel.postPost{
+                    viewModel.postPost(context = context, onSuccess = {
                         navController.navigateUp()
                     }
+                    )
                 }
             )
 
             //if the source isnt available yet, just CircularProgressIndicator
             if(uriObserver == null||uriObserver== Uri.EMPTY){
-                CircularProgressIndicator(Modifier.padding(bottom = 16.dp).height(40.dp))
+                CircularProgressIndicator(
+                    Modifier
+                        .padding(bottom = 16.dp)
+                        .height(40.dp))
             }else{
-                if (uriObserver!!.uriFormat().contains("video")){
+                if (viewModel.getMimeType(context, uriObserver!!)?.startsWith("/video") == true){
                     DisplayVideo(source = uriObserver.toString(), modifier = modifier)
                 }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),
@@ -109,7 +127,7 @@ fun NewPostScreen(
 
 /**@return the format this URI has*/
 fun Uri.uriFormat(): String {
-    return this.toString().split("/").last().split(".").last()
+    return this.toString().split("/").last()
 }
 
 /**top bar with which you can move in the app*/

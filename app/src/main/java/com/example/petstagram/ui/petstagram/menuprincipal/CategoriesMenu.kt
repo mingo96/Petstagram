@@ -45,7 +45,7 @@ fun CategoriesMenu(
         TopLevel(modifier = modifier) {
             TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.22f)), navController = navController)
+                .requiredHeight(height.times(0.21f)), navController = navController)
             BarraTipoNotificacion(modifier = Modifier
                 .rowWeight(1.0f)
                 .requiredHeight(height.times(0.07f)),navController = navController)
@@ -62,7 +62,7 @@ fun CategoriesMenu(
 /**top bar with which you can move in the app*/
 @Composable
 fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu)
+    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController)
 }
 
 /**esthetic bar (for now)*/
@@ -79,7 +79,7 @@ fun CategoriesInstance(
     categoryViewModel: CategoriesViewModel
 ) {
 
-    Categories(modifier = modifier,
+    Categories(modifier = modifier.fillMaxWidth(),
         navController = navController,
         categoryViewModel= categoryViewModel)
 
