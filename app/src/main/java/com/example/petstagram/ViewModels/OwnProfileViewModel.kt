@@ -172,9 +172,11 @@ class OwnProfileViewModel : ViewModel() {
                 .addOnCompleteListener {
                     //i don't think im supposed to need to do this but it doesn't work if i dont
                     for (i in _posts.value) {
-                        db.collection("posts").document(i.second.id).update("creatorUser", _selfProfile.value)
+                        db.collection("Posts").document(i.second.id).update("creatorUser", _selfProfile.value)
+                        i.second.creatorUser!!.userName=userName
                     }
                     _isEditing.value = !_isEditing.value!!
+                    fetchPosts()
                 }
         }
     }
