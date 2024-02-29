@@ -37,6 +37,7 @@ import androidx.core.net.toFile
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.ViewModels.PublishViewModel
+import com.example.petstagram.ViewModels.getMimeType
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
@@ -67,7 +68,6 @@ fun NewPostScreen(
         else {
             Toast.makeText(context, "selección vacía", Toast.LENGTH_SHORT).show()
         }
-        Log.i("entrada", uri.toString())
 
     }
     //uri observed to see it before publishing
@@ -108,7 +108,7 @@ fun NewPostScreen(
                         .padding(bottom = 16.dp)
                         .height(40.dp))
             }else{
-                if (viewModel.getMimeType(context, uriObserver!!)?.startsWith("/video") == true){
+                if (getMimeType(context, uriObserver!!)?.startsWith("/video") == true){
                     DisplayVideo(source = uriObserver.toString(), modifier = modifier)
                 }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),

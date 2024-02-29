@@ -19,6 +19,11 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 
+fun getMimeType(context: Context, uri: Uri): String? {
+    val contentResolver: ContentResolver = context.contentResolver
+    return contentResolver.getType(uri)
+}
+
 class PublishViewModel : ViewModel() {
 
 
@@ -55,10 +60,6 @@ class PublishViewModel : ViewModel() {
         return postTitle
     }
 
-    fun getMimeType(context: Context, uri: Uri): String? {
-        val contentResolver: ContentResolver = context.contentResolver
-        return contentResolver.getType(uri)
-    }
 
     /**posts a [Post] with the info we have (if it is valid)*/
     fun postPost(onSuccess : ()->Unit, context : Context){

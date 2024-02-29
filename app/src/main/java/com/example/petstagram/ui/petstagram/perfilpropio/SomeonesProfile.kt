@@ -1,5 +1,7 @@
 package com.example.petstagram.perfilpropio
 
+import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -72,12 +74,14 @@ fun MyProfile(
         }
     }
 
+    val thisContext =(LocalContext.current)
     /**external activity that returns the local uri of the file the user selects*/
     val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
-        if(uri != null)viewModel.setResource(uri)
+        if(uri != null&&uri != Uri.EMPTY) {
+            viewModel.setResource(uri, thisContext)
+        }else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
     }
 
-    val thisContext =(LocalContext.current)
 
     /**actual profile pic*/
     val profilePicObserver by viewModel.resource.observeAsState()

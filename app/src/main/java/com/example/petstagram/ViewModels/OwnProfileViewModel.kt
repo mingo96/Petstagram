@@ -193,13 +193,18 @@ class OwnProfileViewModel : ViewModel() {
 
     /**pushes the given [uri], gets its download link and persists it to the [db] and [_selfProfile]
      * @param uri the local [Uri] of the stated file*/
-    fun setResource(uri: Uri) {
-        storageRef.child("ProfilePictures/${_selfProfile.value.id}").putFile(uri).addOnSuccessListener {
-            storageRef.child("/ProfilePictures/${_selfProfile.value.id}").downloadUrl.addOnSuccessListener {
-                _selfProfile.value.profilePic = it.toString()
-                db.collection("Users").document(_selfProfile.value.id).update("profilePic", it.toString())
+    fun setResource(uri: Uri, context: Context) {
+        val isImage = getMimeType(context = context, uri)?.startsWith("image/") == true
+        if (isImage) {
+            storageRef.child("ProfilePictures/${_selfProfile.value.id}").putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.child("/ProfilePictures/${_selfProfile.value.id}").downloadUrl.addOnSuccessListener {
+                        _selfProfile.value.profilePic = it.toString()
+                        db.collection("Users").document(_selfProfile.value.id)
+                            .update("profilePic", it.toString())
 
-            }
+                    }
+                }
         }
     }
 
