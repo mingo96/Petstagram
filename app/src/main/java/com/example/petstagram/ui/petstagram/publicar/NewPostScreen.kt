@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -57,6 +58,7 @@ fun NewPostScreen(
     viewModel: PublishViewModel
 ) {
 
+    val isSendingInfo by viewModel.isSendingInfo.observeAsState()
 
     val context = LocalContext.current
     //launcher for an external activity that returns the URI of the file you selected
@@ -85,24 +87,31 @@ fun NewPostScreen(
                     .height(height.times(0.23f)), navController = navController
             )
             CreatePostText()
-            TitleTextInput(textValue = { viewModel.getTitle()}, changeText = {viewModel.changeTitle(it)})
-            SourceSelectorTextButton(
-                modifier.clickable {
-                    sourceSelecter.launch("*/*")
-                }
-            )
-
-            PublishPostTextButton(
-                modifier.clickable {
-                    viewModel.postPost(context = context, onSuccess = {
-                        navController.navigateUp()
+            if(isSendingInfo == false) {
+                TitleTextInput(
+                    textValue = { viewModel.getTitle() },
+                    changeText = { viewModel.changeTitle(it) })
+                SourceSelectorTextButton(
+                    modifier.clickable {
+                        sourceSelecter.launch("*/*")
                     }
-                    )
-                }
-            )
+                )
+                PublishPostTextButton(
+                    modifier.clickable {
+                        viewModel.postPost(context = context, onSuccess = {
+                            navController.navigateUp()
+                        }
+                        )
+                    }
+                )
+            }
+
 
             //if the source isnt available yet, just CircularProgressIndicator
+            if (isSendingInfo == true)
+                Text(text = "Enviando")
             if(uriObserver == null||uriObserver== Uri.EMPTY){
+
                 CircularProgressIndicator(
                     Modifier
                         .padding(bottom = 16.dp)

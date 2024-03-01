@@ -27,6 +27,10 @@ fun getMimeType(context: Context, uri: Uri): String? {
 class PublishViewModel : ViewModel() {
 
 
+    private var _isSendingInfo = MutableLiveData(false)
+
+    val isSendingInfo : LiveData<Boolean> = _isSendingInfo
+
     /**Firebase Storage reference, since it will only push, doesnt need a route*/
     private var storageRef = Firebase.storage.reference
 
@@ -96,13 +100,17 @@ class PublishViewModel : ViewModel() {
      * @param onSuccess code given for execution once we're finished*/
     private fun persistPost(post: Post, onSuccess: () -> Unit){
 
+        _isSendingInfo.value = true
         db.collection("Posts")
-            .add(post).addOnSuccessListener {
-                pushResource(it.id)
-                db.collection("Posts").document(it.id).update("id", it.id)
+            .add(post).addOnSuccessListener {doc ->
+                pushResource(doc.id).addOnSuccessListener{
+                    Log.i("sdufgdsfs", doc.id)
+                db.collection("Posts").document(doc.id).update("id", doc  .id)
                 postTitle = "Titulo Publicacion"
                 _resource.value = Uri.EMPTY
+                    _isSendingInfo.value = false
                 onSuccess.invoke()
+                }
             }
     }
 
