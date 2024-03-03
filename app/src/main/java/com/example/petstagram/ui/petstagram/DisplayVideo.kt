@@ -14,6 +14,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -22,12 +23,16 @@ import androidx.media3.ui.PlayerView
  * works for local files and urls*/
 @OptIn(UnstableApi::class) @Composable
 fun DisplayVideo(source : String, modifier:Modifier) {
+
+    val a = DefaultLoadControl.Builder()
+    a.setPrioritizeTimeOverSizeThresholds(false)
     val context = LocalContext.current
     //main controller
     val mediaPlayer = remember {
         ExoPlayer.Builder(context).build()
     }
-    val media = MediaItem.fromUri(source)
+    val media = remember { MediaItem.fromUri(source) }
+
 
     //on launch set content and basic configuration
     LaunchedEffect(media) {
