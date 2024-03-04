@@ -34,9 +34,6 @@ class PostsViewModel : ViewModel() {
     /**Firebase FireStore reference*/
     private val db = Firebase.firestore
 
-    /**Firebase Storage reference*/
-    private val storageRef = Firebase.storage.getReferenceFromUrl("gs://petstagram-2e298.appspot.com")
-
     /**[Category] of the posts displayed*/
     lateinit var statedCategory: Category
 
@@ -86,30 +83,18 @@ class PostsViewModel : ViewModel() {
             }
             viewModelScope.launch {
                 Log.i("sadiasgf", "se empieza")
-                _posts
-                    //we make it so it doesnt load more if we get out of the app
-                    .stateIn(
-                        viewModelScope,
-                        started = SharingStarted.WhileSubscribed(10000),
-                        0
-                    )
-                    .collect {
 
-                        //****TO BE TESTED**** supposedly changes the _posts value for the saved one for this category
-                        //if it has already been loaded
-
-                        delay(1000)
-                        getPostsFromFirebase()
-                        delay(1000)
-                        //if we dont have any post yet, we are loading
-                        _isloading.value = (_posts.value.isEmpty())
-                        if (_posts.value.count().toLong() >= indexesOfPosts)
-                            indexesOfPosts += 10
-
-                    }
+                delay(1000)
+                getPostsFromFirebase()
+                delay(1000)
+                //if we dont have any post yet, we are loading
+                _isloading.value = (_posts.value.isEmpty())
+                if (_posts.value.count().toLong() >= indexesOfPosts)
+                    indexesOfPosts += 10
 
             }
-            alreadyLoading = false
+
+
         }
     }
 
@@ -132,6 +117,8 @@ class PostsViewModel : ViewModel() {
                         }
                     }
                 }
+            }.continueWith {
+                alreadyLoading = false
             }
     }
 
@@ -157,6 +144,12 @@ class PostsViewModel : ViewModel() {
         Log.i("teniamos", _posts.value.size.toString())
         Log.i("ids", ids.size.toString())
         viewModelScope.coroutineContext.cancelChildren()
+    }
+
+    fun scroll(scrolled : Double) {
+        if (scrolled>0.8){
+            startLoadingPosts()
+        }
     }
 
 

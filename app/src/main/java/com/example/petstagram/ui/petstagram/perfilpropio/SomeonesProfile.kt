@@ -289,7 +289,10 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
     Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
-        posts = viewModel.posts
+        posts = viewModel.posts,
+        onScroll = {
+            viewModel.scroll(it)
+        }
     )
 }
 

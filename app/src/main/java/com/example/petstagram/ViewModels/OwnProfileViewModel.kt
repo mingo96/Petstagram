@@ -247,4 +247,8 @@ class OwnProfileViewModel : ViewModel() {
         viewModelScope.coroutineContext.cancelChildren()
     }
 
+    fun scroll(it: Double) {
+
+    }
+
 }

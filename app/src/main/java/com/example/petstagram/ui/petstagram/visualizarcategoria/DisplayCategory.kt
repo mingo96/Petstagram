@@ -104,7 +104,10 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
     Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
-        posts = viewModel.posts
+        posts = viewModel.posts,
+        onScroll = { it:Double->
+            viewModel.scroll(it)
+        }
     )
 }
 

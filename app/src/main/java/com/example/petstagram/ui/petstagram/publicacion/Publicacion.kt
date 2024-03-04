@@ -47,9 +47,9 @@ import com.google.relay.compose.RelayContainerScope
 @Composable
 fun Publicacion(modifier: Modifier = Modifier, post: Post, url: String) {
     TopLevel(modifier = modifier) {
-        CuadroInfoInstance(modifier = modifier.rowWeight(1.0f), post = post)
-        PostSource(modifier = modifier.rowWeight(1.0f), post = post, url = url)
-        BotonesPublicacion(modifier = modifier.rowWeight(1.0f), post = post)
+        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
+        PostSource(modifier = Modifier.rowWeight(1.0f), post = post, url = url)
+        BotonesPublicacion(modifier = Modifier.rowWeight(1.0f), post = post)
     }
 }
 
