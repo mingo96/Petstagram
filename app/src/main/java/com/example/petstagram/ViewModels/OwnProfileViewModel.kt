@@ -58,13 +58,13 @@ class OwnProfileViewModel : ViewModel() {
 
     /**mutable state of posts and their content url, separated because it can change of location
      * but not in the [Post] itself*/
-    private val _posts = MutableStateFlow<List<Pair<String, Post>>>(emptyList())
+    private val _posts = MutableStateFlow<List<Post>>(emptyList())
 
     /**visible version of [_posts]*/
-    val posts : StateFlow<List<Pair<String, Post>>> = _posts
+    val posts : StateFlow<List<Post>> = _posts
 
     /**keeps the ids of posts we already have*/
-    private var ids by mutableStateOf(_posts.value.map { it.second.id })
+    private var ids by mutableStateOf(_posts.value.map { it.id })
 
     /**number of posts we have, to load them progressively*/
     private var indexesOfPosts = 10L
@@ -97,7 +97,7 @@ class OwnProfileViewModel : ViewModel() {
                     if (_posts.value.count().toLong() >= indexesOfPosts)
                         indexesOfPosts += 10
                     //order the list
-                    _posts.value = _posts.value.sortedBy { it.second.postedDate }
+                    _posts.value = _posts.value.sortedBy { it.postedDate }
                         .reversed()
 
                 }
@@ -138,10 +138,8 @@ class OwnProfileViewModel : ViewModel() {
 
         val castedPost = postJson.toObject(Post::class.java)
 
-        storageRef.child("/PostImages/${postJson.id}")
-            .downloadUrl.addOnSuccessListener { uri ->
-                _posts.value += (Pair(uri.toString(), castedPost!!))
-            }
+        _posts.value += castedPost!!
+
     }
 
     /**gets executed when we click te button for editing [userName]*/
@@ -172,8 +170,8 @@ class OwnProfileViewModel : ViewModel() {
                 .addOnCompleteListener {
                     //i don't think im supposed to need to do this but it doesn't work if i dont
                     for (i in _posts.value) {
-                        db.collection("Posts").document(i.second.id).update("creatorUser", _selfProfile.value)
-                        i.second.creatorUser=_selfProfile.value
+                        db.collection("Posts").document(i.id).update("creatorUser", _selfProfile.value)
+                        i.creatorUser=_selfProfile.value
                     }
                     _isEditing.value = !_isEditing.value!!
                     fetchPosts()
@@ -205,7 +203,7 @@ class OwnProfileViewModel : ViewModel() {
                         db.collection("Users").document(_selfProfile.value.id)
                             .update("profilePic", it.toString()).addOnSuccessListener {
                                 for (i in _posts.value) {
-                                    db.collection("Posts").document(i.second.id).update("creatorUser", _selfProfile.value)
+                                    db.collection("Posts").document(i.id).update("creatorUser", _selfProfile.value)
                                 }
                             }
 

@@ -23,13 +23,13 @@ import kotlinx.coroutines.flow.StateFlow
  * Generated code; do not edit directly
  */
 @Composable
-fun Posts(modifier: Modifier = Modifier, posts : StateFlow<List<Pair<String, Post>>>) {
+fun Posts(modifier: Modifier = Modifier, posts : StateFlow<List<Post>>) {
     BoxWithConstraints {
         val postsState by posts.collectAsStateWithLifecycle()
         val anchoMax = maxWidth
         TopLevel(modifier = modifier.width(maxWidth)) {
             for (i in postsState){
-                PublicacionInstance(modifier = Modifier.width(anchoMax), post = i.second, url = i.first)
+                PublicacionInstance(modifier = Modifier.width(anchoMax), post = i, url = i.source)
             }
         }
     }

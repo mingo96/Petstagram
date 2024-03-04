@@ -104,12 +104,16 @@ class PublishViewModel : ViewModel() {
         db.collection("Posts")
             .add(post).addOnSuccessListener {doc ->
                 pushResource(doc.id).addOnSuccessListener{
-                    Log.i("sdufgdsfs", doc.id)
-                db.collection("Posts").document(doc.id).update("id", doc  .id)
-                postTitle = "Titulo Publicacion"
-                _resource.value = Uri.EMPTY
-                    _isSendingInfo.value = false
-                onSuccess.invoke()
+                    db.collection("Posts").document(doc.id).update("id", doc.id)
+
+                    storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
+                        db.collection("Posts").document(doc.id).update("source", it.toString())
+                        postTitle = "Titulo Publicacion"
+                        _resource.value = Uri.EMPTY
+                        _isSendingInfo.value = false
+                        onSuccess.invoke()
+                    }
+
                 }
             }
     }

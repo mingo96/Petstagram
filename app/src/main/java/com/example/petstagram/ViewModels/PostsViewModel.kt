@@ -48,20 +48,20 @@ class PostsViewModel : ViewModel() {
 
     /*******TO BE TESTED******
      * it's supposed to locally save content for categories when we swap between them*/
-    private val locallySaved by mutableStateOf( mutableMapOf<Category, List<Pair<String, Post>>>() )
+    private val locallySaved by mutableStateOf( mutableMapOf<Category, List<Post>>() )
 
     /**actual content of [Post]s and their Uri Strings*/
-    private val _posts = MutableStateFlow<List<Pair<String, Post>>>(emptyList())
+    private val _posts = MutableStateFlow<List<Post>>(emptyList())
 
     /**it tells if we are loading, so if we go out and in the view again we dont
      * start another collect, it is set to true until the collection ends*/
     private var alreadyLoading by mutableStateOf(false)
 
     /**visible version of [_posts]*/
-    val posts : StateFlow<List<Pair<String, Post>>> = _posts
+    val posts : StateFlow<List<Post>> = _posts
 
     /**ids of the already saved [Post]s*/
-    private var ids by mutableStateOf(_posts.value.map { it.second.id })
+    private var ids by mutableStateOf(_posts.value.map { it.id })
 
     /**number of indexes we'll be getting at a time*/
     private var indexesOfPosts = 10L
@@ -140,13 +140,11 @@ class PostsViewModel : ViewModel() {
 
         val castedPost = postJson.toObject(Post::class.java)
 
-        //obtenemos la url de la imagen, una vez hecho la añadimos a _posts
-        storageRef.child("/PostImages/${postJson.id}").downloadUrl.addOnSuccessListener { uri ->
-            _posts.value+=(Pair(uri.toString(), castedPost!!))
-            _posts.value = _posts.value.sortedBy { it.second.postedDate }.reversed()
-            ids+=postJson.id
-            locallySaved[statedCategory] = _posts.value
-        }
+        _posts.value+=castedPost!!
+        _posts.value = _posts.value.sortedBy { it.postedDate }.reversed()
+        ids+=postJson.id
+        locallySaved[statedCategory] = _posts.value
+
 
     }
 
