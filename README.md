@@ -1,40 +1,42 @@
-enlace al tango de uso : https://app.tango.us/app/workflow/29ee75e0-2282-4781-b86b-0d192eff22fa
-<br>
-enlace al gitbook : https://app.gitbook.com/invite/k1f4oe40ecDSxbAIIK5M/g9RyGcoKcOEKb3MS9YmL
----
-description: Idea original y tecnologías usadas
----
-
 # Introducción y objetivos
 
-## Idea original
+### enlace al tango de uso : https://app.tango.us/app/workflow/29ee75e0-2282-4781-b86b-0d192eff22fa enlace al gitbook : https://app.gitbook.com/invite/k1f4oe40ecDSxbAIIK5M/g9RyGcoKcOEKb3MS9YmL
+
+### description: Idea original y tecnologías usadas
+
+## Introducción y objetivos
+
+### Idea original
 
 Aplicación orientada a contenido sobre mascotas o animales en general, con apartado para dar en adopción o adoptar
 
 Contenido generado por el usuario, basandose en sus mascotas, con perfiles individuales para estas
 
-## Objetivos implementadas
+### Objetivos implementadas
 
 * Autenticación por correo electrónico
 * Almacenamiento y display de publicaciones
 * Ordenado de Publicaciones por categoría
 * Perfil editable con su propia pestaña
+* Carga de datos cuando sea necesaria
 * Creación de publicaciones con archivos del usuario
 
-## Objetivos no implementados (a futuro)
+### Objetivos no implementados (a futuro)
 
 * Interacción con publicaciones en tiempo real (guardar y like)
 * Colección de publicaciones guardadas
-* Pestaña de comentarios por publicación&#x20;
+* Pestaña de comentarios por publicación
 * Sistema de notificaciones por comentario o like
 * Pestaña para mostrar perfiles ajenos
 * Interacción entre perfiles
-* Carga de datos cuando sea necesaria
+
+
+
 * Sección de adopción
 * Chat entre usuarios por adopción
 * Perfiles "hijos" al usuario, orientado a ser uno por mascota
 
-## Tecnologías usadas
+### Tecnologías usadas
 
 * UI : Figma design
 * UI a codigo : Relay for figma
