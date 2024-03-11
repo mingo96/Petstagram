@@ -3,6 +3,7 @@ package com.example.petstagram.publicar
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -21,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -57,6 +59,7 @@ fun NewPostScreen(
     navController: NavHostController,
     viewModel: PublishViewModel
 ) {
+    val loadingText by viewModel.text.collectAsState()
 
     val isSendingInfo by viewModel.isSendingInfo.observeAsState()
 
@@ -75,17 +78,26 @@ fun NewPostScreen(
     //uri observed to see it before publishing
     val uriObserver by viewModel.resource.observeAsState()
 
+    BackHandler {
+        if (isSendingInfo==false){
+            navController.navigateUp()
+        }
+    }
+
     BoxWithConstraints {
         val height = maxHeight
         TopLevel(modifier = modifier) {
 
-            TopBarInstance(
-                modifier = Modifier
-                    .rowWeight(
-                        1.0f
-                    )
-                    .height(height.times(0.23f)), navController = navController
-            )
+            if(isSendingInfo==false) {
+                TopBarInstance(
+                    modifier = Modifier
+                        .rowWeight(
+                            1.0f
+                        )
+                        .height(height.times(0.23f)), navController = navController
+                )
+            }
+
             CreatePostText()
             if(isSendingInfo == false) {
                 TitleTextInput(
@@ -106,10 +118,9 @@ fun NewPostScreen(
                 )
             }
 
-
-            //if the source isnt available yet, just CircularProgressIndicator
             if (isSendingInfo == true)
-                Text(text = "Enviando")
+                Text(text = loadingText)
+
             if(uriObserver == null||uriObserver== Uri.EMPTY){
 
                 CircularProgressIndicator(
@@ -233,7 +244,7 @@ fun TopLevel(
             green = 35,
             blue = 35
         ),
-        mainAxisAlignment = MainAxisAlignment.End,
+        mainAxisAlignment = MainAxisAlignment.Center,
         scrollable = true,
         itemSpacing = 72.0,
         content = content,

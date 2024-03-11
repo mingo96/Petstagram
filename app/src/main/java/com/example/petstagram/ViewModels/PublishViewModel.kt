@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
@@ -18,6 +19,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 fun getMimeType(context: Context, uri: Uri): String? {
     val contentResolver: ContentResolver = context.contentResolver
@@ -51,6 +56,11 @@ class PublishViewModel : ViewModel() {
 
     /**[LiveData] for [_resource]*/
     var resource :LiveData<Uri> =_resource
+
+    private var _text = MutableStateFlow("Enviando")
+
+    val text : StateFlow<String> = _text
+
 
     /**changes [postTitle]
      * @param input new value for [postTitle]*/
@@ -93,6 +103,22 @@ class PublishViewModel : ViewModel() {
                 Log.i("intento de seleccion no valido", "$isImage, $isVideo")
                 Toast.makeText(context, "tipo de archivo no válido", Toast.LENGTH_SHORT).show()
             }
+
+        viewModelScope.launch {
+            _text.collect{
+                _text.value =
+                    when(it){
+                        "Enviando"->"Enviando."
+                        "Enviando."->"Enviando.."
+                        "Enviando.."->"Enviando..."
+                        else-> "Enviando"
+                    }
+                delay(500)
+                if (isSendingInfo.value == false){
+                    _text.value=it
+                }
+            }
+        }
     }
 
     /**sends the created [Post] to the [db]
