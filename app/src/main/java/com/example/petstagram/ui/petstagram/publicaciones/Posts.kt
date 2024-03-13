@@ -1,11 +1,7 @@
 package com.example.petstagram.publicaciones
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollScope
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -17,17 +13,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.petstagram.UiData.Post
-import com.example.petstagram.publicacion.Publicacion
-import com.google.relay.compose.BoxScopeInstance.scope
-import com.google.relay.compose.MainAxisAlignment
-import com.google.relay.compose.RelayContainer
-import com.google.relay.compose.RelayContainerScope
+import com.example.petstagram.UiData.Profile
+import com.example.petstagram.publicacion.Post
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -37,11 +29,19 @@ import kotlinx.coroutines.flow.StateFlow
  * Generated code; do not edit directly
  */
 @Composable
-fun Posts(modifier: Modifier = Modifier, posts : StateFlow<List<Post>>, onScroll : (Double)->Unit) {
+fun Posts(
+    modifier: Modifier = Modifier, posts: StateFlow<List<Post>>,
+    spectator: Profile,
+    onScroll: (Double) -> Unit,
+    onLike: (Post) -> Boolean,
+    onSave: (Post) -> Boolean
+) {
     BoxWithConstraints {
+
         val postsState by posts.collectAsStateWithLifecycle()
-        val anchoMax = maxWidth
+        val localwidth = maxWidth
         val scrollState = rememberScrollState()
+
         TopLevel(modifier = modifier.width(maxWidth), scrollState = scrollState) {
             for (i in postsState){
                 if(scrollState.maxValue!=0) {
@@ -50,8 +50,11 @@ fun Posts(modifier: Modifier = Modifier, posts : StateFlow<List<Post>>, onScroll
                     onScroll.invoke(screenScrolled)
                 }
                 PublicacionInstance(modifier = Modifier
-                    .width(anchoMax)
-                    .padding(vertical = 4.dp), post = i, url = i.source)
+                    .width(localwidth)
+                    .padding(vertical = 4.dp), post = i,
+                    spectator = spectator,
+                    onLike = onLike,
+                    onSave = onSave)
             }
         }
     }
@@ -61,12 +64,16 @@ fun Posts(modifier: Modifier = Modifier, posts : StateFlow<List<Post>>, onScroll
 fun PublicacionInstance(
     modifier: Modifier = Modifier,
     post: Post,
-    url: String
+    spectator: Profile,
+    onLike: (Post) -> Boolean,
+    onSave: (Post) -> Boolean
 ) {
-    Publicacion(modifier = modifier
+    Post(modifier = modifier
         .fillMaxWidth(1.0f),
         post = post,
-        url = url)
+        spectator = spectator,
+        onLike = onLike,
+        onSave = onSave)
 }
 
 @Composable

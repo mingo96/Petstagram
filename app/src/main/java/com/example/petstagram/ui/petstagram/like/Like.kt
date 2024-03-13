@@ -87,9 +87,9 @@ fun TopLevelPulsadoFalse(
     RelayContainer(
         backgroundColor = Color(
             alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            red = 60,
+            green = 60,
+            blue = 60
         ),
         isStructured = false,
         radius = 16.0,

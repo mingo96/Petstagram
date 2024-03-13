@@ -20,5 +20,7 @@ class Post ()
     var postedDate : Date = Date.from(Instant.now())
     /**URL reference to the media of the post*/
     var source : String = ""
+    /***/
+    var likes : MutableList<Like> = mutableListOf()
 
 }

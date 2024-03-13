@@ -1,5 +1,14 @@
 package com.example.petstagram.cuadroinfo
 
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,19 +17,27 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.petstagram.UiData.Post
+import com.example.petstagram.UiData.Profile
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
 import com.example.petstagram.like.Like
+import com.example.petstagram.like.Pressed
 import com.example.petstagram.opciones.Opciones
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -29,10 +46,10 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
 
 // Design to select for CuadroInfo
-enum class Variacion {
+enum class Position {
     Default,
-    Superior,
-    Inferior
+    Top,
+    Bottom
 }
 
 /**
@@ -41,24 +58,82 @@ enum class Variacion {
  * This composable was generated from the UI Package 'cuadro_info'.
  * Generated code; do not edit directly
  */
+@SuppressLint("UnrememberedMutableState")
 @Composable
-fun CuadroInfo(
+fun PostLimit(
     modifier: Modifier = Modifier,
-    variacion: Variacion = Variacion.Default,
-    added: Post
+    variation: Position = Position.Default,
+    added: Post,
+    spectator: Profile = Profile(),
+    onLike: (Post) -> Boolean = { true },
+    onSave: (Post) -> Boolean = { false }
 ) {
-    when (variacion) {
-        Variacion.Default -> TopLevelVariacionDefault(modifier = modifier) {}
-        Variacion.Superior -> TopLevelVariacionSuperior(modifier = modifier) {
+
+    var pressed by remember { mutableStateOf(
+        if (added.likes.find { it.userId == spectator.id } != null)
+            Pressed.True
+        else
+            Pressed.False
+    ) }
+
+
+    val density: Density = LocalDensity.current
+
+    val onEnter = slideInVertically {
+        // Slide in from 40 dp from the top.
+        with(density) { -40.dp.roundToPx() }
+    } + expandVertically(
+        // Expand from the top.
+        expandFrom = Alignment.Top
+    ) + fadeIn(
+        // Fade in with the initial alpha of 0.3f.
+        initialAlpha = 0.3f
+    )
+
+    when (variation) {
+        Position.Default -> TopLevelVariacionDefault(modifier = modifier) {}
+        Position.Top -> TopLevelVariacionSuperior(modifier = modifier) {
             FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
             TextoNombrePerfilVariacionSuperior(added = added.creatorUser!!.userName)
             OpcionesOpciones()
         }
-        Variacion.Inferior -> TopLevelVariacionInferior(modifier = modifier) {
+        Position.Bottom -> TopLevelVariacionInferior(modifier = modifier) {
+
+
             ContenedorBotonesIzquierdaVariacionInferior {
-                LikePulsadoFalse()
+                Box()
+                {
+                    AnimatedVisibility(
+                        visible = pressed == Pressed.True,
+                        enter = onEnter,
+                        exit = ExitTransition.None
+                    ) {
+                        LikePulsadoFalse(Modifier.clickable {
+                            pressed = if (onLike.invoke(added))
+                                Pressed.True
+                            else
+                                Pressed.False
+                        }, pressed)
+                    }
+
+                    AnimatedVisibility(
+                        visible = pressed == Pressed.False,
+                        enter = onEnter,
+                        exit = ExitTransition.None
+                    ) {
+                        LikePulsadoFalse(Modifier.clickable {
+                            pressed = if (onLike.invoke(added)) {
+                                Pressed.True
+                            } else
+                                Pressed.False
+                        }, pressed)
+                    }
+                }
                 BotonSeccionComentariosVariacionInferior {
-                    TextoBotonComentariosVariacionInferior(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+                    TextoBotonComentariosVariacionInferior(modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)
+                        .clickable { onSave.invoke(added) })
                 }
             }
             GuardarGuardarPulsadoNo()
@@ -80,13 +155,17 @@ fun TopLevelVariacionDefault(
         ),
         isStructured = false,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
 @Composable
 fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
-    FotoPerfilBase(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp),
+    FotoPerfilBase(modifier = modifier
+        .requiredWidth(32.0.dp)
+        .requiredHeight(32.0.dp),
         added = picture)
 }
 
@@ -106,16 +185,21 @@ fun TextoNombrePerfilVariacionSuperior(modifier: Modifier = Modifier, added: Str
         textAlign = TextAlign.Left,
         fontWeight = FontWeight(700.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(264.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(264.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
 @Composable
 fun OpcionesOpciones(modifier: Modifier = Modifier) {
-    Opciones(modifier = modifier.requiredWidth(16.0.dp).requiredHeight(32.0.dp))
+    Opciones(modifier = modifier
+        .requiredWidth(16.0.dp)
+        .requiredHeight(32.0.dp))
 }
 
 @Composable
@@ -141,13 +225,17 @@ fun TopLevelVariacionSuperior(
             blue = 0
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
 @Composable
-fun LikePulsadoFalse(modifier: Modifier = Modifier) {
-    Like(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
+fun LikePulsadoFalse(modifier: Modifier = Modifier, pressed: Pressed) {
+    Like(modifier = modifier
+        .requiredWidth(32.0.dp)
+        .requiredHeight(32.0.dp), pressed = pressed)
 }
 
 @Composable
@@ -164,17 +252,21 @@ fun TextoBotonComentariosVariacionInferior(modifier: Modifier = Modifier) {
         ),
         height = 1.2102272510528564.em,
         maxLines = -1,
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 8.800048828125.dp,
-                top = 8.0.dp,
-                end = 8.799957275390625.dp,
-                bottom = 8.0.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 8.800048828125.dp,
+                    top = 8.0.dp,
+                    end = 8.799957275390625.dp,
+                    bottom = 8.0.dp
+                )
             )
-        ).fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -200,7 +292,9 @@ fun BotonSeccionComentariosVariacionInferior(
             blue = 0
         ),
         content = content,
-        modifier = modifier.requiredWidth(176.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(176.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -213,13 +307,17 @@ fun ContenedorBotonesIzquierdaVariacionInferior(
         mainAxisAlignment = MainAxisAlignment.SpaceBetween,
         arrangement = RelayContainerArrangement.Row,
         content = content,
-        modifier = modifier.requiredWidth(224.0.dp).requiredHeight(48.0.dp)
+        modifier = modifier
+            .requiredWidth(224.0.dp)
+            .requiredHeight(48.0.dp)
     )
 }
 
 @Composable
 fun GuardarGuardarPulsadoNo(modifier: Modifier = Modifier) {
-    Guardar(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
+    Guardar(modifier = modifier
+        .requiredWidth(32.0.dp)
+        .requiredHeight(32.0.dp))
 }
 
 @Composable

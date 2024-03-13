@@ -22,6 +22,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -286,13 +287,24 @@ fun EditProfilePicImage(modifier: Modifier = Modifier) {
 @Composable
 fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
 
+    val spectator by viewModel.selfProfile.collectAsState()
+
     Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
         posts = viewModel.posts,
         onScroll = {
             viewModel.scroll(it)
-        }
+        },
+        onLike = {
+            viewModel.likeClicked(it)
+            true
+        },
+        onSave = {
+            viewModel.saveClicked(it)
+            false
+        },
+        spectator = spectator
     )
 }
 

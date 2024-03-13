@@ -3,33 +3,32 @@ package com.example.petstagram.ViewModels
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
+import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
 @SuppressLint("MutableCollectionMutableState")
 class PostsViewModel : ViewModel() {
+
+    var actualUser = Profile()
 
     /**Firebase FireStore reference*/
     private val db = Firebase.firestore
@@ -43,8 +42,7 @@ class PostsViewModel : ViewModel() {
     /**[LiveData] for [_isloading]*/
     val isLoading :LiveData<Boolean> = _isloading
 
-    /*******TO BE TESTED******
-     * it's supposed to locally save content for categories when we swap between them*/
+    /** it's supposed to locally save content for categories when we swap between them*/
     private val locallySaved by mutableStateOf( mutableMapOf<Category, List<Post>>() )
 
     /**actual content of [Post]s and their Uri Strings*/
@@ -104,7 +102,7 @@ class PostsViewModel : ViewModel() {
             //request filters
             .orderBy("postedDate", Query.Direction.DESCENDING)
             .whereEqualTo("category", statedCategory)
-            //max amount we're getting is indexesOfPosts, TODO make it increment when needed
+            //max amount we're getting is indexesOfPosts
             .limit(indexesOfPosts)
             .get()
             .addOnSuccessListener { querySnapshot ->
@@ -149,6 +147,29 @@ class PostsViewModel : ViewModel() {
     fun scroll(scrolled : Double) {
         if (scrolled>0.8){
             startLoadingPosts()
+        }
+    }
+
+    fun likeClicked(post:Post) : Boolean{
+        val newLike = Like(userId = actualUser.id)
+        return if(post.likes.find { it.userId==actualUser.id } == null) {
+            Log.i("sdkoljfjsdgikfjs", "NO se ha encontrado un like de este usuario")
+
+            post.likes += newLike
+            db.collection("Posts")
+                .document(post.id)
+                .update("likes", FieldValue.arrayUnion(newLike))
+
+            true
+        }else{
+
+            Log.i("sdkoljfjsdgikfjs", "se ha encontrado un like de este usuario")
+            post.likes.removeIf { it.userId ==actualUser.id }
+            db.collection("Posts")
+                .document(post.id)
+                .update("likes", FieldValue.arrayRemove(newLike))
+
+            false
         }
     }
 

@@ -40,6 +40,8 @@ class OwnProfileViewModel : ViewModel() {
     /**our profile*/
     private var _selfProfile = MutableStateFlow(Profile())
 
+    val selfProfile :StateFlow<Profile> = _selfProfile
+
     /**indicates still loading the first bunch of posts*/
     private val _isloading = MutableLiveData(true)
 
@@ -248,6 +250,14 @@ class OwnProfileViewModel : ViewModel() {
     }
 
     fun scroll(it: Double) {
+
+    }
+
+    fun likeClicked(it: Post) {
+
+    }
+
+    fun saveClicked(it: Post) {
 
     }
 
