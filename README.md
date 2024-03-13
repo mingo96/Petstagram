@@ -20,18 +20,16 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 * Perfil editable con su propia pestaña
 * Carga de datos cuando sea necesaria
 * Creación de publicaciones con archivos del usuario
+* Interacción con publicaciones en tiempo real (like)
 
 ### Objetivos no implementados (a futuro)
 
-* Interacción con publicaciones en tiempo real (guardar y like)
+* Interacción con publicaciones en tiempo real (guardar)
 * Colección de publicaciones guardadas
 * Pestaña de comentarios por publicación
 * Sistema de notificaciones por comentario o like
 * Pestaña para mostrar perfiles ajenos
 * Interacción entre perfiles
-
-
-
 * Sección de adopción
 * Chat entre usuarios por adopción
 * Perfiles "hijos" al usuario, orientado a ser uno por mascota
