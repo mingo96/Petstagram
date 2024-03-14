@@ -97,7 +97,7 @@ class PostsViewModel : ViewModel() {
     }
 
     /**gets [Post] JSONs, filtering them for the [statedCategory] we have, ordered by [Post.postedDate]*/
-    fun getPostsFromFirebase(){
+    private fun getPostsFromFirebase(){
         db.collection("Posts")
             //request filters
             .orderBy("postedDate", Query.Direction.DESCENDING)
@@ -153,7 +153,6 @@ class PostsViewModel : ViewModel() {
     fun likeClicked(post:Post) : Boolean{
         val newLike = Like(userId = actualUser.id)
         return if(post.likes.find { it.userId==actualUser.id } == null) {
-            Log.i("sdkoljfjsdgikfjs", "NO se ha encontrado un like de este usuario")
 
             post.likes += newLike
             db.collection("Posts")
@@ -163,7 +162,6 @@ class PostsViewModel : ViewModel() {
             true
         }else{
 
-            Log.i("sdkoljfjsdgikfjs", "se ha encontrado un like de este usuario")
             post.likes.removeIf { it.userId ==actualUser.id }
             db.collection("Posts")
                 .document(post.id)

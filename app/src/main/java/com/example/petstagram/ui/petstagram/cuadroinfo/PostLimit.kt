@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,12 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.fotoperfil.FotoPerfilBase
@@ -45,29 +49,18 @@ import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
 
-// Design to select for CuadroInfo
-enum class Position {
-    Default,
-    Top,
-    Bottom
-}
 
-/**
- * cuadros de info
- *
- * This composable was generated from the UI Package 'cuadro_info'.
- * Generated code; do not edit directly
- */
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("MutableCollectionMutableState")
 @Composable
-fun PostLimit(
+fun PostDownBar(
     modifier: Modifier = Modifier,
-    variation: Position = Position.Default,
     added: Post,
     spectator: Profile = Profile(),
-    onLike: (Post) -> Boolean = { true },
-    onSave: (Post) -> Boolean = { false }
+    onLike: () -> Boolean = { true },
+    onSave: () -> Boolean = { false },
+    likes: MutableLiveData<Int>
 ) {
+    val key by likes.observeAsState()
 
     var pressed by remember { mutableStateOf(
         if (added.likes.find { it.userId == spectator.id } != null)
@@ -75,6 +68,15 @@ fun PostLimit(
         else
             Pressed.False
     ) }
+
+    LaunchedEffect(key1 = key){
+        if (added.likes.count {
+            it.userId == spectator.id
+        } !=0)
+            pressed = Pressed.True
+        else
+            pressed = Pressed.False
+    }
 
 
     val density: Density = LocalDensity.current
@@ -90,75 +92,58 @@ fun PostLimit(
         initialAlpha = 0.3f
     )
 
-    when (variation) {
-        Position.Default -> TopLevelVariacionDefault(modifier = modifier) {}
-        Position.Top -> TopLevelVariacionSuperior(modifier = modifier) {
-            FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
-            TextoNombrePerfilVariacionSuperior(added = added.creatorUser!!.userName)
-            OpcionesOpciones()
-        }
-        Position.Bottom -> TopLevelVariacionInferior(modifier = modifier) {
+    TopLevelVariacionInferior {
 
-
-            ContenedorBotonesIzquierdaVariacionInferior {
-                Box()
-                {
-                    AnimatedVisibility(
-                        visible = pressed == Pressed.True,
-                        enter = onEnter,
-                        exit = ExitTransition.None
-                    ) {
-                        LikePulsadoFalse(Modifier.clickable {
-                            pressed = if (onLike.invoke(added))
-                                Pressed.True
-                            else
-                                Pressed.False
-                        }, pressed)
-                    }
-
-                    AnimatedVisibility(
-                        visible = pressed == Pressed.False,
-                        enter = onEnter,
-                        exit = ExitTransition.None
-                    ) {
-                        LikePulsadoFalse(Modifier.clickable {
-                            pressed = if (onLike.invoke(added)) {
-                                Pressed.True
-                            } else
-                                Pressed.False
-                        }, pressed)
-                    }
+        ContenedorBotonesIzquierdaVariacionInferior {
+            Box()
+            {
+                AnimatedVisibility(
+                    visible = pressed == Pressed.True,
+                    enter = onEnter,
+                    exit = ExitTransition.None
+                ) {
+                    LikePulsadoFalse(Modifier.clickable {
+                        pressed = if (onLike.invoke())
+                            Pressed.True
+                        else
+                            Pressed.False
+                    }, pressed)
                 }
-                BotonSeccionComentariosVariacionInferior {
-                    TextoBotonComentariosVariacionInferior(modifier = Modifier
-                        .rowWeight(1.0f)
-                        .columnWeight(1.0f)
-                        .clickable { onSave.invoke(added) })
+
+                AnimatedVisibility(
+                    visible = pressed == Pressed.False,
+                    enter = onEnter,
+                    exit = ExitTransition.None
+                ) {
+                    LikePulsadoFalse(Modifier.clickable {
+                        pressed = if (onLike.invoke()) {
+                            Pressed.True
+                        } else
+                            Pressed.False
+                    }, pressed)
                 }
             }
-            GuardarGuardarPulsadoNo()
+            Text(text = "Likes : $key", style = TextStyle(color = Color.White))
+            BotonSeccionComentariosVariacionInferior {
+                TextoBotonComentariosVariacionInferior(modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+                    .clickable { onSave.invoke() })
+            }
         }
+        GuardarGuardarPulsadoNo()
+
+
     }
 }
 
 @Composable
-fun TopLevelVariacionDefault(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
-) {
-    RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 0,
-            green = 0,
-            blue = 0
-        ),
-        isStructured = false,
-        content = content,
-        modifier = modifier
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
-    )
+fun TopPostLimit(modifier : Modifier, added : Post){
+    TopLevelVariacionSuperior(modifier = modifier) {
+        FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
+        TextoNombrePerfilVariacionSuperior(added = added.creatorUser!!.userName)
+        OpcionesOpciones()
+    }
 }
 
 @Composable
@@ -308,7 +293,7 @@ fun ContenedorBotonesIzquierdaVariacionInferior(
         arrangement = RelayContainerArrangement.Row,
         content = content,
         modifier = modifier
-            .requiredWidth(224.0.dp)
+            .fillMaxWidth(0.8f)
             .requiredHeight(48.0.dp)
     )
 }

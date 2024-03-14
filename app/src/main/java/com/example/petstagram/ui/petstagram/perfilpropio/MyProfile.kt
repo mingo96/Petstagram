@@ -298,7 +298,6 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
         },
         onLike = {
             viewModel.likeClicked(it)
-            true
         },
         onSave = {
             viewModel.saveClicked(it)

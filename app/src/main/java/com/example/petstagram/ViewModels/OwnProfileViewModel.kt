@@ -11,9 +11,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -253,8 +255,26 @@ class OwnProfileViewModel : ViewModel() {
 
     }
 
-    fun likeClicked(it: Post) {
+    fun likeClicked(post: Post): Boolean {
 
+        val newLike = Like(userId = selfId)
+        return if(post.likes.find { it.userId==selfId } == null) {
+
+            post.likes += newLike
+            db.collection("Posts")
+                .document(post.id)
+                .update("likes", FieldValue.arrayUnion(newLike))
+
+            true
+        }else{
+
+            post.likes.removeIf { it.userId ==selfId }
+            db.collection("Posts")
+                .document(post.id)
+                .update("likes", FieldValue.arrayRemove(newLike))
+
+            false
+        }
     }
 
     fun saveClicked(it: Post) {

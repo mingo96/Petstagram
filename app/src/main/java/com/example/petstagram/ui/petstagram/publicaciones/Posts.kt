@@ -49,7 +49,7 @@ fun Posts(
                         scrollState.value.toDouble() / scrollState.maxValue.toDouble()
                     onScroll.invoke(screenScrolled)
                 }
-                PublicacionInstance(modifier = Modifier
+                PostInstance(modifier = Modifier
                     .width(localwidth)
                     .padding(vertical = 4.dp), post = i,
                     spectator = spectator,
@@ -61,7 +61,7 @@ fun Posts(
 }
 
 @Composable
-fun PublicacionInstance(
+fun PostInstance(
     modifier: Modifier = Modifier,
     post: Post,
     spectator: Profile,
