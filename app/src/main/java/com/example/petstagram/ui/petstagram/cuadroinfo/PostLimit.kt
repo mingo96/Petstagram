@@ -1,6 +1,7 @@
 package com.example.petstagram.cuadroinfo
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +40,7 @@ import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
+import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.opciones.Opciones
@@ -55,17 +56,18 @@ import com.google.relay.compose.RelayText
 fun PostDownBar(
     modifier: Modifier = Modifier,
     added: UIPost,
-    spectator: Profile = Profile(),
+    saved : MutableLiveData<SavePressed>,
     onLike: () -> Unit = {  },
     onSave: () -> Boolean = { false },
     likes: MutableLiveData<Int>
 ) {
     val likesCount by likes.observeAsState()
 
-    var post by remember {
+    val post by remember {
         mutableStateOf(added)
     }
 
+    val isSaved by saved.observeAsState()
 
     val density: Density = LocalDensity.current
 
@@ -114,8 +116,28 @@ fun PostDownBar(
             }
         }
 
-        GuardarGuardarPulsadoNo(Modifier.clickable { onSave.invoke() })
+        Box {
+            AnimatedVisibility(
+                visible = isSaved== SavePressed.No,
+                enter = onEnter,
+                exit = ExitTransition.None
+            ) {
+                SaveIcon(Modifier.clickable {
+                    onSave.invoke()
 
+                }, isSaved!!)
+            }
+            AnimatedVisibility(
+                visible = isSaved == SavePressed.Si,
+                enter = onEnter,
+                exit = ExitTransition.None
+            ) {
+                SaveIcon(Modifier.clickable {
+                    onSave.invoke()
+
+                }, isSaved!!)
+            }
+        }
     }
 }
 
@@ -281,10 +303,11 @@ fun ContenedorBotonesIzquierdaVariacionInferior(
 }
 
 @Composable
-fun GuardarGuardarPulsadoNo(modifier: Modifier = Modifier) {
+fun SaveIcon(modifier: Modifier = Modifier, variation : SavePressed) {
     Guardar(modifier = modifier
         .requiredWidth(32.0.dp)
-        .requiredHeight(32.0.dp))
+        .requiredHeight(32.0.dp),
+        savePressed = variation)
 }
 
 @Composable

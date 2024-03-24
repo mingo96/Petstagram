@@ -24,6 +24,7 @@ import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
+import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.google.relay.compose.MainAxisAlignment
@@ -46,6 +47,7 @@ fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
          onSave: (Post)->Boolean) {
 
     val likes = MutableLiveData(post.likes.size)
+    val saved = MutableLiveData(post.saved)
 
     TopLevel(modifier = modifier) {
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
@@ -65,8 +67,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
         PostButtons(
             modifier = Modifier.rowWeight(1.0f),
             post = post,
-            spectator =spectator,
             likes = likes,
+            saved = saved,
             onLike = {
                 if(onLike.invoke(post))
                     post.liked = Pressed.True
@@ -74,8 +76,12 @@ fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
                     post.liked = Pressed.False
                 likes.value = post.likes.size
 
+            },
+            onSave = {
+                saved.value=if(saved.value==SavePressed.Si) SavePressed.No else SavePressed.Si
+                onSave.invoke(post)
             }
-        ) { onSave.invoke(post) }
+        )
     }
 }
 
@@ -108,7 +114,7 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
 
 @OptIn(UnstableApi::class) @Composable
 fun PostButtons(
-    modifier: Modifier = Modifier, post: UIPost, spectator: Profile, likes: MutableLiveData<Int>,
+    modifier: Modifier = Modifier, post: UIPost, likes: MutableLiveData<Int>,saved : MutableLiveData<SavePressed>,
     onLike: ()->Unit,
     onSave: ()->Boolean) {
 
@@ -117,8 +123,8 @@ fun PostButtons(
             .fillMaxWidth(1.0f)
             .requiredHeight(48.0.dp),
         added = post,
-        spectator = spectator,
         likes = likes,
+        saved = saved,
         onLike = onLike,
         onSave = onSave
     )

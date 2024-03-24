@@ -17,6 +17,7 @@ import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -133,12 +134,16 @@ class PostsViewModel : ViewModel() ,PostsUIController{
 
         if (castedPost.likes.find { it.userId==actualUser.id }!=null)
             castedPost.liked= Pressed.True
-
-        _posts.value+=castedPost
-        _posts.value = _posts.value.sortedBy { it.postedDate }.reversed()
-        ids+=postJson.id
-        locallySaved[statedCategory] = _posts.value
-
+        db.collection("SavedLists").whereEqualTo("userId", actualUser.id).whereArrayContains("postList", castedPost.id).get()
+            .addOnSuccessListener {
+                if(!it.isEmpty){
+                    castedPost.saved=SavePressed.Si
+                }
+                _posts.value+=castedPost
+                _posts.value = _posts.value.sortedBy { it.postedDate }.reversed()
+                ids+=postJson.id
+                locallySaved[statedCategory] = _posts.value
+            }
 
     }
 
