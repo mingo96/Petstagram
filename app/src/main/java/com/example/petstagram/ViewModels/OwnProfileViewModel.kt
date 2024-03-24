@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
@@ -28,7 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class OwnProfileViewModel : ViewModel() {
+class OwnProfileViewModel : ViewModel() , PostsUIController{
 
     /**Firebase FireStore reference*/
     private val db = Firebase.firestore
@@ -43,6 +44,8 @@ class OwnProfileViewModel : ViewModel() {
     private var _selfProfile = MutableStateFlow(Profile())
 
     val selfProfile :StateFlow<Profile> = _selfProfile
+
+    override val actualUser = selfProfile.value
 
     /**indicates still loading the first bunch of posts*/
     private val _isloading = MutableLiveData(true)
@@ -65,7 +68,7 @@ class OwnProfileViewModel : ViewModel() {
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
 
     /**visible version of [_posts]*/
-    val posts : StateFlow<List<Post>> = _posts
+    override val posts : StateFlow<List<Post>> = _posts
 
     /**keeps the ids of posts we already have*/
     private var ids by mutableStateOf(_posts.value.map { it.id })
@@ -251,11 +254,11 @@ class OwnProfileViewModel : ViewModel() {
         viewModelScope.coroutineContext.cancelChildren()
     }
 
-    fun scroll(it: Double) {
+    override fun scroll(it: Double) {
 
     }
 
-    fun likeClicked(post: Post): Boolean {
+    override fun likeClicked(post: Post): Boolean {
 
         val newLike = Like(userId = selfId)
         return if(post.likes.find { it.userId==selfId } == null) {
@@ -277,8 +280,8 @@ class OwnProfileViewModel : ViewModel() {
         }
     }
 
-    fun saveClicked(it: Post) {
-
+    override fun saveClicked(post: Post): Boolean {
+        return true
     }
 
 }

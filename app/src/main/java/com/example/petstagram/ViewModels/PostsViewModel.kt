@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
@@ -26,9 +28,9 @@ import kotlinx.coroutines.launch
 
 
 @SuppressLint("MutableCollectionMutableState")
-class PostsViewModel : ViewModel() {
+class PostsViewModel : ViewModel() ,PostsUIController{
 
-    var actualUser = Profile()
+    override var actualUser by mutableStateOf(Profile())
 
     /**Firebase FireStore reference*/
     private val db = Firebase.firestore
@@ -53,7 +55,7 @@ class PostsViewModel : ViewModel() {
     private var alreadyLoading by mutableStateOf(false)
 
     /**visible version of [_posts]*/
-    val posts : StateFlow<List<Post>> = _posts
+    override val posts : StateFlow<List<Post>> = _posts
 
     /**ids of the already saved [Post]s*/
     private var ids by mutableStateOf(_posts.value.map { it.id })
@@ -144,13 +146,13 @@ class PostsViewModel : ViewModel() {
         viewModelScope.coroutineContext.cancelChildren()
     }
 
-    fun scroll(scrolled : Double) {
+    override fun scroll(scrolled : Double) {
         if (scrolled>0.8){
             startLoadingPosts()
         }
     }
 
-    fun likeClicked(post:Post) : Boolean{
+    override fun likeClicked(post:Post) : Boolean{
         val newLike = Like(userId = actualUser.id)
         return if(post.likes.find { it.userId==actualUser.id } == null) {
 
@@ -169,6 +171,10 @@ class PostsViewModel : ViewModel() {
 
             false
         }
+    }
+
+    override fun saveClicked(post: Post): Boolean {
+        return true
     }
 
 

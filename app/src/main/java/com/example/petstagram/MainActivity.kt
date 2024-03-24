@@ -66,7 +66,6 @@ class MainActivity : ComponentActivity() {
                         authViewModel.loadUserFromAuth()
                         "categorias"
                     }
-                    val density: Density = LocalDensity.current
 
                     val onEnter = slideInHorizontally ()
                     val onExit = slideOutHorizontally {

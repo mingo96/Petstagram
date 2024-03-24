@@ -104,17 +104,7 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
     Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
-        posts = viewModel.posts,
-        spectator = viewModel.actualUser,
-        onScroll = {
-            viewModel.scroll(it)
-        },
-        onLike = {
-            viewModel.likeClicked(it)
-        },
-        onSave = {
-            false
-        }
+        controller = viewModel
     )
 }
 
