@@ -98,4 +98,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     // DCS - Base de datos Firestore
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.2")
+    //notificaciones
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+
 }

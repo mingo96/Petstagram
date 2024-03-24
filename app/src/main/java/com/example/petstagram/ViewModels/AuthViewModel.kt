@@ -1,6 +1,7 @@
 package com.example.petstagram.ViewModels
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel : ViewModel() {
 
     /**Firebase Auth reference*/
-    private val auth: FirebaseAuth = Firebase.auth
+    val auth: FirebaseAuth = Firebase.auth
 
     /**Firebase Firestore reference*/
     private val db = Firebase.firestore
@@ -157,7 +158,16 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-
+    /**function to recover the [Profile] given that we have the [auth] from last time*/
+    fun loadUserFromAuth(){
+        db.collection("Users")
+            .whereEqualTo("authId", auth.currentUser!!.uid).get()
+            .addOnSuccessListener {
+                val user = it.first().toObject(Profile::class.java)
+                Log.i(user.authId, auth.currentUser!!.uid)
+                localProfile = user
+            }
+    }
 
 
 }

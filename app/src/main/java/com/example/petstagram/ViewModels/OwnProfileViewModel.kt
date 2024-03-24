@@ -119,7 +119,7 @@ class OwnProfileViewModel : ViewModel() {
             //filters
             .whereEqualTo("creatorUser", _selfProfile.value)
             .orderBy("postedDate", Query.Direction.DESCENDING)
-            //max amount is indexesOfPosts, to get them progressively TODO make it increment when needed
+            //max amount is indexesOfPosts, to get them progressively
             .limit(indexesOfPosts)
             .get()
             .addOnSuccessListener { querySnapshot ->
@@ -229,7 +229,7 @@ class OwnProfileViewModel : ViewModel() {
                 )
                 .collect{
 
-                Log.i("Profile", "loading user data")
+                Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
                 delay(1000)
                 db.collection("Users").whereEqualTo("id", selfId).get()
                 .addOnSuccessListener {
