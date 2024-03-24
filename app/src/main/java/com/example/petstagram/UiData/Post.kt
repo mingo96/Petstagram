@@ -3,7 +3,7 @@ package com.example.petstagram.UiData
 import java.time.Instant
 import java.util.Date
 
-class Post ()
+open class Post ()
 {
 
     /**id of the document in the DB*/

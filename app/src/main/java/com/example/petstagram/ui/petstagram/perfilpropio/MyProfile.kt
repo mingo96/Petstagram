@@ -287,8 +287,6 @@ fun EditProfilePicImage(modifier: Modifier = Modifier) {
 @Composable
 fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
 
-    val spectator by viewModel.selfProfile.collectAsState()
-
     Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),

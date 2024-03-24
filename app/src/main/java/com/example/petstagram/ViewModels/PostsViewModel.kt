@@ -15,10 +15,14 @@ import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.SavedList
+import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
@@ -45,17 +49,17 @@ class PostsViewModel : ViewModel() ,PostsUIController{
     val isLoading :LiveData<Boolean> = _isloading
 
     /** it's supposed to locally save content for categories when we swap between them*/
-    private val locallySaved by mutableStateOf( mutableMapOf<Category, List<Post>>() )
+    private val locallySaved by mutableStateOf( mutableMapOf<Category, List<UIPost>>() )
 
     /**actual content of [Post]s and their Uri Strings*/
-    private val _posts = MutableStateFlow<List<Post>>(emptyList())
+    private val _posts = MutableStateFlow<List<UIPost>>(emptyList())
 
     /**it tells if we are loading, so if we go out and in the view again we dont
      * start another collect, it is set to true until the collection ends*/
     private var alreadyLoading by mutableStateOf(false)
 
     /**visible version of [_posts]*/
-    override val posts : StateFlow<List<Post>> = _posts
+    override val posts : StateFlow<List<UIPost>> = _posts
 
     /**ids of the already saved [Post]s*/
     private var ids by mutableStateOf(_posts.value.map { it.id })
@@ -125,9 +129,12 @@ class PostsViewModel : ViewModel() ,PostsUIController{
     /**given a JSON, saves its [Post] info and its url*/
     private fun savePostAndUrl(postJson: DocumentSnapshot) {
 
-        val castedPost = postJson.toObject(Post::class.java)
+        val castedPost = postJson.toObject(UIPost::class.java)!!
 
-        _posts.value+=castedPost!!
+        if (castedPost.likes.find { it.userId==actualUser.id }!=null)
+            castedPost.liked= Pressed.True
+
+        _posts.value+=castedPost
         _posts.value = _posts.value.sortedBy { it.postedDate }.reversed()
         ids+=postJson.id
         locallySaved[statedCategory] = _posts.value
@@ -174,6 +181,26 @@ class PostsViewModel : ViewModel() ,PostsUIController{
     }
 
     override fun saveClicked(post: Post): Boolean {
+        val newSaved = post.id
+        db.collection("SavedLists")
+            .whereEqualTo("userId", actualUser.id)
+            .get().addOnSuccessListener {
+                if (it.isEmpty){
+                    val newList = SavedList(userId=actualUser.id)
+                    newList.postList.add(post.id)
+                    db.collection("SavedLists").add(newList).addOnSuccessListener {document->
+
+                        db.collection("SavedLists").document(document.id).update("docid",document.id )
+                    }
+                }else{
+                    val thisList = it.first().toObject(SavedList::class.java)
+                    if(thisList.postList.contains(post.id)) {
+                        db.collection("SavedLists").document(thisList.docid).update("postList", FieldValue.arrayRemove(newSaved))
+                    }else{
+                        db.collection("SavedLists").document(thisList.docid).update("postList", FieldValue.arrayUnion(newSaved))
+                    }
+                }
+            }
         return true
     }
 

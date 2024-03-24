@@ -15,6 +15,8 @@ import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
@@ -43,9 +45,8 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     /**our profile*/
     private var _selfProfile = MutableStateFlow(Profile())
 
-    val selfProfile :StateFlow<Profile> = _selfProfile
-
-    override val actualUser = selfProfile.value
+    override var actualUser = _selfProfile.value
+        get() {return _selfProfile.value}
 
     /**indicates still loading the first bunch of posts*/
     private val _isloading = MutableLiveData(true)
@@ -65,10 +66,10 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
 
     /**mutable state of posts and their content url, separated because it can change of location
      * but not in the [Post] itself*/
-    private val _posts = MutableStateFlow<List<Post>>(emptyList())
+    private val _posts = MutableStateFlow<List<UIPost>>(emptyList())
 
     /**visible version of [_posts]*/
-    override val posts : StateFlow<List<Post>> = _posts
+    override val posts : StateFlow<List<UIPost>> = _posts
 
     /**keeps the ids of posts we already have*/
     private var ids by mutableStateOf(_posts.value.map { it.id })
@@ -89,13 +90,14 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
-    fun fetchPosts(){
+    private fun fetchPosts(){
         if (!alreadyLoading) {
             alreadyLoading = true
             viewModelScope.launch {
 
                 _posts.collect {
 
+                    delay(1000)
                     if (!_isEditing.value!!) {
                         getFirebasePosts()
                     }
@@ -128,6 +130,7 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
             .addOnSuccessListener { querySnapshot ->
 
                 if (!querySnapshot.isEmpty) {
+
                     //case not empty
                     for (postJson in querySnapshot.documents) {
                         //case we dont have this id yet
@@ -143,9 +146,11 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     /**given a JSON, saves its [Post] info and its url*/
     private fun savePostAndUrl(postJson : DocumentSnapshot) {
 
-        val castedPost = postJson.toObject(Post::class.java)
+        val castedPost = postJson.toObject(UIPost::class.java)!!
+        if (castedPost.likes.find { it.userId==actualUser.id }!=null)
+            castedPost.liked=Pressed.True
 
-        _posts.value += castedPost!!
+        _posts.value += castedPost
 
     }
 
@@ -236,6 +241,7 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
                 delay(1000)
                 db.collection("Users").whereEqualTo("id", selfId).get()
                 .addOnSuccessListener {
+
                     val newVal = it.documents[0].toObject(Profile::class.java)!!
                     if (newVal != _selfProfile.value){
                         _selfProfile.value = newVal

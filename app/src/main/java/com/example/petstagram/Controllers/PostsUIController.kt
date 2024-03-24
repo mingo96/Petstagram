@@ -2,13 +2,14 @@ package com.example.petstagram.Controllers
 
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIPost
 import kotlinx.coroutines.flow.StateFlow
 
 interface PostsUIController {
 
-    val posts : StateFlow<List<Post>>
+    val posts : StateFlow<List<UIPost>>
 
-    val actualUser : Profile
+    var actualUser : Profile
 
     fun scroll(scrolled:Double)
 

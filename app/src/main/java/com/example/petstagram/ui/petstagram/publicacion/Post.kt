@@ -21,8 +21,10 @@ import androidx.media3.common.util.UnstableApi
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
+import com.example.petstagram.like.Pressed
 import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -39,7 +41,7 @@ import com.google.relay.compose.RelayContainerScope
 )
 @kotlin.OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Post(modifier: Modifier = Modifier, post: Post, spectator : Profile,
+fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
          onLike: (Post)->Boolean,
          onSave: (Post)->Boolean) {
 
@@ -52,7 +54,10 @@ fun Post(modifier: Modifier = Modifier, post: Post, spectator : Profile,
             .combinedClickable(
                 enabled = true,
                 onDoubleClick = {
-                    onLike.invoke(post)
+                    if(onLike.invoke(post))
+                        post.liked = Pressed.True
+                    else
+                        post.liked = Pressed.False
                     likes.value = post.likes.size
                 },
                 onClick = {}),
@@ -63,14 +68,13 @@ fun Post(modifier: Modifier = Modifier, post: Post, spectator : Profile,
             spectator =spectator,
             likes = likes,
             onLike = {
-                if(onLike.invoke(post)){
-                    likes.value = post.likes.size
-                    true
-                }else{
-                    likes.value = post.likes.size
-                    false
-                }
-                     }
+                if(onLike.invoke(post))
+                    post.liked = Pressed.True
+                else
+                    post.liked = Pressed.False
+                likes.value = post.likes.size
+
+            }
         ) { onSave.invoke(post) }
     }
 }
@@ -104,8 +108,8 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
 
 @OptIn(UnstableApi::class) @Composable
 fun PostButtons(
-    modifier: Modifier = Modifier, post: Post, spectator: Profile, likes: MutableLiveData<Int>,
-    onLike: ()->Boolean,
+    modifier: Modifier = Modifier, post: UIPost, spectator: Profile, likes: MutableLiveData<Int>,
+    onLike: ()->Unit,
     onSave: ()->Boolean) {
 
     PostDownBar(

@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.publicacion.Post
 import kotlinx.coroutines.flow.StateFlow
 
@@ -45,12 +46,13 @@ fun Posts(
         val spectator by mutableStateOf(controller.actualUser)
 
         TopLevel(modifier = modifier.width(maxWidth), scrollState = scrollState) {
+            if(scrollState.maxValue!=0) {
+                val screenScrolled =
+                    scrollState.value.toDouble() / scrollState.maxValue.toDouble()
+                controller.scroll(screenScrolled)
+            }
             for (i in postsState){
-                if(scrollState.maxValue!=0) {
-                    val screenScrolled =
-                        scrollState.value.toDouble() / scrollState.maxValue.toDouble()
-                    controller.scroll(screenScrolled)
-                }
+
                 PostInstance(modifier = Modifier
                     .width(localwidth)
                     .padding(vertical = 4.dp), post = i,
@@ -65,7 +67,7 @@ fun Posts(
 @Composable
 fun PostInstance(
     modifier: Modifier = Modifier,
-    post: Post,
+    post: UIPost,
     spectator: Profile,
     onLike: (Post) -> Boolean,
     onSave: (Post) -> Boolean

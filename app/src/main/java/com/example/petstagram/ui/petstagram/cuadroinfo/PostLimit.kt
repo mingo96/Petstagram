@@ -1,7 +1,6 @@
 package com.example.petstagram.cuadroinfo
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
 import com.example.petstagram.like.Like
@@ -54,28 +54,16 @@ import com.google.relay.compose.RelayText
 @Composable
 fun PostDownBar(
     modifier: Modifier = Modifier,
-    added: Post,
+    added: UIPost,
     spectator: Profile = Profile(),
-    onLike: () -> Boolean = { true },
+    onLike: () -> Unit = {  },
     onSave: () -> Boolean = { false },
     likes: MutableLiveData<Int>
 ) {
-    val key by likes.observeAsState()
+    val likesCount by likes.observeAsState()
 
-    var pressed by remember { mutableStateOf(
-        if (added.likes.find { it.userId == spectator.id } != null)
-            Pressed.True
-        else
-            Pressed.False
-    ) }
-
-    LaunchedEffect(key1 = key){
-        if (added.likes.count {
-            it.userId == spectator.id
-        } !=0)
-            pressed = Pressed.True
-        else
-            pressed = Pressed.False
+    var post by remember {
+        mutableStateOf(added)
     }
 
 
@@ -98,41 +86,35 @@ fun PostDownBar(
             Box()
             {
                 AnimatedVisibility(
-                    visible = pressed == Pressed.True,
+                    visible = post.liked == Pressed.True,
                     enter = onEnter,
                     exit = ExitTransition.None
                 ) {
                     LikePulsadoFalse(Modifier.clickable {
-                        pressed = if (onLike.invoke())
-                            Pressed.True
-                        else
-                            Pressed.False
-                    }, pressed)
+                        onLike.invoke()
+                    }, post.liked)
                 }
 
                 AnimatedVisibility(
-                    visible = pressed == Pressed.False,
+                    visible = post.liked == Pressed.False,
                     enter = onEnter,
                     exit = ExitTransition.None
                 ) {
                     LikePulsadoFalse(Modifier.clickable {
-                        pressed = if (onLike.invoke()) {
-                            Pressed.True
-                        } else
-                            Pressed.False
-                    }, pressed)
+                        onLike.invoke()
+                    }, post.liked)
                 }
             }
-            Text(text = "Likes : $key", style = TextStyle(color = Color.White))
+            Text(text = "Likes : $likesCount", style = TextStyle(color = Color.White))
             BotonSeccionComentariosVariacionInferior {
                 TextoBotonComentariosVariacionInferior(modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
-                    .clickable { onSave.invoke() })
+                    .clickable { })
             }
         }
-        GuardarGuardarPulsadoNo()
 
+        GuardarGuardarPulsadoNo(Modifier.clickable { onSave.invoke() })
 
     }
 }
