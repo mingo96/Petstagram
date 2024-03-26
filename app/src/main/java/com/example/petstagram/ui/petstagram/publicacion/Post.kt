@@ -42,12 +42,11 @@ import com.google.relay.compose.RelayContainerScope
 )
 @kotlin.OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
+fun Post(modifier: Modifier = Modifier, post: UIPost,
          onLike: (Post)->Boolean,
          onSave: (Post)->Boolean) {
 
     val likes = MutableLiveData(post.likes.size)
-    val saved = MutableLiveData(post.saved)
 
     TopLevel(modifier = modifier) {
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
@@ -56,7 +55,7 @@ fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
             .combinedClickable(
                 enabled = true,
                 onDoubleClick = {
-                    if(onLike.invoke(post))
+                    if (onLike.invoke(post))
                         post.liked = Pressed.True
                     else
                         post.liked = Pressed.False
@@ -65,10 +64,9 @@ fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
                 onClick = {}),
             post = post)
         PostButtons(
-            modifier = Modifier.rowWeight(1.0f),
+            modifier = modifier.rowWeight(1.0f),
             post = post,
             likes = likes,
-            saved = saved,
             onLike = {
                 if(onLike.invoke(post))
                     post.liked = Pressed.True
@@ -78,7 +76,6 @@ fun Post(modifier: Modifier = Modifier, post: UIPost, spectator : Profile,
 
             },
             onSave = {
-                saved.value=if(saved.value==SavePressed.Si) SavePressed.No else SavePressed.Si
                 onSave.invoke(post)
             }
         )
@@ -114,9 +111,11 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
 
 @OptIn(UnstableApi::class) @Composable
 fun PostButtons(
-    modifier: Modifier = Modifier, post: UIPost, likes: MutableLiveData<Int>,saved : MutableLiveData<SavePressed>,
+    modifier: Modifier = Modifier, post: UIPost, likes: MutableLiveData<Int>,
     onLike: ()->Unit,
     onSave: ()->Boolean) {
+
+    val saved = MutableLiveData(post.saved)
 
     PostDownBar(
         modifier = modifier
@@ -126,7 +125,11 @@ fun PostButtons(
         likes = likes,
         saved = saved,
         onLike = onLike,
-        onSave = onSave
+        onSave = {
+            if(saved.value == SavePressed.Si) saved.value = SavePressed.No
+            else saved.value = SavePressed.Si
+            onSave.invoke()
+        }
     )
 }
 

@@ -1,12 +1,13 @@
 package com.example.petstagram.cuadroinfo
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.view.Gravity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,15 +19,19 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,9 +39,11 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.UiData.Post
-import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
@@ -44,11 +51,14 @@ import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.opciones.Opciones
+import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("MutableCollectionMutableState")
@@ -61,6 +71,16 @@ fun PostDownBar(
     onSave: () -> Boolean = { false },
     likes: MutableLiveData<Int>
 ) {
+    val coroutine = rememberCoroutineScope()
+
+    var commentsDisplayed by remember {
+        mutableStateOf(false)
+    }
+
+    var animationDisplayer by remember {
+        mutableStateOf(false)
+    }
+
     val likesCount by likes.observeAsState()
 
     val post by remember {
@@ -81,6 +101,51 @@ fun PostDownBar(
         // Fade in with the initial alpha of 0.3f.
         initialAlpha = 0.3f
     )
+
+    if (commentsDisplayed)
+    Dialog(onDismissRequest = {
+        coroutine.launch {
+            animationDisplayer = false
+            delay(300)
+            commentsDisplayed = !commentsDisplayed
+        }
+                              },
+        properties = DialogProperties(dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false))
+    {
+
+        //on open, set display animation to true
+        LaunchedEffect(Unit ){
+            animationDisplayer = true
+        }
+
+        //animations
+        AnimatedVisibility(
+            visible = commentsDisplayed&&animationDisplayer,
+            enter = slideInVertically {
+                                      it
+            },
+            exit = slideOutVertically { it }
+        ) {
+            //align bottom
+            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+            dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+
+            CommentsSection (modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.7f),
+                comments = post.comments,
+                account = post.creatorUser!!)
+        }
+        //on close, animationDisplayer closes
+        DisposableEffect(Unit ){
+            onDispose {
+                animationDisplayer = false
+            }
+        }
+    }
+
 
     TopLevelVariacionInferior {
 
@@ -112,7 +177,7 @@ fun PostDownBar(
                 TextoBotonComentariosVariacionInferior(modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
-                    .clickable { })
+                    .clickable { commentsDisplayed = !commentsDisplayed })
             }
         }
 

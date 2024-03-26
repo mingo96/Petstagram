@@ -44,7 +44,6 @@ fun Posts(
         val postsState by controller.posts.collectAsStateWithLifecycle()
         val localwidth = maxWidth
         val scrollState = rememberScrollState()
-        val spectator by mutableStateOf(controller.actualUser)
 
         TopLevel(modifier = modifier.width(maxWidth), scrollState = scrollState) {
             if(scrollState.maxValue!=0) {
@@ -54,11 +53,10 @@ fun Posts(
             }
             for (i in postsState){
 
-                PostInstance(modifier = Modifier
+                Post(modifier = Modifier
                     .width(localwidth)
                     .padding(vertical = 4.dp),
                     post = i,
-                    spectator = spectator,
                     onLike = {controller.likeClicked(i)},
                     onSave = {
                         if (i.saved==SavePressed.Si){
@@ -72,21 +70,6 @@ fun Posts(
     }
 }
 
-@Composable
-fun PostInstance(
-    modifier: Modifier = Modifier,
-    post: UIPost,
-    spectator: Profile,
-    onLike: (Post) -> Boolean,
-    onSave: (Post) -> Boolean
-) {
-    Post(modifier = modifier
-        .fillMaxWidth(1.0f),
-        post = post,
-        spectator = spectator,
-        onLike = onLike,
-        onSave = onSave)
-}
 
 @Composable
 fun TopLevel(

@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.ktx.firestore
