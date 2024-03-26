@@ -24,6 +24,7 @@ import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.guardar.SavePressed
+import com.example.petstagram.like.Pressed
 import com.example.petstagram.publicacion.Post
 import kotlinx.coroutines.flow.StateFlow
 
@@ -57,7 +58,12 @@ fun Posts(
                     .width(localwidth)
                     .padding(vertical = 4.dp),
                     post = i,
-                    onLike = {controller.likeClicked(i)},
+                    onLike = {
+                        if(controller.likeClicked(i))
+                            i.liked = Pressed.True
+                        else
+                            i.liked = Pressed.False
+                             },
                     onSave = {
                         if (i.saved==SavePressed.Si){
                             i.saved=SavePressed.No

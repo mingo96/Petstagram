@@ -43,7 +43,7 @@ import com.google.relay.compose.RelayContainerScope
 @kotlin.OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Post(modifier: Modifier = Modifier, post: UIPost,
-         onLike: (Post)->Boolean,
+         onLike: (Post)->Unit,
          onSave: (Post)->Boolean) {
 
     val likes = MutableLiveData(post.likes.size)
@@ -55,10 +55,7 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
             .combinedClickable(
                 enabled = true,
                 onDoubleClick = {
-                    if (onLike.invoke(post))
-                        post.liked = Pressed.True
-                    else
-                        post.liked = Pressed.False
+                    onLike.invoke(post)
                     likes.value = post.likes.size
                 },
                 onClick = {}),
@@ -68,12 +65,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
             post = post,
             likes = likes,
             onLike = {
-                if(onLike.invoke(post))
-                    post.liked = Pressed.True
-                else
-                    post.liked = Pressed.False
+                onLike.invoke(post)
                 likes.value = post.likes.size
-
             },
             onSave = {
                 onSave.invoke(post)
@@ -125,11 +118,7 @@ fun PostButtons(
         likes = likes,
         saved = saved,
         onLike = onLike,
-        onSave = {
-            if(saved.value == SavePressed.Si) saved.value = SavePressed.No
-            else saved.value = SavePressed.Si
-            onSave.invoke()
-        }
+        onSave = onSave
     )
 }
 

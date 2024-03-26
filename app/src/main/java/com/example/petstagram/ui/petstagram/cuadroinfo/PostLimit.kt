@@ -61,7 +61,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("MutableCollectionMutableState")
+@SuppressLint("MutableCollectionMutableState", "SuspiciousIndentation")
 @Composable
 fun PostDownBar(
     modifier: Modifier = Modifier,
@@ -102,46 +102,53 @@ fun PostDownBar(
         initialAlpha = 0.3f
     )
 
-    if (commentsDisplayed)
-    Dialog(onDismissRequest = {
-        coroutine.launch {
-            animationDisplayer = false
-            delay(300)
-            commentsDisplayed = !commentsDisplayed
-        }
-                              },
-        properties = DialogProperties(dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false))
-    {
-
-        //on open, set display animation to true
-        LaunchedEffect(Unit ){
-            animationDisplayer = true
-        }
-
-        //animations
-        AnimatedVisibility(
-            visible = commentsDisplayed&&animationDisplayer,
-            enter = slideInVertically {
-                                      it
+    if (commentsDisplayed) {
+        Dialog(
+            onDismissRequest = {
+                coroutine.launch {
+                    animationDisplayer = false
+                    delay(300)
+                    commentsDisplayed = !commentsDisplayed
+                }
             },
-            exit = slideOutVertically { it }
-        ) {
-            //align bottom
-            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
-            dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false
+            )
+        )
+        {
 
-            CommentsSection (modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.7f),
-                comments = post.comments,
-                account = post.creatorUser!!)
-        }
-        //on close, animationDisplayer closes
-        DisposableEffect(Unit ){
-            onDispose {
-                animationDisplayer = false
+            //on open, set display animation to true
+            LaunchedEffect(Unit) {
+                animationDisplayer = true
+            }
+
+            //animations
+            AnimatedVisibility(
+                visible = commentsDisplayed && animationDisplayer,
+                enter = slideInVertically {
+                    it
+                },
+                exit = slideOutVertically { it }
+            ) {
+                //align bottom
+                val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+                dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+
+                CommentsSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f),
+                    comments = post.comments,
+                    account = post.creatorUser!!
+                )
+            }
+            //on close, animationDisplayer closes
+            DisposableEffect(Unit) {
+                onDispose {
+                    animationDisplayer = false
+                }
             }
         }
     }
@@ -188,8 +195,10 @@ fun PostDownBar(
                 exit = ExitTransition.None
             ) {
                 SaveIcon(Modifier.clickable {
-                    onSave.invoke()
-
+                    if(onSave.invoke())
+                        saved.value = SavePressed.Si
+                    else
+                        saved.value = SavePressed.No
                 }, isSaved!!)
             }
             AnimatedVisibility(
@@ -198,7 +207,10 @@ fun PostDownBar(
                 exit = ExitTransition.None
             ) {
                 SaveIcon(Modifier.clickable {
-                    onSave.invoke()
+                    if(onSave.invoke())
+                        saved.value = SavePressed.No
+                    else
+                        saved.value = SavePressed.Si
 
                 }, isSaved!!)
             }
