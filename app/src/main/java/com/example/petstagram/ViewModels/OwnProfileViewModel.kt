@@ -15,6 +15,7 @@ import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
@@ -149,6 +150,14 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
         val castedPost = postJson.toObject(UIPost::class.java)!!
         if (castedPost.likes.find { it.userId==actualUser.id }!=null)
             castedPost.liked=Pressed.True
+        for (i in castedPost.comments){
+            val UIComment = UIComment(i)
+            db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
+
+                UIComment.objectUser = it.toObject(Profile::class.java)!!
+                castedPost.UIComments.add(UIComment)
+            }
+        }
 
         _posts.value += castedPost
 

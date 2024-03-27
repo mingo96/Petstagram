@@ -5,6 +5,7 @@ import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.SavedList
+import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -67,13 +68,14 @@ interface PostsUIController {
         return true
     }
 
-    fun comment(content : String, post: Post):Boolean{
+    fun comment(content : String, post: UIPost):Boolean{
         if (content.length>=50){
             return false
         }
         val newComment = Comment(actualUser.id, post.id, content)
         db.collection("Posts").document(post.id).update("comments", FieldValue.arrayUnion(newComment))
         post.comments+=newComment
+        post.UIComments+= UIComment(newComment)
         return true
     }
 

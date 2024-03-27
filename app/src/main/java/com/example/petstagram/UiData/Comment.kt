@@ -13,4 +13,11 @@ open class Comment (
 class UIComment (
     var objectUser : Profile = Profile(),
     var liked : Pressed = Pressed.False
-): Comment()
+): Comment(){
+    constructor(other : Comment):this(){
+        user = other.user
+        commentPost = other.commentPost
+        commentText = other.commentText
+        likes = other.likes
+    }
+}

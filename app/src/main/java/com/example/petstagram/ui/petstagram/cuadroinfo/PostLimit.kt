@@ -1,6 +1,7 @@
 package com.example.petstagram.cuadroinfo
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.Gravity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
@@ -136,7 +137,6 @@ fun PostDownBar(
                 //align bottom
                 val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
                 dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
-
                 CommentsSection(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -147,6 +147,7 @@ fun PostDownBar(
                         onComment(it)
                     }
                 )
+
             }
             //on close, animationDisplayer closes
             DisposableEffect(Unit) {

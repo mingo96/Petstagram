@@ -89,7 +89,7 @@ fun TopLine(modifier: Modifier = Modifier) {
 @Composable
 fun CommentContent(modifier: Modifier = Modifier, content : String) {
     RelayText(
-        content = "\${comentario}",
+        content = content,
         color = Color(
             alpha = 255,
             red = 224,
