@@ -44,6 +44,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
+import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.fotoperfil.FotoPerfilBase
@@ -71,6 +72,7 @@ fun PostDownBar(
     onLike: () -> Unit = {  },
     onSave: () -> Boolean = { false },
     onComment : (String)->Boolean,
+    onCommentLiked : (Comment)->Boolean,
     likes: MutableLiveData<Int>
 ) {
     val coroutine = rememberCoroutineScope()
@@ -145,7 +147,8 @@ fun PostDownBar(
                     account = post.creatorUser!!,
                     postComment = {
                         onComment(it)
-                    }
+                    },
+                    commentLiked = onCommentLiked
                 )
 
             }

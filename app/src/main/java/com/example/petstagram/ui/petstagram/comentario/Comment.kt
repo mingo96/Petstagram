@@ -1,5 +1,12 @@
 package com.example.petstagram.ui.petstagram.comentario
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -22,8 +31,10 @@ import com.example.petstagram.R
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.cuadroinfo.FotoPerfilSizePeque
+import com.example.petstagram.cuadroinfo.LikePulsadoFalse
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.like.Like
+import com.example.petstagram.like.Pressed
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
@@ -36,7 +47,19 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun Comment(modifier: Modifier = Modifier, comment: UIComment) {
+fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Unit) {
+    val density: Density = LocalDensity.current
+
+    val onEnter = slideInVertically {
+        // Slide in from 40 dp from the top.
+        with(density) { -40.dp.roundToPx() }
+    } + expandVertically(
+        // Expand from the top.
+        expandFrom = Alignment.Top
+    ) + fadeIn(
+        // Fade in with the initial alpha of 0.3f.
+        initialAlpha = 0.3f
+    )
     TopLevel(modifier = modifier) {
         TopLine(
             modifier = Modifier.boxAlign(
@@ -59,15 +82,28 @@ fun Comment(modifier: Modifier = Modifier, comment: UIComment) {
         )
         FotoPerfilSizePeque(picture = comment.objectUser.profilePic)
 
-        LikeInstance(
-            modifier = Modifier.boxAlign(
-                alignment = Alignment.TopEnd,
-                offset = DpOffset(
-                    x = -8.0.dp,
-                    y = 8.0.dp
-                )
-            )
-        )
+        Box()
+        {
+            AnimatedVisibility(
+                visible = comment.liked == Pressed.True,
+                enter = onEnter,
+                exit = ExitTransition.None
+            ) {
+                LikePulsadoFalse(Modifier.clickable {
+                    onLike.invoke()
+                }, comment.liked)
+            }
+
+            AnimatedVisibility(
+                visible = comment.liked == Pressed.False,
+                enter = onEnter,
+                exit = ExitTransition.None
+            ) {
+                LikePulsadoFalse(Modifier.clickable {
+                    onLike.invoke()
+                }, comment.liked)
+            }
+        }
     }
 }
 

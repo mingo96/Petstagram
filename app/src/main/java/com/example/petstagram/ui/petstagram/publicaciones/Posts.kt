@@ -14,19 +14,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.petstagram.Controllers.PostsUIController
-import com.example.petstagram.UiData.Post
-import com.example.petstagram.UiData.Profile
-import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.publicacion.Post
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * publicaciones
@@ -59,7 +54,7 @@ fun Posts(
                     .padding(vertical = 4.dp),
                     post = i,
                     onLike = {
-                        if(controller.likeClicked(i))
+                        if(controller.likeOnPost(i))
                             i.liked = Pressed.True
                         else
                             i.liked = Pressed.False
@@ -73,6 +68,9 @@ fun Posts(
                     },
                     onComment = {
                         controller.comment(it,i)
+                    },
+                    onCommentLiked = {
+                        controller.likeOnComment(it)
                     })
             }
         }

@@ -1,5 +1,6 @@
 package com.example.petstagram.Controllers
 
+import android.util.Log
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
@@ -9,8 +10,6 @@ import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.StateFlow
 
 interface PostsUIController {
@@ -23,7 +22,7 @@ interface PostsUIController {
     val db: FirebaseFirestore
     fun scroll(scrolled:Double)
 
-    fun likeClicked(post:Post):Boolean{
+    fun likeOnPost(post:Post):Boolean{
         val newLike = Like(userId = actualUser.id)
         return if(post.likes.find { it.userId==actualUser.id } == null) {
 
@@ -42,6 +41,32 @@ interface PostsUIController {
 
             false
         }
+    }
+
+    fun likeOnComment(comment : Comment) : Boolean{
+        val newLike = Like(userId = actualUser.id)
+        return if(comment.likes.find { it.userId==actualUser.id } == null) {
+            Log.i("AAAAAAAAAAAAAAAAAAAAA", "ya likeado")
+
+            comment.likes += newLike
+            db.collection("Comments")
+                .document(comment.id)
+                .update(
+                    "likes" ,FieldValue.arrayUnion(newLike)
+                )
+
+            true
+        }else{
+
+            comment.likes.removeIf { it.userId ==actualUser.id }
+            db.collection("Comments")
+                .document(comment.id)
+                .update(
+                    "likes" ,FieldValue.arrayRemove(newLike)
+                )
+            false
+        }
+
     }
 
     fun saveClicked(post:Post):Boolean{
@@ -72,10 +97,14 @@ interface PostsUIController {
         if (content.length>=50){
             return false
         }
-        val newComment = Comment(actualUser.id, post.id, content)
-        db.collection("Posts").document(post.id).update("comments", FieldValue.arrayUnion(newComment))
-        post.comments+=newComment
-        post.UIComments+= UIComment(newComment)
+        val newComment = Comment("",actualUser.id, post.id, content)
+
+        db.collection("Comments").add(newComment).addOnSuccessListener {
+            db.collection("Posts").document(post.id).update("comments", FieldValue.arrayUnion(it.id))
+            db.collection("Comments").document(it.id).update("id", it.id)
+            newComment.id = it.id
+            post.UIComments+= UIComment(newComment)
+        }
         return true
     }
 

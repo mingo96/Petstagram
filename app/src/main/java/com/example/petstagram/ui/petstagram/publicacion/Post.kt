@@ -19,6 +19,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import coil.compose.SubcomposeAsyncImage
+import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
@@ -45,7 +46,8 @@ import com.google.relay.compose.RelayContainerScope
 fun Post(modifier: Modifier = Modifier, post: UIPost,
          onLike: (Post)->Unit,
          onSave: (Post)->Boolean,
-         onComment: (String) -> Boolean) {
+         onComment: (String) -> Boolean,
+         onCommentLiked: (Comment) -> Boolean) {
 
     val likes = MutableLiveData(post.likes.size)
 
@@ -72,7 +74,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
             onSave = {
                 onSave.invoke(post)
             },
-            onComment = onComment
+            onComment = onComment,
+            onCommentLiked = onCommentLiked
         )
     }
 }
@@ -109,7 +112,8 @@ fun PostButtons(
     modifier: Modifier = Modifier, post: UIPost, likes: MutableLiveData<Int>,
     onLike: ()->Unit,
     onSave: ()->Boolean,
-    onComment : (String)->Boolean) {
+    onComment : (String)->Boolean,
+    onCommentLiked : (Comment)->Boolean) {
 
     val saved = MutableLiveData(post.saved)
 
@@ -122,7 +126,8 @@ fun PostButtons(
         saved = saved,
         onLike = onLike,
         onSave = onSave,
-        onComment = onComment
+        onComment = onComment,
+        onCommentLiked = onCommentLiked
     )
 }
 

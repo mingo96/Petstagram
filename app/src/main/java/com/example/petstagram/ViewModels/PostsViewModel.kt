@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
@@ -136,11 +137,15 @@ class PostsViewModel : ViewModel() ,PostsUIController{
         if (castedPost.likes.find { it.userId==actualUser.id }!=null)
             castedPost.liked= Pressed.True
         for (i in castedPost.comments){
-            val UIComment = UIComment(i)
-            db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
+            db.collection("Comments").document(i).get().addOnSuccessListener {
+                val UIComment = it.toObject(UIComment::class.java)!!
+                db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
 
-                UIComment.objectUser = it.toObject(Profile::class.java)!!
-                castedPost.UIComments.add(UIComment)
+                    UIComment.objectUser = it.toObject(Profile::class.java)!!
+                    castedPost.UIComments.add(UIComment)
+                    UIComment.liked = if(UIComment.likes.find { it.userId==actualUser.id }==null) Pressed.False else Pressed.True
+
+                }
             }
         }
 

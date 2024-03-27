@@ -25,7 +25,7 @@ open class Post ()
     /***/
     var likes : MutableList<Like> = mutableListOf()
     /***/
-    var comments : MutableList<Comment> = mutableListOf()
+    var comments : MutableList<String> = mutableListOf()
 
 }
 

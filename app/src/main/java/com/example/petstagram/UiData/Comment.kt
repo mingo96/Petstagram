@@ -4,6 +4,7 @@ import com.example.petstagram.like.Pressed
 
 open class Comment (
 
+    var id : String = "",
     var user :String = "",
     var commentPost : String = "",
     var commentText :String= "",
