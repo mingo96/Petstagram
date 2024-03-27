@@ -69,6 +69,7 @@ fun PostDownBar(
     saved : MutableLiveData<SavePressed>,
     onLike: () -> Unit = {  },
     onSave: () -> Boolean = { false },
+    onComment : (String)->Boolean,
     likes: MutableLiveData<Int>
 ) {
     val coroutine = rememberCoroutineScope()
@@ -140,8 +141,11 @@ fun PostDownBar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.7f),
-                    comments = post.comments,
-                    account = post.creatorUser!!
+                    comments = post.UIComments,
+                    account = post.creatorUser!!,
+                    postComment = {
+                        onComment(it)
+                    }
                 )
             }
             //on close, animationDisplayer closes

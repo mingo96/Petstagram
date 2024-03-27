@@ -44,7 +44,8 @@ import com.google.relay.compose.RelayContainerScope
 @Composable
 fun Post(modifier: Modifier = Modifier, post: UIPost,
          onLike: (Post)->Unit,
-         onSave: (Post)->Boolean) {
+         onSave: (Post)->Boolean,
+         onComment: (String) -> Boolean) {
 
     val likes = MutableLiveData(post.likes.size)
 
@@ -70,7 +71,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
             },
             onSave = {
                 onSave.invoke(post)
-            }
+            },
+            onComment = onComment
         )
     }
 }
@@ -106,7 +108,8 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
 fun PostButtons(
     modifier: Modifier = Modifier, post: UIPost, likes: MutableLiveData<Int>,
     onLike: ()->Unit,
-    onSave: ()->Boolean) {
+    onSave: ()->Boolean,
+    onComment : (String)->Boolean) {
 
     val saved = MutableLiveData(post.saved)
 
@@ -118,7 +121,8 @@ fun PostButtons(
         likes = likes,
         saved = saved,
         onLike = onLike,
-        onSave = onSave
+        onSave = onSave,
+        onComment = onComment
     )
 }
 

@@ -1,12 +1,18 @@
 package com.example.petstagram.ui.petstagram.seccioncomentarios
 
+import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,13 +21,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Profile
-import com.example.petstagram.ui.petstagram.comentario.Comentario
+import com.example.petstagram.UiData.UIComment
+import com.example.petstagram.ui.petstagram.comentario.Comment
 import com.example.petstagram.seccioncomentarios.inter
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -35,32 +43,54 @@ import com.google.relay.compose.RelayText
  * This composable was generated from the UI Package 'seccion_comentarios'.
  * Generated code; do not edit directly
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentsSection(modifier: Modifier = Modifier, comments:MutableList<Comment>, account : Profile) {
+fun CommentsSection(modifier: Modifier = Modifier,
+                    comments:MutableList<UIComment>,
+                    account : Profile,
+                    postComment : (String)->Boolean) {
     
     var commenting by remember {
         mutableStateOf(false)
     }
 
     TopLevel(modifier = modifier) {
+        var content by remember{ mutableStateOf("")}
+
         CommentsTopSection(modifier = Modifier.rowWeight(1.0f)) {
             if (!commenting) {
                 CommentsTitle(userName = account.userName)
-                BotonMas(modifier = Modifier.columnWeight(1.0f).clickable { commenting = true }) {
-                    CuadroSumar(
-                        modifier = Modifier
-                            .rowWeight(1.0f)
-                            .columnWeight(1.0f)
-                    )
-                }
             }
             else{
+                OutlinedTextField(value = content,
+                    onValueChange = {content = it},
+                    modifier = Modifier.padding(end = 8.dp),
+                    label = { Text(text = "Introduce tu comentario")},
+                    shape = RoundedCornerShape(15),
+                    textStyle = TextStyle(Color.White)
+                )
+            }
+            BotonMas(modifier = Modifier
+                .columnWeight(1.0f)
+                .clickable {
+                    if (!commenting) {
+                        commenting = true
+                    }else{
+                        if(postComment.invoke(content)){
 
+                        }
+                    }
+                }) {
+                CuadroSumar(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)
+                )
             }
         }
         Comentarios(modifier = Modifier.rowWeight(1.0f)) {
             for (i in comments){
-                ComentarioInstance()
+                Comment(comment = i)
             }
         }
     }
@@ -154,19 +184,13 @@ fun CommentsTopSection(
         mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(
-            end = 24.0.dp
+            horizontal = 16.0.dp
         ),
         content = content,
         modifier = modifier.fillMaxWidth(1.0f)
     )
 }
 
-@Composable
-fun ComentarioInstance(modifier: Modifier = Modifier) {
-    Comentario(modifier = modifier
-        .fillMaxWidth(1.0f)
-        .requiredHeight(48.0.dp))
-}
 
 @Composable
 fun Comentarios(
@@ -210,7 +234,7 @@ fun TopLevel(
             green = 196,
             blue = 1
         ),
-        radius = 15.0,
+        radius = 20.0,
         content = content,
         modifier = modifier.fillMaxHeight(1.0f)
     )

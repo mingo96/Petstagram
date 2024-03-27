@@ -38,7 +38,7 @@ class PostsViewModel : ViewModel() ,PostsUIController{
     override var actualUser by mutableStateOf(Profile())
 
     /**Firebase FireStore reference*/
-    private val db = Firebase.firestore
+    override val db = Firebase.firestore
 
     /**[Category] of the posts displayed*/
     lateinit var statedCategory: Category
@@ -163,51 +163,5 @@ class PostsViewModel : ViewModel() ,PostsUIController{
             startLoadingPosts()
         }
     }
-
-    override fun likeClicked(post:Post) : Boolean{
-        val newLike = Like(userId = actualUser.id)
-        return if(post.likes.find { it.userId==actualUser.id } == null) {
-
-            post.likes += newLike
-            db.collection("Posts")
-                .document(post.id)
-                .update("likes", FieldValue.arrayUnion(newLike))
-
-            true
-        }else{
-
-            post.likes.removeIf { it.userId ==actualUser.id }
-            db.collection("Posts")
-                .document(post.id)
-                .update("likes", FieldValue.arrayRemove(newLike))
-
-            false
-        }
-    }
-
-    override fun saveClicked(post: Post): Boolean {
-        val newSaved = post.id
-        db.collection("SavedLists")
-            .whereEqualTo("userId", actualUser.id)
-            .get().addOnSuccessListener {
-                if (it.isEmpty){
-                    val newList = SavedList(userId=actualUser.id)
-                    newList.postList.add(post.id)
-                    db.collection("SavedLists").add(newList).addOnSuccessListener {document->
-
-                        db.collection("SavedLists").document(document.id).update("docid",document.id )
-                    }
-                }else{
-                    val thisList = it.first().toObject(SavedList::class.java)
-                    if(thisList.postList.contains(post.id)) {
-                        db.collection("SavedLists").document(thisList.docid).update("postList", FieldValue.arrayRemove(newSaved))
-                    }else{
-                        db.collection("SavedLists").document(thisList.docid).update("postList", FieldValue.arrayUnion(newSaved))
-                    }
-                }
-            }
-        return true
-    }
-
 
 }

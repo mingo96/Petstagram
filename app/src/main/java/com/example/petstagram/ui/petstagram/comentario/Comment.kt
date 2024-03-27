@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,12 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.petstagram.R
+import com.example.petstagram.UiData.Comment
+import com.example.petstagram.UiData.UIComment
+import com.example.petstagram.cuadroinfo.FotoPerfilSizePeque
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.like.Like
 import com.google.relay.compose.RelayContainer
@@ -35,35 +36,29 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun Comentario(modifier: Modifier = Modifier) {
+fun Comment(modifier: Modifier = Modifier, comment: UIComment) {
     TopLevel(modifier = modifier) {
-        LineaInferior(
+        TopLine(
             modifier = Modifier.boxAlign(
                 alignment = Alignment.BottomStart,
                 offset = DpOffset(
                     x = 0.0.dp,
-                    y = -1.0.dp
+                    y = (-1.0).dp
                 )
             ).rowWeight(1.0f)
         )
-        ContenidoComentario(
+        CommentContent(
             modifier = Modifier.boxAlign(
                 alignment = Alignment.TopStart,
                 offset = DpOffset(
                     x = 48.0.dp,
                     y = 0.0.dp
                 )
-            ).columnWeight(1.0f)
+            ).columnWeight(1.0f),
+            content = comment.commentText
         )
-        FotoPerfilInstance(
-            modifier = Modifier.boxAlign(
-                alignment = Alignment.CenterStart,
-                offset = DpOffset(
-                    x = 8.0.dp,
-                    y = 0.0.dp
-                )
-            )
-        )
+        FotoPerfilSizePeque(picture = comment.objectUser.profilePic)
+
         LikeInstance(
             modifier = Modifier.boxAlign(
                 alignment = Alignment.TopEnd,
@@ -76,18 +71,8 @@ fun Comentario(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(widthDp = 360, heightDp = 48)
 @Composable
-private fun ComentarioPreview() {
-    MaterialTheme {
-        RelayContainer {
-            Comentario(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
-        }
-    }
-}
-
-@Composable
-fun LineaInferior(modifier: Modifier = Modifier) {
+fun TopLine(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.comentario_linea_inferior),
         modifier = modifier.padding(
@@ -102,7 +87,7 @@ fun LineaInferior(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ContenidoComentario(modifier: Modifier = Modifier) {
+fun CommentContent(modifier: Modifier = Modifier, content : String) {
     RelayText(
         content = "\${comentario}",
         color = Color(

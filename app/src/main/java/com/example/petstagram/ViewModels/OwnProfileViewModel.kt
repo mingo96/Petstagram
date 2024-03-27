@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 class OwnProfileViewModel : ViewModel() , PostsUIController{
 
     /**Firebase FireStore reference*/
-    private val db = Firebase.firestore
+    override val db = Firebase.firestore
 
     /**Firebase Storage reference*/
     private val storageRef = Firebase.storage.reference
@@ -262,32 +262,6 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
 
     override fun scroll(it: Double) {
 
-    }
-
-    override fun likeClicked(post: Post): Boolean {
-
-        val newLike = Like(userId = selfId)
-        return if(post.likes.find { it.userId==selfId } == null) {
-
-            post.likes += newLike
-            db.collection("Posts")
-                .document(post.id)
-                .update("likes", FieldValue.arrayUnion(newLike))
-
-            true
-        }else{
-
-            post.likes.removeIf { it.userId ==selfId }
-            db.collection("Posts")
-                .document(post.id)
-                .update("likes", FieldValue.arrayRemove(newLike))
-
-            false
-        }
-    }
-
-    override fun saveClicked(post: Post): Boolean {
-        return true
     }
 
 }

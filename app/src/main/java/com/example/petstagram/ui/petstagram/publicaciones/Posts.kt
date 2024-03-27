@@ -53,7 +53,7 @@ fun Posts(
                 controller.scroll(screenScrolled)
             }
             for (i in postsState){
-
+                //Do NOT try to implement directly with controller as param, major usage of ram+bugs?¿
                 Post(modifier = Modifier
                     .width(localwidth)
                     .padding(vertical = 4.dp),
@@ -70,6 +70,9 @@ fun Posts(
                         }else
                             i.saved=SavePressed.Si
                         controller.saveClicked(i)
+                    },
+                    onComment = {
+                        controller.comment(it,i)
                     })
             }
         }
