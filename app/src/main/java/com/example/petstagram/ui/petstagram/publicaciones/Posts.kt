@@ -70,7 +70,13 @@ fun Posts(
                         controller.comment(it,i)
                     },
                     onCommentLiked = {
-                        controller.likeOnComment(it)
+                        if(controller.likeOnComment(it)){
+                            it.liked = Pressed.True
+                            true
+                        }else{
+                            it.liked = Pressed.False
+                            false
+                        }
                     })
             }
         }

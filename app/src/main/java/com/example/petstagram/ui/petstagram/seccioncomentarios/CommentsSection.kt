@@ -1,12 +1,15 @@
 package com.example.petstagram.ui.petstagram.seccioncomentarios
 
-import android.graphics.drawable.shapes.Shape
-import android.util.Log
+import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
@@ -15,11 +18,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +38,10 @@ import androidx.compose.ui.unit.sp
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIComment
+import com.example.petstagram.like.Pressed
 import com.example.petstagram.ui.petstagram.comentario.Comment
 import com.example.petstagram.seccioncomentarios.inter
+import com.google.relay.compose.Clip
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -47,19 +54,25 @@ import com.google.relay.compose.RelayText
  * This composable was generated from the UI Package 'seccion_comentarios'.
  * Generated code; do not edit directly
  */
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentsSection(modifier: Modifier = Modifier,
-                    comments:MutableList<UIComment>,
-                    account : Profile,
-                    postComment : (String)->Boolean,
-                    commentLiked : (Comment)->Boolean) {
+fun CommentsSection(
+    modifier: Modifier = Modifier,
+    comments: MutableList<UIComment>,
+    account: Profile,
+    postComment: (String)->Unit,
+    commentLiked: (UIComment)->Boolean) {
 
     var commenting by remember {
         mutableStateOf(false)
     }
 
-    var context = LocalContext.current
+    var commentList by remember {
+        mutableStateOf(comments)
+    }
+
+    val context = LocalContext.current
 
     TopLevel(modifier = modifier) {
         var content by remember{ mutableStateOf("")}
@@ -71,10 +84,25 @@ fun CommentsSection(modifier: Modifier = Modifier,
             else{
                 OutlinedTextField(value = content,
                     onValueChange = {content = it},
-                    modifier = Modifier.padding(end = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .wrapContentHeight(
+                            align = Alignment.CenterVertically,
+                            unbounded = true
+                        )
+                        .padding(end = 16.dp)
+                    ,
                     label = { Text(text = "Introduce tu comentario")},
-                    shape = RoundedCornerShape(15),
-                    textStyle = TextStyle(Color.White)
+                    shape = RoundedCornerShape(30),
+                    textStyle = TextStyle(color = Color.White, lineHeight = 1.em),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.White,
+                        containerColor = Color.DarkGray,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color.White,
+                        focusedIndicatorColor = Color.Gray,
+                        unfocusedIndicatorColor = Color.Gray
+                    )
                 )
             }
             BotonMas(modifier = Modifier
@@ -83,10 +111,18 @@ fun CommentsSection(modifier: Modifier = Modifier,
                     if (!commenting) {
                         commenting = true
                     } else {
-                        if (!postComment.invoke(content)) {
-                            Toast.makeText(context, "Comentario demasiado largo", Toast.LENGTH_SHORT).show()
-                        }else{
+                        if (content.length >= 50) {
+                            Toast
+                                .makeText(context, "Comentario demasiado largo", Toast.LENGTH_SHORT)
+                                .show()
+                        } else if(content.isNotEmpty()){
+                            postComment(content)
+                            commentList = comments
                             commenting = false
+                        }else{
+                            Toast
+                                .makeText(context, "Comentario vacío", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }) {
@@ -98,8 +134,11 @@ fun CommentsSection(modifier: Modifier = Modifier,
             }
         }
         Comentarios(modifier = Modifier.rowWeight(1.0f)) {
-            for (i in comments){
-                Comment(comment = i, onLike = {commentLiked.invoke(i)})
+
+            for (i in commentList){
+                Comment(comment = i, onLike = {
+                    commentLiked.invoke(i)
+                })
             }
         }
     }
@@ -121,32 +160,23 @@ fun CommentsTitle(modifier: Modifier = Modifier, userName : String) {
         fontWeight = FontWeight(500.0.toInt()),
         maxLines = 2,
         modifier = modifier
-            .requiredWidth(280.0.dp)
+            .fillMaxWidth(0.7f)
             .requiredHeight(40.0.dp)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = true
             )
+            .padding(end = 16.dp)
     )
 }
 
 @Composable
 fun CuadroSumar(modifier: Modifier = Modifier) {
-    RelayText(
-        content = "+",
-        fontSize = 40.0.sp,
-        fontFamily = inter,
-        height = 1.2102272033691406.em,
-        fontWeight = FontWeight(500.0.toInt()),
-        maxLines = -1,
-        modifier = modifier
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
-            .wrapContentHeight(
-                align = Alignment.Bottom,
-                unbounded = true
-            )
-    )
+    Text(text = "+",
+        style = TextStyle(
+            fontSize = 40.sp,
+            fontWeight = FontWeight(500.0.toInt())
+        ),modifier = modifier)
 }
 
 @Composable
@@ -179,8 +209,11 @@ fun BotonMas(
         ),
         content = content,
         modifier = modifier
-            .requiredWidth(64.0.dp)
-            .requiredHeight(40.dp)
+            .fillMaxWidth(0.7f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = false
+            )
     )
 }
 
@@ -196,7 +229,7 @@ fun CommentsTopSection(
             horizontal = 16.0.dp
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(align = Alignment.CenterVertically)
     )
 }
 
@@ -235,16 +268,18 @@ fun TopLevel(
             end = 8.0.dp,
             bottom = 0.0.dp
         ),
-        itemSpacing = 16.0,
-        strokeWidth = 1.0,
-        strokeColor = Color(
-            alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
-        ),
         radius = 20.0,
+        itemSpacing = 16.0,
         content = content,
         modifier = modifier.fillMaxHeight(1.0f)
+            .border(
+                width = 4.0.dp,
+                color = Color(
+                    alpha = 255,
+                    red = 225,
+                    green = 196,
+                    blue = 1
+                ),
+                shape = RoundedCornerShape(5,5))
     )
 }

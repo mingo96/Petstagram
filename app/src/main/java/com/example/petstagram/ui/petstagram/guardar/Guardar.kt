@@ -69,7 +69,7 @@ private fun GuardarGuardarPulsadoSiPreview() {
 @Composable
 fun ImagenGuardarGuardarPulsadoNo(modifier: Modifier = Modifier) {
     RelayImage(
-        image = painterResource(R.drawable.guardar_imagen_guardar),
+        image = painterResource(R.drawable.guardar_imagen_guardar_modified),
         contentScale = ContentScale.Crop,
         modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
@@ -97,7 +97,7 @@ fun TopLevelGuardarPulsadoNo(
 @Composable
 fun ImagenGuardarGuardarPulsadoSi(modifier: Modifier = Modifier) {
     RelayImage(
-        image = painterResource(R.drawable.guardar_imagen_guardar),
+        image = painterResource(R.drawable.guardar_imagen_guardar_modified),
         contentScale = ContentScale.Crop,
         modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )

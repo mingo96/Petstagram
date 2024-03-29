@@ -1,6 +1,8 @@
 package com.example.petstagram.Controllers
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
@@ -10,6 +12,7 @@ import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 
 interface PostsUIController {
@@ -46,7 +49,7 @@ interface PostsUIController {
     fun likeOnComment(comment : Comment) : Boolean{
         val newLike = Like(userId = actualUser.id)
         return if(comment.likes.find { it.userId==actualUser.id } == null) {
-            Log.i("AAAAAAAAAAAAAAAAAAAAA", "ya likeado")
+            Log.i("AAAAAAAAAAAAAAAAAAAAA", comment.id)
 
             comment.likes += newLike
             db.collection("Comments")
@@ -93,19 +96,24 @@ interface PostsUIController {
         return true
     }
 
-    fun comment(content : String, post: UIPost):Boolean{
-        if (content.length>=50){
-            return false
-        }
-        val newComment = Comment("",actualUser.id, post.id, content)
+    fun comment(content : String, post: UIPost){
+        val newComment =
+            Comment(id = "", user = actualUser.id, commentPost = post.id, commentText = content)
 
         db.collection("Comments").add(newComment).addOnSuccessListener {
-            db.collection("Posts").document(post.id).update("comments", FieldValue.arrayUnion(it.id))
+            db.collection("Posts").document(post.id)
+                .update("comments", FieldValue.arrayUnion(it.id))
             db.collection("Comments").document(it.id).update("id", it.id)
+
             newComment.id = it.id
-            post.UIComments+= UIComment(newComment)
+            post.comments.add(newComment.id)
+
+            val uiComment = UIComment(newComment)
+            uiComment.objectUser = actualUser
+            post.UIComments += uiComment
+
+
         }
-        return true
     }
 
 

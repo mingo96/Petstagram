@@ -2,12 +2,16 @@ package com.example.petstagram.ui.petstagram.comentario
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +19,10 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,12 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.petstagram.R
-import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.cuadroinfo.FotoPerfilSizePeque
 import com.example.petstagram.cuadroinfo.LikePulsadoFalse
-import com.example.petstagram.fotoperfil.FotoPerfilBase
-import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -47,63 +52,78 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Unit) {
+fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Boolean) {
     val density: Density = LocalDensity.current
 
-    val onEnter = slideInVertically {
+    val onEnter = slideInHorizontally {
         // Slide in from 40 dp from the top.
-        with(density) { -40.dp.roundToPx() }
-    } + expandVertically(
+        with(density) { 40.dp.roundToPx() }
+    } + expandHorizontally(
         // Expand from the top.
-        expandFrom = Alignment.Top
+        expandFrom = Alignment.End
     ) + fadeIn(
         // Fade in with the initial alpha of 0.3f.
         initialAlpha = 0.3f
     )
-    TopLevel(modifier = modifier) {
-        TopLine(
-            modifier = Modifier.boxAlign(
-                alignment = Alignment.BottomStart,
-                offset = DpOffset(
-                    x = 0.0.dp,
-                    y = (-1.0).dp
-                )
-            ).rowWeight(1.0f)
-        )
-        CommentContent(
-            modifier = Modifier.boxAlign(
-                alignment = Alignment.TopStart,
-                offset = DpOffset(
-                    x = 48.0.dp,
-                    y = 0.0.dp
-                )
-            ).columnWeight(1.0f),
-            content = comment.commentText
-        )
-        FotoPerfilSizePeque(picture = comment.objectUser.profilePic)
+    var locallyLiked by remember {
+        mutableStateOf(comment.liked)
+    }
 
-        Box()
-        {
-            AnimatedVisibility(
-                visible = comment.liked == Pressed.True,
-                enter = onEnter,
-                exit = ExitTransition.None
-            ) {
-                LikePulsadoFalse(Modifier.clickable {
-                    onLike.invoke()
-                }, comment.liked)
+    TopLevel(modifier = modifier) {
+
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 7.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically){
+                FotoPerfilSizePeque(picture = comment.objectUser.profilePic)
+
+
+                CommentContent(
+                    modifier = Modifier,
+                    content = comment.commentText
+                )
             }
 
             AnimatedVisibility(
-                visible = comment.liked == Pressed.False,
+                visible = locallyLiked == Pressed.True,
                 enter = onEnter,
                 exit = ExitTransition.None
             ) {
                 LikePulsadoFalse(Modifier.clickable {
-                    onLike.invoke()
-                }, comment.liked)
+                    locallyLiked = if(onLike.invoke())
+                        Pressed.True
+                    else
+                        Pressed.False
+
+                }, locallyLiked)
+            }
+
+            AnimatedVisibility(
+                visible = locallyLiked == Pressed.False,
+                enter = onEnter,
+                exit = ExitTransition.None
+            ) {
+                LikePulsadoFalse(Modifier.clickable {
+                    locallyLiked = if(onLike.invoke())
+                        Pressed.True
+                    else
+                        Pressed.False
+                }, locallyLiked)
             }
         }
+        TopLine(
+            modifier = Modifier
+                .boxAlign(
+                    alignment = Alignment.BottomStart,
+                    offset = DpOffset(
+                        x = 0.0.dp,
+                        y = (-1.0).dp
+                    )
+                )
+                .rowWeight(1.0f)
+        )
     }
 }
 
@@ -111,14 +131,17 @@ fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Unit
 fun TopLine(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.comentario_linea_inferior),
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 16.0.dp,
-                top = 0.0.dp,
-                end = 16.0.dp,
-                bottom = 0.0.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 16.0.dp,
+                    top = 0.0.dp,
+                    end = 16.0.dp,
+                    bottom = 0.0.dp
+                )
             )
-        ).fillMaxWidth(1.0f).requiredHeight(0.0.dp)
+            .fillMaxWidth(1.0f)
+            .requiredHeight(1.dp)
     )
 }
 
@@ -137,28 +160,22 @@ fun CommentContent(modifier: Modifier = Modifier, content : String) {
         textAlign = TextAlign.Left,
         fontWeight = FontWeight(500.0.toInt()),
         maxLines = -1,
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 0.0.dp,
-                top = 8.0.dp,
-                end = 0.0.dp,
-                bottom = 8.0.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 8.0.dp,
+                    top = 8.0.dp,
+                    end = 0.0.dp,
+                    bottom = 8.0.dp
+                )
             )
-        ).requiredWidth(256.0.dp).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+            .requiredWidth(256.0.dp)
+            .fillMaxHeight(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
-}
-
-@Composable
-fun FotoPerfilInstance(modifier: Modifier = Modifier) {
-    FotoPerfilBase(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
-}
-
-@Composable
-fun LikeInstance(modifier: Modifier = Modifier) {
-    Like(modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp))
 }
 
 @Composable
@@ -167,8 +184,11 @@ fun TopLevel(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        isStructured = false,
+        isStructured = true,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
+            .padding(horizontal = 8.dp)
     )
 }

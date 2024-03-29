@@ -16,6 +16,7 @@ class UIComment (
     var liked : Pressed = Pressed.False
 ): Comment(){
     constructor(other : Comment):this(){
+        id = other.id
         user = other.user
         commentPost = other.commentPost
         commentText = other.commentText

@@ -1,7 +1,6 @@
 package com.example.petstagram.cuadroinfo
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.Gravity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
@@ -27,6 +26,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +46,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Post
+import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
@@ -63,7 +64,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("MutableCollectionMutableState", "SuspiciousIndentation")
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun PostDownBar(
     modifier: Modifier = Modifier,
@@ -71,13 +72,13 @@ fun PostDownBar(
     saved : MutableLiveData<SavePressed>,
     onLike: () -> Unit = {  },
     onSave: () -> Boolean = { false },
-    onComment : (String)->Boolean,
-    onCommentLiked : (Comment)->Boolean,
+    onComment : (String)->Unit,
+    onCommentLiked : (UIComment)->Boolean,
     likes: MutableLiveData<Int>
 ) {
     val coroutine = rememberCoroutineScope()
 
-    var commentsDisplayed by remember {
+    var commentsDisplayed by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -139,15 +140,14 @@ fun PostDownBar(
                 //align bottom
                 val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
                 dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+
                 CommentsSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.7f),
-                    comments = post.UIComments,
+                    comments = added.UIComments,
                     account = post.creatorUser!!,
-                    postComment = {
-                        onComment(it)
-                    },
+                    postComment = onComment,
                     commentLiked = onCommentLiked
                 )
 

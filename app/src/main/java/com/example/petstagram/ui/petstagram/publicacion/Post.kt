@@ -22,6 +22,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
@@ -46,8 +47,8 @@ import com.google.relay.compose.RelayContainerScope
 fun Post(modifier: Modifier = Modifier, post: UIPost,
          onLike: (Post)->Unit,
          onSave: (Post)->Boolean,
-         onComment: (String) -> Boolean,
-         onCommentLiked: (Comment) -> Boolean) {
+         onComment: (String) -> Unit,
+         onCommentLiked: (UIComment) -> Boolean) {
 
     val likes = MutableLiveData(post.likes.size)
 
@@ -112,8 +113,8 @@ fun PostButtons(
     modifier: Modifier = Modifier, post: UIPost, likes: MutableLiveData<Int>,
     onLike: ()->Unit,
     onSave: ()->Boolean,
-    onComment : (String)->Boolean,
-    onCommentLiked : (Comment)->Boolean) {
+    onComment : (String)->Unit,
+    onCommentLiked : (UIComment)->Boolean) {
 
     val saved = MutableLiveData(post.saved)
 
