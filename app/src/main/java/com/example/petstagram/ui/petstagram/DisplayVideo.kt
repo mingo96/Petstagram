@@ -18,6 +18,7 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
@@ -47,6 +48,7 @@ fun DisplayVideo(source : String, modifier:Modifier) {
             mediaPlayer.release()
         }
     }
+
 
     //the video itself, they repeat for ever, start stopped, on click you swap between
     //stopped / playing, basic controller was just too ugly

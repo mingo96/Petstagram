@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -73,45 +75,61 @@ fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Bool
 
 
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 7.dp)
+            horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 8.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically){
                 FotoPerfilSizePeque(picture = comment.objectUser.profilePic)
-
 
                 CommentContent(
                     modifier = Modifier,
                     content = comment.commentText
                 )
+
+                AnimatedVisibility(
+                    visible = locallyLiked == Pressed.True,
+                    enter = onEnter,
+                    exit = ExitTransition.None,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Row {
+
+                        Text(text = "${comment.likes.size}",
+                            style = TextStyle(color = Color.White, fontSize = 10.sp))
+                        LikePulsadoFalse(Modifier.clickable {
+                            locallyLiked = if(onLike.invoke())
+                                Pressed.True
+                            else
+                                Pressed.False
+
+                        }, locallyLiked)
+                    }
+                }
+
+
+                AnimatedVisibility(
+                    visible = locallyLiked == Pressed.False,
+                    enter = onEnter,
+                    exit = ExitTransition.None,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Row{
+                        Text(
+                            text = "${comment.likes.size}",
+                            style = TextStyle(color = Color.White,fontSize = 10.sp)
+                        )
+                        LikePulsadoFalse(Modifier.clickable {
+                            locallyLiked = if (onLike.invoke())
+                                Pressed.True
+                            else
+                                Pressed.False
+                        }, locallyLiked)
+                    }
+                }
             }
 
-            AnimatedVisibility(
-                visible = locallyLiked == Pressed.True,
-                enter = onEnter,
-                exit = ExitTransition.None
-            ) {
-                LikePulsadoFalse(Modifier.clickable {
-                    locallyLiked = if(onLike.invoke())
-                        Pressed.True
-                    else
-                        Pressed.False
-
-                }, locallyLiked)
-            }
-
-            AnimatedVisibility(
-                visible = locallyLiked == Pressed.False,
-                enter = onEnter,
-                exit = ExitTransition.None
-            ) {
-                LikePulsadoFalse(Modifier.clickable {
-                    locallyLiked = if(onLike.invoke())
-                        Pressed.True
-                    else
-                        Pressed.False
-                }, locallyLiked)
-            }
         }
         TopLine(
             modifier = Modifier
@@ -169,7 +187,7 @@ fun CommentContent(modifier: Modifier = Modifier, content : String) {
                     bottom = 8.0.dp
                 )
             )
-            .requiredWidth(256.0.dp)
+            .fillMaxWidth(0.85f)
             .fillMaxHeight(1.0f)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,

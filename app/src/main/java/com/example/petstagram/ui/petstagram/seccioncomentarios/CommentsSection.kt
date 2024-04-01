@@ -111,7 +111,7 @@ fun CommentsSection(
                     if (!commenting) {
                         commenting = true
                     } else {
-                        if (content.length >= 50) {
+                        if (content.length >= 200) {
                             Toast
                                 .makeText(context, "Comentario demasiado largo", Toast.LENGTH_SHORT)
                                 .show()
@@ -272,6 +272,7 @@ fun TopLevel(
         itemSpacing = 16.0,
         content = content,
         modifier = modifier.fillMaxHeight(1.0f)
+
             .border(
                 width = 4.0.dp,
                 color = Color(

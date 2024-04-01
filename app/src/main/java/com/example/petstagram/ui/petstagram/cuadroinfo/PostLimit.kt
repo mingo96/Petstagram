@@ -9,8 +9,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,10 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -44,10 +48,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
-import com.example.petstagram.UiData.Comment
+import com.example.petstagram.R
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.cuadrotexto.PostTitle
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.guardar.Guardar
 import com.example.petstagram.guardar.SavePressed
@@ -60,6 +65,7 @@ import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
+import com.google.relay.compose.RelayVector
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -162,12 +168,28 @@ fun PostDownBar(
     }
 
 
-    TopLevelVariacionInferior {
-
-        ContenedorBotonesIzquierdaVariacionInferior {
+    Container {
+        TitleContainer {
+            PostTitle(title = "${post.creatorUser!!.userName}: ${post.title}")
+        }
+        IntersectLine(
+            modifier = Modifier
+                .boxAlign(
+                    alignment = Alignment.BottomStart,
+                    offset = DpOffset(
+                        x = 0.0.dp,
+                        y = (-1.0).dp
+                    )
+                )
+                .rowWeight(1.0f))
+        Row (horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)){
             Box()
             {
-                AnimatedVisibility(
+                this@Row.AnimatedVisibility(
                     visible = post.liked == Pressed.True,
                     enter = onEnter,
                     exit = ExitTransition.None
@@ -177,7 +199,7 @@ fun PostDownBar(
                     }, post.liked)
                 }
 
-                AnimatedVisibility(
+                this@Row.AnimatedVisibility(
                     visible = post.liked == Pressed.False,
                     enter = onEnter,
                     exit = ExitTransition.None
@@ -194,35 +216,36 @@ fun PostDownBar(
                     .columnWeight(1.0f)
                     .clickable { commentsDisplayed = !commentsDisplayed })
             }
+            Box {
+                this@Row.AnimatedVisibility(
+                    visible = isSaved== SavePressed.No,
+                    enter = onEnter,
+                    exit = ExitTransition.None
+                ) {
+                    SaveIcon(Modifier.clickable {
+                        if(onSave.invoke())
+                            saved.value = SavePressed.Si
+                        else
+                            saved.value = SavePressed.No
+                    }, isSaved!!)
+                }
+                this@Row.AnimatedVisibility(
+                    visible = isSaved == SavePressed.Si,
+                    enter = onEnter,
+                    exit = ExitTransition.None
+                ) {
+                    SaveIcon(Modifier.clickable {
+                        if(onSave.invoke())
+                            saved.value = SavePressed.No
+                        else
+                            saved.value = SavePressed.Si
+
+                    }, isSaved!!)
+                }
+            }
         }
 
-        Box {
-            AnimatedVisibility(
-                visible = isSaved== SavePressed.No,
-                enter = onEnter,
-                exit = ExitTransition.None
-            ) {
-                SaveIcon(Modifier.clickable {
-                    if(onSave.invoke())
-                        saved.value = SavePressed.Si
-                    else
-                        saved.value = SavePressed.No
-                }, isSaved!!)
-            }
-            AnimatedVisibility(
-                visible = isSaved == SavePressed.Si,
-                enter = onEnter,
-                exit = ExitTransition.None
-            ) {
-                SaveIcon(Modifier.clickable {
-                    if(onSave.invoke())
-                        saved.value = SavePressed.No
-                    else
-                        saved.value = SavePressed.Si
 
-                }, isSaved!!)
-            }
-        }
     }
 }
 
@@ -230,7 +253,7 @@ fun PostDownBar(
 fun TopPostLimit(modifier : Modifier, added : Post){
     TopLevelVariacionSuperior(modifier = modifier) {
         FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
-        TextoNombrePerfilVariacionSuperior(added = added.creatorUser!!.userName)
+        ProfileName(added = added.creatorUser!!.userName)
         OpcionesOpciones()
     }
 }
@@ -238,13 +261,82 @@ fun TopPostLimit(modifier : Modifier, added : Post){
 @Composable
 fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
     FotoPerfilBase(modifier = modifier
-        .requiredWidth(32.0.dp)
+        .requiredWidth(32.dp)
         .requiredHeight(32.0.dp),
         added = picture)
 }
 
+
 @Composable
-fun TextoNombrePerfilVariacionSuperior(modifier: Modifier = Modifier, added: String) {
+fun Frame12VariacionInferior(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        arrangement = RelayContainerArrangement.Row,
+        padding = PaddingValues(
+            start = 0.0.dp,
+            top = 8.0.dp,
+            end = 0.0.dp,
+            bottom = 8.0.dp
+        ),
+        itemSpacing = 8.0,
+        content = content,
+        modifier = modifier
+    )
+}
+@Composable
+fun TitleContainer(
+    modifier: Modifier = Modifier,
+    content: @Composable RelayContainerScope.() -> Unit
+) {
+    RelayContainer(
+        mainAxisAlignment = MainAxisAlignment.Start,
+        arrangement = RelayContainerArrangement.Row,
+        content = content,
+        modifier = modifier.fillMaxWidth(1.0f)
+    )
+}
+
+
+@Composable
+fun NombreUsuarioTTuloVariacionInferior(modifier: Modifier = Modifier) {
+    RelayText(
+        content = "\${nombreUsuario} Título",
+        fontSize = 12.0.sp,
+        fontFamily = inter,
+        color = Color(
+            alpha = 255,
+            red = 255,
+            green = 255,
+            blue = 255
+        ),
+        height = 1.6666667175292968.em,
+        letterSpacing = 0.10000000149011612.sp,
+        fontWeight = FontWeight(500.0.toInt()),
+        maxLines = -1,
+        modifier = modifier
+            .requiredWidth(143.0.dp)
+            .requiredHeight(24.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
+    )
+}
+@Composable
+fun IntersectLine(modifier: Modifier = Modifier) {
+    RelayVector(
+        vector = painterResource(R.drawable.cuadro_info_line_1),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .requiredHeight(1.dp)
+    )
+}
+
+@Composable
+fun ProfileName(modifier: Modifier = Modifier, added: String) {
     RelayText(
         content = added,
         fontSize = 15.0.sp,
@@ -382,7 +474,6 @@ fun ContenedorBotonesIzquierdaVariacionInferior(
         arrangement = RelayContainerArrangement.Row,
         content = content,
         modifier = modifier
-            .fillMaxWidth(0.8f)
             .requiredHeight(48.0.dp)
     )
 }
@@ -396,7 +487,7 @@ fun SaveIcon(modifier: Modifier = Modifier, variation : SavePressed) {
 }
 
 @Composable
-fun TopLevelVariacionInferior(
+fun Container(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
@@ -407,14 +498,8 @@ fun TopLevelVariacionInferior(
             green = 0,
             blue = 0
         ),
-        mainAxisAlignment = MainAxisAlignment.SpaceBetween,
-        arrangement = RelayContainerArrangement.Row,
-        padding = PaddingValues(
-            start = 8.0.dp,
-            top = 0.0.dp,
-            end = 8.0.dp,
-            bottom = 0.0.dp
-        ),
+        mainAxisAlignment = MainAxisAlignment.Center,
+        arrangement = RelayContainerArrangement.Column,
         strokeWidth = 1.0,
         strokeColor = Color(
             alpha = 255,

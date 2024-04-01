@@ -1,6 +1,7 @@
 package com.example.petstagram.fotoperfil
 
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -122,7 +123,7 @@ fun ProfilePic(modifier: Modifier = Modifier, url: String) {
     else
         AsyncImage(model = url,
             contentDescription = "profilePic",
-            modifier = modifier,
+            modifier = modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
 }

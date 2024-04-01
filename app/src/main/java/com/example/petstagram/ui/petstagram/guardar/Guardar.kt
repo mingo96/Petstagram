@@ -111,9 +111,9 @@ fun TopLevelGuardarPulsadoSi(
     RelayContainer(
         backgroundColor = Color(
             alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
+            red = 224,
+            green = 164,
+            blue = 0
         ),
         isStructured = false,
         radius = 4.5,

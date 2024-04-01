@@ -3,7 +3,9 @@ package com.example.petstagram.cuadrotexto
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -87,7 +89,7 @@ fun Label(
             TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
         }
         Variation.PostTitle -> TopLevelVariacionTituloPublicacion(modifier = modifier) {
-            TextoTituloPublicacionVariacionTituloPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            PostTitle(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f), added  )
         }
         Variation.PostCategory -> TopLevelVariacionCategoriaPublicacion(modifier = modifier) {
             TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
@@ -741,10 +743,10 @@ fun TopLevelVariacionSeleccionarRecurso(
 }
 
 @Composable
-fun TextoTituloPublicacionVariacionTituloPublicacion(modifier: Modifier = Modifier) {
+fun PostTitle(modifier: Modifier = Modifier, title : String) {
     RelayText(
-        content = "Titulo publicacion",
-        fontSize = 26.0.sp,
+        content = title,
+        fontSize = 12.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -756,10 +758,10 @@ fun TextoTituloPublicacionVariacionTituloPublicacion(modifier: Modifier = Modifi
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier.wrapContentWidth(
+            unbounded = false,
+            align = Alignment.Start
+        ).padding(8.dp)
     )
 }
 
