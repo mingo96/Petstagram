@@ -78,19 +78,9 @@ fun PostDownBar(
     saved : MutableLiveData<SavePressed>,
     onLike: () -> Unit = {  },
     onSave: () -> Boolean = { false },
-    onComment : (String)->Unit,
-    onCommentLiked : (UIComment)->Boolean,
-    likes: MutableLiveData<Int>
+    likes: MutableLiveData<Int>,
+    tapOnComments : ()->Unit
 ) {
-    val coroutine = rememberCoroutineScope()
-
-    var commentsDisplayed by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var animationDisplayer by remember {
-        mutableStateOf(false)
-    }
 
     val likesCount by likes.observeAsState()
 
@@ -112,60 +102,6 @@ fun PostDownBar(
         // Fade in with the initial alpha of 0.3f.
         initialAlpha = 0.3f
     )
-
-    if (commentsDisplayed) {
-        Dialog(
-            onDismissRequest = {
-                coroutine.launch {
-                    animationDisplayer = false
-                    delay(300)
-                    commentsDisplayed = !commentsDisplayed
-                }
-            },
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true,
-                usePlatformDefaultWidth = false
-            )
-        )
-        {
-
-            //on open, set display animation to true
-            LaunchedEffect(Unit) {
-                animationDisplayer = true
-            }
-
-            //animations
-            AnimatedVisibility(
-                visible = commentsDisplayed && animationDisplayer,
-                enter = slideInVertically {
-                    it
-                },
-                exit = slideOutVertically { it }
-            ) {
-                //align bottom
-                val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
-                dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
-
-                CommentsSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.7f),
-                    comments = added.UIComments,
-                    account = post.creatorUser!!,
-                    postComment = onComment,
-                    commentLiked = onCommentLiked
-                )
-
-            }
-            //on close, animationDisplayer closes
-            DisposableEffect(Unit) {
-                onDispose {
-                    animationDisplayer = false
-                }
-            }
-        }
-    }
 
 
     Container {
@@ -214,7 +150,7 @@ fun PostDownBar(
                 TextoBotonComentariosVariacionInferior(modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
-                    .clickable { commentsDisplayed = !commentsDisplayed })
+                    .clickable { tapOnComments.invoke() })
             }
             Box {
                 this@Row.AnimatedVisibility(

@@ -66,13 +66,15 @@ fun DisplayCategory(
                         .height(height.times(0.825f))
                         .fillMaxWidth(0.8f))
 
-            else
+            else {
+
                 PostsInstance(
                     modifier = Modifier
                         .rowWeight(1.0f)
                         .height(height.times(0.825f)),
                     viewModel = viewModel
                 )
+            }
         }
     }
 }

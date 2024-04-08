@@ -136,6 +136,7 @@ class PostsViewModel : ViewModel() ,PostsUIController{
 
         if (castedPost.likes.find { it.userId==actualUser.id }!=null)
             castedPost.liked= Pressed.True
+
         for (i in castedPost.comments){
             db.collection("Comments").document(i).get().addOnSuccessListener {
                 val UIComment = it.toObject(UIComment::class.java)!!

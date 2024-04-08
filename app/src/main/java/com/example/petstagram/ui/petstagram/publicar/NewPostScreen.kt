@@ -129,7 +129,7 @@ fun NewPostScreen(
                         .height(40.dp))
             }else{
                 if (getMimeType(context, uriObserver!!)?.startsWith("video/") == true){
-                    DisplayVideo(source = uriObserver.toString(), modifier = modifier)
+                    DisplayVideo(source = uriObserver.toString(), modifier = modifier, context)
                 }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),
                         contentDescription = "foto seleccionada",
