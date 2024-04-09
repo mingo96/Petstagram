@@ -27,15 +27,18 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
+@HiltViewModel
 @SuppressLint("MutableCollectionMutableState")
-class PostsViewModel : ViewModel() ,PostsUIController{
+class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
 
     override var actualUser by mutableStateOf(Profile())
 

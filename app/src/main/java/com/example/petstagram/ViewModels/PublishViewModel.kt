@@ -20,18 +20,20 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 fun getMimeType(context: Context, uri: Uri): String? {
     val contentResolver: ContentResolver = context.contentResolver
     return contentResolver.getType(uri)
 }
 
-class PublishViewModel : ViewModel() {
-
+@HiltViewModel
+class PublishViewModel @Inject constructor() : ViewModel() {
 
     private var _isSendingInfo = MutableLiveData(false)
 

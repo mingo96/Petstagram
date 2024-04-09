@@ -8,13 +8,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoriesViewModel : ViewModel() {
+@HiltViewModel
+
+class CategoriesViewModel @Inject constructor() : ViewModel() {
 
     /**Firebase Firestore reference*/
     private val db = Firebase.firestore

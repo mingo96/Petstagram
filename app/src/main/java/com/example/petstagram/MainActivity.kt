@@ -1,6 +1,7 @@
 package com.example.petstagram
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
@@ -41,7 +42,10 @@ import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var analytics: FirebaseAnalytics
     @OptIn(UnstableApi::class) @SuppressLint("SourceLockedOrientationActivity")
@@ -111,3 +115,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@HiltAndroidApp
+class ExampleApplication : Application()
