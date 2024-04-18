@@ -12,3 +12,4 @@ description: Funcionalidades logradas
 * Creación de publicaciones (titulo y recurso)
 * Display de publicaciones filtradas por categoría y ordenadas
   * Display de info del usuario en estas
+  * Comentarios, likes y guardados de estas

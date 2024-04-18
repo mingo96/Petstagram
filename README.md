@@ -40,9 +40,11 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 * Lógica de aplicación : Android \[Jetpack compose]
   * Imagenes asíncronas : Android Coil
   * Video : Google Exoplayer
+  * Inserción de depencencias : Dagger hilt
   * Navegación : Android Navigation
   * Interacción con servidor : Firebase for Android
 * Servidor : Google Firebase
   * Autenticación : Firebase Authentication
   * Persistencia y acceso a datos : Firebase Firestore
   * Persistencia y acceso de archivos : Firebase Storage
+  * Notificaciones : Firebase Cloud Message

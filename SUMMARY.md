@@ -12,3 +12,4 @@
   * [Barra superior](prototipado-de-la-aplicacion/barra-superior.md)
   * [Publicaciones](prototipado-de-la-aplicacion/publicaciones.md)
 * [Desarrollo de la aplicación](desarrollo-de-la-aplicacion.md)
+* [Tareas](tareas.md)
