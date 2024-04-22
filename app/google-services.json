@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750182229870",
+    "project_id": "petstagram-2e298",
+    "storage_bucket": "petstagram-2e298.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750182229870:android:7c1536c525d943a7f7037f",
+        "android_client_info": {
+          "package_name": "com.example.Petstagram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQRxnbl5htFCradEqSNb4sFcK_CUir2uI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
