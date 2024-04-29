@@ -280,4 +280,9 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
 
     }
 
+    fun clear(){
+        if (_posts.value.isNotEmpty())
+            _posts.value.drop(0)
+    }
+
 }

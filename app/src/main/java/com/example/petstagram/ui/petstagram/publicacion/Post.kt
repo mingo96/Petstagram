@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -185,7 +186,6 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
     val context = LocalContext.current
 
     if (post.typeOfMedia == "image") {
-        android.util.Log.i("AAAAAAAAAAAAAAAAAAAAA","Image")
 
         SubcomposeAsyncImage(
             modifier = modifier.fillMaxWidth(),
@@ -198,7 +198,6 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
             contentScale = ContentScale.Crop
         )
     }else{
-        android.util.Log.i("AAAAAAAAAAAAAAAAAAAAA","Video")
         DisplayVideo(source = post.source, modifier = modifier, context = context)
     }
 }

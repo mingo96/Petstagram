@@ -3,27 +3,30 @@ package com.example.petstagram
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.OptIn
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,20 +37,43 @@ import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.loginenmovil.PhoneLogin
 import com.example.petstagram.menuprincipal.CategoriesMenu
-import com.example.petstagram.perfil.SomeonesProfile
 import com.example.petstagram.perfilpropio.MyProfile
 import com.example.petstagram.publicar.NewPostScreen
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var analytics: FirebaseAnalytics
+
+    // Declare the launcher at the top of your Activity/Fragment:
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // FCM SDK (and your app) can post notifications.
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.i("Fetching FCM registration token failed", task.exception.toString())
+                    return@OnCompleteListener
+                }
+
+                // Get new FCM registration token
+                val token = task.result
+
+
+            })
+        } else {
+            Toast.makeText(this,"Po no hay notificaciones, shulo", Toast.LENGTH_SHORT).show()
+        }
+    }
     @OptIn(UnstableApi::class) @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +83,7 @@ class MainActivity : ComponentActivity() {
         val publishViewModel :PublishViewModel by viewModels()
         val postsViewModel : PostsViewModel by viewModels()
         val ownProfileViewModel : OwnProfileViewModel by viewModels()
+        askNotificationPermission()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
@@ -66,7 +93,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    val start = if(authViewModel.auth.currentUser == null) "login" else {
+                    val start = if(authViewModel.auth.currentUser == null) {
+                        "login"
+                    } else {
                         authViewModel.loadUserFromAuth()
                         "categorias"
                     }
@@ -76,18 +105,30 @@ class MainActivity : ComponentActivity() {
                         it
                     }
 
+                    var lastStep : String? by rememberSaveable {
+                        mutableStateOf(null)
+                    }
+
                     NavHost(navController = navController, startDestination = start){
                         composable("login", enterTransition = { onEnter }, exitTransition = {onExit}){
+                            LaunchedEffect(key1 = lastStep) {
+                                if (!lastStep.isNullOrBlank()){
+                                    ownProfileViewModel.clear()
+                                }
+                            }
+                            lastStep = route
                             PhoneLogin(navController = navController, viewModel = authViewModel)
 
                         }
                         composable("categorias", enterTransition = { onEnter }, exitTransition = {onExit}){
 
+                            lastStep = route
                             CategoriesMenu(navController = navController, viewModel = categoriesViewModel)
 
                         }
                         composable("publicaciones", enterTransition = { onEnter }, exitTransition = {onExit}){
 
+                            lastStep = route
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
                             postsViewModel.actualUser = authViewModel.localProfile
                             DisplayCategory(navController = navController, viewModel = postsViewModel)
@@ -98,12 +139,22 @@ class MainActivity : ComponentActivity() {
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             NewPostScreen(navController = navController , viewModel = publishViewModel)
 
+                            lastStep = route
                         }
                         //not implemented (yet)
                         //composable("perfilAjeno"){
                         //    SomeonesProfile(navController = navController, viewModel = ownProfileViewModel)
                         //}
                         composable("perfilPropio", enterTransition = { onEnter }, exitTransition = {onExit}){
+
+                            lastStep = route
+                            ownProfileViewModel.selfId = authViewModel.localProfile.id
+                            MyProfile(navController = navController, viewModel = ownProfileViewModel)
+
+                        }
+                        composable("guardadas", enterTransition = { onEnter }, exitTransition = {onExit}){
+
+                            lastStep = route
                             ownProfileViewModel.selfId = authViewModel.localProfile.id
                             MyProfile(navController = navController, viewModel = ownProfileViewModel)
 
@@ -114,7 +165,21 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            // FCM SDK (and your app) can post notifications.
+        } else  {
+            // Directly ask for the permission
+            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
 }
+
+
 
 @HiltAndroidApp
 class ExampleApplication : Application()

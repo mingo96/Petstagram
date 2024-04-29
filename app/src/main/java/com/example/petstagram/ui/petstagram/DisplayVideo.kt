@@ -2,6 +2,7 @@ package com.example.petstagram.ui.petstagram
 
 import android.content.Context
 import androidx.annotation.OptIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,6 +15,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -70,8 +72,8 @@ fun DisplayVideo(source : String, modifier:Modifier, context : Context) {
             .fillMaxHeight()
             .clickable {
                 mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
-            }
+            }.background(Color.Gray)
     )
     else
-        CircularProgressIndicator(modifier.fillMaxWidth().height(500.dp))
+        CircularProgressIndicator(modifier.fillMaxWidth().height(500.dp).background(Color.Gray))
 }

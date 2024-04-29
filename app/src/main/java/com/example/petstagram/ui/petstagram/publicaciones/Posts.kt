@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,7 +41,7 @@ fun Posts(
     controller : PostsUIController
 ) {
 
-    val postsState by controller.posts.collectAsStateWithLifecycle()
+    val postsState by controller.posts.collectAsState()
     val scrollState = rememberScrollState()
 
     BoxWithConstraints {
