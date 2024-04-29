@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toFile
+import androidx.media3.common.MediaItem
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.ViewModels.PublishViewModel
@@ -129,7 +131,10 @@ fun NewPostScreen(
                         .height(40.dp))
             }else{
                 if (getMimeType(context, uriObserver!!)?.startsWith("video/") == true){
-                    DisplayVideo(source = uriObserver.toString(), modifier = modifier, context)
+                    val source = remember{
+                        MediaItem.fromUri(uriObserver!!)
+                    }
+                    DisplayVideo(source = source, modifier = modifier)
                 }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),
                         contentDescription = "foto seleccionada",

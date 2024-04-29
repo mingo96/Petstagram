@@ -1,5 +1,6 @@
 package com.example.petstagram.UiData
 
+import androidx.media3.common.MediaItem
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import java.time.Instant
@@ -33,4 +34,9 @@ class UIPost: Post() {
     var liked = Pressed.False
     var saved = SavePressed.No
     var UIComments = mutableListOf<UIComment>()
+    var UIsource : MediaItem = MediaItem.EMPTY
+
+    fun loadSource(){
+        UIsource =MediaItem.fromUri(this.source)
+    }
 }

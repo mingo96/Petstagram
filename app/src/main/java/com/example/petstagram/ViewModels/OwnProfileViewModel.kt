@@ -12,14 +12,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.PostsUIController
-import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -53,10 +51,10 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
         get() {return _selfProfile.value}
 
     /**indicates still loading the first bunch of posts*/
-    private val _isloading = MutableLiveData(true)
+    private val _isLoading = MutableLiveData(true)
 
-    /**live data for [_isloading]*/
-    val isLoading : LiveData<Boolean> = _isloading
+    /**live data for [_isLoading]*/
+    var isLoading : LiveData<Boolean> = _isLoading
 
     /**indicates if we are editing the UserName, because if we are editing and reload,
      * username will go back to original*/
@@ -89,13 +87,14 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
 
     /**it tells if we are loading, so if we go out and in the view again we dont
      * start another collect, it is set to true until the collection ends*/
-    private var alreadyLoading by mutableStateOf(false)
+    override var alreadyLoading by mutableStateOf(false)
 
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
     private fun fetchPosts(){
         if (!alreadyLoading) {
+
             alreadyLoading = true
             viewModelScope.launch {
 
@@ -106,7 +105,7 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
                         getFirebasePosts()
                     }
                     delay(4000)
-                    _isloading.value = (_posts.value.isEmpty())
+                    _isLoading.value = (_posts.value.isEmpty())
                     if (_posts.value.count().toLong() >= indexesOfPosts)
                         indexesOfPosts += 10
                     //order the list
@@ -165,6 +164,7 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
                 }
             }
         }
+        castedPost.loadSource()
 
         _posts.value += castedPost
 

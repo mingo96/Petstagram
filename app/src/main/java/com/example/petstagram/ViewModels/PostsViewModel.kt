@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,20 +11,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.UiData.Comment
-import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
-import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancelChildren
@@ -49,10 +43,10 @@ class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
     lateinit var statedCategory: Category
 
     /**indicates if we still dont have any [Post]s*/
-    private val _isloading = MutableLiveData(true)
+    private val _isLoading = MutableLiveData(true)
 
-    /**[LiveData] for [_isloading]*/
-    val isLoading :LiveData<Boolean> = _isloading
+    /**[LiveData] for [_isLoading]*/
+    val isLoading :LiveData<Boolean> = _isLoading
 
     /** it's supposed to locally save content for categories when we swap between them*/
     private val locallySaved by mutableStateOf( mutableMapOf<Category, List<UIPost>>() )
@@ -62,7 +56,7 @@ class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
 
     /**it tells if we are loading, so if we go out and in the view again we dont
      * start another collect, it is set to true until the collection ends*/
-    private var alreadyLoading by mutableStateOf(false)
+    override var alreadyLoading by mutableStateOf(false)
 
     /**visible version of [_posts]*/
     override val posts : StateFlow<List<UIPost>> = _posts
@@ -98,7 +92,7 @@ class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
                 getPostsFromFirebase()
                 delay(1000)
                 //if we dont have any post yet, we are loading
-                _isloading.value = (_posts.value.isEmpty())
+                _isLoading.value = (_posts.value.isEmpty())
                 if (_posts.value.count().toLong() >= indexesOfPosts)
                     indexesOfPosts += 10
 
@@ -163,6 +157,7 @@ class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
                 ids+=postJson.id
                 locallySaved[statedCategory] = _posts.value
             }
+        castedPost.loadSource()
 
     }
 

@@ -3,6 +3,8 @@ package com.example.petstagram.Controllers
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Post
@@ -20,6 +22,8 @@ interface PostsUIController {
     val posts : StateFlow<List<UIPost>>
 
     var actualUser : Profile
+
+    var alreadyLoading : Boolean
 
     /**Firebase FireStore reference*/
     val db: FirebaseFirestore

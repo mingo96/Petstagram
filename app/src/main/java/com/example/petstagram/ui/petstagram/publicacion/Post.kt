@@ -181,9 +181,8 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 }
 
 @OptIn(UnstableApi::class) @Composable
-fun PostSource(modifier: Modifier = Modifier, post: Post) {
+fun PostSource(modifier: Modifier = Modifier, post: UIPost) {
 
-    val context = LocalContext.current
 
     if (post.typeOfMedia == "image") {
 
@@ -198,7 +197,7 @@ fun PostSource(modifier: Modifier = Modifier, post: Post) {
             contentScale = ContentScale.Crop
         )
     }else{
-        DisplayVideo(source = post.source, modifier = modifier, context = context)
+        DisplayVideo(source = post.UIsource, modifier = modifier)
     }
 }
 
