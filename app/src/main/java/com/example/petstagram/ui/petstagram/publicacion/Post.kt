@@ -104,7 +104,6 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
         }
 
         PostDownBar(
-            modifier = modifier.rowWeight(1.0f),
             controller = controller,
             added = post,
             likes = likes,
@@ -202,7 +201,7 @@ fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIC
             contentScale = ContentScale.Crop
         )
     }else{
-        DisplayVideo(source = post.UIsource, modifier = modifier)
+        DisplayVideo(source = post.UIsource, modifier = modifier, onLike = {controller.likeOnPost(post)})
     }
 }
 

@@ -1,14 +1,13 @@
 package com.example.petstagram.ui.petstagram
 
-import android.content.Context
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,22 +21,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.LoadControl
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.example.petstagram.Controllers.PostsUIController
 
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
+@kotlin.OptIn(ExperimentalFoundationApi::class)
 @OptIn(UnstableApi::class) @Composable
-fun DisplayVideo(source : MediaItem, modifier:Modifier) {
+fun DisplayVideo(source: MediaItem, modifier: Modifier, onLike :()->Unit = {}) {
 
     val context = LocalContext.current
     //main controller
@@ -73,9 +70,15 @@ fun DisplayVideo(source : MediaItem, modifier:Modifier) {
             modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .clickable {
-                    mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
-                }
+                .combinedClickable (
+                    enabled = true,
+                    onClick = {
+                        mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
+                    },
+                    onDoubleClick = {
+                        onLike.invoke()
+                    }
+                    )
                 .background(Color.Gray)
         )
     }

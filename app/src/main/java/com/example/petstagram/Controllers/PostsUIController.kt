@@ -1,6 +1,5 @@
 package com.example.petstagram.Controllers
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
@@ -56,7 +55,6 @@ interface PostsUIController {
     fun likeOnComment(comment : UIComment) : Boolean{
         val newLike = Like(userId = actualUser.id)
         return if(comment.likes.find { it.userId==actualUser.id } == null) {
-            Log.i("AAAAAAAAAAAAAAAAAAAAA", comment.id)
 
             comment.likes += newLike
             db.collection("Comments")

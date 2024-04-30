@@ -59,7 +59,6 @@ import com.google.relay.compose.RelayVector
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun PostDownBar(
-    modifier: Modifier = Modifier,
     added: UIPost,
     saved: MutableLiveData<SavePressed>,
     onLike: () -> Unit = { },
@@ -204,31 +203,6 @@ fun TitleContainer(
 
 
 @Composable
-fun NombreUsuarioTTuloVariacionInferior(modifier: Modifier = Modifier) {
-    RelayText(
-        content = "\${nombreUsuario} Título",
-        fontSize = 12.0.sp,
-        fontFamily = inter,
-        color = Color(
-            alpha = 255,
-            red = 255,
-            green = 255,
-            blue = 255
-        ),
-        height = 1.6666667175292968.em,
-        letterSpacing = 0.10000000149011612.sp,
-        fontWeight = FontWeight(500.0.toInt()),
-        maxLines = -1,
-        modifier = modifier
-            .requiredWidth(143.0.dp)
-            .requiredHeight(24.0.dp)
-            .wrapContentHeight(
-                align = Alignment.CenterVertically,
-                unbounded = true
-            )
-    )
-}
-@Composable
 fun IntersectLine(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.cuadro_info_line_1),
@@ -365,20 +339,6 @@ fun BotonSeccionComentariosVariacionInferior(
         modifier = modifier
             .requiredWidth(176.0.dp)
             .requiredHeight(32.0.dp)
-    )
-}
-
-@Composable
-fun ContenedorBotonesIzquierdaVariacionInferior(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
-) {
-    RelayContainer(
-        mainAxisAlignment = MainAxisAlignment.SpaceBetween,
-        arrangement = RelayContainerArrangement.Row,
-        content = content,
-        modifier = modifier
-            .requiredHeight(48.0.dp)
     )
 }
 
