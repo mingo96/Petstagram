@@ -6,11 +6,12 @@ description: '"tickets" pendientes de desarrollo'
 
 * [ ] Interfaz de publicaciones guardadas
 * [ ] Implementar inyección de dependencias bien
-* [ ] Optimizar carga de recursos (pantalla de carga?)
+* [x] Optimizar carga de recursos (pantalla de carga?)
+* [ ] Unificar carga de datos e implementar pantalla de carga inicial
 * [ ] Implementar nueva interfaz de creación de Post
 * [ ] Implementar perfiles de mascotas
 * [ ] Implementar creación de perfiles de mascotas
-* [ ] Notificaciones por like o comentario
+* [x] Notificaciones por like o comentario (no se puede)
 * [ ] Implementar pestaña de perfil ajeno
 * [ ] Cambio de pestaña principal entre adopción y publicaciones normales
 * [ ] Creación e implementación de interfaz de creación de post de adopción
