@@ -2,6 +2,8 @@ package com.example.petstagram.publicaciones
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -25,6 +27,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +46,6 @@ import com.example.petstagram.publicacion.Post
  * This composable was generated from the UI Package 'publicaciones'.
  * Generated code; do not edit directly
  */
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun Posts(
     modifier: Modifier = Modifier,
@@ -62,46 +64,56 @@ fun Posts(
 
         TopLevel(modifier = modifier.width(Dp(localwidth)), scrollState = scrollState) {
             LaunchedEffect(key1 = scrollState) {
-                if(scrollState.maxValue!=0) {
-                    snapshotFlow { scrollState.isScrollInProgress }.collect{
-                        controller.scroll(scrollState.value.toDouble() / scrollState.maxValue.toDouble())
-                    }
+                snapshotFlow { scrollState.isScrollInProgress }.collect{
+
+                    controller.scroll(scrollState.value.toDouble() / scrollState.maxValue.toDouble())
                 }
             }
 
 
+
             for (i in postsState){
+                var seen by rememberSaveable {
+                    mutableStateOf(false)
+                }
 
                 //Do NOT try to implement directly with controller as param, major usage of ram+bugs?¿
-                Post(modifier = Modifier
-                    .width(Dp(localwidth))
-                    .padding(vertical = 4.dp),
-                    post = i,
-                    onLike = {
-                        if(controller.likeOnPost(i))
-                            i.liked = Pressed.True
-                        else
-                            i.liked = Pressed.False
-                             },
-                    onSave = {
-                        if (i.saved==SavePressed.Si){
-                            i.saved=SavePressed.No
-                        }else
-                            i.saved=SavePressed.Si
-                        controller.saveClicked(i)
-                    },
-                    onComment = {
-                        controller.comment(it,i)
-                    },
-                    onCommentLiked = {
-                        if(controller.likeOnComment(it)){
-                            it.liked = Pressed.True
-                            true
-                        }else{
-                            it.liked = Pressed.False
-                            false
-                        }
-                    })
+                AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
+
+                    Post(modifier = Modifier
+                        .width(Dp(localwidth))
+                        .padding(vertical = 4.dp),
+                        post = i,
+                        onLike = {
+                            if(controller.likeOnPost(i))
+                                i.liked = Pressed.True
+                            else
+                                i.liked = Pressed.False
+                        },
+                        onSave = {
+                            if (i.saved==SavePressed.Si){
+                                i.saved=SavePressed.No
+                            }else
+                                i.saved=SavePressed.Si
+                            controller.saveClicked(i)
+                        },
+                        onComment = {
+                            controller.comment(it,i)
+                        },
+                        onCommentLiked = {
+                            if(controller.likeOnComment(it)){
+                                it.liked = Pressed.True
+                                true
+                            }else{
+                                it.liked = Pressed.False
+                                false
+                            }
+                        })
+                }
+                LaunchedEffect(key1 = seen) {
+                    seen = true
+
+                }
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
@@ -115,8 +127,7 @@ fun Posts(
                     Text(text = "Cargando",color = Color.Black)
 
                 }else{
-
-                    Text(text = "Parece que no hay más publicaciones", color = Color.Black)
+                    Text(text = "Parece que no hay más publicaciones", color = Color.Black, modifier = Modifier.padding(vertical = 200.dp))
                 }
             }
             

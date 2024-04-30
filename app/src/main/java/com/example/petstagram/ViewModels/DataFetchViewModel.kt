@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Arrays
+import java.util.concurrent.Semaphore
 
 @SuppressLint("MutableCollectionMutableState")
 class DataFetchViewModel : ViewModel() {
@@ -50,28 +52,25 @@ class DataFetchViewModel : ViewModel() {
      * start another collect, it is set to true until the collection ends*/
     var alreadyLoading by mutableStateOf(false)
 
-    /**visible version of [_posts]*/
-    val posts : StateFlow<List<UIPost>> = _posts
-
     /**ids of the already saved [Post]s*/
     private var ids by mutableStateOf(_posts.value.map { it.id })
 
     /**number of indexes we'll be getting at a time*/
-    private var indexesOfPosts = 20L
+    private var indexesOfPosts = 5L
 
     private var savedList : UISavedList = UISavedList()
+
+    var semaforo : Semaphore = Semaphore(1)
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
 
-        if (!alreadyLoading) {
 
-            keepUpWithUser()
-            getUserPosts()
-            getPostsFromFirebase()
-            fetchSavedList()
+        keepUpWithUser()
+        getUserPosts()
+        getPostsFromFirebase()
+        fetchSavedList()
 
-        }
     }
 
     private fun keepUpWithUser(){
@@ -110,6 +109,7 @@ class DataFetchViewModel : ViewModel() {
                 delay(100)
             }
             alreadyLoading = true
+            delay(100)
 
             db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).get().addOnSuccessListener { document ->
                 if(!document.isEmpty) {
@@ -140,12 +140,12 @@ class DataFetchViewModel : ViewModel() {
                 delay(100)
             }
             alreadyLoading = true
+            delay(100)
 
 
             db.collection("Posts")
                 //request filters
                 .orderBy("postedDate", Query.Direction.DESCENDING)
-                .whereNotIn("id", ids + "askdhgg")
                 .limit(indexesOfPosts)
                 .get()
                 .addOnCompleteListener {
@@ -154,8 +154,6 @@ class DataFetchViewModel : ViewModel() {
 
                             //case not empty
                             for (postJson in it.result.documents) {
-                                //case we dont have this id yet
-                                ids += postJson.id
                                 bootUpPost(postJson)
 
                             }
@@ -163,11 +161,15 @@ class DataFetchViewModel : ViewModel() {
 
                         alreadyLoading = false
                     }else{
-                        if(it.isCanceled)
-                            Log.i("Error de carga", "la carga fue cancelada")
-                        if(it.isComplete)
-                            Log.i("Error de carga", "la carga fue completada pero no exitosa")
-                        getPostsFromFirebase()
+                        if(it.isCanceled) {
+                            Log.i("Error de carga", "la carga general fue cancelada")
+                            getPostsFromFirebase()
+
+                        }
+                        if(it.isComplete) {
+                            Log.i("Error de carga", "la carga general fue completada pero no exitosa, tenemos ${ids.size}")
+                            alreadyLoading = false
+                        }
                     }
                 }
         }
@@ -183,14 +185,12 @@ class DataFetchViewModel : ViewModel() {
                 delay(100)
             }
             alreadyLoading = true
-
-
+            delay(100)
 
             db.collection("Posts")
                 //filters
                 .whereEqualTo("creatorUser", _selfProfile.value)
                 .orderBy("postedDate", Query.Direction.DESCENDING)
-                .whereNotIn("id", ids + "askdhgg")
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful){
@@ -198,8 +198,6 @@ class DataFetchViewModel : ViewModel() {
 
                             //case not empty
                             for (postJson in it.result.documents) {
-                                //case we dont have this id yet
-                                ids += postJson.id
                                 bootUpPost(postJson)
 
                             }
@@ -207,11 +205,15 @@ class DataFetchViewModel : ViewModel() {
 
                         alreadyLoading = false
                     }else{
-                        if(it.isCanceled)
-                            Log.i("Error de carga", "la carga fue cancelada")
-                        if(it.isComplete)
-                            Log.i("Error de carga", "la carga fue completada pero no exitosa")
-                        getUserPosts()
+                        if(it.isCanceled) {
+                            Log.e("Error de carga", "la carga del usuario fue cancelada")
+
+                            getUserPosts()
+                        }
+                        if(it.isComplete) {
+                            Log.d("Error de carga", "la carga del usuario fue completada pero no exitosa, tenemos ${ids.size}")
+                            alreadyLoading = false
+                        }
                     }
                 }
 
@@ -225,15 +227,14 @@ class DataFetchViewModel : ViewModel() {
             while(alreadyLoading) {
                 delay(100)
             }
+            delay(100)
+
             alreadyLoading = true
-
-
 
             db.collection("Posts")
                 //filters
                 .whereEqualTo("category", category)
                 .orderBy("postedDate", Query.Direction.DESCENDING)
-                .whereNotIn("id", ids + "askdhgg")
                 .limit(indexesOfPosts)
                 .get()
                 .addOnCompleteListener {
@@ -242,8 +243,6 @@ class DataFetchViewModel : ViewModel() {
 
                             //case not empty
                             for (postJson in it.result.documents) {
-                                //case we dont have this id yet
-                                ids += postJson.id
                                 bootUpPost(postJson)
 
                             }
@@ -252,15 +251,18 @@ class DataFetchViewModel : ViewModel() {
                         alreadyLoading = false
                     } else {
                         if (it.isCanceled) {
-                            Log.i("Error de carga", "la carga fue cancelada")
+                            Log.e("Error de carga", "la carga de categoria fue cancelada")
 
                             moreCategoryPosts(category)
                         }
-                        if (it.isComplete)
-                            Log.i(
+                        if (it.isComplete) {
+                            Log.d(
                                 "Error de carga",
-                                "la carga fue completada pero no exitosa, ids = ${ids.size}"
+                                "la carga de categoria fue completada pero no exitosa, ids = ${_posts.value.map { it.id }.toList()}"
                             )
+
+                            alreadyLoading = false
+                        }
                     }
                 }
 
@@ -270,6 +272,7 @@ class DataFetchViewModel : ViewModel() {
     /**given a JSON, saves its [Post] info and its url*/
     private fun bootUpPost(postJson: DocumentSnapshot) {
 
+        if (postJson.id in ids) return;
         val castedPost = postJson.toObject(UIPost::class.java)!!
 
         if (castedPost.likes.count { it.userId==selfId }>0)
@@ -284,6 +287,10 @@ class DataFetchViewModel : ViewModel() {
         loadSaved(castedPost, postJson)
 
         castedPost.loadSource()
+
+        ids += castedPost.id
+
+        indexesOfPosts++
 
     }
 
@@ -316,13 +323,13 @@ class DataFetchViewModel : ViewModel() {
 
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()
+        alreadyLoading = false
     }
 
 
     fun postsFromCategory(category : Category): List<UIPost> {
 
         moreCategoryPosts(category)
-
         return _posts.value.filter { it.category!= null && it.category!!.name == category.name }
     }
 

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -83,20 +85,32 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
     val saved = MutableLiveData(post.saved)
 
+    var seen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     TopLevel(modifier = modifier) {
 
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
 
-        PostSource(modifier = Modifier
-            .rowWeight(1.0f)
-            .combinedClickable(
-                enabled = true,
-                onDoubleClick = {
-                    onLike.invoke(post)
-                    likes.value = post.likes.size
-                },
-                onClick = {}),
-            post = post)
+        AnimatedVisibility(visible = seen, enter = expandVertically { it }) {
+
+            PostSource(modifier = Modifier
+                .rowWeight(1.0f)
+                .combinedClickable(
+                    enabled = true,
+                    onDoubleClick = {
+                        onLike.invoke(post)
+                        likes.value = post.likes.size
+                    },
+                    onClick = {}),
+                post = post)
+
+        }
+
+        LaunchedEffect(key1 = seen) {
+            seen = true
+        }
 
         PostDownBar(
             modifier = modifier.rowWeight(1.0f),

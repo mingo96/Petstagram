@@ -1,5 +1,10 @@
 package com.example.petstagram.visualizarcategoria
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +16,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.PostsViewModel
@@ -59,14 +68,16 @@ fun DisplayCategory(
 
             CategoryText(modifier.requiredHeight(height.times(0.05f)), added = viewModel.statedCategory.name)
 
-            if (isLoading!!)
+            AnimatedVisibility(visible = isLoading!!,
+                enter = slideInVertically { it },
+                exit = slideOutVertically { 1 }) {
+
                 CircularProgressIndicator(
                     modifier
                         .rowWeight(1.0f)
                         .height(height.times(0.825f))
                         .fillMaxWidth(0.8f))
-
-            else {
+            }
 
                 PostsInstance(
                     modifier = Modifier
@@ -74,7 +85,6 @@ fun DisplayCategory(
                         .height(height.times(0.825f)),
                     viewModel = viewModel
                 )
-            }
         }
     }
 }

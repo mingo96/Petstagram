@@ -44,7 +44,7 @@ class PostsViewModel : ViewModel() ,PostsUIController{
     lateinit var statedCategory: Category
 
     /**indicates if we still dont have any [Post]s*/
-    private val _isLoading = MutableLiveData(true)
+    private val _isLoading = MutableLiveData(false)
 
     /**[LiveData] for [_isLoading]*/
     override val isLoading :LiveData<Boolean> = _isLoading
@@ -56,12 +56,13 @@ class PostsViewModel : ViewModel() ,PostsUIController{
     /**visible version of [_posts]*/
     override val posts : StateFlow<List<UIPost>> = _posts
 
-    var ended by mutableStateOf(false)
+    private var ended by mutableStateOf(false)
 
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
 
+        Log.i("ADSOFGVBGVASFKOAUHVSFik", "${base.alreadyLoading}")
 
         if (!_isLoading.value!!) {
             viewModelScope.launch {
@@ -73,29 +74,35 @@ class PostsViewModel : ViewModel() ,PostsUIController{
                 while (base.alreadyLoading){
                     delay(100)
                 }
+
                 val end = base.postsFromCategory(statedCategory)
 
-                _posts.value = end
 
+                for (i in end){
+                    if(i !in _posts.value) {
+                        _posts.value += i
+                        delay(100)
+                    }
+                }
                 _isLoading.value = false
+
                 ended = start.size >= _posts.value.size
 
-
             }
-
 
         }
     }
 
     fun stopLoading() {
+        _posts.value = emptyList()
         base.stopLoading()
         viewModelScope.coroutineContext.cancelChildren()
     }
 
     override fun scroll(scrolled : Double) {
         if (scrolled>0.8){
-            _posts.value= emptyList()
-            startLoadingPosts()
+            if(!base.alreadyLoading)
+                _posts.value= base.postsFromCategory(statedCategory)
         }
     }
 
