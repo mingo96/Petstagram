@@ -84,35 +84,10 @@ fun Posts(
                         .width(Dp(localwidth))
                         .padding(vertical = 4.dp),
                         post = i,
-                        onLike = {
-                            if(controller.likeOnPost(i))
-                                i.liked = Pressed.True
-                            else
-                                i.liked = Pressed.False
-                        },
-                        onSave = {
-                            if (i.saved==SavePressed.Si){
-                                i.saved=SavePressed.No
-                            }else
-                                i.saved=SavePressed.Si
-                            controller.saveClicked(i)
-                        },
-                        onComment = {
-                            controller.comment(it,i)
-                        },
-                        onCommentLiked = {
-                            if(controller.likeOnComment(it)){
-                                it.liked = Pressed.True
-                                true
-                            }else{
-                                it.liked = Pressed.False
-                                false
-                            }
-                        })
+                        controller = controller)
                 }
                 LaunchedEffect(key1 = seen) {
                     seen = true
-
                 }
             }
 

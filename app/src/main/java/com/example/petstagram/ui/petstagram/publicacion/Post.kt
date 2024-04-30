@@ -1,15 +1,14 @@
+@file:kotlin.OptIn(ExperimentalFoundationApi::class)
+
 package com.example.petstagram.publicacion
 
-import android.annotation.SuppressLint
 import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,25 +26,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import coil.compose.SubcomposeAsyncImage
-import com.example.petstagram.UiData.Comment
+import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Post
-import com.example.petstagram.UiData.Profile
-import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
-import com.example.petstagram.guardar.SavePressed
-import com.example.petstagram.like.Pressed
 import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
 import com.google.relay.compose.MainAxisAlignment
@@ -60,17 +53,14 @@ import kotlinx.coroutines.launch
  * This composable was generated from the UI Package 'publicacion'.
  * Generated code; do not edit directly
  */
-@OptIn(UnstableApi::class) @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState",
-    "Range"
-)
-@kotlin.OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Post(modifier: Modifier = Modifier, post: UIPost,
-         onLike: (Post)->Unit,
-         onSave: (Post)->Boolean,
-         onComment: (String) -> Unit,
-         onCommentLiked: (UIComment) -> Boolean) {
-
+    controller :PostsUIController)
+         //onLike: ()->Unit,
+         //onSave: ()->Boolean,
+         //onComment: (String) -> Unit,
+         //onCommentLiked: (UIComment) -> Boolean) {
+{
     var commentsDisplayed by rememberSaveable {
         mutableStateOf(false)
     }
@@ -100,10 +90,11 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
                 .combinedClickable(
                     enabled = true,
                     onDoubleClick = {
-                        onLike.invoke(post)
+                        controller.likeOnPost(post)
                         likes.value = post.likes.size
                     },
                     onClick = {}),
+                controller = controller,
                 post = post)
 
         }
@@ -114,15 +105,14 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
         PostDownBar(
             modifier = modifier.rowWeight(1.0f),
+            controller = controller,
             added = post,
             likes = likes,
             onLike = {
-                onLike.invoke(post)
+                controller.likeOnPost(post)
                 likes.value = post.likes.size
             },
-            onSave = {
-                onSave.invoke(post)
-            },
+            //onSave = onSave,
             saved = saved,
             tapOnComments = {commentsDisplayed = !commentsDisplayed}
         )
@@ -166,10 +156,11 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(0.7f),
-                        comments = post.UIComments,
-                        account = post.creatorUser!!,
-                        postComment = onComment,
-                        commentLiked = onCommentLiked
+
+                        controller = controller,
+                        post = post
+                        //postComment = onComment,
+                        //commentLiked = onCommentLiked
                     )
 
                 }
@@ -195,7 +186,7 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 }
 
 @OptIn(UnstableApi::class) @Composable
-fun PostSource(modifier: Modifier = Modifier, post: UIPost) {
+fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController) {
 
 
     if (post.typeOfMedia == "image") {

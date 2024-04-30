@@ -1,13 +1,11 @@
 package com.example.petstagram.cuadroinfo
 
 import android.annotation.SuppressLint
-import android.view.Gravity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,20 +19,14 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,13 +36,10 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
+import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.R
 import com.example.petstagram.UiData.Post
-import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadrotexto.PostTitle
 import com.example.petstagram.fotoperfil.FotoPerfilBase
@@ -59,15 +48,12 @@ import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.opciones.Opciones
-import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
 import com.google.relay.compose.RelayVector
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("MutableCollectionMutableState")
@@ -75,11 +61,11 @@ import kotlinx.coroutines.launch
 fun PostDownBar(
     modifier: Modifier = Modifier,
     added: UIPost,
-    saved : MutableLiveData<SavePressed>,
-    onLike: () -> Unit = {  },
-    onSave: () -> Boolean = { false },
+    saved: MutableLiveData<SavePressed>,
+    onLike: () -> Unit = { },
     likes: MutableLiveData<Int>,
-    tapOnComments : ()->Unit
+    tapOnComments: () -> Unit,
+    controller: PostsUIController
 ) {
 
     val likesCount by likes.observeAsState()
@@ -159,7 +145,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(onSave.invoke())
+                        if(controller.saveClicked(post))
                             saved.value = SavePressed.Si
                         else
                             saved.value = SavePressed.No
@@ -171,7 +157,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(onSave.invoke())
+                        if(controller.saveClicked(post))
                             saved.value = SavePressed.No
                         else
                             saved.value = SavePressed.Si

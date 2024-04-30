@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.PostsViewModel
@@ -72,11 +73,13 @@ fun DisplayCategory(
                 enter = slideInVertically { it },
                 exit = slideOutVertically { 1 }) {
 
-                CircularProgressIndicator(
-                    modifier
-                        .rowWeight(1.0f)
-                        .height(height.times(0.825f))
-                        .fillMaxWidth(0.8f))
+                Dialog(onDismissRequest = {  }) {
+                    CircularProgressIndicator(
+                        modifier
+                            .rowWeight(1.0f)
+                            .height(height.times(0.825f))
+                            .fillMaxWidth(0.8f))
+                }
             }
 
                 PostsInstance(

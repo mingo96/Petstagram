@@ -81,7 +81,7 @@ class PostsViewModel : ViewModel() ,PostsUIController{
                 for (i in end){
                     if(i !in _posts.value) {
                         _posts.value += i
-                        delay(100)
+                        delay(500)
                     }
                 }
                 _isLoading.value = false

@@ -12,6 +12,8 @@ import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.guardar.SavePressed
+import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
@@ -29,16 +31,16 @@ interface PostsUIController {
     val db: FirebaseFirestore
     fun scroll(scrolled:Double)
 
-    fun likeOnPost(post:Post):Boolean{
+    fun likeOnPost(post:UIPost) {
         val newLike = Like(userId = actualUser.id)
-        return if(post.likes.find { it.userId==actualUser.id } == null) {
+        if(post.likes.find { it.userId==actualUser.id } == null) {
 
             post.likes += newLike
             db.collection("Posts")
                 .document(post.id)
                 .update("likes", FieldValue.arrayUnion(newLike))
 
-            true
+            post.liked = Pressed.True
         }else{
 
             post.likes.removeIf { it.userId ==actualUser.id }
@@ -46,11 +48,11 @@ interface PostsUIController {
                 .document(post.id)
                 .update("likes", FieldValue.arrayRemove(newLike))
 
-            false
+            post.liked = Pressed.False
         }
     }
 
-    fun likeOnComment(comment : Comment) : Boolean{
+    fun likeOnComment(comment : UIComment) : Boolean{
         val newLike = Like(userId = actualUser.id)
         return if(comment.likes.find { it.userId==actualUser.id } == null) {
             Log.i("AAAAAAAAAAAAAAAAAAAAA", comment.id)
@@ -61,7 +63,7 @@ interface PostsUIController {
                 .update(
                     "likes" ,FieldValue.arrayUnion(newLike)
                 )
-
+            comment.liked = Pressed.True
             true
         }else{
 
@@ -71,12 +73,14 @@ interface PostsUIController {
                 .update(
                     "likes" ,FieldValue.arrayRemove(newLike)
                 )
+            comment.liked = Pressed.False
+
             false
         }
 
     }
 
-    fun saveClicked(post:Post):Boolean{
+    fun saveClicked(post:UIPost):Boolean{
 
         val newSaved = post.id
         db.collection("SavedLists")
@@ -88,12 +92,17 @@ interface PostsUIController {
                     db.collection("SavedLists").add(newList).addOnSuccessListener {document->
                         db.collection("SavedLists").document(document.id).update("docid",document.id )
                     }
+                    post.saved = SavePressed.Si
                 }else{
                     val thisList = it.first().toObject(SavedList::class.java)
                     if(thisList.postList.contains(post.id)) {
                         db.collection("SavedLists").document(thisList.docid).update("postList", FieldValue.arrayRemove(newSaved))
+                        post.saved = SavePressed.No
+
                     }else{
                         db.collection("SavedLists").document(thisList.docid).update("postList", FieldValue.arrayUnion(newSaved))
+                        post.saved = SavePressed.Si
+
                     }
                 }
             }
