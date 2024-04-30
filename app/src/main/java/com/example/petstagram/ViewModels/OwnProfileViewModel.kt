@@ -51,6 +51,10 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     override var actualUser = _selfProfile.value
         get() {return _selfProfile.value}
 
+    private val _actualComments = MutableLiveData<List<UIComment>>(emptyList())
+
+    override val actualComments: LiveData<List<UIComment>> = _actualComments
+
     /**indicates still loading the first bunch of posts*/
     private val _isLoading = MutableLiveData(true)
 
@@ -85,6 +89,8 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
 
     /**visible version of [_resource]*/
     val resource :LiveData<String> = _resource
+
+    private var commentsDisplayed by mutableStateOf(false)
 
 
 
@@ -156,7 +162,6 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
                 db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
 
                     UIComment.objectUser = it.toObject(Profile::class.java)!!
-                    castedPost.UIComments.add(UIComment)
                     UIComment.liked = if(UIComment.likes.find { it.userId==actualUser.id }==null) Pressed.False else Pressed.True
 
                 }
@@ -281,6 +286,31 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     fun clear(){
         if (_posts.value.isNotEmpty())
             _posts.value.drop(0)
+    }
+
+    override fun selectPostForComments(post: UIPost) {
+        commentsDisplayed = true
+        viewModelScope.launch {
+
+            var loadingComments = true
+            val result = mutableListOf<UIComment>()
+            db.collection("Comments").whereEqualTo("commentPost", post.id).get()
+                .addOnSuccessListener {
+                    for (i in it) {
+                        result.add(i.toObject(UIComment::class.java))
+                    }
+                    loadingComments = false
+                }
+            while (loadingComments) delay(100)
+
+            _actualComments.value = result
+
+        }
+    }
+
+    override fun clearComments() {
+        commentsDisplayed = false
+        _actualComments.value = emptyList()
     }
 
 }

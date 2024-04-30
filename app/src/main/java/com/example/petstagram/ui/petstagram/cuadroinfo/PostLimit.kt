@@ -190,24 +190,6 @@ fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
 
 
 @Composable
-fun Frame12VariacionInferior(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
-) {
-    RelayContainer(
-        arrangement = RelayContainerArrangement.Row,
-        padding = PaddingValues(
-            start = 0.0.dp,
-            top = 8.0.dp,
-            end = 0.0.dp,
-            bottom = 8.0.dp
-        ),
-        itemSpacing = 8.0,
-        content = content,
-        modifier = modifier
-    )
-}
-@Composable
 fun TitleContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit

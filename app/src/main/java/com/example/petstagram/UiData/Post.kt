@@ -33,7 +33,6 @@ open class Post ()
 class UIPost: Post() {
     var liked = Pressed.False
     var saved = SavePressed.No
-    var UIComments = mutableListOf<UIComment>()
     var UIsource : MediaItem = MediaItem.EMPTY
 
     fun loadSource(){

@@ -280,10 +280,6 @@ class DataFetchViewModel : ViewModel() {
         else
             castedPost.liked = Pressed.False
 
-        for (i in castedPost.comments){
-            loadComments(i, castedPost)
-        }
-
         loadSaved(castedPost, postJson)
 
         castedPost.loadSource()
@@ -307,19 +303,6 @@ class DataFetchViewModel : ViewModel() {
             }
     }
 
-    private fun loadComments(i : String, castedPost : UIPost){
-
-        db.collection("Comments").document(i).get().addOnSuccessListener {
-            val UIComment = it.toObject(UIComment::class.java)!!
-            db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
-
-                UIComment.objectUser = it.toObject(Profile::class.java)!!
-                castedPost.UIComments.add(UIComment)
-                UIComment.liked = if(UIComment.likes.find { it.userId==_selfProfile.value.id }==null) Pressed.False else Pressed.True
-
-            }
-        }
-    }
 
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()

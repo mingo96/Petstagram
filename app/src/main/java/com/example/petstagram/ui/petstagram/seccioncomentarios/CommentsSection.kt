@@ -1,6 +1,5 @@
 package com.example.petstagram.ui.petstagram.seccioncomentarios
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +15,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,14 +29,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.petstagram.Controllers.PostsUIController
-import com.example.petstagram.UiData.Profile
-import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.ui.petstagram.comentario.Comment
+import com.example.petstagram.ui.petstagram.comentario.CommentContent
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -53,15 +56,22 @@ fun CommentsSection(
     controller: PostsUIController,
     post: UIPost
 ) {
+    LaunchedEffect(key1 = post.id) {
+        controller.selectPostForComments(post)
+    }
+
 
     var commenting by remember {
         mutableStateOf(false)
     }
 
-    var commentList by remember {
-        mutableStateOf(post.UIComments.toList())
-    }
+    val commentList = controller.actualComments.observeAsState()
 
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            controller.clearComments()
+        }
+    }
     val context = LocalContext.current
 
     TopLevel(modifier = modifier) {
@@ -69,7 +79,18 @@ fun CommentsSection(
 
         CommentsTopSection(modifier = Modifier.rowWeight(1.0f)) {
             if (!commenting) {
-                CommentsTitle(userName = post.creatorUser!!.userName)
+
+                if (commentList.value!!.isEmpty()){
+                    CommentContent(content = "Parece que nadie ha comentado aún, sé el primero!",
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .wrapContentHeight(
+                                align = Alignment.CenterVertically,
+                                unbounded = true
+                            )
+                            .padding(end = 16.dp))
+                }else
+                    CommentsTitle(userName = post.creatorUser!!.userName)
             }
             else{
                 OutlinedTextField(value = content,
@@ -105,11 +126,10 @@ fun CommentsSection(
                             Toast
                                 .makeText(context, "Comentario demasiado largo", Toast.LENGTH_SHORT)
                                 .show()
-                        } else if(content.isNotEmpty()){
+                        } else if (content.isNotEmpty()) {
                             controller.comment(content, post)
                             commenting = false
-                            commentList = post.UIComments
-                        }else{
+                        } else {
                             Toast
                                 .makeText(context, "Comentario vacío", Toast.LENGTH_SHORT)
                                 .show()
@@ -125,7 +145,7 @@ fun CommentsSection(
         }
         Comentarios(modifier = Modifier.rowWeight(1.0f)) {
 
-            for (i in commentList){
+            for (i in commentList.value!!){
                 Comment(comment = i, onLike = {
                     controller.likeOnComment(i)
                 })
@@ -219,7 +239,9 @@ fun CommentsTopSection(
             horizontal = 16.0.dp
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(align = Alignment.CenterVertically)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(align = Alignment.CenterVertically)
     )
 }
 
@@ -261,7 +283,8 @@ fun TopLevel(
         radius = 20.0,
         itemSpacing = 16.0,
         content = content,
-        modifier = modifier.fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxHeight(1.0f)
 
             .border(
                 width = 4.0.dp,
@@ -271,6 +294,7 @@ fun TopLevel(
                     green = 196,
                     blue = 1
                 ),
-                shape = RoundedCornerShape(5,5))
+                shape = RoundedCornerShape(5, 5)
+            )
     )
 }

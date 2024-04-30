@@ -1,13 +1,9 @@
 package com.example.petstagram.Controllers
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
-import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIComment
@@ -16,7 +12,6 @@ import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 
 interface PostsUIController {
@@ -29,6 +24,8 @@ interface PostsUIController {
 
     /**Firebase FireStore reference*/
     val db: FirebaseFirestore
+
+    val actualComments : LiveData<List<UIComment>>
     fun scroll(scrolled:Double)
 
     fun likeOnPost(post:UIPost) {
@@ -51,6 +48,10 @@ interface PostsUIController {
             post.liked = Pressed.False
         }
     }
+
+    fun selectPostForComments(post : UIPost)
+
+    fun clearComments()
 
     fun likeOnComment(comment : UIComment) : Boolean{
         val newLike = Like(userId = actualUser.id)
@@ -121,10 +122,7 @@ interface PostsUIController {
             newComment.id = it.id
             post.comments.add(newComment.id)
 
-            val uiComment = UIComment(newComment)
-            uiComment.objectUser = actualUser
-            post.UIComments += uiComment
-
+            selectPostForComments(post)
 
         }
     }

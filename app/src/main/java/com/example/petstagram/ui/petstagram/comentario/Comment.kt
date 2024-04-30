@@ -188,7 +188,6 @@ fun CommentContent(modifier: Modifier = Modifier, content : String) {
                 )
             )
             .fillMaxWidth(0.85f)
-            .fillMaxHeight(1.0f)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = true
