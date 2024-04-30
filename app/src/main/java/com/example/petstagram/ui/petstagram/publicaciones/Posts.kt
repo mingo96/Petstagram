@@ -52,6 +52,7 @@ fun Posts(
 
     val postsState by controller.posts.collectAsState()
     val scrollState = rememberScrollState()
+    val isLoading by controller.isLoading.observeAsState()
 
     BoxWithConstraints {
 
@@ -104,9 +105,13 @@ fun Posts(
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                if (controller.alreadyLoading){
+                if (isLoading == true){
 
-                    CircularProgressIndicator(Modifier.width(200.dp).height(200.dp))
+                    CircularProgressIndicator(
+                        Modifier
+                            .width(200.dp)
+                            .height(200.dp)
+                            .padding(top = 16.dp))
                     Text(text = "Cargando",color = Color.Black)
 
                 }else{

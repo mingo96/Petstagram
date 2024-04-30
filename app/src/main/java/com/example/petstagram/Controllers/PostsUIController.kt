@@ -23,7 +23,7 @@ interface PostsUIController {
 
     var actualUser : Profile
 
-    var alreadyLoading : Boolean
+    val isLoading : LiveData<Boolean>
 
     /**Firebase FireStore reference*/
     val db: FirebaseFirestore

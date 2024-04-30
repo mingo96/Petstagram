@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.ViewModels.CategoriesViewModel
+import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
@@ -83,6 +84,12 @@ class MainActivity : ComponentActivity() {
         val publishViewModel :PublishViewModel by viewModels()
         val postsViewModel : PostsViewModel by viewModels()
         val ownProfileViewModel : OwnProfileViewModel by viewModels()
+        val dataFetchViewModel : DataFetchViewModel by viewModels()
+
+
+        postsViewModel.base = dataFetchViewModel
+        ownProfileViewModel.base = dataFetchViewModel
+
         askNotificationPermission()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
@@ -122,6 +129,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("categorias", enterTransition = { onEnter }, exitTransition = {onExit}){
 
+
                             lastStep = route
                             CategoriesMenu(navController = navController, viewModel = categoriesViewModel)
 
@@ -130,7 +138,13 @@ class MainActivity : ComponentActivity() {
 
                             lastStep = route
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
-                            postsViewModel.actualUser = authViewModel.localProfile
+
+                            LaunchedEffect(key1 = Unit) {
+                                postsViewModel.actualUser = authViewModel.localProfile
+                                dataFetchViewModel.selfId = authViewModel.localProfile.id
+                                dataFetchViewModel.startLoadingPosts()
+                            }
+
                             DisplayCategory(navController = navController, viewModel = postsViewModel)
 
                         }

@@ -32,8 +32,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIController{
+class OwnProfileViewModel : ViewModel() , PostsUIController{
+
+    lateinit var base : DataFetchViewModel
 
     /**Firebase FireStore reference*/
     override val db = Firebase.firestore
@@ -54,7 +55,7 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
     private val _isLoading = MutableLiveData(true)
 
     /**live data for [_isLoading]*/
-    var isLoading : LiveData<Boolean> = _isLoading
+    override val isLoading : LiveData<Boolean> = _isLoading
 
     /**indicates if we are editing the UserName, because if we are editing and reload,
      * username will go back to original*/
@@ -85,17 +86,14 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
     /**visible version of [_resource]*/
     val resource :LiveData<String> = _resource
 
-    /**it tells if we are loading, so if we go out and in the view again we dont
-     * start another collect, it is set to true until the collection ends*/
-    override var alreadyLoading by mutableStateOf(false)
 
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
     private fun fetchPosts(){
-        if (!alreadyLoading) {
+        if (!_isLoading.value!!) {
 
-            alreadyLoading = true
+            _isLoading.value = true
             viewModelScope.launch {
 
                 _posts.collect {
@@ -116,7 +114,7 @@ class OwnProfileViewModel @Inject constructor() : ViewModel() , PostsUIControlle
 
 
             }
-            alreadyLoading = false
+            _isLoading.value = false
         }
     }
 

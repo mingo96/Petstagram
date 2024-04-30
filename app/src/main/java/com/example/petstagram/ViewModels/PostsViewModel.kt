@@ -30,9 +30,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-@HiltViewModel
 @SuppressLint("MutableCollectionMutableState")
-class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
+class PostsViewModel : ViewModel() ,PostsUIController{
+
+    lateinit var base : DataFetchViewModel
 
     override var actualUser by mutableStateOf(Profile())
 
@@ -46,134 +47,54 @@ class PostsViewModel @Inject constructor() : ViewModel() ,PostsUIController{
     private val _isLoading = MutableLiveData(true)
 
     /**[LiveData] for [_isLoading]*/
-    val isLoading :LiveData<Boolean> = _isLoading
-
-    /** it's supposed to locally save content for categories when we swap between them*/
-    private val locallySaved by mutableStateOf( mutableMapOf<Category, List<UIPost>>() )
+    override val isLoading :LiveData<Boolean> = _isLoading
 
     /**actual content of [Post]s and their Uri Strings*/
     private val _posts = MutableStateFlow<List<UIPost>>(emptyList())
 
-    /**it tells if we are loading, so if we go out and in the view again we dont
-     * start another collect, it is set to true until the collection ends*/
-    override var alreadyLoading by mutableStateOf(false)
 
     /**visible version of [_posts]*/
     override val posts : StateFlow<List<UIPost>> = _posts
 
-    /**ids of the already saved [Post]s*/
-    private var ids by mutableStateOf(_posts.value.map { it.id })
+    var ended by mutableStateOf(false)
 
-    /**number of indexes we'll be getting at a time*/
-    private var indexesOfPosts = 10L
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
 
-        if (!alreadyLoading) {
-            alreadyLoading = true
-            if (locallySaved.map { it.key.name }.contains(statedCategory.name)) {
-                //if i dont do this it fails because it has to be the SAME category, same object reference
-                val localCategory = locallySaved.keys.find { it.name == statedCategory.name }!!
 
-                _posts.value = locallySaved[localCategory]!!
-                indexesOfPosts = _posts.value.count().toLong()+10
-            } else {
-
-
-                indexesOfPosts = 10L
-                _posts.value = emptyList()
-                locallySaved[statedCategory] = emptyList()
-            }
+        if (!_isLoading.value!!) {
             viewModelScope.launch {
-                Log.i("sadiasgf", "se empieza")
 
-                delay(1000)
-                getPostsFromFirebase()
-                delay(1000)
-                //if we dont have any post yet, we are loading
-                _isLoading.value = (_posts.value.isEmpty())
-                if (_posts.value.count().toLong() >= indexesOfPosts)
-                    indexesOfPosts += 10
+                _isLoading.value = true
+
+                val start = base.postsFromCategory(statedCategory)
+
+                while (base.alreadyLoading){
+                    delay(100)
+                }
+                val end = base.postsFromCategory(statedCategory)
+
+                _posts.value = end
+
+                _isLoading.value = false
+                ended = start.size >= _posts.value.size
+
 
             }
 
 
         }
-    }
-
-    /**gets [Post] JSONs, filtering them for the [statedCategory] we have, ordered by [Post.postedDate]*/
-    private fun getPostsFromFirebase(){
-        db.collection("Posts")
-            //request filters
-            .orderBy("postedDate", Query.Direction.DESCENDING)
-            .whereEqualTo("category", statedCategory)
-            //max amount we're getting is indexesOfPosts
-            .limit(indexesOfPosts)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty){
-                    //if there's any entry
-                    for (postJson in querySnapshot.documents){
-                        //only get the data loaded if we dont have it registered
-                        if(postJson.id !in ids) {
-                            savePostAndUrl(postJson)
-                        }
-                    }
-                }
-            }.continueWith {
-                alreadyLoading = false
-            }
-    }
-
-    /**given a JSON, saves its [Post] info and its url*/
-    private fun savePostAndUrl(postJson: DocumentSnapshot) {
-
-        val castedPost = postJson.toObject(UIPost::class.java)!!
-
-        if (castedPost.likes.find { it.userId==actualUser.id }!=null)
-            castedPost.liked= Pressed.True
-
-        for (i in castedPost.comments){
-            db.collection("Comments").document(i).get().addOnSuccessListener {
-                val UIComment = it.toObject(UIComment::class.java)!!
-                db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
-
-                    UIComment.objectUser = it.toObject(Profile::class.java)!!
-                    castedPost.UIComments.add(UIComment)
-                    UIComment.liked = if(UIComment.likes.find { it.userId==actualUser.id }==null) Pressed.False else Pressed.True
-
-                }
-            }
-        }
-
-        db.collection("SavedLists").whereEqualTo("userId", actualUser.id).whereArrayContains("postList", castedPost.id).get()
-            .addOnSuccessListener {
-                if(!it.isEmpty){
-                    castedPost.saved=SavePressed.Si
-                }
-                _posts.value+=castedPost
-                _posts.value = _posts.value.sortedBy { it.postedDate }.reversed()
-                ids+=postJson.id
-                locallySaved[statedCategory] = _posts.value
-            }
-        castedPost.loadSource()
-
     }
 
     fun stopLoading() {
-        Log.i("getting", "out")
-        for (i in locallySaved)
-        {
-            Log.i(i.key.name, i.value.size.toString())
-        }
-        Log.i("teniamos", _posts.value.size.toString())
-        Log.i("ids", ids.size.toString())
+        base.stopLoading()
         viewModelScope.coroutineContext.cancelChildren()
     }
 
     override fun scroll(scrolled : Double) {
         if (scrolled>0.8){
+            _posts.value= emptyList()
             startLoadingPosts()
         }
     }

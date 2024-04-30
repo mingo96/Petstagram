@@ -1,9 +1,11 @@
 package com.example.petstagram.UiData
 
-class SavedList (
+open class SavedList (
     var userId : String="",
     var docid : String="",
     var postList : MutableList<String> = mutableListOf()
-){
+)
 
+class UISavedList : SavedList(){
+    val UIPosts : MutableList<UIPost> = emptyList<UIPost>().toMutableList()
 }
