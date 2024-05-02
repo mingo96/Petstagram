@@ -7,7 +7,8 @@ description: '"tickets" pendientes de desarrollo'
 * [ ] Interfaz de publicaciones guardadas
 * [ ] Implementar inyección de dependencias bien
 * [x] Optimizar carga de recursos (pantalla de carga?)
-* [ ] Unificar carga de datos e implementar pantalla de carga inicial
+* [x] Unificar carga de datos&#x20;
+* [ ] Implementar pantalla de carga inicial
 * [ ] Implementar nueva interfaz de creación de Post
 * [ ] Implementar perfiles de mascotas
 * [ ] Implementar creación de perfiles de mascotas
