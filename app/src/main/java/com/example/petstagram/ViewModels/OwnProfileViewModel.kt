@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.petstagram.Controllers.GeneralController
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
@@ -32,12 +33,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class OwnProfileViewModel : ViewModel() , PostsUIController{
+class OwnProfileViewModel : GeneralController(){
 
     lateinit var base : DataFetchViewModel
-
-    /**Firebase FireStore reference*/
-    override val db = Firebase.firestore
 
     /**Firebase Storage reference*/
     private val storageRef = Firebase.storage.reference
@@ -51,16 +49,6 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     override var actualUser = _selfProfile.value
         get() {return _selfProfile.value}
 
-    private val _actualComments = MutableLiveData<List<UIComment>>(emptyList())
-
-    override val actualComments: LiveData<List<UIComment>> = _actualComments
-
-    /**indicates still loading the first bunch of posts*/
-    private val _isLoading = MutableLiveData(true)
-
-    /**live data for [_isLoading]*/
-    override val isLoading : LiveData<Boolean> = _isLoading
-
     /**indicates if we are editing the UserName, because if we are editing and reload,
      * username will go back to original*/
     private val _isEditing = MutableLiveData(false)
@@ -71,107 +59,43 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     /**new username container*/
     private var userName by mutableStateOf("")
 
-    /**mutable state of posts and their content url, separated because it can change of location
-     * but not in the [Post] itself*/
-    private val _posts = MutableStateFlow<List<UIPost>>(emptyList())
-
-    /**visible version of [_posts]*/
-    override val posts : StateFlow<List<UIPost>> = _posts
-
-    /**keeps the ids of posts we already have*/
-    private var ids by mutableStateOf(_posts.value.map { it.id })
-
-    /**number of posts we have, to load them progressively*/
-    private var indexesOfPosts = 10L
-
     /**the url of the profile pic, since it can change, we need it here*/
     private var _resource = MutableLiveData<String>()
 
     /**visible version of [_resource]*/
     val resource :LiveData<String> = _resource
 
-    private var commentsDisplayed by mutableStateOf(false)
-
-
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
     private fun fetchPosts(){
         if (!_isLoading.value!!) {
-
-            _isLoading.value = true
             viewModelScope.launch {
 
-                _posts.collect {
+                _isLoading.value = true
 
-                    delay(1000)
-                    if (!_isEditing.value!!) {
-                        getFirebasePosts()
-                    }
-                    delay(4000)
-                    _isLoading.value = (_posts.value.isEmpty())
-                    if (_posts.value.count().toLong() >= indexesOfPosts)
-                        indexesOfPosts += 10
-                    //order the list
-                    _posts.value = _posts.value.sortedBy { it.postedDate }
-                        .reversed()
+                base.postsFromUser(actualUser.id)
 
+                while (base.alreadyLoading){
+                    delay(100)
                 }
 
+                val end = base.postsFromUser(actualUser.id)
+
+
+                for (i in end){
+                    if(i !in _posts.value) {
+                        _posts.value += i
+                        delay(500)
+                    }
+                }
+                _isLoading.value = false
 
             }
-            _isLoading.value = false
+
         }
     }
 
-
-    /**gets the posts JSON filtering by [_selfProfile]*/
-    private fun getFirebasePosts(){
-        db.collection("Posts")
-            //filters
-            .whereEqualTo("creatorUser", _selfProfile.value)
-            .orderBy("postedDate", Query.Direction.DESCENDING)
-            //max amount is indexesOfPosts, to get them progressively
-            .limit(indexesOfPosts)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-
-                if (!querySnapshot.isEmpty) {
-
-                    //case not empty
-                    for (postJson in querySnapshot.documents) {
-                        //case we dont have this id yet
-                        if (postJson.id !in ids) {
-                            ids += postJson.id
-                            savePostAndUrl(postJson)
-                        }
-                    }
-                }
-            }
-    }
-
-    /**given a JSON, saves its [Post] info and its url*/
-    private fun savePostAndUrl(postJson : DocumentSnapshot) {
-
-        val castedPost = postJson.toObject(UIPost::class.java)!!
-        if (castedPost.likes.find { it.userId==actualUser.id }!=null)
-            castedPost.liked=Pressed.True
-        for (i in castedPost.comments){
-            db.collection("Comments").document(i).get().addOnSuccessListener {
-                val UIComment = it.toObject(UIComment::class.java)!!
-                db.collection("Users").document(UIComment.user).get().addOnSuccessListener {
-
-                    UIComment.objectUser = it.toObject(Profile::class.java)!!
-                    UIComment.liked = if(UIComment.likes.find { it.userId==actualUser.id }==null) Pressed.False else Pressed.True
-
-                }
-            }
-        }
-        castedPost.loadSource()
-
-        _posts.value += castedPost
-
-    }
 
     /**gets executed when we click te button for editing [userName]*/
     fun editUserNameClicked(context : Context){
@@ -257,6 +181,7 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
                 .collect{
 
                 Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
+
                 delay(1000)
                 db.collection("Users").whereEqualTo("id", selfId).get()
                 .addOnSuccessListener {
@@ -276,41 +201,21 @@ class OwnProfileViewModel : ViewModel() , PostsUIController{
     }
 
     fun stopLoading() {
+        _posts.value = emptyList()
+        base.stopLoading()
         viewModelScope.coroutineContext.cancelChildren()
     }
 
     override fun scroll(it: Double) {
-
+        if (it>0.8){
+            if(!base.alreadyLoading)
+                _posts.value= base.postsFromUser(actualUser.id)
+        }
     }
 
     fun clear(){
         if (_posts.value.isNotEmpty())
             _posts.value.drop(0)
-    }
-
-    override fun selectPostForComments(post: UIPost) {
-        commentsDisplayed = true
-        viewModelScope.launch {
-
-            var loadingComments = true
-            val result = mutableListOf<UIComment>()
-            db.collection("Comments").whereEqualTo("commentPost", post.id).get()
-                .addOnSuccessListener {
-                    for (i in it) {
-                        result.add(i.toObject(UIComment::class.java))
-                    }
-                    loadingComments = false
-                }
-            while (loadingComments) delay(100)
-
-            _actualComments.value = result
-
-        }
-    }
-
-    override fun clearComments() {
-        commentsDisplayed = false
-        _actualComments.value = emptyList()
     }
 
 }

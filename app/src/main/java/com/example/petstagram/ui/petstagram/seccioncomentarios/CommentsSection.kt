@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.example.petstagram.Controllers.CommentsUIController
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.ui.petstagram.comentario.Comment
@@ -51,7 +52,7 @@ import com.google.relay.compose.RelayText
 @Composable
 fun CommentsSection(
     modifier: Modifier = Modifier,
-    controller: PostsUIController,
+    controller: CommentsUIController,
     post: UIPost
 ) {
     LaunchedEffect(key1 = post.id) {
@@ -59,11 +60,10 @@ fun CommentsSection(
     }
 
 
-    var commenting by remember {
-        mutableStateOf(false)
-    }
+    val commenting by controller.commenting.observeAsState()
+    val content by controller.commentContent.observeAsState()
 
-    val commentList = controller.actualComments.observeAsState()
+    val commentList by controller.actualComments.observeAsState()
 
     DisposableEffect(key1 = Unit) {
         onDispose {
@@ -73,12 +73,10 @@ fun CommentsSection(
     val context = LocalContext.current
 
     TopLevel(modifier = modifier) {
-        var content by remember{ mutableStateOf("")}
-
         CommentsTopSection(modifier = Modifier.rowWeight(1.0f)) {
-            if (!commenting) {
+            if (!commenting!!) {
 
-                if (commentList.value!!.isEmpty()){
+                if (commentList!!.isEmpty()){
                     CommentContent(content = "Parece que nadie ha comentado aún, sé el primero!",
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
@@ -91,8 +89,8 @@ fun CommentsSection(
                     CommentsTitle(userName = post.creatorUser!!.userName)
             }
             else{
-                OutlinedTextField(value = content,
-                    onValueChange = {content = it},
+                OutlinedTextField(value = content!!,
+                    onValueChange = {controller.textChange(it)},
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .wrapContentHeight(
@@ -101,7 +99,7 @@ fun CommentsSection(
                         )
                         .padding(end = 16.dp)
                     ,
-                    label = { Text(text = "Introduce tu comentario")},
+                    label = { Text(text = "Introduce tu comentario", style = TextStyle(fontSize = 12.sp))},
                     shape = RoundedCornerShape(30),
                     textStyle = TextStyle(color = Color.White, lineHeight = 1.em),
                     colors = TextFieldDefaults.textFieldColors(
@@ -117,16 +115,16 @@ fun CommentsSection(
             BotonMas(modifier = Modifier
                 .columnWeight(1.0f)
                 .clickable {
-                    if (!commenting) {
-                        commenting = true
+                    if (commenting == false) {
+                        controller.commentingToggle()
                     } else {
-                        if (content.length >= 200) {
+                        if (content!!.length >= 200) {
                             Toast
                                 .makeText(context, "Comentario demasiado largo", Toast.LENGTH_SHORT)
                                 .show()
-                        } else if (content.isNotEmpty()) {
-                            controller.comment(content, post)
-                            commenting = false
+                        } else if (content!!.isNotEmpty()) {
+                            controller.comment( post)
+                            controller.commentingToggle()
                         } else {
                             Toast
                                 .makeText(context, "Comentario vacío", Toast.LENGTH_SHORT)
@@ -143,7 +141,7 @@ fun CommentsSection(
         }
         Comentarios(modifier = Modifier.rowWeight(1.0f)) {
 
-            for (i in commentList.value!!){
+            for (i in commentList!!){
                 Comment(comment = i, onLike = {
                     controller.likeOnComment(i)
                 })
@@ -239,7 +237,7 @@ fun CommentsTopSection(
         content = content,
         modifier = modifier
             .fillMaxWidth(1.0f)
-            .wrapContentHeight(align = Alignment.CenterVertically)
+            .wrapContentHeight(unbounded = true,align = Alignment.CenterVertically)
     )
 }
 

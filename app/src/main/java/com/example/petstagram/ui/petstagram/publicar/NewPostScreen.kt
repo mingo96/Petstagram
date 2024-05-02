@@ -147,11 +147,6 @@ fun NewPostScreen(
 
 }
 
-/**@return the format this URI has*/
-fun Uri.uriFormat(): String {
-    return this.toString().split("/").last()
-}
-
 /**top bar with which you can move in the app*/
 @Composable
 fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {

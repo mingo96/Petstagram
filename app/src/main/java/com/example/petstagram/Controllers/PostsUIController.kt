@@ -13,18 +13,12 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.StateFlow
 
-interface PostsUIController {
+interface PostsUIController:CommentsUIController {
 
     val posts : StateFlow<List<UIPost>>
 
-    var actualUser : Profile
-
     val isLoading : LiveData<Boolean>
 
-    /**Firebase FireStore reference*/
-    val db: FirebaseFirestore
-
-    val actualComments : LiveData<List<UIComment>>
     fun scroll(scrolled:Double)
 
     fun likeOnPost(post:UIPost) {
@@ -48,36 +42,6 @@ interface PostsUIController {
         }
     }
 
-    fun selectPostForComments(post : UIPost)
-
-    fun clearComments()
-
-    fun likeOnComment(comment : UIComment) : Boolean{
-        val newLike = Like(userId = actualUser.id)
-        return if(comment.likes.find { it.userId==actualUser.id } == null) {
-
-            comment.likes += newLike
-            db.collection("Comments")
-                .document(comment.id)
-                .update(
-                    "likes" ,FieldValue.arrayUnion(newLike)
-                )
-            comment.liked = Pressed.True
-            true
-        }else{
-
-            comment.likes.removeIf { it.userId ==actualUser.id }
-            db.collection("Comments")
-                .document(comment.id)
-                .update(
-                    "likes" ,FieldValue.arrayRemove(newLike)
-                )
-            comment.liked = Pressed.False
-
-            false
-        }
-
-    }
 
     fun saveClicked(post:UIPost):Boolean{
 
@@ -107,24 +71,5 @@ interface PostsUIController {
             }
         return true
     }
-
-    fun comment(content : String, post: UIPost){
-        val newComment =
-            Comment(id = "", user = actualUser.id, commentPost = post.id, commentText = content)
-
-        db.collection("Comments").add(newComment).addOnSuccessListener {
-            db.collection("Posts").document(post.id)
-                .update("comments", FieldValue.arrayUnion(it.id))
-            db.collection("Comments").document(it.id).update("id", it.id)
-
-            newComment.id = it.id
-            post.comments.add(newComment.id)
-
-            selectPostForComments(post)
-
-        }
-    }
-
-
 
 }
