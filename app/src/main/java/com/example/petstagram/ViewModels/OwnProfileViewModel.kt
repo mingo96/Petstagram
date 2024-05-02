@@ -35,8 +35,6 @@ import javax.inject.Inject
 
 class OwnProfileViewModel : GeneralController(){
 
-    lateinit var base : DataFetchViewModel
-
     /**Firebase Storage reference*/
     private val storageRef = Firebase.storage.reference
 
@@ -200,11 +198,6 @@ class OwnProfileViewModel : GeneralController(){
         }
     }
 
-    fun stopLoading() {
-        _posts.value = emptyList()
-        base.stopLoading()
-        viewModelScope.coroutineContext.cancelChildren()
-    }
 
     override fun scroll(it: Double) {
         if (it>0.8){

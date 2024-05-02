@@ -36,10 +36,12 @@ import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
+import com.example.petstagram.ViewModels.SavedPostsViewModel
 import com.example.petstagram.loginenmovil.PhoneLogin
 import com.example.petstagram.menuprincipal.CategoriesMenu
 import com.example.petstagram.perfilpropio.MyProfile
 import com.example.petstagram.publicar.NewPostScreen
+import com.example.petstagram.ui.petstagram.publicacionesguardadas.SavedPosts
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.android.gms.tasks.OnCompleteListener
@@ -85,10 +87,12 @@ class MainActivity : ComponentActivity() {
         val postsViewModel : PostsViewModel by viewModels()
         val ownProfileViewModel : OwnProfileViewModel by viewModels()
         val dataFetchViewModel : DataFetchViewModel by viewModels()
+        val savedPostsViewModel : SavedPostsViewModel by viewModels()
 
 
         postsViewModel.base = dataFetchViewModel
         ownProfileViewModel.base = dataFetchViewModel
+        savedPostsViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -129,7 +133,11 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("categorias", enterTransition = { onEnter }, exitTransition = {onExit}){
 
-
+                            LaunchedEffect(key1 = Unit) {
+                                postsViewModel.actualUser = authViewModel.localProfile
+                                dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
+                                dataFetchViewModel.startLoadingPosts()
+                            }
                             lastStep = route
                             CategoriesMenu(navController = navController, viewModel = categoriesViewModel)
 
@@ -138,12 +146,6 @@ class MainActivity : ComponentActivity() {
 
                             lastStep = route
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
-
-                            LaunchedEffect(key1 = Unit) {
-                                postsViewModel.actualUser = authViewModel.localProfile
-                                dataFetchViewModel.selfId = authViewModel.localProfile.id
-                                dataFetchViewModel.startLoadingPosts()
-                            }
 
                             DisplayCategory(navController = navController, viewModel = postsViewModel)
 
@@ -167,10 +169,9 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("guardadas", enterTransition = { onEnter }, exitTransition = {onExit}){
-
                             lastStep = route
-                            ownProfileViewModel.selfId = authViewModel.localProfile.id
-                            MyProfile(navController = navController, viewModel = ownProfileViewModel)
+                            savedPostsViewModel.actualUser = authViewModel.localProfile
+                            SavedPosts(navController = navController, viewModel = savedPostsViewModel)
 
                         }
                     }

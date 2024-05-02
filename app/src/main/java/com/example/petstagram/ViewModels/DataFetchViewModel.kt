@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
@@ -27,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Arrays
@@ -42,9 +44,6 @@ class DataFetchViewModel : ViewModel() {
     /**Firebase FireStore reference*/
     val db = Firebase.firestore
 
-    /**[Category] of the posts displayed*/
-    lateinit var statedCategory: Category
-
     /**actual content of [Post]s and their Uri Strings*/
     private val _posts = MutableStateFlow<List<UIPost>>(emptyList())
 
@@ -57,14 +56,10 @@ class DataFetchViewModel : ViewModel() {
 
     /**number of indexes we'll be getting at a time*/
     private var indexesOfPosts = 5L
-
-    private var savedList : UISavedList = UISavedList()
-
-    var semaforo : Semaphore = Semaphore(1)
+    private var savedList by mutableStateOf(SavedList())
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
-
 
         keepUpWithUser()
         getUserPosts()
@@ -85,18 +80,18 @@ class DataFetchViewModel : ViewModel() {
                 )
                 .collect{
 
-                    if(_selfProfile.value.id!= "") {
-                        delay(100)
-                        db.collection("Users").whereEqualTo("id", _selfProfile.value.id).get()
+                    if(selfId!= "") {
+                        alreadyLoading = true
+                        db.collection("Users").whereEqualTo("authId", selfId).get()
                             .addOnSuccessListener {
 
                                 val newVal = it.documents[0].toObject(Profile::class.java)!!
-                                if (newVal != _selfProfile.value) {
+                                if (newVal != _selfProfile.value){
                                     _selfProfile.value = newVal
                                 }
-                            }
+                            }.continueWith { alreadyLoading = false }
                     }
-                    delay(15000)
+                    delay(1000)
                 }
         }
     }
@@ -109,24 +104,27 @@ class DataFetchViewModel : ViewModel() {
                 delay(100)
             }
             alreadyLoading = true
-            delay(100)
-
             db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).get().addOnSuccessListener { document ->
                 if(!document.isEmpty) {
                     val document = document.documents.first()
                     val spareSavedList = document.toObject(UISavedList::class.java)!!
+                    savedList = spareSavedList
 
-                    for (post in spareSavedList.postList) {
-                        _posts.value.find { it.id == post }
-                            ?.let { it1 -> spareSavedList.UIPosts.add(it1) }
+                    for (id in spareSavedList.postList){
+                        individualPostFetch(id)
                     }
                 }
             }.continueWith {
 
                 alreadyLoading = false
 
-
             }
+        }
+    }
+
+    private fun individualPostFetch(id :String){
+        db.collection("Posts").document(id).get().addOnSuccessListener {
+            bootUpPost(it)
         }
     }
 
@@ -199,7 +197,6 @@ class DataFetchViewModel : ViewModel() {
                             //case not empty
                             for (postJson in it.result.documents) {
                                 bootUpPost(postJson)
-
                             }
                         }
 
@@ -324,7 +321,7 @@ class DataFetchViewModel : ViewModel() {
 
     fun postsFromSaved(): List<UIPost> {
         fetchSavedList()
-        return savedList.UIPosts
+        return _posts.value.filter { it.id in savedList.postList }
     }
 
 }

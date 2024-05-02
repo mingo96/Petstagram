@@ -28,9 +28,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("MutableCollectionMutableState")
 class PostsViewModel : GeneralController(){
 
-    lateinit var base : DataFetchViewModel
-
-    override var actualUser by mutableStateOf(Profile())
 
     /**[Category] of the posts displayed*/
     lateinit var statedCategory: Category
@@ -68,12 +65,6 @@ class PostsViewModel : GeneralController(){
             }
 
         }
-    }
-
-    fun stopLoading() {
-        _posts.value = emptyList()
-        base.stopLoading()
-        viewModelScope.coroutineContext.cancelChildren()
     }
 
     override fun scroll(scrolled : Double) {

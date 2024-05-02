@@ -11,16 +11,20 @@ import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 abstract class GeneralController : ViewModel(), PostsUIController {
+
+    lateinit var base : DataFetchViewModel
 
     /**Firebase FireStore reference*/
     override val db = Firebase.firestore
@@ -94,5 +98,9 @@ abstract class GeneralController : ViewModel(), PostsUIController {
         _actualComments.value = emptyList()
     }
 
-
+    fun stopLoading() {
+        _posts.value = emptyList()
+        base.stopLoading()
+        viewModelScope.coroutineContext.cancelChildren()
+    }
 }

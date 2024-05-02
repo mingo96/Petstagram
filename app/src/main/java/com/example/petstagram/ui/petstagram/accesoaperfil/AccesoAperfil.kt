@@ -32,7 +32,7 @@ import com.google.relay.compose.RelayImage
 fun AccesoAperfil(modifier: Modifier = Modifier, navController: NavHostController) {
     TopLevel(modifier = modifier) {
         ImagenPerfil(Modifier.clickable { navController.navigate("perfilPropio") })
-        ImagenGaleria(Modifier.clickable { navController.navigate("publicaciones") })
+        ImagenGaleria(Modifier.clickable { navController.navigate("guardadas") })
         ImagenPuerta(Modifier.clickable { navController.navigate("login") })
     }
 }

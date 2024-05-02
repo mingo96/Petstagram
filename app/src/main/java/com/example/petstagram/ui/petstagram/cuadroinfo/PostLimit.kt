@@ -130,7 +130,7 @@ fun PostDownBar(
                     }, post.liked)
                 }
             }
-            Text(text = "Likes : $likesCount", style = TextStyle(color = Color.White))
+            Text(text = "Likes : ${(likesCount!!).quantity()}", style = TextStyle(color = Color.White))
             BotonSeccionComentariosVariacionInferior {
                 TextoBotonComentariosVariacionInferior(modifier = Modifier
                     .rowWeight(1.0f)
@@ -168,6 +168,26 @@ fun PostDownBar(
 
 
     }
+}
+
+/**returns the amount as a string but if more than 3 0's, in thousands, if more than 6 0's, millions*/
+fun Int.quantity(): String{
+
+    var spare = this.toString()
+    var times = 0
+    while (spare.length>4){
+        when(times){
+            0->{
+                spare = spare.substring(0..spare.length-4)+"k"
+            }
+            1->{
+                spare = spare.substring(0..spare.length-5)+"m"
+            }
+        }
+        times++
+    }
+    return spare
+
 }
 
 @Composable

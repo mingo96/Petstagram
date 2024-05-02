@@ -102,7 +102,7 @@ fun Posts(
                     Text(text = "Cargando",color = Color.Black)
 
                 }else{
-                    Text(text = "Parece que no hay más publicaciones", color = Color.Black, modifier = Modifier.padding(vertical = 200.dp))
+                    Text(text = "Cargando más publicaciones", color = Color.Black, modifier = Modifier.padding(vertical = 200.dp))
                 }
             }
             
