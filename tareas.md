@@ -4,7 +4,7 @@ description: '"tickets" pendientes de desarrollo'
 
 # Tareas
 
-* [ ] Interfaz de publicaciones guardadas
+* [x] Interfaz de publicaciones guardadas
 * [ ] Implementar inyección de dependencias bien
 * [x] Optimizar carga de recursos (pantalla de carga?)
 * [x] Unificar carga de datos&#x20;
@@ -18,3 +18,4 @@ description: '"tickets" pendientes de desarrollo'
 * [ ] Creación e implementación de interfaz de creación de post de adopción
 * [ ] Chat entre usuarios respecto a ofertas de adopción
 * [ ] Adaptar interfaz a funcionalidad de chats y notificaciones
+* [ ] Actualizar documentación del prototipado

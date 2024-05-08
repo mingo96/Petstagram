@@ -13,3 +13,4 @@ description: Funcionalidades logradas
 * Display de publicaciones filtradas por categoría y ordenadas
   * Display de info del usuario en estas
   * Comentarios, likes y guardados de estas
+* Display de las publicaciones guardadas, filtrando, o no, por especie

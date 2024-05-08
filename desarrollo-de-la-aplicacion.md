@@ -37,14 +37,19 @@ Aquí finaliza el proyecto base
    6. Implementación del sistema de comentarios con sus Likes
 2. Rediseño de la interfaz de creación de publicación
 3. Implementación de inyección de dependencias con dagger hilt (aun en progreso)
+4. Rediseño de sistema de clases controladoras para unificación y simplificación del código
+5. Re-Implementación de gestión de comentarios de forma que sobrecargue menos el dispositivo y esté más organizado
+6. Implementación de interfaz de publicaciones guardadas
+7. Rediseño a base estable del display, gestión de carga y scroll de la interfaz&#x20;
 
 ## Dificultades encontradas
 
 (Ordenadas de horrible a molesto)
 
 1. Gestión y optimización del uso de clases controladoras de publicaciones
-2. Gestión de estado de UI y flujo de datos estable y práctico
-3. Actualización de datos (las referencias no se actualizan si el referenciado cambia)
-4. Gestión de recursos en memoria
-5. Display de video
-6. Ajuste de UI a código
+2. Rendimiento de composición y scroll
+3. Gestión de estado de UI y flujo de datos estable y práctico
+4. Actualización de datos (las referencias no se actualizan si el referenciado cambia)
+5. Gestión de recursos en memoria
+6. Display de video
+7. Ajuste de UI a código
