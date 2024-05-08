@@ -62,9 +62,6 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override var commentContent: LiveData<String> = _commentContent
 
-    init {
-        startRollingDots()
-    }
 
     override fun startRollingDots(){
         viewModelScope.launch {

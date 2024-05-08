@@ -2,10 +2,12 @@ package com.example.petstagram.publicaciones
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -40,10 +42,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.publicacion.Post
+import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
+import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
 
 /**
  * publicaciones
@@ -54,7 +59,8 @@ import com.example.petstagram.publicacion.Post
 @Composable
 fun Posts(
     modifier: Modifier = Modifier,
-    controller : PostsUIController
+    controller : PostsUIController,
+    navController: NavController? = null
 ) {
 
     val postsState by controller.posts.collectAsState()
@@ -85,7 +91,7 @@ fun Posts(
                 )
 
         ){
-            itemsIndexed(postsState){index, post->
+            items(postsState){post->
 
                 var seen by rememberSaveable {
                     mutableStateOf(false)
@@ -106,6 +112,10 @@ fun Posts(
 
             }
             item {
+                LaunchedEffect(key1 = true) {
+                    if (isLoading==false)
+                        controller.scroll()
+                }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                     .fillMaxHeight(0.3f)
@@ -120,7 +130,23 @@ fun Posts(
                         Text(text = "Cargando$dots",color = Color.Black)
 
                     }else{
-                        Text(text = "Cargando más publicaciones$dots", color = Color.Black, modifier = Modifier.padding(vertical = 50.dp))
+                        if (navController != null){
+                            Text(text = "No hay más, prueba a publicar tú mismo!", color = Color.Black)
+
+                            BotonMas(modifier = Modifier
+                                .clickable {
+                                    navController.navigate("publicar")
+                                }
+                                .padding(vertical = 8.dp)) {
+                                CuadroSumar(
+                                    modifier = Modifier
+                                        .rowWeight(1.0f)
+                                        .columnWeight(1.0f)
+                                )
+                            }
+                        }else{
+                            Text(text = "No hay más publicaciones!", color = Color.Black, modifier = Modifier.padding(vertical = 50.dp))
+                        }
                     }
                 }
             }

@@ -199,11 +199,8 @@ class OwnProfileViewModel : GeneralController(){
     }
 
 
-    override fun scroll(it: Double) {
-        if (it>0.8){
-            if(!base.alreadyLoading)
-                _posts.value= base.postsFromUser(actualUser.id)
-        }
+    override fun scroll() {
+        _posts.value= base.postsFromUser(actualUser.id)
     }
 
     fun clear(){

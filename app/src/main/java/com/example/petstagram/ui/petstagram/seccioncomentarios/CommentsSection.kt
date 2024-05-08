@@ -193,9 +193,9 @@ fun BotonMas(
     RelayContainer(
         backgroundColor = Color(
             alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
+            red = 225,
+            green = 196,
+            blue = 1
         ),
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(
@@ -208,7 +208,7 @@ fun BotonMas(
         radius = 15.0,
         strokeWidth = 1.0,
         strokeColor = Color(
-            alpha = 38,
+            alpha = 50,
             red = 0,
             green = 0,
             blue = 0

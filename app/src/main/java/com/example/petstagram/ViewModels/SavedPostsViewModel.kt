@@ -60,9 +60,7 @@ class SavedPostsViewModel : GeneralController() {
         else category
         startLoadingPosts()
     }
-    override fun scroll(scrolled: Double) {
-        if (scrolled >=0.8){
-            startLoadingPosts()
-        }
+    override fun scroll() {
+        startLoadingPosts()
     }
 }

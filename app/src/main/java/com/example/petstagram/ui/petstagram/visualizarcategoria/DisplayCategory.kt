@@ -5,21 +5,27 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -75,11 +81,16 @@ fun DisplayCategory(
                 exit = slideOutVertically { 1 }) {
 
                 Dialog(onDismissRequest = {  }) {
-                    CircularProgressIndicator(
-                        modifier
-                            .rowWeight(1.0f)
-                            .height(height.times(0.6f))
-                            .fillMaxWidth(0.8f))
+                    val dots by viewModel.funnyAhhString.collectAsState()
+
+                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+
+                        CircularProgressIndicator(
+                            modifier
+                                .height(height.times(0.6f))
+                                .fillMaxWidth(0.8f))
+                        Text(text = "Cargando, por favor, espere$dots", style = TextStyle(color = Color.White))
+                    }
                 }
             }
 
@@ -87,7 +98,8 @@ fun DisplayCategory(
                 modifier = Modifier
                     .rowWeight(1.0f)
                     .height(height.times(0.81f)),
-                viewModel = viewModel
+                viewModel = viewModel,
+                navController = navController
             )
         }
     }
@@ -116,11 +128,12 @@ fun CategoryText(modifier: Modifier = Modifier, added: String) {
 
 /**pass-by function to display [Posts]*/
 @Composable
-fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel) {
+fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel, navController: NavHostController) {
     Posts(
         modifier = modifier
             .fillMaxWidth(1.0f),
-        controller = viewModel
+        controller = viewModel,
+        navController = navController
     )
 }
 

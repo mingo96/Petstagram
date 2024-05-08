@@ -68,11 +68,8 @@ class PostsViewModel : GeneralController(){
         }
     }
 
-    override fun scroll(scrolled : Double) {
-        if (scrolled>0.8){
-            if(!base.alreadyLoading)
-                _posts.value= base.postsFromCategory(statedCategory)
-        }
+    override fun scroll() {
+         _posts.value= base.postsFromCategory(statedCategory)
     }
 
 }
