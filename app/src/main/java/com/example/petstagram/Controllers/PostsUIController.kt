@@ -19,11 +19,15 @@ interface PostsUIController:CommentsUIController {
 
     val isLoading : LiveData<Boolean>
 
+    val funnyAhhString : StateFlow<String>
+
+    fun startRollingDots()
+
     fun scroll(scrolled:Double)
 
     fun likeOnPost(post:UIPost) {
         val newLike = Like(userId = actualUser.id)
-        if(post.likes.find { it.userId==actualUser.id } == null) {
+        if(!post.likes.any { it.userId==actualUser.id }) {
 
             post.likes += newLike
             db.collection("Posts")

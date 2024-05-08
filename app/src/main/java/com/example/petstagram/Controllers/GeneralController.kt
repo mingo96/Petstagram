@@ -19,7 +19,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 abstract class GeneralController : ViewModel(), PostsUIController {
@@ -30,6 +32,10 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     override val db = Firebase.firestore
 
     override var actualUser by mutableStateOf(Profile())
+
+    private val _funnyAhhString = MutableStateFlow("")
+
+    override val funnyAhhString: StateFlow<String> = _funnyAhhString
 
 
     /**indicates if we still dont have any [Post]s*/
@@ -56,7 +62,32 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override var commentContent: LiveData<String> = _commentContent
 
+    init {
+        startRollingDots()
+    }
 
+    override fun startRollingDots(){
+        viewModelScope.launch {
+
+            _funnyAhhString
+                //we make it so it doesnt load more if we get out of the app
+                .stateIn(
+                    viewModelScope,
+                    started = SharingStarted.WhileSubscribed(10000),
+                    0
+                )
+                .collect{
+                    _funnyAhhString.value = when(_funnyAhhString.value){
+                        "."->".."
+                        ".."->"..."
+                        "..."->""
+                        else ->"."
+                    }
+                    delay(500)
+
+                }
+        }
+    }
     override fun selectPostForComments(post: UIPost) {
         viewModelScope.launch {
 
@@ -83,6 +114,7 @@ abstract class GeneralController : ViewModel(), PostsUIController {
             _actualComments.value = result
 
         }
+
     }
 
     override fun commentingToggle() {

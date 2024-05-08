@@ -16,6 +16,7 @@ import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.Categories
+import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -45,13 +46,13 @@ fun CategoriesMenu(
         TopLevel(modifier = modifier) {
             TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.21f)), navController = navController)
+                .requiredHeight(height.times(0.24f)), navController = navController)
             BarraTipoNotificacion(modifier = Modifier
                 .rowWeight(1.0f)
                 .requiredHeight(height.times(0.07f)),navController = navController)
             CategoriesInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.84f)),
+                .requiredHeight(height.times(0.83f)),
                 navController = navController,
                 categoryViewModel = viewModel)
         }
@@ -97,8 +98,8 @@ fun TopLevel(
             green = 35,
             blue = 35
         ),
-        mainAxisAlignment = MainAxisAlignment.Center,
-        scrollAnchor = ScrollAnchor.Start,
+        mainAxisAlignment = MainAxisAlignment.End,
+        scrollAnchor = ScrollAnchor.End,
         scrollable = true,
         itemSpacing = 8.0,
         content = content,

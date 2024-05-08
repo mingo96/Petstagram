@@ -33,12 +33,63 @@ import com.example.petstagram.Controllers.PostsUIController
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
 @kotlin.OptIn(ExperimentalFoundationApi::class)
+@OptIn(UnstableApi::class)
+@Composable
+fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
+
+
+    //when we get out it releases memory
+    DisposableEffect(Unit) {
+        onDispose {
+            source.pause()
+        }
+    }
+
+    AnimatedVisibility(visible = !source.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
+        AndroidView(
+            factory = { ctx ->
+                PlayerView(ctx).apply {
+                    player = source
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    useController = false
+                    isClickable = false
+                }
+            },
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .combinedClickable (
+                    enabled = true,
+                    onClick = {
+                        source.playWhenReady = !source.playWhenReady
+                    },
+                    onDoubleClick = {
+                        onLike.invoke()
+                    }
+                )
+                .background(Color.Gray)
+        )
+    }
+
+    AnimatedVisibility(visible = source.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
+        CircularProgressIndicator(
+            modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .background(Color.Black))
+    }
+}
+
+
+/**function that uses [ExoPlayer] to display a video given an Uri in string format
+ * works for local files and urls*/
+@kotlin.OptIn(ExperimentalFoundationApi::class)
 @OptIn(UnstableApi::class) @Composable
-fun DisplayVideo(source: MediaItem, modifier: Modifier, onLike :()->Unit = {}) {
+fun DisplayVideoFromSource(source: MediaItem, modifier: Modifier, onLike :()->Unit = {}) {
 
     val context = LocalContext.current
     //main controller
-    var mediaPlayer = remember {
+    val mediaPlayer = remember {
         ExoPlayer.Builder(context).build()
     }
 

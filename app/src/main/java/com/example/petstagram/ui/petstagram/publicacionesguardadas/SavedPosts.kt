@@ -53,6 +53,7 @@ import com.example.petstagram.publicaciones.Posts
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
+import com.google.relay.compose.ScrollAnchor
 
 
 /**UI screen to display a [Category] posts*/
@@ -85,12 +86,12 @@ fun SavedPosts(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.2225f)),
+                    .height(height.times(0.24f)),
                 navController = navController
             )
 
 
-            Row(Modifier.height(height.times(0.07f))) {
+            Row(Modifier.height(height.times(0.07f)).fillMaxWidth().padding(start = 8.dp)) {
 
                 LazyRow (horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
@@ -129,7 +130,7 @@ fun SavedPosts(
             PostsInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.835f)),
+                    .height(height.times(if (viewModel.statedCategory== null)0.825f else 0.773f)),
                 viewModel = viewModel
             )
         }
@@ -206,6 +207,7 @@ fun TopLevel(
             blue = 35
         ),
         mainAxisAlignment = MainAxisAlignment.End,
+        scrollAnchor = ScrollAnchor.End,
         scrollable = true,
         itemSpacing = 8.0,
         content = content,

@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,87 +58,77 @@ fun Posts(
 ) {
 
     val postsState by controller.posts.collectAsState()
-    val scrollState = rememberScrollState()
     val isLoading by controller.isLoading.observeAsState()
+    val dots by controller.funnyAhhString.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        controller.startRollingDots()
+    }
 
     BoxWithConstraints {
 
         val localwidth by rememberSaveable {
-          mutableFloatStateOf(maxWidth.value)
+            mutableFloatStateOf(maxWidth.value)
         }
 
-        TopLevel(modifier = modifier.width(Dp(localwidth)), scrollState = scrollState) {
-            LaunchedEffect(key1 = scrollState) {
-                snapshotFlow { scrollState.isScrollInProgress }.collect{
+        LazyColumn(
+            modifier = modifier
+                .width(Dp(localwidth))
+                .fillMaxHeight(1.0f)
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 224,
+                        green = 164,
+                        blue = 0
+                    )
+                )
 
-                    controller.scroll(scrollState.value.toDouble() / scrollState.maxValue.toDouble())
-                }
-            }
+        ){
+            itemsIndexed(postsState){index, post->
 
-
-
-            for (i in postsState){
                 var seen by rememberSaveable {
                     mutableStateOf(false)
                 }
 
-                //Do NOT try to implement directly with controller as param, major usage of ram+bugs?¿
+
                 AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
 
                     Post(modifier = Modifier
                         .width(Dp(localwidth))
                         .padding(vertical = 4.dp),
-                        post = i,
+                        post = post,
                         controller = controller)
                 }
                 LaunchedEffect(key1 = seen) {
                     seen = true
                 }
+
             }
+            item {
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                if (isLoading == true){
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                    .fillMaxHeight(0.3f)
+                    .fillMaxWidth()) {
+                    if (isLoading == true){
 
-                    CircularProgressIndicator(
-                        Modifier
-                            .width(200.dp)
-                            .height(200.dp)
-                            .padding(top = 16.dp))
-                    Text(text = "Cargando",color = Color.Black)
+                        CircularProgressIndicator(
+                            Modifier
+                                .width(200.dp)
+                                .height(200.dp)
+                                .padding(top = 16.dp))
+                        Text(text = "Cargando$dots",color = Color.Black)
 
-                }else{
-                    Text(text = "Cargando más publicaciones", color = Color.Black, modifier = Modifier.padding(vertical = 200.dp))
+                    }else{
+                        Text(text = "Cargando más publicaciones$dots", color = Color.Black, modifier = Modifier.padding(vertical = 50.dp))
+                    }
                 }
             }
-            
+
         }
+
+
+
     }
 }
 
-
-@Composable
-fun TopLevel(
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        content = content,
-        modifier = modifier
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
-            .background(
-                Color(
-                    alpha = 255,
-                    red = 224,
-                    green = 164,
-                    blue = 0
-                )
-            )
-            .verticalScroll(
-                state = scrollState
-            )
-
-    )
-
-}

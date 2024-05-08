@@ -45,7 +45,7 @@ import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
-import com.example.petstagram.ui.petstagram.DisplayVideo
+import com.example.petstagram.ui.petstagram.DisplayVideoFromSource
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -131,7 +131,7 @@ fun NewPostScreen(
                     val source = remember{
                         MediaItem.fromUri(uriObserver!!)
                     }
-                    DisplayVideo(source = source, modifier = modifier)
+                    DisplayVideoFromSource(source = source, modifier = modifier)
                 }else{
                     Image(painter = rememberAsyncImagePainter(model = uriObserver),
                         contentDescription = "foto seleccionada",

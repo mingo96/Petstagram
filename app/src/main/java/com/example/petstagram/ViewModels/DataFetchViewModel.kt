@@ -1,6 +1,7 @@
 package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,12 +35,14 @@ import kotlinx.coroutines.launch
 import java.util.Arrays
 import java.util.concurrent.Semaphore
 
-@SuppressLint("MutableCollectionMutableState")
+@SuppressLint("MutableCollectionMutableState", "StaticFieldLeak")
 class DataFetchViewModel : ViewModel() {
 
     var selfId = ""
 
-    private var _selfProfile = MutableStateFlow(Profile())
+    private val _selfProfile = MutableStateFlow(Profile())
+
+    lateinit var context: Context
 
     /**Firebase FireStore reference*/
     val db = Firebase.firestore
@@ -59,7 +62,8 @@ class DataFetchViewModel : ViewModel() {
     private var savedList by mutableStateOf(SavedList())
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
-    fun startLoadingPosts(){
+    fun startLoadingPosts(context: Context){
+        this.context = context
 
         keepUpWithUser()
         getUserPosts()
@@ -67,6 +71,8 @@ class DataFetchViewModel : ViewModel() {
         fetchSavedList()
 
     }
+
+    fun profile()=_selfProfile.value
 
     private fun keepUpWithUser(){
         viewModelScope.launch {
@@ -79,19 +85,21 @@ class DataFetchViewModel : ViewModel() {
                     0
                 )
                 .collect{
-
-                    if(selfId!= "") {
-                        alreadyLoading = true
-                        db.collection("Users").whereEqualTo("authId", selfId).get()
-                            .addOnSuccessListener {
-
-                                val newVal = it.documents[0].toObject(Profile::class.java)!!
-                                if (newVal != _selfProfile.value){
-                                    _selfProfile.value = newVal
-                                }
-                            }.continueWith { alreadyLoading = false }
+                    while (selfId.isBlank()){
+                        delay(100)
                     }
-                    delay(1000)
+
+                    alreadyLoading = true
+                    db.collection("Users").whereEqualTo("authId", selfId).get()
+                        .addOnSuccessListener {
+
+                            val newVal = it.documents[0].toObject(Profile::class.java)!!
+                            if (newVal != _selfProfile.value){
+                                _selfProfile.value = newVal
+                            }
+                        }.continueWith { alreadyLoading = false }
+
+                    delay(15000)
                 }
         }
     }
@@ -272,14 +280,16 @@ class DataFetchViewModel : ViewModel() {
         if (postJson.id in ids) return;
         val castedPost = postJson.toObject(UIPost::class.java)!!
 
-        if (castedPost.likes.count { it.userId==selfId }>0)
+        if (castedPost.likes.any { it.userId==_selfProfile.value.id })
             castedPost.liked= Pressed.True
         else
             castedPost.liked = Pressed.False
 
+        Log.e(castedPost.liked.name, _selfProfile.value.id +" "+ castedPost.likes.map { it.userId })
+
         loadSaved(castedPost, postJson)
 
-        castedPost.loadSource()
+        castedPost.loadSource(context)
 
         ids += castedPost.id
 

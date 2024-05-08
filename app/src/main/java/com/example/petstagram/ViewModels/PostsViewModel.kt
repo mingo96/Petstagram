@@ -48,6 +48,7 @@ class PostsViewModel : GeneralController(){
                 while (base.alreadyLoading){
                     delay(100)
                 }
+                actualUser = base.profile()
 
                 val end = base.postsFromCategory(statedCategory)
 

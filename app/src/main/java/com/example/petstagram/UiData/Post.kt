@@ -1,6 +1,9 @@
 package com.example.petstagram.UiData
 
+import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import java.time.Instant
@@ -34,8 +37,16 @@ class UIPost: Post() {
     var liked = Pressed.False
     var saved = SavePressed.No
     var UIsource : MediaItem = MediaItem.EMPTY
+    lateinit var player : ExoPlayer
 
-    fun loadSource(){
+    fun loadSource(context : Context){
+
         UIsource =MediaItem.fromUri(this.source)
+        player = ExoPlayer.Builder(context).build()
+        player.setMediaItem(UIsource)
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.trackSelectionParameters = player.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 500).build()
+        player.playWhenReady = false
+        player.prepare()
     }
 }

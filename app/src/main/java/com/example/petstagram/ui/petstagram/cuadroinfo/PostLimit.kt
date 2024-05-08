@@ -1,6 +1,5 @@
 package com.example.petstagram.cuadroinfo
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
@@ -21,8 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,23 +52,16 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
 import com.google.relay.compose.RelayVector
 
-
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun PostDownBar(
     added: UIPost,
     saved: MutableLiveData<SavePressed>,
-    onLike: () -> Unit = { },
     likes: MutableLiveData<Int>,
     tapOnComments: () -> Unit,
     controller: PostsUIController
 ) {
 
     val likesCount by likes.observeAsState()
-
-    val post by remember {
-        mutableStateOf(added)
-    }
 
     val isSaved by saved.observeAsState()
 
@@ -91,7 +81,7 @@ fun PostDownBar(
 
     Container {
         TitleContainer {
-            PostTitle(title = "${post.creatorUser!!.userName}: ${post.title}")
+            PostTitle(title = "${added.creatorUser!!.userName}: ${added.title}")
         }
         IntersectLine(
             modifier = Modifier
@@ -111,23 +101,25 @@ fun PostDownBar(
             Box()
             {
                 this@Row.AnimatedVisibility(
-                    visible = post.liked == Pressed.True,
+                    visible = added.liked == Pressed.True,
                     enter = onEnter,
                     exit = ExitTransition.None
                 ) {
                     LikePulsadoFalse(Modifier.clickable {
-                        onLike.invoke()
-                    }, post.liked)
+                        controller.likeOnPost(added)
+                        likes.value = added.likes.size
+                    }, added.liked)
                 }
 
                 this@Row.AnimatedVisibility(
-                    visible = post.liked == Pressed.False,
+                    visible = added.liked == Pressed.False,
                     enter = onEnter,
                     exit = ExitTransition.None
                 ) {
                     LikePulsadoFalse(Modifier.clickable {
-                        onLike.invoke()
-                    }, post.liked)
+                        controller.likeOnPost(added)
+                        likes.value = added.likes.size
+                    }, added.liked)
                 }
             }
             Text(text = "Likes : ${(likesCount!!).quantity()}", style = TextStyle(color = Color.White))
@@ -144,7 +136,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(controller.saveClicked(post))
+                        if(controller.saveClicked(added))
                             saved.value = SavePressed.Si
                         else
                             saved.value = SavePressed.No
@@ -156,7 +148,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(controller.saveClicked(post))
+                        if(controller.saveClicked(added))
                             saved.value = SavePressed.No
                         else
                             saved.value = SavePressed.Si

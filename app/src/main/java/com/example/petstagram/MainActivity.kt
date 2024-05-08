@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
@@ -133,10 +134,11 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("categorias", enterTransition = { onEnter }, exitTransition = {onExit}){
 
+                            val context = LocalContext.current
                             LaunchedEffect(key1 = Unit) {
                                 postsViewModel.actualUser = authViewModel.localProfile
                                 dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
-                                dataFetchViewModel.startLoadingPosts()
+                                dataFetchViewModel.startLoadingPosts(context)
                             }
                             lastStep = route
                             CategoriesMenu(navController = navController, viewModel = categoriesViewModel)

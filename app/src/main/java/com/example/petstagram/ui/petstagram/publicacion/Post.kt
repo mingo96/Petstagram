@@ -95,7 +95,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
                     },
                     onClick = {}),
                 controller = controller,
-                post = post)
+                post = post,
+                likes = likes)
 
         }
 
@@ -107,11 +108,6 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
             controller = controller,
             added = post,
             likes = likes,
-            onLike = {
-                controller.likeOnPost(post)
-                likes.value = post.likes.size
-            },
-            //onSave = onSave,
             saved = saved,
             tapOnComments = {commentsDisplayed = !commentsDisplayed}
         )
@@ -185,7 +181,7 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 }
 
 @OptIn(UnstableApi::class) @Composable
-fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController) {
+fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController, likes : MutableLiveData<Int>? = null) {
 
 
     if (post.typeOfMedia == "image") {
@@ -201,7 +197,10 @@ fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIC
             contentScale = ContentScale.Crop
         )
     }else{
-        DisplayVideo(source = post.UIsource, modifier = modifier, onLike = {controller.likeOnPost(post)})
+        DisplayVideo(source = post.player, modifier = modifier, onLike = {
+            controller.likeOnPost(post)
+            likes!!.value = post.likes.size
+        })
     }
 }
 

@@ -32,6 +32,8 @@ class SavedPostsViewModel : GeneralController() {
                     delay(100)
                 }
 
+                actualUser = base.profile()
+
                 val end = base.postsFromSaved()
 
 
@@ -53,10 +55,9 @@ class SavedPostsViewModel : GeneralController() {
     }
 
     fun selectCategory(category: Category?){
-        if (category == statedCategory)
-            statedCategory = null
-
-        statedCategory = category
+        statedCategory = if (category == statedCategory)
+            null
+        else category
         startLoadingPosts()
     }
     override fun scroll(scrolled: Double) {

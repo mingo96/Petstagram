@@ -34,6 +34,7 @@ import com.example.petstagram.publicaciones.Posts
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
+import com.google.relay.compose.ScrollAnchor
 
 /**UI screen to display a [Category] posts*/
 @Composable
@@ -63,7 +64,7 @@ fun DisplayCategory(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.2225f)),
+                    .height(height.times(0.24f)),
                 navController = navController
             )
 
@@ -77,17 +78,17 @@ fun DisplayCategory(
                     CircularProgressIndicator(
                         modifier
                             .rowWeight(1.0f)
-                            .height(height.times(0.825f))
+                            .height(height.times(0.6f))
                             .fillMaxWidth(0.8f))
                 }
             }
 
-                PostsInstance(
-                    modifier = Modifier
-                        .rowWeight(1.0f)
-                        .height(height.times(0.825f)),
-                    viewModel = viewModel
-                )
+            PostsInstance(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .height(height.times(0.81f)),
+                viewModel = viewModel
+            )
         }
     }
 }
@@ -136,6 +137,7 @@ fun TopLevel(
             blue = 35
         ),
         mainAxisAlignment = MainAxisAlignment.End,
+        scrollAnchor = ScrollAnchor.End,
         scrollable = true,
         itemSpacing = 24.0,
         content = content,
