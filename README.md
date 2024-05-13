@@ -22,10 +22,10 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 * Creación de publicaciones con archivos del usuario
 * Interacción con publicaciones en tiempo real (like, guardar)
 * Pestaña de comentarios por publicación
+* Colección de publicaciones guardadas
 
 ### Objetivos no implementados (a futuro)
 
-* Colección de publicaciones guardadas
 * Sistema de notificaciones por comentario o like
 * Pestaña para mostrar perfiles ajenos
 * Interacción entre perfiles
