@@ -1,11 +1,8 @@
 package com.example.petstagram.ViewModels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
 import com.example.petstagram.UiData.Category
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +26,7 @@ class SavedPostsViewModel : GeneralController() {
                 base.postsFromSaved()
 
                 while (base.alreadyLoading){
-                    delay(100)
+                    delay(10)
                 }
 
                 actualUser = base.profile()
@@ -37,15 +34,14 @@ class SavedPostsViewModel : GeneralController() {
                 val end = base.postsFromSaved()
 
 
-                for (post in end){
-                    if(post !in _posts.value) {
+                for (post in end- _posts.value.toSet()){
+                    if(statedCategory == null || post.category!!.name == statedCategory!!.name) {
                         _posts.value += post
                         delay(500)
                     }
                 }
-                _posts.value.map { it.category }.distinct().forEach { if (it!!.name !in _categories.value.map { it.name }) _categories.value += it }
 
-                _posts.value = _posts.value.filter { statedCategory == null ||it.category!!.name == statedCategory!!.name }
+                if(statedCategory == null)_categories.value = _posts.value.distinctBy { it.category!!.name }.map { it.category!! }
 
                 _isLoading.value = false
 
@@ -58,7 +54,8 @@ class SavedPostsViewModel : GeneralController() {
         statedCategory = if (category == statedCategory)
             null
         else category
-        startLoadingPosts()
+        _posts.value = _posts.value.filter { statedCategory == null ||it.category!!.name == statedCategory!!.name }
+
     }
     override fun scroll() {
         startLoadingPosts()

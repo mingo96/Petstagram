@@ -103,7 +103,6 @@ fun CommentsSection(
                     shape = RoundedCornerShape(30),
                     textStyle = TextStyle(color = Color.White, lineHeight = 1.em),
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = Color.White,
                         containerColor = Color.DarkGray,
                         focusedLabelColor = Color.White,
                         unfocusedLabelColor = Color.White,

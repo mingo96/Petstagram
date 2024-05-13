@@ -9,29 +9,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
-import com.example.petstagram.Controllers.PostsUIController
-import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
-import com.example.petstagram.UiData.UIComment
-import com.example.petstagram.UiData.UIPost
-import com.example.petstagram.like.Pressed
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class OwnProfileViewModel : GeneralController(){
 

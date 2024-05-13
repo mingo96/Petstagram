@@ -13,14 +13,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +30,6 @@ fun getMimeType(context: Context, uri: Uri): String? {
     return contentResolver.getType(uri)
 }
 
-@HiltViewModel
 class PublishViewModel @Inject constructor() : ViewModel() {
 
     private var _isSendingInfo = MutableLiveData(false)
