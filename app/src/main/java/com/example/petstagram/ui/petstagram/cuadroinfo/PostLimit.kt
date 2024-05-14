@@ -57,8 +57,8 @@ fun PostDownBar(
     added: UIPost,
     saved: MutableLiveData<SavePressed>,
     likes: MutableLiveData<Int>,
-    tapOnComments: () -> Unit,
-    controller: PostsUIController
+    tapOnComments: () -> Unit = {},
+    controller: PostsUIController? = null
 ) {
 
     val likesCount by likes.observeAsState()
@@ -106,7 +106,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     LikePulsadoFalse(Modifier.clickable {
-                        controller.likeOnPost(added)
+                        controller?.likeOnPost(added)
                         likes.value = added.likes.size
                     }, added.liked)
                 }
@@ -117,7 +117,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     LikePulsadoFalse(Modifier.clickable {
-                        controller.likeOnPost(added)
+                        controller?.likeOnPost(added)
                         likes.value = added.likes.size
                     }, added.liked)
                 }
@@ -136,7 +136,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(controller.saveClicked(added))
+                        if(controller?.saveClicked(added) == true)
                             saved.value = SavePressed.Si
                         else
                             saved.value = SavePressed.No
@@ -148,7 +148,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(controller.saveClicked(added))
+                        if(controller?.saveClicked(added) == true)
                             saved.value = SavePressed.No
                         else
                             saved.value = SavePressed.Si
@@ -156,6 +156,49 @@ fun PostDownBar(
                     }, isSaved!!)
                 }
             }
+        }
+
+
+    }
+}
+
+@Composable
+fun DeadPostDownBar(added: UIPost){
+    Container {
+
+        TitleContainer {
+            PostTitle(title = "${added.creatorUser!!.userName}: ${added.title}")
+        }
+        IntersectLine(
+            modifier = Modifier
+                .boxAlign(
+                    alignment = Alignment.BottomStart,
+                    offset = DpOffset(
+                        x = 0.0.dp,
+                        y = (-1.0).dp
+                    )
+                )
+                .rowWeight(1.0f))
+        Row (horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)){
+
+            LikePulsadoFalse(Modifier.clickable {
+            }, Pressed.False)
+
+
+            Text(text = "Likes : 0", style = TextStyle(color = Color.White))
+            BotonSeccionComentariosVariacionInferior {
+                TextoBotonComentariosVariacionInferior(modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+                    .clickable {  })
+            }
+            SaveIcon(Modifier.clickable {
+            }, SavePressed.No)
+
         }
 
 

@@ -134,6 +134,7 @@ class MainActivity : ComponentActivity() {
                                 postsViewModel.actualUser = authViewModel.localProfile
                                 dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
                                 dataFetchViewModel.startLoadingPosts(context)
+                                publishViewModel.user = authViewModel.localProfile
                             }
                             lastStep = route
                             CategoriesMenu(navController = navController, viewModel = categoriesViewModel)
@@ -148,7 +149,6 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("publicar", enterTransition = { onEnter }, exitTransition = {onExit}){
-                            publishViewModel.user = authViewModel.localProfile
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             NewPostScreen(navController = navController , viewModel = publishViewModel)
 

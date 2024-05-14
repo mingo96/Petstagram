@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -35,6 +37,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.util.UnstableApi
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.Controllers.PostsUIController
+import com.example.petstagram.R
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
@@ -56,10 +59,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun Post(modifier: Modifier = Modifier, post: UIPost,
     controller :PostsUIController)
-         //onLike: ()->Unit,
-         //onSave: ()->Boolean,
-         //onComment: (String) -> Unit,
-         //onCommentLiked: (UIComment) -> Boolean) {
 {
     var commentsDisplayed by rememberSaveable {
         mutableStateOf(false)
@@ -181,7 +180,7 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 }
 
 @OptIn(UnstableApi::class) @Composable
-fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController, likes : MutableLiveData<Int>? = null) {
+fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController? = null, likes : MutableLiveData<Int>? = null) {
 
 
     if (post.typeOfMedia == "image") {
@@ -196,11 +195,18 @@ fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIC
             contentDescription = post.title,
             contentScale = ContentScale.Crop
         )
-    }else{
+    }else if(post.typeOfMedia == "video"){
         DisplayVideo(source = post.player, modifier = modifier, onLike = {
-            controller.likeOnPost(post)
+            controller?.likeOnPost(post)
             likes!!.value = post.likes.size
         })
+    }else{
+        Image(
+            painter = painterResource(id = R.drawable.acceso_aperfil_imagen_galeria),
+            contentDescription = "Aún nada",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

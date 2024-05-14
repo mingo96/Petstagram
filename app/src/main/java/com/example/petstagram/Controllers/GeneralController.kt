@@ -125,13 +125,6 @@ abstract class GeneralController : ViewModel(), PostsUIController {
         _commenting.value = false
         _actualComments.value = emptyList()
     }
-
-    override fun scroll() {
-
-
-
-    }
-
     fun stopLoading() {
         _posts.value = emptyList()
         base.stopLoading()

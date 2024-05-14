@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.UIPost
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
@@ -30,7 +31,10 @@ fun getMimeType(context: Context, uri: Uri): String? {
     return contentResolver.getType(uri)
 }
 
-class PublishViewModel @Inject constructor() : ViewModel() {
+class PublishViewModel : ViewModel(){
+
+
+    val newPost by mutableStateOf(UIPost())
 
     private var _isSendingInfo = MutableLiveData(false)
 
@@ -40,7 +44,11 @@ class PublishViewModel @Inject constructor() : ViewModel() {
     private var storageRef = Firebase.storage.reference
 
     /**[Profile] of the user posting*/
-    lateinit var user : Profile
+    var user : Profile = Profile()
+        set(value) {
+            newPost.creatorUser = value
+            field = value
+        }
 
     /**[Category] for the [Post]*/
     lateinit var category : Category
@@ -61,7 +69,6 @@ class PublishViewModel @Inject constructor() : ViewModel() {
 
     val text : StateFlow<String> = _text
 
-
     /**changes [postTitle]
      * @param input new value for [postTitle]*/
     fun changeTitle(input:String){
@@ -81,7 +88,6 @@ class PublishViewModel @Inject constructor() : ViewModel() {
 
         val isVideo = getMimeType(context = context,_resource.value!!)?.startsWith("video/")
         val isImage = getMimeType(context = context,_resource.value!!)?.startsWith("image/")
-        Log.i("intento de seleccion no valido", "$isImage, $isVideo")
 
         if(isVideo == true || isImage == true) {
             if (resource.value != null &&
@@ -90,7 +96,6 @@ class PublishViewModel @Inject constructor() : ViewModel() {
             ) {
 
                 //creates a post with given info
-                val newPost = Post()
                 newPost.title = postTitle
                 newPost.category = category
                 newPost.typeOfMedia = if (isImage == true) "image" else "video"
@@ -151,7 +156,12 @@ class PublishViewModel @Inject constructor() : ViewModel() {
     }
 
     /**setter for resource*/
-    fun setResource(uri: Uri?) {
+    fun setResource(uri: Uri, context: Context) {
+        newPost.source = uri.toString()
+        val type = getMimeType(context, uri)
+        if (type != null) {
+            newPost.typeOfMedia = type.substring(0,5)
+        }
         _resource.value = uri
     }
 
