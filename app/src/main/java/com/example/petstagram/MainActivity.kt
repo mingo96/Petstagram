@@ -150,6 +150,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("publicar", enterTransition = { onEnter }, exitTransition = {onExit}){
                             publishViewModel.category = categoriesViewModel.selectedCategory
+
+                            publishViewModel.user = authViewModel.localProfile
                             NewPostScreen(navController = navController , viewModel = publishViewModel)
 
                             lastStep = route

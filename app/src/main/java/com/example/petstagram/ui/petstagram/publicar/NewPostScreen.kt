@@ -217,7 +217,6 @@ fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostControll
 }
 
 /**basic in-out info representation text, not much to see (logic-wise)*/
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TitleTextInput(
     modifier: Modifier = Modifier,

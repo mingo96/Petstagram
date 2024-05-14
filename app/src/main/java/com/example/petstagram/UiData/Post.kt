@@ -37,16 +37,16 @@ class UIPost: Post() {
     var liked = Pressed.False
     var saved = SavePressed.No
     var UIsource : MediaItem = MediaItem.EMPTY
-    lateinit var player : ExoPlayer
+    var player : ExoPlayer?=null
 
     fun loadSource(context : Context){
 
         UIsource =MediaItem.fromUri(this.source)
         player = ExoPlayer.Builder(context).build()
-        player.setMediaItem(UIsource)
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.trackSelectionParameters = player.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 500).build()
-        player.playWhenReady = false
-        player.prepare()
+        player!!.setMediaItem(UIsource)
+        player!!.repeatMode = Player.REPEAT_MODE_ALL
+        player!!.trackSelectionParameters = player!!.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 500).build()
+        player!!.playWhenReady = false
+        player!!.prepare()
     }
 }

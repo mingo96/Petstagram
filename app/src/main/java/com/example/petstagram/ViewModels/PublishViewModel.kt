@@ -99,9 +99,12 @@ class PublishViewModel : ViewModel(){
                 newPost.title = postTitle
                 newPost.category = category
                 newPost.typeOfMedia = if (isImage == true) "image" else "video"
+                if (isImage==true){
+                    newPost.player = null
+                }
                 newPost.creatorUser = user
 
-                persistPost(newPost, onSuccess)
+                persistPost(newPost as Post, onSuccess)
             }
         }
         else {

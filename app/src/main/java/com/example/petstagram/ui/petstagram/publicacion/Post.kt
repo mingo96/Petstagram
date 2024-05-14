@@ -196,7 +196,7 @@ fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIC
             contentScale = ContentScale.Crop
         )
     }else if(post.typeOfMedia == "video"){
-        DisplayVideo(source = post.player, modifier = modifier, onLike = {
+        DisplayVideo(source = post.player!!, modifier = modifier, onLike = {
             controller?.likeOnPost(post)
             likes!!.value = post.likes.size
         })
