@@ -33,7 +33,6 @@ class SavedPostsViewModel : GeneralController() {
 
                 val end = base.postsFromSaved()
 
-
                 for (post in end- _posts.value.toSet()){
                     if(statedCategory == null || post.category!!.name == statedCategory!!.name) {
                         _posts.value += post

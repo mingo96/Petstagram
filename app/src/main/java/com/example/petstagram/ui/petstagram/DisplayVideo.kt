@@ -37,23 +37,26 @@ import com.example.petstagram.Controllers.PostsUIController
 @Composable
 fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
 
-
     //when we get out it releases memory
     DisposableEffect(Unit) {
         onDispose {
             source.pause()
         }
     }
+    val context = LocalContext.current
+    val coso = remember{
+        PlayerView(context).apply {
+            player = source
+            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            useController = false
+            isClickable = false
+        }
+    }
 
     AnimatedVisibility(visible = !source.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
         AndroidView(
-            factory = { ctx ->
-                PlayerView(ctx).apply {
-                    player = source
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    useController = false
-                    isClickable = false
-                }
+            factory = {
+                coso
             },
             modifier = modifier
                 .fillMaxWidth()

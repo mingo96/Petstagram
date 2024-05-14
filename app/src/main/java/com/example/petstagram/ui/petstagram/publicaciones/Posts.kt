@@ -91,25 +91,30 @@ fun Posts(
                 )
 
         ){
-            items(postsState){post->
+            item{
+                Column {
 
-                var seen by rememberSaveable {
-                    mutableStateOf(false)
+                    for (post in postsState) {
+
+                        var seen by rememberSaveable {
+                            mutableStateOf(false)
+                        }
+
+                        AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
+
+                            Post(
+                                modifier = Modifier
+                                    .width(Dp(localwidth))
+                                    .padding(vertical = 4.dp),
+                                post = post,
+                                controller = controller
+                            )
+                        }
+                        LaunchedEffect(key1 = seen) {
+                            seen = true
+                        }
+                    }
                 }
-
-
-                AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
-
-                    Post(modifier = Modifier
-                        .width(Dp(localwidth))
-                        .padding(vertical = 4.dp),
-                        post = post,
-                        controller = controller)
-                }
-                LaunchedEffect(key1 = seen) {
-                    seen = true
-                }
-
             }
             item {
                 LaunchedEffect(key1 = true) {

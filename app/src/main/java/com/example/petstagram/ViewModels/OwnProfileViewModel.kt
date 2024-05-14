@@ -62,17 +62,16 @@ class OwnProfileViewModel : GeneralController(){
                 base.postsFromUser(actualUser.id)
 
                 while (base.alreadyLoading){
-                    delay(100)
+                    delay(10)
                 }
 
                 val end = base.postsFromUser(actualUser.id)
 
 
-                for (i in end){
-                    if(i !in _posts.value) {
-                        _posts.value += i
-                        delay(500)
-                    }
+
+                for (post in end- _posts.value.toSet()){
+                    _posts.value += post
+                    delay(500)
                 }
                 _isLoading.value = false
 
@@ -187,7 +186,7 @@ class OwnProfileViewModel : GeneralController(){
 
 
     override fun scroll() {
-        _posts.value= base.postsFromUser(actualUser.id)
+        fetchPosts()
     }
 
     fun clear(){

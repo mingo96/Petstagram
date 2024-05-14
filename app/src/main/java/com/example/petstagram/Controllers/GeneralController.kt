@@ -37,7 +37,6 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override val funnyAhhString: StateFlow<String> = _funnyAhhString
 
-
     /**indicates if we still dont have any [Post]s*/
     protected val _isLoading = MutableLiveData(false)
 
@@ -125,6 +124,12 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     override fun clearComments() {
         _commenting.value = false
         _actualComments.value = emptyList()
+    }
+
+    override fun scroll() {
+
+
+
     }
 
     fun stopLoading() {

@@ -18,8 +18,6 @@ class PostsViewModel : GeneralController(){
     /**[Category] of the posts displayed*/
     lateinit var statedCategory: Category
 
-    private var ended by mutableStateOf(false)
-
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(){
@@ -29,25 +27,25 @@ class PostsViewModel : GeneralController(){
 
                 _isLoading.value = true
 
-                val start = base.postsFromCategory(statedCategory)
+
+                base.postsFromCategory(statedCategory)
 
                 while (base.alreadyLoading){
-                    delay(100)
+                    delay(10)
                 }
                 actualUser = base.profile()
 
                 val end = base.postsFromCategory(statedCategory)
 
 
-                for (i in end){
-                    if(i !in _posts.value) {
-                        _posts.value += i
-                        delay(500)
-                    }
+                for (post in end- _posts.value.toSet()){
+                    _posts.value += post
+                    delay(500)
+
                 }
+
                 _isLoading.value = false
 
-                ended = start.size >= _posts.value.size
 
             }
 
@@ -55,7 +53,7 @@ class PostsViewModel : GeneralController(){
     }
 
     override fun scroll() {
-         _posts.value= base.postsFromCategory(statedCategory)
+        startLoadingPosts()
     }
 
 }
