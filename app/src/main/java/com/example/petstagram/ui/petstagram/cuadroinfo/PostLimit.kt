@@ -196,7 +196,7 @@ fun DeadPostDownBar(creatorUser : Profile, title : String){
                 TextoBotonComentariosVariacionInferior(modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
-                    .clickable {  })
+                    .clickable { })
             }
             SaveIcon(Modifier.clickable {
             }, SavePressed.No)
@@ -235,8 +235,7 @@ fun TopPostLimit(modifier : Modifier = Modifier, added : UIPost, controller: Pos
         ProfileName(added = added.creatorUser!!.userName)
         //guardar, reportar
         OpcionesOpciones(modifier.clickable {
-            controller?.savePostResource(post = added,context)
-            //controller?.reportPost(post = added, context)
+            controller?.optionsClicked(post = added)
         })
     }
 }

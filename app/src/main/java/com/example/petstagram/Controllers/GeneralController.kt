@@ -29,6 +29,10 @@ import kotlinx.coroutines.launch
 
 abstract class GeneralController : ViewModel(), PostsUIController {
 
+    private val _optionsClicked : MutableLiveData<UIPost?> = MutableLiveData(null)
+
+    override val optionsClicked: LiveData<UIPost?> = _optionsClicked
+
     lateinit var base : DataFetchViewModel
 
     override var storageRef = Firebase.storage.reference
@@ -134,5 +138,13 @@ abstract class GeneralController : ViewModel(), PostsUIController {
         _posts.value = emptyList()
         base.stopLoading()
         viewModelScope.coroutineContext.cancelChildren()
+    }
+
+    override fun optionsClicked(post: UIPost) {
+        _optionsClicked.value = post
+    }
+
+    override fun clearOptions() {
+        _optionsClicked.value = null
     }
 }

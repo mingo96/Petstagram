@@ -25,6 +25,8 @@ interface PostsUIController:CommentsUIController {
 
     val isLoading : LiveData<Boolean>
 
+    val optionsClicked : LiveData<UIPost?>
+
     val funnyAhhString : StateFlow<String>
 
     fun startRollingDots()
@@ -52,7 +54,7 @@ interface PostsUIController:CommentsUIController {
         }
     }
 
-    fun reportPost(post: UIPost, context: Context){
+    fun reportPost(post: UIPost = optionsClicked.value!!, context: Context){
         if (post.reports.any { it.user==actualUser.id }) {
             Toast.makeText(context,"Ya has reportado este post!", Toast.LENGTH_LONG).show()
             return;
@@ -71,7 +73,7 @@ interface PostsUIController:CommentsUIController {
 
     }
 
-    fun savePostResource(post: UIPost, context: Context){
+    fun savePostResource(post: UIPost = optionsClicked.value!!, context: Context){
         try {
             var routeToDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
 
@@ -122,6 +124,9 @@ interface PostsUIController:CommentsUIController {
         return true
     }
 
+    fun optionsClicked(post: UIPost)
+
+    fun clearOptions()
 
 
 }
