@@ -702,7 +702,7 @@ fun TopLevelVariacionCrearPublicacion(
 fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modifier) {
     RelayText(
         content = "Seleccionar recurso",
-        fontSize = 26.0.sp,
+        fontSize = 16.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,
@@ -717,7 +717,7 @@ fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modi
         modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
             align = Alignment.CenterVertically,
             unbounded = true
-        )
+        ).padding(8.dp)
     )
 }
 
@@ -728,7 +728,7 @@ fun TopLevelVariacionSeleccionarRecurso(
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
+            alpha = 0,
             red = 224,
             green = 164,
             blue = 0
@@ -736,7 +736,7 @@ fun TopLevelVariacionSeleccionarRecurso(
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(all = 8.0.dp),
         itemSpacing = 10.0,
-        radius = 5.0,
+        radius = 50.0,
         content = content,
         modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )
@@ -834,7 +834,7 @@ fun TopLevelVariacionCategoriaPublicacion(
 fun TextoPublicarVariacionPublicar(modifier: Modifier = Modifier) {
     RelayText(
         content = "Publicar",
-        fontSize = 40.0.sp,
+        fontSize = 30.0.sp,
         fontFamily = inter,
         color = Color(
             alpha = 255,

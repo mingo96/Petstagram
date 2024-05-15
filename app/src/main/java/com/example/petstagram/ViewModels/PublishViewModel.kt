@@ -72,6 +72,7 @@ class PublishViewModel : ViewModel(){
     /**changes [postTitle]
      * @param input new value for [postTitle]*/
     fun changeTitle(input:String){
+        newPost.title = input
         postTitle = input
     }
 
@@ -104,7 +105,7 @@ class PublishViewModel : ViewModel(){
                 }
                 newPost.creatorUser = user
 
-                persistPost(newPost as Post, onSuccess)
+                persistPost(onSuccess)
             }
         }
         else {
@@ -132,11 +133,11 @@ class PublishViewModel : ViewModel(){
     /**sends the created [Post] to the [db]
      * @param post the post about to be persisted
      * @param onSuccess code given for execution once we're finished*/
-    private fun persistPost(post: Post, onSuccess: () -> Unit){
+    private fun persistPost(onSuccess: () -> Unit){
 
         _isSendingInfo.value = true
         db.collection("Posts")
-            .add(post).addOnSuccessListener {doc ->
+            .add(newPost.basePost()).addOnSuccessListener {doc ->
                 pushResource(doc.id).addOnSuccessListener{
                     db.collection("Posts").document(doc.id).update("id", doc.id)
 

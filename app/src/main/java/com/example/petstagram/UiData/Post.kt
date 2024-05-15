@@ -39,6 +39,20 @@ class UIPost: Post() {
     var UIsource : MediaItem = MediaItem.EMPTY
     var player : ExoPlayer?=null
 
+    fun basePost():Post{
+        return Post().apply {
+            this.id = this@UIPost.id
+            this.title = this@UIPost.title
+            this.creatorUser = this@UIPost.creatorUser
+            this.category = this@UIPost.category
+            this.typeOfMedia = this@UIPost.typeOfMedia
+            this.postedDate =this@UIPost.postedDate
+            this.source = this@UIPost.source
+            this.likes = this@UIPost.likes
+            this.comments = this@UIPost.comments
+        }
+    }
+
     fun loadSource(context : Context){
 
         UIsource =MediaItem.fromUri(this.source)

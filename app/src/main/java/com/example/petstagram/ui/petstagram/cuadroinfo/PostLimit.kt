@@ -37,6 +37,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.R
 import com.example.petstagram.UiData.Post
+import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadrotexto.PostTitle
 import com.example.petstagram.fotoperfil.FotoPerfilBase
@@ -163,11 +164,11 @@ fun PostDownBar(
 }
 
 @Composable
-fun DeadPostDownBar(added: UIPost){
+fun DeadPostDownBar(creatorUser : Profile, title : String){
     Container {
 
         TitleContainer {
-            PostTitle(title = "${added.creatorUser!!.userName}: ${added.title}")
+            PostTitle(title = "${creatorUser.userName}: ${title}")
         }
         IntersectLine(
             modifier = Modifier
