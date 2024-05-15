@@ -10,12 +10,19 @@ import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 
 interface CommentsUIController {
 
 
     /**Firebase FireStore reference*/
     val db: FirebaseFirestore
+
+
+    var storageRef : StorageReference
 
     val actualComments : LiveData<List<UIComment>>
 

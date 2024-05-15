@@ -48,6 +48,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.navigation.NavHostController
+import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.PublishViewModel
@@ -103,6 +104,10 @@ fun NewPostScreen(
 
     if (isSendingInfo == true)
         Dialog(onDismissRequest = {}) {
+            CircularProgressIndicator(
+                modifier.fillMaxWidth(0.7f),
+                color = Color.Green
+            )
             Text(text = loadingText)
         }
 
@@ -161,16 +166,15 @@ fun NewPostScreen(
                                     uriObserver!!
                                 )?.startsWith("image") == true
                             ) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(
-                                        model = uriObserver,
-                                        contentScale = ContentScale.Crop
-                                    ),
-                                    contentDescription = "foto seleccionada",
-                                    contentScale = ContentScale.Crop,
-                                    modifier = modifier
-                                        .height(height.times(0.5f))
-                                        .fillMaxWidth()
+                                SubcomposeAsyncImage(
+                                    modifier = modifier.fillMaxWidth(),
+                                    model = uriObserver,
+                                    loading = { CircularProgressIndicator(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(400.dp))},
+                                    contentDescription = "imagen",
+                                    contentScale = ContentScale.Crop
                                 )
                             } else {
                                 Image(

@@ -1,5 +1,8 @@
 package com.example.petstagram.ui.petstagram
 
+import android.net.Uri
+import android.widget.MediaController
+import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

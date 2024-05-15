@@ -23,6 +23,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -227,11 +228,16 @@ fun Int.quantity(): String{
 }
 
 @Composable
-fun TopPostLimit(modifier : Modifier, added : Post){
+fun TopPostLimit(modifier : Modifier = Modifier, added : UIPost, controller: PostsUIController? = null){
+    val context = LocalContext.current
     TopLevelVariacionSuperior(modifier = modifier) {
         FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
         ProfileName(added = added.creatorUser!!.userName)
-        OpcionesOpciones()
+        //guardar, reportar
+        OpcionesOpciones(modifier.clickable {
+            controller?.savePostResource(post = added,context)
+            //controller?.reportPost(post = added, context)
+        })
     }
 }
 

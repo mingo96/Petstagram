@@ -22,9 +22,6 @@ import kotlinx.coroutines.launch
 
 class OwnProfileViewModel : GeneralController(){
 
-    /**Firebase Storage reference*/
-    private val storageRef = Firebase.storage.reference
-
     /**id of our profile, to keep up with the user data*/
     var selfId by mutableStateOf("")
 

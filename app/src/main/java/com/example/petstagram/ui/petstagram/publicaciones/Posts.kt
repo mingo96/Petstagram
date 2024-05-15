@@ -1,13 +1,11 @@
 package com.example.petstagram.publicaciones
 
-import android.annotation.SuppressLint
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -20,10 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,7 +50,6 @@ import com.example.petstagram.like.Pressed
 import com.example.petstagram.publicacion.Post
 import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
-
 /**
  * publicaciones
  *
@@ -77,7 +77,9 @@ fun Posts(
             mutableFloatStateOf(maxWidth.value)
         }
 
+        val state: LazyListState = rememberLazyListState()
         LazyColumn(
+            state = state,
             modifier = modifier
                 .width(Dp(localwidth))
                 .fillMaxHeight(1.0f)
@@ -91,6 +93,26 @@ fun Posts(
                 )
 
         ){
+
+            //items(postsState){
+            //    var seen by rememberSaveable {
+            //        mutableStateOf(false)
+            //    }
+//
+            //    AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
+//
+            //        Post(
+            //            modifier = Modifier
+            //                .width(Dp(localwidth))
+            //                .padding(vertical = 4.dp),
+            //            post = it,
+            //            controller = controller
+            //        )
+            //    }
+            //    LaunchedEffect(key1 = seen) {
+            //        seen = true
+            //    }
+            //}
             item{
                 Column {
 
@@ -117,14 +139,17 @@ fun Posts(
                 }
             }
             item {
-                LaunchedEffect(key1 = true) {
-                    if (isLoading==false)
-                        controller.scroll()
-                }
+            }
+            item {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                     .fillMaxHeight(0.3f)
                     .fillMaxWidth()) {
+
+                    LaunchedEffect(key1 = true) {
+                        if (isLoading==false)
+                            controller.scroll()
+                    }
                     if (isLoading == true){
 
                         CircularProgressIndicator(

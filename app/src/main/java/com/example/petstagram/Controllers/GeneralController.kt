@@ -16,6 +16,9 @@ import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,8 @@ import kotlinx.coroutines.launch
 abstract class GeneralController : ViewModel(), PostsUIController {
 
     lateinit var base : DataFetchViewModel
+
+    override var storageRef = Firebase.storage.reference
 
     /**Firebase FireStore reference*/
     override val db = Firebase.firestore

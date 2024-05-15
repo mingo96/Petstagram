@@ -1,6 +1,10 @@
 package com.example.petstagram.UiData
 
 import android.content.Context
+import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -30,14 +34,15 @@ open class Post ()
     var likes : MutableList<Like> = mutableListOf()
     /***/
     var comments : MutableList<String> = mutableListOf()
+    var reports : MutableList<Report> = mutableListOf()
 
 }
 
 class UIPost: Post() {
     var liked = Pressed.False
     var saved = SavePressed.No
-    var UIsource : MediaItem = MediaItem.EMPTY
-    var player : ExoPlayer?=null
+    var UIURL : Uri by mutableStateOf(Uri.EMPTY)
+    var mediaItem: MediaItem by mutableStateOf(MediaItem.EMPTY)
 
     fun basePost():Post{
         return Post().apply {
@@ -53,14 +58,4 @@ class UIPost: Post() {
         }
     }
 
-    fun loadSource(context : Context){
-
-        UIsource =MediaItem.fromUri(this.source)
-        player = ExoPlayer.Builder(context).build()
-        player!!.setMediaItem(UIsource)
-        player!!.repeatMode = Player.REPEAT_MODE_ALL
-        player!!.trackSelectionParameters = player!!.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 500).build()
-        player!!.playWhenReady = false
-        player!!.prepare()
-    }
 }

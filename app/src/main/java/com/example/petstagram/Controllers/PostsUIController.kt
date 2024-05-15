@@ -1,9 +1,14 @@
 package com.example.petstagram.Controllers
 
+import android.content.Context
+import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Like
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
@@ -12,6 +17,7 @@ import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 interface PostsUIController:CommentsUIController {
 
@@ -46,6 +52,46 @@ interface PostsUIController:CommentsUIController {
         }
     }
 
+    fun reportPost(post: UIPost, context: Context){
+        if (post.reports.any { it.user==actualUser.id }) {
+            Toast.makeText(context,"Ya has reportado este post!", Toast.LENGTH_LONG).show()
+            return;
+        }
+
+        post.reports.add(Report().apply {
+            user = actualUser.id
+            score = actualUser.reportScore
+        })
+
+        if(post.reports.sumOf { it.score } >= 10){
+            db.collection("Posts").document(post.id).delete()
+        }else{
+            db.collection("Posts").document(post.id).update("reports", post.reports)
+        }
+
+    }
+
+    fun savePostResource(post: UIPost, context: Context){
+        try {
+            var routeToDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+
+            val destination = File(routeToDownloads,post.id +"."+ if (post.typeOfMedia == "video") "mp4" else "jpeg")
+
+            if (!destination.createNewFile()){
+                Toast.makeText(context,"Ya has bajado este post!", Toast.LENGTH_LONG).show()
+                return
+            }
+
+            storageRef.child("PostImages/${post.id}").getFile(destination).addOnCompleteListener{
+                if (it.isCanceled)
+                    Toast.makeText(context,"Algo salió mal", Toast.LENGTH_LONG).show()
+                if (it.isSuccessful)
+                    Toast.makeText(context,"Archivo bajado", Toast.LENGTH_LONG).show()
+            }
+        }catch (e:Exception){
+            Toast.makeText(context,"Ya has bajado este post!", Toast.LENGTH_LONG).show()
+        }
+    }
 
     fun saveClicked(post:UIPost):Boolean{
 
@@ -75,5 +121,7 @@ interface PostsUIController:CommentsUIController {
             }
         return true
     }
+
+
 
 }

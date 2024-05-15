@@ -3,6 +3,7 @@
 package com.example.petstagram.publicacion
 
 import android.view.Gravity
+import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -21,12 +22,14 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -34,6 +37,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.MutableLiveData
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.Controllers.PostsUIController
@@ -43,6 +47,7 @@ import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
 import com.example.petstagram.ui.petstagram.DisplayVideo
+import com.example.petstagram.ui.petstagram.DisplayVideoFromSource
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -80,7 +85,7 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
     TopLevel(modifier = modifier) {
 
-        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post)
+        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post, controller = controller)
 
         AnimatedVisibility(visible = seen, enter = expandVertically { it }) {
 
@@ -170,12 +175,13 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 }
 
 @Composable
-fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
+fun CuadroInfoInstance(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController?=null) {
     TopPostLimit(
         modifier = modifier
             .fillMaxWidth(1.0f)
             .requiredHeight(48.0.dp),
-        added = post
+        added = post,
+        controller = controller
     )
 }
 
@@ -183,30 +189,37 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: Post) {
 fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController? = null, likes : MutableLiveData<Int>? = null) {
 
 
-    if (post.typeOfMedia == "image") {
+    when (post.typeOfMedia) {
+        "image" -> {
 
-        SubcomposeAsyncImage(
-            modifier = modifier.fillMaxWidth(),
-            model = post.source,
-            loading = { CircularProgressIndicator(
-                Modifier
-                    .fillMaxWidth()
-                    .height(400.dp))},
-            contentDescription = post.title,
-            contentScale = ContentScale.Crop
-        )
-    }else if(post.typeOfMedia == "video"){
-        DisplayVideo(source = post.player!!, modifier = modifier, onLike = {
-            controller?.likeOnPost(post)
-            likes!!.value = post.likes.size
-        })
-    }else{
-        Image(
-            painter = painterResource(id = R.drawable.acceso_aperfil_imagen_galeria),
-            contentDescription = "Aún nada",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth()
-        )
+            SubcomposeAsyncImage(
+                modifier = modifier
+                    .fillMaxWidth(),
+                model = post.UIURL,
+                loading = { CircularProgressIndicator(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(400.dp))},
+                contentDescription = post.title,
+                contentScale = ContentScale.Crop
+            )
+        }
+        "video" -> {
+            if (post.mediaItem != MediaItem.EMPTY)
+            DisplayVideoFromSource(source = post.mediaItem, modifier = modifier, onLike = {
+                controller?.likeOnPost(post)
+                likes!!.value = post.likes.size
+            })
+
+        }
+        else -> {
+            Image(
+                painter = painterResource(id = R.drawable.acceso_aperfil_imagen_galeria),
+                contentDescription = "Aún nada",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 

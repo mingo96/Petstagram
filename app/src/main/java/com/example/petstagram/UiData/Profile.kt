@@ -10,5 +10,7 @@ class Profile (
     /**username of the user*/
     var userName :String= "",
     /**url of the photo for this account*/
-    var profilePic : String = ""
+    var profilePic : String = "",
+    var reportScore : Double = 1.0
 )
+

@@ -1,7 +1,6 @@
 package com.example.petstagram
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,18 +11,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.OptIn
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.compose.NavHost
@@ -73,7 +77,9 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this,"Po no hay notificaciones, shulo", Toast.LENGTH_SHORT).show()
         }
     }
-    @OptIn(UnstableApi::class) @SuppressLint("SourceLockedOrientationActivity")
+    @OptIn(UnstableApi::class) @SuppressLint("SourceLockedOrientationActivity",
+        "CoroutineCreationDuringComposition"
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
@@ -144,8 +150,11 @@ class MainActivity : ComponentActivity() {
 
                             lastStep = route
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
+                            DisplayCategory(
+                                navController = navController,
+                                viewModel = postsViewModel
+                            )
 
-                            DisplayCategory(navController = navController, viewModel = postsViewModel)
 
                         }
                         composable("publicar", enterTransition = { onEnter }, exitTransition = {onExit}){

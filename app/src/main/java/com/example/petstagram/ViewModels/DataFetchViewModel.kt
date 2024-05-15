@@ -2,17 +2,21 @@ package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.util.rangeTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
@@ -23,12 +27,16 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
+import java.time.Instant
+import java.util.Date
 
 @SuppressLint("MutableCollectionMutableState", "StaticFieldLeak")
 class DataFetchViewModel : ViewModel() {
@@ -38,6 +46,8 @@ class DataFetchViewModel : ViewModel() {
     private val _selfProfile = MutableStateFlow(Profile())
 
     lateinit var context: Context
+
+    private val storageRef = Firebase.storage.reference
 
     /**Firebase FireStore reference*/
     val db = Firebase.firestore
@@ -92,11 +102,34 @@ class DataFetchViewModel : ViewModel() {
                             if (newVal != _selfProfile.value){
                                 _selfProfile.value = newVal
                             }
+                            updateReportScore()
+
                         }.continueWith { alreadyLoading = false }
 
                     delay(15000)
                 }
         }
+    }
+
+    fun updateReportScore(){
+
+        db.collection("Reports").whereEqualTo("user", _selfProfile.value.id).get().addOnSuccessListener {
+
+            val before = _selfProfile.value.reportScore
+            for (i in it.documents){
+                val report = i.toObject(Report::class.java)
+                if (report!!.reportDate.daysAwayFrom()>=10 && _selfProfile.value.reportScore>=0.1){
+                    _selfProfile.value.reportScore-=0.1
+                }
+            }
+            if (before != _selfProfile.value.reportScore)
+                db.collection("Users").document(_selfProfile.value.id).update("reportScore", _selfProfile.value.reportScore)
+
+        }
+    }
+
+    fun Date.daysAwayFrom(other : Date = Date.from(Instant.now())): Long {
+        return this.time - Date.from(Instant.now()).time/1000/60/60/24
     }
 
     private fun fetchSavedList(){
@@ -280,11 +313,16 @@ class DataFetchViewModel : ViewModel() {
         else
             castedPost.liked = Pressed.False
 
-        Log.e(castedPost.liked.name, _selfProfile.value.id +" "+ castedPost.likes.map { it.userId })
-
         loadSaved(castedPost, postJson)
 
-        castedPost.loadSource(context)
+        val destination = File.createTempFile(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg")
+
+        storageRef.child("PostImages/${castedPost.id}").getFile(destination).addOnSuccessListener {
+            castedPost.UIURL = Uri.fromFile(destination)
+
+            if (castedPost.typeOfMedia == "video")
+                castedPost.mediaItem = MediaItem.fromUri(castedPost.UIURL)
+        }
 
         ids += castedPost.id
 

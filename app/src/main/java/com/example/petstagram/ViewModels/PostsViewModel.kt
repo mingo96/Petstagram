@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("MutableCollectionMutableState")
 class PostsViewModel : GeneralController(){
 
-
     /**[Category] of the posts displayed*/
     lateinit var statedCategory: Category
 
@@ -26,7 +25,6 @@ class PostsViewModel : GeneralController(){
             viewModelScope.launch {
 
                 _isLoading.value = true
-
 
                 base.postsFromCategory(statedCategory)
 
