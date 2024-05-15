@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun Post(modifier: Modifier = Modifier, post: UIPost,
-    controller :PostsUIController)
+    controller :PostsUIController, isVisible : Boolean)
 {
     var commentsDisplayed by rememberSaveable {
         mutableStateOf(false)
@@ -79,15 +79,11 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
     val saved = MutableLiveData(post.saved)
 
-    var seen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
     TopLevel(modifier = modifier) {
 
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post, controller = controller)
 
-        AnimatedVisibility(visible = seen, enter = expandVertically { it }) {
+        AnimatedVisibility(visible = isVisible, enter = expandVertically { it }) {
 
             PostSource(modifier = Modifier
                 .rowWeight(1.0f)
@@ -100,12 +96,9 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
                     onClick = {}),
                 controller = controller,
                 post = post,
-                likes = likes)
+                likes = likes,
+                isVisible = isVisible)
 
-        }
-
-        LaunchedEffect(key1 = seen) {
-            seen = true
         }
 
         PostDownBar(
@@ -186,7 +179,11 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: UIPost, controller: 
 }
 
 @OptIn(UnstableApi::class) @Composable
-fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController? = null, likes : MutableLiveData<Int>? = null) {
+fun PostSource(modifier: Modifier = Modifier, 
+               post: UIPost, 
+               controller: PostsUIController? = null, 
+               likes : MutableLiveData<Int>? = null,
+               isVisible: Boolean) {
 
 
     when (post.typeOfMedia) {
@@ -210,6 +207,7 @@ fun PostSource(modifier: Modifier = Modifier, post: UIPost, controller: PostsUIC
                 controller?.likeOnPost(post)
                 likes!!.value = post.likes.size
             })
+
 
         }
         else -> {

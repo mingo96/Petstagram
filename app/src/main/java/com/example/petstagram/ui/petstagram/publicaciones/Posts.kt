@@ -34,10 +34,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -125,53 +127,57 @@ fun Posts(
                 )
 
         ){
+            val prefetchDistance = 2 // Number of items to prefetch before/after the visible items
 
-            //items(postsState){
-            //    var seen by rememberSaveable {
-            //        mutableStateOf(false)
-            //    }
-//
-            //    AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
-//
-            //        Post(
-            //            modifier = Modifier
-            //                .width(Dp(localwidth))
-            //                .padding(vertical = 4.dp),
-            //            post = it,
-            //            controller = controller
-            //        )
-            //    }
-            //    LaunchedEffect(key1 = seen) {
-            //        seen = true
-            //    }
-            //}
-            item{
-                Column {
+            itemsIndexed(postsState){index, it->
+                var seen by rememberSaveable {
+                    mutableStateOf(false)
+                }
 
-                    for (post in postsState) {
-
-                        var seen by rememberSaveable {
-                            mutableStateOf(false)
-                        }
-
-                        AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
-
-                            Post(
-                                modifier = Modifier
-                                    .width(Dp(localwidth))
-                                    .padding(vertical = 4.dp),
-                                post = post,
-                                controller = controller
-                            )
-                        }
-                        LaunchedEffect(key1 = seen) {
-                            seen = true
-                        }
+                AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
+                    val isVisible by remember{
+                        derivedStateOf { index in state.firstVisibleItemIndex-2..state.firstVisibleItemIndex+2 }
                     }
+                    Post(
+                        modifier = Modifier
+                            .width(Dp(localwidth))
+                            .padding(vertical = 4.dp),
+                        post = it,
+                        controller = controller,
+                        isVisible = isVisible
+                    )
+                }
+                LaunchedEffect(key1 = seen) {
+                    seen = true
                 }
             }
-            item {
-            }
+            //item{
+            //    Column {
+//
+            //        for (post in postsState) {
+//
+            //            var seen by rememberSaveable {
+            //                mutableStateOf(false)
+            //            }
+//
+            //            AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
+//
+            //                Post(
+            //                    modifier = Modifier
+            //                        .width(Dp(localwidth))
+            //                        .padding(vertical = 4.dp),
+            //                    post = post,
+            //                    controller = controller
+            //                )
+            //            }
+            //            LaunchedEffect(key1 = seen) {
+            //                seen = true
+            //            }
+            //        }
+            //    }
+            //}
+            //item {
+            //}
             item {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier

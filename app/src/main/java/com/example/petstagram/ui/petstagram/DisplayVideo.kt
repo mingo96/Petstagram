@@ -28,6 +28,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.petstagram.Controllers.PostsUIController
@@ -91,12 +92,15 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
  * works for local files and urls*/
 @kotlin.OptIn(ExperimentalFoundationApi::class)
 @OptIn(UnstableApi::class) @Composable
-fun DisplayVideoFromSource(source: MediaItem, modifier: Modifier, onLike :()->Unit = {}) {
+fun DisplayVideoFromSource(source: MediaItem,
+                           modifier: Modifier,
+                           onLike :()->Unit = {}) {
 
     val context = LocalContext.current
     //main controller
     val mediaPlayer = remember {
-        ExoPlayer.Builder(context).build()
+        ExoPlayer.Builder(context)
+            .build()
     }
 
     //on launch set content and basic configuration
@@ -112,6 +116,7 @@ fun DisplayVideoFromSource(source: MediaItem, modifier: Modifier, onLike :()->Un
         onDispose {
             mediaPlayer.pause()
             mediaPlayer.clearMediaItems()
+            mediaPlayer.release()
         }
     }
 

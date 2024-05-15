@@ -229,7 +229,6 @@ fun Int.quantity(): String{
 
 @Composable
 fun TopPostLimit(modifier : Modifier = Modifier, added : UIPost, controller: PostsUIController? = null){
-    val context = LocalContext.current
     TopLevelVariacionSuperior(modifier = modifier) {
         FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
         ProfileName(added = added.creatorUser!!.userName)
@@ -291,8 +290,9 @@ fun ProfileName(modifier: Modifier = Modifier, added: String) {
         fontWeight = FontWeight(700.0.toInt()),
         maxLines = -1,
         modifier = modifier
-            .requiredWidth(264.0.dp)
+            .fillMaxWidth(0.9f)
             .requiredHeight(32.0.dp)
+            .padding(horizontal = 8.dp)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = true
