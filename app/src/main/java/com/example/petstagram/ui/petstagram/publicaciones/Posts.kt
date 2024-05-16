@@ -109,7 +109,7 @@ fun Posts(
         ){
 
 
-            itemsIndexed(postsState){index, it->
+            itemsIndexed(postsState){ index, it->
                 var seen by rememberSaveable {
                     mutableStateOf(false)
                 }

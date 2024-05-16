@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.categoria.Category
+import com.example.petstagram.categoria.ListedCategory
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -43,12 +44,14 @@ fun Categories(
         val categories by categoryViewModel.categories.collectAsStateWithLifecycle()
         LazyColumn(
             modifier = modifier
-                .background(Color(
-                alpha = 255,
-                red = 225,
-                green = 196,
-                blue = 1
-            ))
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 225,
+                        green = 196,
+                        blue = 1
+                    )
+                )
                 .wrapContentHeight(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -59,6 +62,31 @@ fun Categories(
                     navController = navController,
                     category = category,
                     viewModel = categoryViewModel)
+            }
+        }
+
+    }
+}
+
+@Composable
+fun CategoryList(modifier : Modifier,onSelect : (Category)->Unit, categoryList: List<Category>){
+    BoxWithConstraints(modifier = modifier) {
+        val width = maxWidth
+
+        LazyColumn(modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .background(
+                Color(
+                    alpha = 255,
+                    red = 225,
+                    green = 196,
+                    blue = 1
+                )
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)){
+            items(categoryList){category->
+                ListedCategory(modifier = Modifier.width(width), category = category, onSelected = { onSelect(category) })
             }
         }
 

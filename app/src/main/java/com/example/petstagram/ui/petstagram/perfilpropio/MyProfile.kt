@@ -106,13 +106,15 @@ fun MyProfile(
                 .rowWeight(1.0f)
                 .height(height.times(0.23f)),navController = navController)
             UserNameContainer(Modifier.height(height.times(0.06f))) {
-                YourUserName(editing = editing!!, textValue = accessText, changeText = changeText)
+                YourUserName(editing = editing!!, textValue = accessText, changeText = changeText, modifier = Modifier.fillMaxWidth(0.7f))
                 EditUsernameButton(
                     Modifier.clickable {
                         viewModel.editUserNameClicked(thisContext)
                     }
                 ) {
-                    EditUsernameBackgroundCircle()
+                    EditUsernameBackgroundCircle(Modifier
+                        .requiredWidth(32.0.dp)
+                        .requiredHeight(32.0.dp))
                     EditUsernameImageContainer {
                         EditUsernameImage()
                     }
@@ -214,8 +216,6 @@ fun EditUsernameBackgroundCircle(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.perfil_propio_circulo_editar_nombre_usuario),
         modifier = modifier
-            .requiredWidth(32.0.dp)
-            .requiredHeight(32.0.dp)
     )
 }
 
@@ -301,7 +301,7 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YourUserName(modifier: Modifier = Modifier,
-                 editing : Boolean,
+                 editing : Boolean = true,
                  textValue:()->String,
                  changeText : (String)->Unit) {
 
@@ -315,9 +315,9 @@ fun YourUserName(modifier: Modifier = Modifier,
                 lineHeight = 1.2102272033691406.em,
                 color = Color.Black
             ),
+            singleLine = true,
             shape = RoundedCornerShape(10),
             modifier = modifier
-                .fillMaxWidth(0.7f)
                 .wrapContentHeight(
                     align = Alignment.CenterVertically,
                     unbounded = true

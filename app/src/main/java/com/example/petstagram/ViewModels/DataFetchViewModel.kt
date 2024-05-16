@@ -53,14 +53,16 @@ class DataFetchViewModel : ViewModel() {
     val db = Firebase.firestore
 
     /**actual content of [Post]s and their Uri Strings*/
-    private val _posts = MutableStateFlow<List<UIPost>>(emptyList())
+    private var _posts = mutableListOf<UIPost>()
+
+    private var _categories = mutableListOf<Category>()
 
     /**it tells if we are loading, so if we go out and in the view again we dont
      * start another collect, it is set to true until the collection ends*/
     var alreadyLoading by mutableStateOf(false)
 
     /**ids of the already saved [Post]s*/
-    private var ids by mutableStateOf(_posts.value.map { it.id })
+    private var ids by mutableStateOf(_posts.map { it.id })
 
     /**number of indexes we'll be getting at a time*/
     private var indexesOfPosts = 5L
@@ -74,7 +76,30 @@ class DataFetchViewModel : ViewModel() {
         getUserPosts()
         getPostsFromFirebase()
         fetchSavedList()
+        fetchCategories()
 
+    }
+
+    private fun fetchCategories(){
+        alreadyLoading = true
+        db.collection("Categories").get().addOnSuccessListener {
+            if (!it.isEmpty){
+                for (categoryJson in it.documents){
+                    val newCategory = categoryJson.toObject(Category::class.java)!!
+                    if (newCategory.name !in _categories.map { it.name }){
+                        _categories.add(newCategory)
+                    }
+                }
+            }
+            alreadyLoading = false
+        }
+
+    }
+
+    fun categories():List<Category>{
+        fetchCategories()
+
+        return _categories.toList()
     }
 
     fun profile()=_selfProfile.value
@@ -291,7 +316,7 @@ class DataFetchViewModel : ViewModel() {
                         if (it.isComplete) {
                             Log.d(
                                 "Error de carga",
-                                "la carga de categoria fue completada pero no exitosa, ids = ${_posts.value.map { it.id }.toList()}"
+                                "la carga de categoria fue completada pero no exitosa, ids = ${_posts.map { it.id }.toList()}"
                             )
 
                             alreadyLoading = false
@@ -337,8 +362,8 @@ class DataFetchViewModel : ViewModel() {
                 if(!it.isEmpty){
                     castedPost.saved= SavePressed.Si
                 }
-                _posts.value+=castedPost
-                _posts.value = _posts.value.sortedBy { it.postedDate }.reversed()
+                _posts+=castedPost
+                _posts = _posts.sortedBy { it.postedDate }.reversed().toMutableList()
                 ids+=postJson.id
             }
     }
@@ -353,18 +378,18 @@ class DataFetchViewModel : ViewModel() {
     fun postsFromCategory(category : Category): List<UIPost> {
 
         moreCategoryPosts(category)
-        return _posts.value.filter { it.category!= null && it.category!!.name == category.name }
+        return _posts.filter { it.category!= null && it.category!!.name == category.name }
     }
 
 
     fun postsFromUser(user : String): List<UIPost> {
-        return _posts.value.filter { it.creatorUser!= null && it.creatorUser!!.id == user }
+        return _posts.filter { it.creatorUser!= null && it.creatorUser!!.id == user }
     }
 
 
     fun postsFromSaved(): List<UIPost> {
         fetchSavedList()
-        return _posts.value.filter { it.id in savedList.postList }
+        return _posts.filter { it.id in savedList.postList }
     }
 
 }

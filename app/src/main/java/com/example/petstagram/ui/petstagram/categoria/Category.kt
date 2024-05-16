@@ -1,18 +1,22 @@
 package com.example.petstagram.categoria
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,6 +32,7 @@ import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
+import java.util.Locale
 
 /**Ui representation of [Category]
  */
@@ -71,6 +76,52 @@ fun Category(
             }
         }
     }
+}
+
+@Composable
+fun ListedCategory(modifier: Modifier, category: Category, onSelected : ()->Unit = {}){
+
+    TopLevel(modifier.clickable { onSelected() }) {
+        ImageContainer(modifier = Modifier.rowWeight(1.0f)) {
+            SubcomposeAsyncImage(
+                model = category.categoryImage,
+                loading = {
+                    CircularProgressIndicator()
+                },
+                contentDescription = category.name,
+                contentScale = ContentScale.Crop
+            )
+        }
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .requiredWidth(40.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center){
+            CategoryName(texto = category.name)
+        }
+    }
+
+}
+
+
+@Composable
+fun CategoryName(modifier: Modifier = Modifier, texto: String) {
+    RelayText(
+        content = texto.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+        fontSize = 20.0.sp,
+        fontFamily = inter,
+        color = Color.White,
+        height = 1.2102272033691406.em,
+        fontWeight = FontWeight(800.0.toInt()),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = -1,
+        modifier = modifier
+            .requiredWidth(232.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
+    )
 }
 
 
@@ -239,8 +290,7 @@ fun TopLevel(
             green = 0,
             blue = 0
         ),
-        mainAxisAlignment = MainAxisAlignment.Start,
-        crossAxisAlignment = CrossAxisAlignment.Start,
+        arrangement = RelayContainerArrangement.Column,
         padding = PaddingValues(all = 16.0.dp),
         itemSpacing = 8.0,
         strokeWidth = 8.0,

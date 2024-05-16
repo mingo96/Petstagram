@@ -38,12 +38,14 @@ import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.OwnProfileViewModel
+import com.example.petstagram.ViewModels.PetCreationViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.ViewModels.SavedPostsViewModel
 import com.example.petstagram.loginenmovil.PhoneLogin
 import com.example.petstagram.menuprincipal.CategoriesMenu
 import com.example.petstagram.perfilpropio.MyProfile
 import com.example.petstagram.publicar.NewPostScreen
+import com.example.petstagram.ui.petstagram.PetCreation
 import com.example.petstagram.ui.petstagram.publicacionesguardadas.SavedPosts
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
@@ -90,6 +92,7 @@ class MainActivity : ComponentActivity() {
         val ownProfileViewModel : OwnProfileViewModel by viewModels()
         val dataFetchViewModel : DataFetchViewModel by viewModels()
         val savedPostsViewModel : SavedPostsViewModel by viewModels()
+        val petCreationViewModel : PetCreationViewModel by viewModels()
 
 
         postsViewModel.base = dataFetchViewModel
@@ -174,7 +177,11 @@ class MainActivity : ComponentActivity() {
                             lastStep = route
                             ownProfileViewModel.selfId = authViewModel.localProfile.id
                             MyProfile(navController = navController, viewModel = ownProfileViewModel)
+                        }
+                        composable("añadirMascota", enterTransition = { onEnter }, exitTransition = {onExit}){
 
+                            petCreationViewModel.base = dataFetchViewModel
+                            PetCreation(viewModel = petCreationViewModel, navController = navController)
                         }
                         composable("guardadas", enterTransition = { onEnter }, exitTransition = {onExit}){
                             lastStep = route

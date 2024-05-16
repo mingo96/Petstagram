@@ -13,4 +13,3 @@ class Profile (
     var profilePic : String = "",
     var reportScore : Double = 1.0
 )
-
