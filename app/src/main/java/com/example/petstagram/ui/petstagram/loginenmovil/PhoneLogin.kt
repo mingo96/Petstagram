@@ -110,7 +110,7 @@ fun PhoneLogin(
                         .clickable {
                             viewModel.register(
                                 context = context
-                            ) { navController.navigate("categorias") }
+                            ) { navController.navigate("añadirMascota") }
                         }
                 )
                 LogInTextButton(modifier = Modifier
