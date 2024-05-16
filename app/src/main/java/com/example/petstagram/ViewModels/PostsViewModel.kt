@@ -38,7 +38,7 @@ class PostsViewModel : GeneralController(){
 
                 for (post in end- _posts.value.toSet()){
                     _posts.value += post
-                    delay(500)
+                    delay(250)
 
                 }
 

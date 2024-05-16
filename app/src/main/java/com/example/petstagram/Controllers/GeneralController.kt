@@ -141,7 +141,10 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     }
 
     override fun optionsClicked(post: UIPost) {
-        _optionsClicked.value = post
+        _optionsClicked.value = if (post != _optionsClicked.value)
+            post
+        else
+            null
     }
 
     override fun clearOptions() {

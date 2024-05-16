@@ -2,16 +2,24 @@
 
 package com.example.petstagram.publicacion
 
+import android.media.MediaMetadataRetriever
 import android.view.Gravity
 import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -83,23 +92,23 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post, controller = controller)
 
-        AnimatedVisibility(visible = isVisible, enter = expandVertically { it }) {
 
-            PostSource(modifier = Modifier
-                .rowWeight(1.0f)
-                .combinedClickable(
-                    enabled = true,
-                    onDoubleClick = {
-                        controller.likeOnPost(post)
-                        likes.value = post.likes.size
-                    },
-                    onClick = {}),
-                controller = controller,
-                post = post,
-                likes = likes,
-                isVisible = isVisible)
+        PostSource(modifier = Modifier
+            .rowWeight(1.0f)
+            .combinedClickable(
+                enabled = true,
+                onDoubleClick = {
+                    controller.likeOnPost(post)
+                    likes.value = post.likes.size
+                },
+                onClick = {}),
+            controller = controller,
+            post = post,
+            likes = likes,
+            isVisible = isVisible)
 
-        }
+
+
 
         PostDownBar(
             controller = controller,
@@ -203,11 +212,12 @@ fun PostSource(modifier: Modifier = Modifier,
         }
         "video" -> {
             if (post.mediaItem != MediaItem.EMPTY)
-            DisplayVideoFromSource(source = post.mediaItem, modifier = modifier, onLike = {
-                controller?.likeOnPost(post)
-                likes!!.value = post.likes.size
-            })
-
+                DisplayVideoFromSource(source = post.mediaItem, modifier = modifier, onLike = {
+                    controller?.likeOnPost(post)
+                    likes!!.value = post.likes.size
+                },
+                    isVisible = isVisible,
+                    uri = post.UIURL)
 
         }
         else -> {

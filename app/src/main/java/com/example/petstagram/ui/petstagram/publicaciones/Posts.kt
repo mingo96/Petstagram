@@ -1,7 +1,11 @@
 package com.example.petstagram.publicaciones
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -80,30 +84,6 @@ fun Posts(
         controller.startRollingDots()
     }
 
-    AnimatedVisibility(visible = optionsClicked!= null) {
-        Row (
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly){
-            Button(onClick = {
-                controller.reportPost(context = context)
-                controller.clearOptions()
-            }) {
-                Text(text = "Reportar")
-            }
-            Button(onClick = {
-                controller.savePostResource(context = context)
-                controller.clearOptions()
-            }) {
-                Text(text = "Descargar")
-            }
-            Button(onClick = { controller.clearOptions() }) {
-                Text(text = "Cancelar")
-            }
-        }
-    }
 
     BoxWithConstraints {
 
@@ -127,16 +107,41 @@ fun Posts(
                 )
 
         ){
-            val prefetchDistance = 2 // Number of items to prefetch before/after the visible items
+
 
             itemsIndexed(postsState){index, it->
                 var seen by rememberSaveable {
                     mutableStateOf(false)
                 }
 
-                AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
+                AnimatedVisibility(visible = optionsClicked== it, enter = slideInHorizontally()+ expandVertically(), exit = slideOutHorizontally{it} + shrinkVertically()) {
+                    Row (
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly){
+                        Button(onClick = {
+                            controller.reportPost(context = context)
+                            controller.clearOptions()
+                        }) {
+                            Text(text = "Reportar")
+                        }
+                        Button(onClick = {
+                            controller.savePostResource(context = context)
+                            controller.clearOptions()
+                        }) {
+                            Text(text = "Descargar")
+                        }
+                        Button(onClick = { controller.clearOptions() }) {
+                            Text(text = "Cancelar")
+                        }
+                    }
+                }
+
+                AnimatedVisibility(visible = seen, enter = slideInHorizontally()+ expandVertically()) {
                     val isVisible by remember{
-                        derivedStateOf { index in state.firstVisibleItemIndex-2..state.firstVisibleItemIndex+2 }
+                        derivedStateOf { (index in state.firstVisibleItemIndex-2..state.firstVisibleItemIndex+2)&& !state.isScrollInProgress }
                     }
                     Post(
                         modifier = Modifier

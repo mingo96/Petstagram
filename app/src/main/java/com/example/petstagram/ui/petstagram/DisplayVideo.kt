@@ -1,16 +1,22 @@
 package com.example.petstagram.ui.petstagram
 
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.widget.MediaController
 import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,9 +24,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -65,7 +75,7 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
             modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .combinedClickable (
+                .combinedClickable(
                     enabled = true,
                     onClick = {
                         source.playWhenReady = !source.playWhenReady
@@ -94,13 +104,19 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
 @OptIn(UnstableApi::class) @Composable
 fun DisplayVideoFromSource(source: MediaItem,
                            modifier: Modifier,
-                           onLike :()->Unit = {}) {
+                           onLike :()->Unit = {},
+                           isVisible : Boolean = true,
+                           uri: Uri = Uri.EMPTY) {
 
     val context = LocalContext.current
     //main controller
     val mediaPlayer = remember {
         ExoPlayer.Builder(context)
             .build()
+    }
+
+    val loading by remember {
+        derivedStateOf { mediaPlayer.isLoading }
     }
 
     //on launch set content and basic configuration
@@ -120,34 +136,45 @@ fun DisplayVideoFromSource(source: MediaItem,
         }
     }
 
-    AnimatedVisibility(visible = !mediaPlayer.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
-        AndroidView(
-            factory = { ctx ->
-                PlayerView(ctx).apply {
-                    player = mediaPlayer
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    useController = false
-                }
-            },
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .combinedClickable (
-                    enabled = true,
-                    onClick = {
-                        mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
-                    },
-                    onDoubleClick = {
-                        onLike.invoke()
-                    }
-                    )
-                .background(Color.Gray)
-        )
-    }
-    //the video itself, they repeat for ever, start stopped, on click you swap between
-    //stopped / playing, basic controller was just too ugly
+    if(!loading) {
+        Box{
 
-    AnimatedVisibility(visible = mediaPlayer.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
+            AnimatedVisibility (visible = isVisible, exit = fadeOut(animationSpec = tween(1000)), enter = EnterTransition.None) {
+                AndroidView(
+                    factory = { ctx ->
+                        PlayerView(ctx).apply {
+                            useController = false
+                            player = mediaPlayer
+                            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                        }
+                    },
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .combinedClickable(
+                            enabled = true,
+                            onClick = {
+                                mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
+                            },
+                            onDoubleClick = {
+                                onLike.invoke()
+                            }
+                        )
+                        .background(Color.Gray)
+                )
+            }
+            AnimatedVisibility(visible = !isVisible, exit = fadeOut(animationSpec = tween(1000)), enter = EnterTransition.None){
+
+                val retriever = MediaMetadataRetriever()
+                retriever.setDataSource(context,uri )
+                val bitmap by remember {
+                    mutableStateOf(retriever.getFrameAtIndex(1))
+                }
+                Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "primer frame")
+
+            }
+        }
+    }else{
         CircularProgressIndicator(
             modifier
                 .fillMaxWidth()
