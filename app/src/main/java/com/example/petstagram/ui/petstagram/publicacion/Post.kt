@@ -107,9 +107,6 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
             likes = likes,
             isVisible = isVisible)
 
-
-
-
         PostDownBar(
             controller = controller,
             added = post,

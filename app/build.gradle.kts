@@ -88,6 +88,7 @@ dependencies {
 
     //AsyncImage
     implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("androidx.fragment:fragment-ktx:1.7.0")
 
     // DCS - Firebase
     // Import the Firebase BoM

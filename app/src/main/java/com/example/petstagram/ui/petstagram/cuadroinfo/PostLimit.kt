@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,9 +26,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -85,16 +90,7 @@ fun PostDownBar(
         TitleContainer {
             PostTitle(title = "${added.creatorUser!!.userName}: ${added.title}")
         }
-        IntersectLine(
-            modifier = Modifier
-                .boxAlign(
-                    alignment = Alignment.BottomStart,
-                    offset = DpOffset(
-                        x = 0.0.dp,
-                        y = (-1.0).dp
-                    )
-                )
-                .rowWeight(1.0f))
+        IntersectLine(modifier = Modifier)
         Row (horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -264,13 +260,14 @@ fun TitleContainer(
 
 @Composable
 fun IntersectLine(modifier: Modifier = Modifier) {
-    RelayVector(
-        vector = painterResource(R.drawable.cuadro_info_line_1),
-        modifier = modifier
+    Box(
+        Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-            .requiredHeight(1.dp)
-    )
+            .padding(horizontal = 8.dp)){
+
+        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cuadro_info_line_1), contentDescription = "linea")
+    }
+
 }
 
 @Composable
@@ -433,6 +430,8 @@ fun Container(
             blue = 0
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .padding()
     )
 }
