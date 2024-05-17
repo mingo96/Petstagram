@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
@@ -43,6 +44,9 @@ class DataFetchViewModel : ViewModel() {
 
     var selfId = ""
 
+    val id : String
+        get() {return _selfProfile.value.id}
+
     private val _selfProfile = MutableStateFlow(Profile())
 
     lateinit var context: Context
@@ -55,6 +59,8 @@ class DataFetchViewModel : ViewModel() {
     /**actual content of [Post]s and their Uri Strings*/
     private var _posts = mutableListOf<UIPost>()
 
+    private var _pets = mutableListOf<Pet>()
+
     private var _categories = mutableListOf<Category>()
 
     /**it tells if we are loading, so if we go out and in the view again we dont
@@ -66,12 +72,14 @@ class DataFetchViewModel : ViewModel() {
 
     /**number of indexes we'll be getting at a time*/
     private var indexesOfPosts = 5L
+
     private var savedList by mutableStateOf(SavedList())
 
     /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
     fun startLoadingPosts(context: Context){
         this.context = context
 
+        fetchPetsFromUser()
         keepUpWithUser()
         getUserPosts()
         getPostsFromFirebase()
@@ -368,6 +376,20 @@ class DataFetchViewModel : ViewModel() {
             }
     }
 
+    private fun fetchPetsFromUser(id: String = _selfProfile.value.id) {
+        db.collection("Pets").whereEqualTo("owner", id).get().addOnSuccessListener {
+            if (!it.isEmpty){
+                for (petJson in it.documents){
+                    if (petJson.id !in _pets.map { it.id }) {
+                        val newPet = petJson.toObject(Pet::class.java)!!
+                        _pets.add(newPet)
+                    }
+                }
+            }
+        }
+    }
+
+
 
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()
@@ -392,4 +414,8 @@ class DataFetchViewModel : ViewModel() {
         return _posts.filter { it.id in savedList.postList }
     }
 
+    fun petsFromUser(id: String): List<Pet> {
+        fetchPetsFromUser(id)
+        return _pets.filter { it.owner == id }
+    }
 }

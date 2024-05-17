@@ -11,12 +11,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
+import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -30,6 +30,10 @@ class OwnProfileViewModel : GeneralController(){
 
     override var actualUser = _selfProfile.value
         get() {return _selfProfile.value}
+
+    private val _pets = MutableStateFlow<List<Pet>>(emptyList())
+
+    val pets : StateFlow<List<Pet>> = _pets
 
     /**indicates if we are editing the UserName, because if we are editing and reload,
      * username will go back to original*/
@@ -57,16 +61,20 @@ class OwnProfileViewModel : GeneralController(){
                 _isLoading.value = true
 
                 base.postsFromUser(actualUser.id)
+                base.petsFromUser(actualUser.id)
 
                 while (base.alreadyLoading){
                     delay(10)
                 }
 
-                val end = base.postsFromUser(actualUser.id)
+                val endPosts = base.postsFromUser(actualUser.id)
 
+                val endPets = base.petsFromUser(actualUser.id)
 
-
-                for (post in end- _posts.value.toSet()){
+                for (pet in endPets- pets.value.toSet()){
+                    _pets.value += pet
+                }
+                for (post in endPosts- _posts.value.toSet()){
                     _posts.value += post
                     delay(500)
                 }

@@ -1,4 +1,4 @@
-package com.example.petstagram.ui.petstagram
+package com.example.petstagram.ui.petstagram.Pets
 
 import android.net.Uri
 import android.widget.Toast
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,7 +62,15 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
     val categories by viewModel.categories.collectAsState()
     
     val resource by viewModel.resource.observeAsState()
-    
+
+    val thisContext =(LocalContext.current)
+    /**external activity that returns the local uri of the file the user selects*/
+    val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
+        if(uri != null&&uri != Uri.EMPTY) {
+            viewModel.setResource(uri, thisContext)
+        }else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
+    }
+
     LaunchedEffect(key1 = true){
         viewModel.startLoading()
     }
@@ -79,14 +86,6 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                     .height(height.times(0.24f)),
                 navController = navController
             )
-
-            val thisContext =(LocalContext.current)
-            /**external activity that returns the local uri of the file the user selects*/
-            val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
-                if(uri != null&&uri != Uri.EMPTY) {
-                    viewModel.setResource(uri, thisContext)
-                }else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
-            }
 
             Row(
                 Modifier
@@ -121,12 +120,12 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                     Image(painter = painterResource(id = R.drawable.hacer_clic),
                         contentDescription = "clica para cambiar",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(0.7f)
+                        modifier = Modifier.fillMaxSize(0.65f)
                     )
                 }else{
                     SubcomposeAsyncImage(
                         modifier = Modifier
-                            .fillMaxSize(0.7f),
+                            .fillMaxSize(0.65f),
                         model = resource,
                         loading = { CircularProgressIndicator(
                             Modifier

@@ -478,7 +478,7 @@ fun TopLevelVariacionTusPublicaciones(
             green = 196,
             blue = 1
         ),
-        mainAxisAlignment = MainAxisAlignment.Start,
+        mainAxisAlignment = MainAxisAlignment.Center,
         arrangement = RelayContainerArrangement.Column,
         padding = PaddingValues(all = 8.0.dp),
         itemSpacing = 10.0,

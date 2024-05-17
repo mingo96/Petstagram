@@ -69,8 +69,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.google.relay.compose.ColumnScopeInstanceImpl.weight
-import com.google.relay.compose.RowScopeInstanceImpl.weight
 import java.util.Locale as JavaLocale
 import java.util.regex.Pattern
 

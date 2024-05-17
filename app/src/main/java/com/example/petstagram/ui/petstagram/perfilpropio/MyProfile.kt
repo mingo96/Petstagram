@@ -46,6 +46,7 @@ import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.perfil.ProfilePicInstance
 import com.example.petstagram.publicaciones.Posts
+import com.example.petstagram.ui.petstagram.Pets.PetList
 import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -94,6 +95,7 @@ fun MyProfile(
     /**informs UI of changes in editing value*/
     val editing by viewModel.isEditing.observeAsState()
 
+    val pets by viewModel.pets.collectAsState()
 
     val accessText : ()->String = { viewModel.getUserNameText() }
 
@@ -112,9 +114,10 @@ fun MyProfile(
                         viewModel.editUserNameClicked(thisContext)
                     }
                 ) {
-                    EditUsernameBackgroundCircle(Modifier
-                        .requiredWidth(32.0.dp)
-                        .requiredHeight(32.0.dp))
+                    EditUsernameBackgroundCircle(
+                        Modifier
+                            .requiredWidth(32.0.dp)
+                            .requiredHeight(32.0.dp))
                     EditUsernameImageContainer {
                         EditUsernameImage()
                     }
@@ -140,13 +143,23 @@ fun MyProfile(
                         .rowWeight(1.0f)
                         .height(height.times(0.825f))
                         .fillMaxWidth(0.8f))
-            else
-                PostsInstance(
+            else {
+                
+                PetList(
+                    pets = pets,
+                    onNewPet = { navController.navigate("añadirMascota") },
+                    onSelect = {},
                     modifier = Modifier
                         .rowWeight(1.0f)
-                        .height(height),
-                    viewModel = viewModel
-                )
+                        .height(height))
+                
+                //PostsInstance(
+                //    modifier = Modifier
+                //        .rowWeight(1.0f)
+                //        .height(height),
+                //    viewModel = viewModel
+                //)
+            }
         }
     }
 

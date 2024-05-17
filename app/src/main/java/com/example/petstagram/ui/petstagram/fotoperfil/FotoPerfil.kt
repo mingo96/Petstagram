@@ -119,6 +119,7 @@ fun ProfilePic(modifier: Modifier = Modifier, url: String) {
             modifier = modifier
                 .fillMaxWidth(1.0f)
                 .fillMaxHeight(1.0f)
+                
         )
     else
         AsyncImage(model = url,

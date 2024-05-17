@@ -2,24 +2,14 @@
 
 package com.example.petstagram.publicacion
 
-import android.media.MediaMetadataRetriever
 import android.view.Gravity
-import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,15 +20,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -51,11 +38,9 @@ import androidx.media3.common.util.UnstableApi
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.R
-import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
-import com.example.petstagram.ui.petstagram.DisplayVideo
 import com.example.petstagram.ui.petstagram.DisplayVideoFromSource
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
 import com.google.relay.compose.MainAxisAlignment

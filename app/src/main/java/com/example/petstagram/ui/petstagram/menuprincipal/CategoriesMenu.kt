@@ -14,9 +14,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.barrasuperior.TopBar
-import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.Categories
-import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope

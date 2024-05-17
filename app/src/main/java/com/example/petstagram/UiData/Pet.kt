@@ -6,7 +6,7 @@ open class Pet {
     var id : String=""
     var name = ""
     var owner =""
-    var profilePic : Uri = Uri.EMPTY
+    var profilePic : String = ""
     var category : Category? = null
 
 }

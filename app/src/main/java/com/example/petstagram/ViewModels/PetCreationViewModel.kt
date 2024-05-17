@@ -85,14 +85,14 @@ class PetCreationViewModel : ViewModel() {
 
         if (validate()) {
             try {
-                pet.owner = base.selfId
+                pet.owner = base.id
 
                 db.collection("Pets").add(pet).addOnSuccessListener {
                     pet.id = it.id
                     storageRef.child("ProfilePictures/${pet.id}").putFile(_resource.value!!)
                         .addOnSuccessListener {
                             storageRef.child("/ProfilePictures/${pet.id}").downloadUrl.addOnSuccessListener { uri ->
-                                pet.profilePic = uri
+                                pet.profilePic = uri.toString()
                                 db.collection("Pets")
                                     .document(pet.id)
                                     .update(
