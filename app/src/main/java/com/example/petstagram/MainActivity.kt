@@ -93,6 +93,7 @@ class MainActivity : ComponentActivity() {
         postsViewModel.base = dataFetchViewModel
         ownProfileViewModel.base = dataFetchViewModel
         savedPostsViewModel.base = dataFetchViewModel
+        publishViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

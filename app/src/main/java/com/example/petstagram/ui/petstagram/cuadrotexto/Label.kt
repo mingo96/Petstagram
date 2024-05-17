@@ -702,7 +702,7 @@ fun TopLevelVariacionCrearPublicacion(
 @Composable
 fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modifier) {
     RelayText(
-        content = "Seleccionar recurso",
+        content = "Seleccionar la mascota de la publicación",
         fontSize = 16.0.sp,
         fontFamily = inter,
         color = Color(

@@ -5,6 +5,13 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,6 +64,7 @@ import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.publicacion.CuadroInfoInstance
 import com.example.petstagram.ui.petstagram.DisplayVideoFromSource
+import com.example.petstagram.ui.petstagram.Pets.PetList
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -89,7 +97,12 @@ fun NewPostScreen(
     //uri observed to see it before publishing
     val uriObserver by viewModel.resource.observeAsState()
 
+    val pets by viewModel.pets.collectAsState()
+
     BackHandler {
+
+        if (viewModel.petsDisplayed) viewModel.togglePetsVisibility()
+        else
         if (isSendingInfo == false) {
             navController.navigateUp()
         }
@@ -105,7 +118,7 @@ fun NewPostScreen(
         }
 
 
-    BoxWithConstraints {
+    BoxWithConstraints (contentAlignment = Alignment.BottomCenter){
         val height = maxHeight
         TopLevel(modifier = modifier) {
 
@@ -201,7 +214,7 @@ fun NewPostScreen(
                                 changeText = { viewModel.changeTitle(it) })
                             SourceSelectorTextButton(
                                 modifier.clickable {
-                                    sourceSelecter.launch("*/*")
+                                    viewModel.togglePetsVisibility()
                                 }
                             )
 
@@ -223,6 +236,18 @@ fun NewPostScreen(
                     }
                     .height(height.times(0.09f))
             )
+        }
+        AnimatedVisibility(visible = viewModel.petsDisplayed, enter = expandVertically{it}+slideInVertically{it}, exit = shrinkVertically{it}+slideOutVertically{it}) {
+
+            PetList(pets = pets,
+                onSelect = {
+                    viewModel.selectPet(it)
+                    viewModel.togglePetsVisibility()
+                           },
+                onNewPet = { navController.navigate("añadirMascota") },
+                selected = viewModel.selectedPet,
+                modifier = Modifier.fillMaxHeight(0.7f)
+                )
         }
     }
 

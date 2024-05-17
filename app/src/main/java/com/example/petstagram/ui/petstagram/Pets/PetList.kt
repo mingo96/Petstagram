@@ -1,6 +1,6 @@
 package com.example.petstagram.ui.petstagram.Pets
 
-import androidx.compose.foundation.background
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -30,7 +30,11 @@ import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 
 @Composable
-fun PetList(modifier :Modifier= Modifier, pets : List<Pet>, onSelect : ()->Unit, onNewPet : ()->Unit){
+fun PetList(modifier:Modifier= Modifier,
+            pets: List<Pet>,
+            onSelect: (Pet)->Unit = {},
+            onNewPet: (() -> Unit)? = null,
+            selected : Pet? = null){
 
     PetListContainer (modifier){
 
@@ -40,26 +44,32 @@ fun PetList(modifier :Modifier= Modifier, pets : List<Pet>, onSelect : ()->Unit,
                 .height(8.dp)
                 .padding(top = 16.dp))
 
-        BotonMas(modifier = Modifier
-            .clickable {
-                onNewPet()
-            }) {
-            CuadroSumar(
-                modifier = Modifier
-                    .rowWeight(1.0f)
-                    .columnWeight(1.0f)
-            )
+        if (onNewPet != null) {
+            BotonMas(modifier = Modifier
+                .clickable {
+                    onNewPet()
+                }) {
+                CuadroSumar(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)
+                )
+            }
+            if (pets.isEmpty()){
+                Text(text = "No hay mascotas!!")
+            }
         }
         BoxWithConstraints(Modifier.padding(16.dp)) {
 
+            var width = maxWidth
             LazyVerticalGrid(
-                columns = GridCells.FixedSize(maxWidth.times(0.5f)),
+                columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(pets){pet->
 
-                    PetCard(pet = pet)
+                    PetCard(pet = pet, onSelect = { onSelect(pet) }, selected = pet == selected)
 
                 }
             }

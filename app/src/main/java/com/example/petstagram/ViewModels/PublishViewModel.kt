@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIPost
@@ -24,7 +25,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 fun getMimeType(context: Context, uri: Uri): String? {
     val contentResolver: ContentResolver = context.contentResolver
@@ -33,6 +33,7 @@ fun getMimeType(context: Context, uri: Uri): String? {
 
 class PublishViewModel : ViewModel(){
 
+    lateinit var base : DataFetchViewModel
 
     val newPost by mutableStateOf(UIPost())
 
@@ -64,6 +65,16 @@ class PublishViewModel : ViewModel(){
 
     /**[LiveData] for [_resource]*/
     var resource :LiveData<Uri> =_resource
+
+    var petsDisplayed by mutableStateOf(false)
+        private set
+
+    private val _pets = MutableStateFlow<List<Pet>>(emptyList())
+
+    val pets : StateFlow<List<Pet>> = _pets
+
+    var selectedPet : Pet? = null
+        private set
 
     private var _text = MutableStateFlow("Enviando")
 
@@ -166,5 +177,24 @@ class PublishViewModel : ViewModel(){
         _resource.value = uri
     }
 
+    fun togglePetsVisibility(){
+        petsDisplayed = !petsDisplayed
+        viewModelScope.launch {
+
+            _pets.collect{
+                base.petsFromUser(user.id).ofThisCategory()
+                delay(1000)
+                _pets.value = base.petsFromUser(user.id).ofThisCategory()
+            }
+        }
+    }
+
+    fun selectPet(pet: Pet){
+        selectedPet = pet
+    }
+
+    private fun List<Pet>.ofThisCategory(): List<Pet> {
+        return this.filter { it.category!!.name == category.name }
+    }
 
 }
