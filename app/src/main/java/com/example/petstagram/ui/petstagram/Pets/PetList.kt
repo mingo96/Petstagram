@@ -1,5 +1,6 @@
 package com.example.petstagram.ui.petstagram.Pets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.petstagram.UiData.Pet
@@ -34,7 +37,8 @@ fun PetList(modifier :Modifier= Modifier, pets : List<Pet>, onSelect : ()->Unit,
         IntersectLine(
             Modifier
                 .fillMaxWidth(0.9f)
-                .height(8.dp))
+                .height(8.dp)
+                .padding(top = 16.dp))
 
         BotonMas(modifier = Modifier
             .clickable {
@@ -88,15 +92,17 @@ fun PetListContainer(
             .fillMaxWidth(1.0f)
             .fillMaxHeight(1.0f)
             .border(
-                width = 4.0.dp,
-                color = Color(
-                    alpha = 255,
-                    red = 225,
-                    green = 196,
-                    blue = 1
+                width = 4.dp,
+                Brush.verticalGradient(
+                    0.0f to Color(
+                        alpha = 255,
+                        red = 225,
+                        green = 196,
+                        blue = 1
+                    ),
+                    1.0f to Color.Transparent
                 ),
-                shape = RoundedCornerShape(5, 5)
+                RoundedCornerShape(15.dp, 15.dp)
             )
-            .padding(top = 16.dp)
     )
 }

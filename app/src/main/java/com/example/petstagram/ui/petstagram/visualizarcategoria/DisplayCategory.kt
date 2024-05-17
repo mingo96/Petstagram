@@ -147,7 +147,6 @@ fun TopLevel(
         mainAxisAlignment = MainAxisAlignment.End,
         scrollAnchor = ScrollAnchor.End,
         scrollable = true,
-        itemSpacing = 24.0,
         content = content,
         modifier = modifier
             .fillMaxWidth(1.0f)

@@ -44,6 +44,7 @@ import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.CategoryList
 import com.example.petstagram.cuadrotexto.inter
+import com.example.petstagram.ui.theme.Primary
 import com.example.petstagram.cuadrotexto.TopLevelVariacionTusPublicaciones as ImageBackground
 import com.example.petstagram.perfilpropio.EditUsernameBackgroundCircle as SendBackground
 import com.example.petstagram.perfilpropio.EditUsernameButton as Send
@@ -181,12 +182,7 @@ fun SelectCategoryTexts( modifier: Modifier){
             content = "Ten en cuenta\nque esto no se podrá cambiar",
             fontSize = 20.0.sp,
             fontFamily = inter,
-            color = Color(
-                alpha = 255,
-                red = 224,
-                green = 164,
-                blue = 0
-            ),
+            color = Primary,
             fontWeight = FontWeight.Bold,
             height = 1.2102272033691406.em,
             maxLines = -1,

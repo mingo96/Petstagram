@@ -371,9 +371,10 @@ fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier) {
         content = "Tu perfil",
         fontSize = 20.0.sp,
         fontFamily = inter,
+        fontWeight = FontWeight.Bold,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
+        modifier = modifier.wrapContentWidth().wrapContentHeight(
             align = Alignment.CenterVertically,
             unbounded = true
         )

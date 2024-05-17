@@ -38,6 +38,7 @@ import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.cuadroinfo.FotoPerfilSizePeque
 import com.example.petstagram.cuadroinfo.LikePulsadoFalse
 import com.example.petstagram.like.Pressed
+import com.example.petstagram.ui.theme.Primary
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
@@ -163,12 +164,7 @@ fun TopLine(modifier: Modifier = Modifier) {
 fun CommentContent(modifier: Modifier = Modifier, content : String) {
     RelayText(
         content = content,
-        color = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        color = Primary,
         height = 1.4285714721679688.em,
         letterSpacing = 0.10000000149011612.sp,
         textAlign = TextAlign.Left,

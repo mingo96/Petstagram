@@ -20,6 +20,7 @@ import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.categoria.Category
 import com.example.petstagram.categoria.ListedCategory
+import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -45,12 +46,7 @@ fun Categories(
         LazyColumn(
             modifier = modifier
                 .background(
-                    Color(
-                        alpha = 255,
-                        red = 225,
-                        green = 196,
-                        blue = 1
-                    )
+                    Secondary
                 )
                 .wrapContentHeight(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -77,12 +73,7 @@ fun CategoryList(modifier : Modifier,onSelect : (Category)->Unit, categoryList: 
             .wrapContentHeight()
             .fillMaxWidth()
             .background(
-                Color(
-                    alpha = 255,
-                    red = 225,
-                    green = 196,
-                    blue = 1
-                )
+                Secondary
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp)){
             items(categoryList){category->
@@ -110,12 +101,7 @@ fun TopLevel(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
-        ),
+        backgroundColor = Secondary,
         mainAxisAlignment = MainAxisAlignment.Start,
         scrollable = true,
         itemSpacing = 8.0,

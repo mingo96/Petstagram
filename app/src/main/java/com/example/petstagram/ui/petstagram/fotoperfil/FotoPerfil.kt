@@ -114,7 +114,7 @@ fun TopLevelSizePeque(
 fun ProfilePic(modifier: Modifier = Modifier, url: String) {
     if(url == "")
         RelayImage(
-            image = painterResource(R.drawable.foto_perfil_foto),
+            image = painterResource(R.drawable.hacer_clic),
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .fillMaxWidth(1.0f)

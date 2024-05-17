@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
+import com.example.petstagram.ui.theme.Primary
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -69,12 +70,7 @@ fun TopLevel(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         mainAxisAlignment = MainAxisAlignment.SpaceBetween,
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(all = 16.0.dp),

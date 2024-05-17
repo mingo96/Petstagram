@@ -33,6 +33,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,6 +64,9 @@ import com.example.petstagram.like.Pressed
 import com.example.petstagram.publicacion.Post
 import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
+import com.example.petstagram.ui.theme.Primary
+import com.example.petstagram.ui.theme.Secondary
+
 /**
  * publicaciones
  *
@@ -98,14 +104,8 @@ fun Posts(
                 .width(Dp(localwidth))
                 .fillMaxHeight(1.0f)
                 .background(
-                    Color(
-                        alpha = 255,
-                        red = 224,
-                        green = 164,
-                        blue = 0
-                    )
+                    Primary,
                 )
-
         ){
 
 
@@ -124,16 +124,25 @@ fun Posts(
                         Button(onClick = {
                             controller.reportPost(context = context)
                             controller.clearOptions()
-                        }) {
+                        },
+                            colors = buttonColors(),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                            ) {
                             Text(text = "Reportar")
                         }
                         Button(onClick = {
                             controller.savePostResource(context = context)
                             controller.clearOptions()
-                        }) {
+                        },
+                            colors = buttonColors(),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                        ) {
                             Text(text = "Descargar")
                         }
-                        Button(onClick = { controller.clearOptions() }) {
+                        Button(onClick = { controller.clearOptions() },
+                            colors = buttonColors(),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                        ) {
                             Text(text = "Cancelar")
                         }
                     }
@@ -229,5 +238,14 @@ fun Posts(
 
 
     }
+}
+
+@Composable
+fun buttonColors(): ButtonColors {
+    return ButtonColors(
+        contentColor = Color.Black,
+        containerColor = Color.White.copy(0.5F),
+        disabledContainerColor = Primary,
+        disabledContentColor = Primary)
 }
 

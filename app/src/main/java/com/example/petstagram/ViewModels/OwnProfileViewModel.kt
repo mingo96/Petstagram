@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 class OwnProfileViewModel : GeneralController(){
 
@@ -30,6 +33,16 @@ class OwnProfileViewModel : GeneralController(){
 
     override var actualUser = _selfProfile.value
         get() {return _selfProfile.value}
+
+    private val _state = MutableLiveData(false)
+
+    val state : LiveData<Boolean> = _state
+
+    private val _offset = MutableStateFlow(0.dp)
+
+    val offset : StateFlow<Dp> = _offset
+
+    var isMoving by mutableStateOf(false)
 
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
 
@@ -197,6 +210,31 @@ class OwnProfileViewModel : GeneralController(){
     fun clear(){
         if (_posts.value.isNotEmpty())
             _posts.value.drop(0)
+        _offset.value = 0.dp
+    }
+
+    fun ToggleState(width : Dp){
+        if (isMoving) return;
+        isMoving = true
+        _state.value = !_state.value!!
+
+        viewModelScope.launch {
+            val objective = if (width.value == _offset.value.value) 0.dp else width
+            while (_offset.value!= objective) {
+                if (objective > _offset.value) {
+                    _offset.value = Dp(_offset.value.value + 50)
+                }
+                else if (objective < _offset.value) {
+                    _offset.value = Dp(_offset.value.value - 50)
+                }
+                if ((objective - _offset.value).value in -60f..60f && objective != _offset.value) {
+                    _offset.value = objective
+                }
+                delay(1)
+
+            }
+            isMoving = false
+        }
     }
 
 }

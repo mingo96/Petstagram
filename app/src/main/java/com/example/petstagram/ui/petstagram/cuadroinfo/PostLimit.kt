@@ -47,6 +47,8 @@ import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.opciones.Opciones
+import com.example.petstagram.ui.theme.Primary
+import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -270,12 +272,7 @@ fun ProfileName(modifier: Modifier = Modifier, added: String) {
         content = added,
         fontSize = 15.0.sp,
         fontFamily = inter,
-        color = Color(
-            alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
-        ),
+        color = Secondary,
         height = 1.2102272033691406.em,
         textAlign = TextAlign.Left,
         fontWeight = FontWeight(700.0.toInt()),
@@ -372,12 +369,7 @@ fun BotonSeccionComentariosVariacionInferior(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         isStructured = false,
         radius = 15.0,
         strokeWidth = 1.0,

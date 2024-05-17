@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.cuadroinfo.IntersectLine
 import com.example.petstagram.fotoperfil.ProfilePic
+import com.example.petstagram.ui.theme.Primary
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -35,7 +36,10 @@ fun PetCard(modifier: Modifier = Modifier, pet: Pet, onSelect: () -> Unit = {}) 
 
         BoxWithConstraints() {
 
-            PhotoContainer(Modifier.height(maxWidth).width(maxWidth)) {
+            PhotoContainer(
+                Modifier
+                    .height(maxWidth)
+                    .width(maxWidth)) {
                 ProfilePic(url = pet.profilePic)
             }
         }
@@ -67,22 +71,11 @@ fun PetContainer(
             .fillMaxHeight(1.0f)
             .background(
                 Brush.verticalGradient(
-                    0.0f to Color(
-                        alpha = 255,
-                        red = 224,
-                        green = 164,
-                        blue = 0
-                    ),
-                    1.0f to Color(
-                        alpha = 255,
-                        red = 35,
-                        green = 35,
-                        blue = 35
-                    )
+                    0.0f to Primary,
+                    1.0f to Color.Transparent
                 ),
                 RoundedCornerShape(15.dp, 15.dp)
             )
-
             .padding(8.dp)
     )
 }

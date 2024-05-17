@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.UiData.Category
 import com.example.petstagram.ViewModels.CategoriesViewModel
+import com.example.petstagram.ui.theme.Primary
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -182,12 +183,7 @@ fun PostsAccessButton(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         padding = PaddingValues(all = 8.0.dp),
         itemSpacing = 8.0,
         radius = 15.0,
@@ -230,12 +226,7 @@ fun AddButton(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(
             start = 8.0.dp,

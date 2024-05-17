@@ -1,24 +1,43 @@
 package com.example.petstagram.perfilpropio
 
+import android.graphics.Paint.Style
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonColors
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -33,9 +52,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.OwnProfileViewModel
@@ -48,6 +69,8 @@ import com.example.petstagram.perfil.ProfilePicInstance
 import com.example.petstagram.publicaciones.Posts
 import com.example.petstagram.ui.petstagram.Pets.PetList
 import com.example.petstagram.visualizarcategoria.TopLevel
+import com.google.relay.compose.CrossAxisAlignment
+import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
@@ -66,7 +89,7 @@ fun MyProfile(
 ) {
 
     //on launch start loading user info
-    LaunchedEffect(key1 = viewModel){
+    LaunchedEffect(key1 = viewModel) {
         viewModel.keepUpWithUserInfo()
     }
 
@@ -77,14 +100,19 @@ fun MyProfile(
         }
     }
 
-    val thisContext =(LocalContext.current)
-    /**external activity that returns the local uri of the file the user selects*/
-    val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
-        if(uri != null&&uri != Uri.EMPTY) {
-            viewModel.setResource(uri, thisContext)
-        }else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
-    }
+    val thisContext = (LocalContext.current)
 
+    /**external activity that returns the local uri of the file the user selects*/
+    val sourceSelector =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null && uri != Uri.EMPTY) {
+                viewModel.setResource(uri, thisContext)
+            } else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
+        }
+
+    val state by viewModel.state.observeAsState()
+
+    val offsetObserver by viewModel.offset.collectAsState()
 
     /**actual profile pic*/
     val profilePicObserver by viewModel.resource.observeAsState()
@@ -97,69 +125,106 @@ fun MyProfile(
 
     val pets by viewModel.pets.collectAsState()
 
-    val accessText : ()->String = { viewModel.getUserNameText() }
+    val accessText: () -> String = { viewModel.getUserNameText() }
 
-    val changeText :(String)->Unit = {viewModel.editUserName(it)}
+    val changeText: (String) -> Unit = { viewModel.editUserName(it) }
 
     BoxWithConstraints {
         val height = maxHeight
-        TopLevel(modifier = modifier) {
-            TopBarInstance(modifier = Modifier
-                .rowWeight(1.0f)
-                .height(height.times(0.23f)),navController = navController)
-            UserNameContainer(Modifier.height(height.times(0.06f))) {
-                YourUserName(editing = editing!!, textValue = accessText, changeText = changeText, modifier = Modifier.fillMaxWidth(0.7f))
-                EditUsernameButton(
-                    Modifier.clickable {
-                        viewModel.editUserNameClicked(thisContext)
+        val width = maxWidth
+        TopLevel(modifier = Modifier) {
+            TopBarInstance(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .height(height.times(0.24f)), navController = navController
+            )
+            LazyColumn(
+                Modifier.height(height.times(0.926f)),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+
+                    DataContainer(height = height) {
+
+                        ImageContainer {
+                            ProfilePicInstance(
+                                Modifier
+                                    .height(height.times(0.23f))
+                                    .width(height.times(0.23f))
+                                    .clickable { sourceSelector.launch("image/*") },
+                                url = profilePicObserver.orEmpty()
+                            )
+                        }
+
+                        UserNameContainer {
+                            YourUserName(
+                                editing = editing!!,
+                                textValue = accessText,
+                                changeText = changeText,
+                                modifier = Modifier.fillMaxWidth(0.7f)
+                            )
+                            EditUsernameButton(
+                                Modifier.clickable {
+                                    viewModel.editUserNameClicked(thisContext)
+                                }
+                            ) {
+                                EditUsernameBackgroundCircle(
+                                    Modifier
+                                        .requiredWidth(32.0.dp)
+                                        .requiredHeight(32.0.dp)
+                                )
+                                EditUsernameImageContainer {
+                                    EditUsernameImage()
+                                }
+                            }
+                        }
                     }
-                ) {
-                    EditUsernameBackgroundCircle(
-                        Modifier
-                            .requiredWidth(32.0.dp)
-                            .requiredHeight(32.0.dp))
-                    EditUsernameImageContainer {
-                        EditUsernameImage()
+                }
+
+                item {
+
+                    StateSelector(
+                        Modifier.height(height.times(0.06f)),
+                        state = state!!,
+                        onClick = { viewModel.ToggleState(width) })
+                }
+
+                item {
+
+                    if (isLoading!!)
+                        CircularProgressIndicator(
+                            modifier
+                                .rowWeight(1.0f)
+                                .height(height.times(0.8f))
+                                .fillMaxWidth(0.8f)
+                        )
+                    else {
+                        Box(
+                            Modifier.fillMaxWidth(),
+                        ) {
+                            PostsInstance(
+                                modifier = Modifier
+                                    .zIndex(5F)
+                                    .height(height.times(0.8f))
+                                    .offset(x = offsetObserver - width),
+                                viewModel = viewModel
+                            )
+                            PetList(
+                                pets = pets,
+                                onNewPet = { navController.navigate("añadirMascota") },
+                                onSelect = {},
+                                modifier = Modifier
+                                    .height(height.times(0.8f))
+                                    .offset(x = offsetObserver)
+                            )
+
+
+                        }
                     }
                 }
             }
-            ImageContainer {
-                ProfilePicInstance(
-                    Modifier
-                        .height(height.times(0.30f))
-                        .width(height.times(0.30f)),
-                    url = profilePicObserver.orEmpty())
-                EditProfilePicButton(Modifier.clickable { sourceSelector.launch("image/*") }) {
-                    EditProfilePicButtonBackgroundCircle()
-                    EditProfilePicImageContainer {
-                        EditProfilePicImage()
-                    }
-                }
-            }
-            YourPostsLabel(Modifier.height(height.times(0.06f)))
-            if (isLoading!!)
-                CircularProgressIndicator(
-                    modifier
-                        .rowWeight(1.0f)
-                        .height(height.times(0.825f))
-                        .fillMaxWidth(0.8f))
-            else {
-                
-                PetList(
-                    pets = pets,
-                    onNewPet = { navController.navigate("añadirMascota") },
-                    onSelect = {},
-                    modifier = Modifier
-                        .rowWeight(1.0f)
-                        .height(height))
-                
-                //PostsInstance(
-                //    modifier = Modifier
-                //        .rowWeight(1.0f)
-                //        .height(height),
-                //    viewModel = viewModel
-                //)
-            }
+
         }
     }
 
@@ -169,18 +234,38 @@ fun MyProfile(
 /**top bar with which you can move in the app*/
 @Composable
 fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu)
+    TopBar(
+        modifier = modifier.fillMaxWidth(1.0f),
+        navController = navController,
+        variant = Variant.WithMenu
+    )
 }
+
+@Composable
+fun DataContainer(height: Dp, content: @Composable RowScope.() -> Unit) {
+    Row(
+        Modifier
+            .height(height.times(0.23f) + 24.dp)
+            .padding(top = 24.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        content = content
+    )
+}
+
 @Composable
 fun UserNameContainer(
     modifier: Modifier = Modifier,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        arrangement = RelayContainerArrangement.Row,
+        arrangement = RelayContainerArrangement.Column,
+        mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
+        crossAxisAlignment = CrossAxisAlignment.Center,
         itemSpacing = 24.0,
         content = content,
-        modifier = modifier
+        modifier = modifier.fillMaxHeight()
     )
 }
 
@@ -238,60 +323,8 @@ fun ImageContainer(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        arrangement = RelayContainerArrangement.Row,
-        itemSpacing = 24.0,
         content = content,
         modifier = modifier
-    )
-}
-
-@Composable
-fun EditProfilePicButton(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
-) {
-    RelayContainer(
-        isStructured = false,
-        content = content,
-        modifier = modifier
-            .requiredWidth(48.0.dp)
-            .requiredHeight(48.0.dp)
-    )
-}
-
-@Composable
-fun EditProfilePicButtonBackgroundCircle(modifier: Modifier = Modifier) {
-    RelayVector(
-        vector = painterResource(R.drawable.perfil_propio_circulo_editar),
-        modifier = modifier
-            .requiredWidth(48.0.dp)
-            .requiredHeight(48.0.dp)
-    )
-}
-
-@Composable
-fun EditProfilePicImageContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
-) {
-    RelayContainer(
-        arrangement = RelayContainerArrangement.Row,
-        content = content,
-        modifier = modifier
-            .requiredWidth(48.0.dp)
-            .requiredHeight(48.0.dp)
-            .alpha(alpha = 100.0f)
-    )
-}
-
-@Composable
-fun EditProfilePicImage(modifier: Modifier = Modifier) {
-    RelayImage(
-        image = painterResource(R.drawable.perfil_propio_imagen_editar),
-        contentScale = ContentScale.Crop,
-        modifier = modifier
-            .requiredWidth(32.0.dp)
-            .requiredHeight(32.0.dp)
     )
 }
 
@@ -313,10 +346,12 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
  * @param editing `false` we play default text*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YourUserName(modifier: Modifier = Modifier,
-                 editing : Boolean = true,
-                 textValue:()->String,
-                 changeText : (String)->Unit) {
+fun YourUserName(
+    modifier: Modifier = Modifier,
+    editing: Boolean = true,
+    textValue: () -> String,
+    changeText: (String) -> Unit
+) {
 
     if (editing)
         OutlinedTextField(
@@ -355,7 +390,6 @@ fun YourUserName(modifier: Modifier = Modifier,
                     shape = RoundedCornerShape(10)
                 )
         )
-
     else
         Label(
             modifier = modifier.requiredWidth(94.0.dp),
@@ -365,11 +399,63 @@ fun YourUserName(modifier: Modifier = Modifier,
 
 
 /**pass-by function to call a [Label], not much to see (logic-wise)*/
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YourPostsLabel(modifier: Modifier = Modifier) {
-    Label(
-        modifier = modifier.requiredWidth(186.0.dp),
-        variation = Variation.YourPosts
+fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> Unit) {
+    SingleChoiceSegmentedButtonRow(
+        modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        SegmentedButton(
+            selected = state,
+            onClick = onClick,
+            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+            colors = colors()
+        ) {
+            Text(
+                text = "Publicaciones",
+                style = TextStyle(color = if (state) Color.Black else Color.White)
+            )
+        }
+        SegmentedButton(
+            selected = !state,
+            onClick = onClick,
+            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+            colors = colors()
+        ) {
+            Text(
+                text = "Mascotas",
+                style = TextStyle(color = if (!state) Color.Black else Color.White)
+            )
+
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun colors(): SegmentedButtonColors {
+    return SegmentedButtonDefaults.colors(
+        activeContainerColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        activeBorderColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        inactiveBorderColor = Color(
+            alpha = 255,
+            red = 224,
+            green = 164,
+            blue = 0
+        ),
+        activeContentColor = Color.Black
     )
 }
 

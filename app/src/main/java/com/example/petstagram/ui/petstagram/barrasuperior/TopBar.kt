@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ui.petstagram.accesoaperfil.AccesoAperfil
 import com.example.petstagram.atras.Atras
+import com.example.petstagram.ui.theme.Primary
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -90,12 +91,7 @@ fun TopLevelVarianteSimple(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         padding = PaddingValues(
             start = 0.0.dp,
             top = 0.0.dp,
@@ -180,12 +176,7 @@ fun TopLevelVarianteConMenu(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         itemSpacing = 8.0,
         clipToParent = false,
         radius = 6.0,
