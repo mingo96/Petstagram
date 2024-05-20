@@ -239,7 +239,7 @@ fun TopPostLimit(
             FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
             ProfileName(
                 added = added.creatorUser!!.userName, modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp).clickable { controller?.enterProfile(added.creatorUser!!.id) }
             )
             if (added.pet.isNotBlank() && added.uiPet != null) {
                 ProfileName(

@@ -343,7 +343,7 @@ fun YourUserName(
     modifier: Modifier = Modifier,
     editing: Boolean = true,
     textValue: () -> String,
-    changeText: (String) -> Unit
+    changeText: (String) -> Unit = {}
 ) {
 
     if (editing)

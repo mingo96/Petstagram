@@ -2,20 +2,16 @@ package com.example.petstagram.Controllers
 
 import android.content.Context
 import android.os.Environment
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
-import com.example.petstagram.UiData.Comment
+import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Like
-import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
-import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
@@ -26,6 +22,10 @@ interface PostsUIController:CommentsUIController {
     val isLoading : LiveData<Boolean>
 
     val optionsClicked : LiveData<UIPost?>
+
+    var navController: NavHostController
+
+    var selectedProfile : String
 
     val funnyAhhString : StateFlow<String>
 
@@ -128,5 +128,8 @@ interface PostsUIController:CommentsUIController {
 
     fun clearOptions()
 
-
+    fun enterProfile(id: String) {
+        selectedProfile = id
+        navController.navigate("perfilAjeno")
+    }
 }

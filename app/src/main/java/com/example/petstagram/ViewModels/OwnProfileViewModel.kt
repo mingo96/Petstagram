@@ -42,7 +42,7 @@ class OwnProfileViewModel : GeneralController(){
 
     val offset : StateFlow<Dp> = _offset
 
-    var isMoving by mutableStateOf(false)
+    private var isMoving by mutableStateOf(false)
 
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
 

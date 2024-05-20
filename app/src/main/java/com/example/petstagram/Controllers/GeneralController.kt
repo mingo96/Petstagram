@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.UIComment
@@ -70,6 +71,9 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override var commentContent: LiveData<String> = _commentContent
 
+    override var selectedProfile: String=""
+
+    override lateinit var navController: NavHostController
 
     override fun startRollingDots(){
         viewModelScope.launch {
