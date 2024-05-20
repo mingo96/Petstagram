@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.media3.common.MediaItem
 import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
@@ -110,7 +113,7 @@ fun NewPostScreen(
 
     if (isSendingInfo == true)
         Dialog(onDismissRequest = {}) {
-            CircularProgressIndicator(
+            LinearProgressIndicator(
                 modifier.fillMaxWidth(0.7f),
                 color = Color.Green
             )
@@ -140,7 +143,6 @@ fun NewPostScreen(
 
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(36.dp),
                     modifier = Modifier.fillMaxHeight()
                 ) {
 
@@ -156,17 +158,22 @@ fun NewPostScreen(
                                         blue = 35
                                     )
                                 )
-                                .padding(vertical = 16.dp)
                                 .wrapContentHeight()
                                 .fillMaxWidth()
                         ) {
 
-                            CuadroInfoInstance(post = viewModel.newPost)
+                            CuadroInfoInstance(post = viewModel.newPost,
+                                modifier = Modifier.zIndex(1F)
+                            )
                             if (getMimeType(context, uriObserver!!)?.startsWith("video") == true) {
                                 val source = remember {
                                     MediaItem.fromUri(uriObserver!!)
                                 }
-                                DisplayVideoFromSource(source = source, modifier = modifier)
+                                DisplayVideoFromSource(source = source,
+                                    onDoubleTap = {
+                                        sourceSelecter.launch("*/*")
+                                                  },
+                                    modifier = modifier)
                             } else if (getMimeType(
                                     context,
                                     uriObserver!!
@@ -213,7 +220,7 @@ fun NewPostScreen(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(32.dp),
-                            modifier = Modifier.padding(bottom = 32.dp)
+                            modifier = Modifier.padding(vertical = 32.dp)
                         ) {
 
                             TitleTextInput(

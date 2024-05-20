@@ -89,11 +89,11 @@ class MainActivity : ComponentActivity() {
         val savedPostsViewModel : SavedPostsViewModel by viewModels()
         val petCreationViewModel : PetCreationViewModel by viewModels()
 
-
         postsViewModel.base = dataFetchViewModel
         ownProfileViewModel.base = dataFetchViewModel
         savedPostsViewModel.base = dataFetchViewModel
         publishViewModel.base = dataFetchViewModel
+        petCreationViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -176,7 +176,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("añadirMascota", enterTransition = { onEnter }, exitTransition = {onExit}){
 
-                            petCreationViewModel.base = dataFetchViewModel
+                            lastStep= route
+                            petCreationViewModel.selectedCategory = publishViewModel.category
                             PetCreation(viewModel = petCreationViewModel, navController = navController)
                         }
                         composable("guardadas", enterTransition = { onEnter }, exitTransition = {onExit}){
@@ -189,8 +190,11 @@ class MainActivity : ComponentActivity() {
 
                 }
             }
+
         }
+
     }
+
 
     private fun askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)

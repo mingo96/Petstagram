@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
@@ -78,9 +79,10 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
     TopLevel(modifier = modifier) {
 
-        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post, controller = controller)
+        CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f).zIndex(1F), post = post, controller = controller)
 
         PostSource(modifier = Modifier
+            .zIndex(0F)
             .rowWeight(1.0f)
             .heightIn(0.dp,400.dp)
             .combinedClickable(
@@ -195,7 +197,7 @@ fun PostSource(modifier: Modifier = Modifier,
         }
         "video" -> {
             if (post.mediaItem != MediaItem.EMPTY)
-                DisplayVideoFromSource(source = post.mediaItem, modifier = modifier, onLike = {
+                DisplayVideoFromSource(source = post.mediaItem, modifier = modifier, onDoubleTap = {
                     controller?.likeOnPost(post)
                     likes!!.value = post.likes.size
                 },

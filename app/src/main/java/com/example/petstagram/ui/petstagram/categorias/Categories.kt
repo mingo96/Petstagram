@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -37,7 +36,7 @@ fun Categories(
     navController: NavHostController,
     categoryViewModel: CategoriesViewModel
 ) {
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         categoryViewModel.fetchCategories()
     }
     BoxWithConstraints {
@@ -51,13 +50,14 @@ fun Categories(
                 .wrapContentHeight(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(categories) {category->
+            items(categories) { category ->
 
                 CategoryInstance(
                     Modifier.width(width),
                     navController = navController,
                     category = category,
-                    viewModel = categoryViewModel)
+                    viewModel = categoryViewModel
+                )
             }
         }
 
@@ -65,19 +65,32 @@ fun Categories(
 }
 
 @Composable
-fun CategoryList(modifier : Modifier,onSelect : (Category)->Unit, categoryList: List<Category>){
+fun CategoryList(
+    modifier: Modifier,
+    onSelect: (Category) -> Unit,
+    categoryList: List<Category>,
+    selected: Category?
+) {
     BoxWithConstraints(modifier = modifier) {
         val width = maxWidth
 
-        LazyColumn(modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .background(
-                Secondary
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)){
-            items(categoryList){category->
-                ListedCategory(modifier = Modifier.width(width), category = category, onSelected = { onSelect(category) })
+        LazyColumn(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .background(
+                    Secondary
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(categoryList) { category ->
+
+                ListedCategory(
+                    modifier = Modifier.width(width),
+                    category = category,
+                    onSelected = { onSelect(category) },
+                    selected = (selected != null && selected.name == category.name)
+                )
             }
         }
 
@@ -92,7 +105,12 @@ fun CategoryInstance(
     category: Category,
     viewModel: CategoriesViewModel
 ) {
-    Category(modifier = modifier, navController = navController, category = category, viewModel = viewModel)
+    Category(
+        modifier = modifier,
+        navController = navController,
+        category = category,
+        viewModel = viewModel
+    )
 }
 
 @Composable

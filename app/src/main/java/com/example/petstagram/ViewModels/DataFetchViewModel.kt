@@ -339,9 +339,9 @@ class DataFetchViewModel : ViewModel() {
     /**given a JSON, saves its [Post] info and its url*/
     private fun bootUpPost(postJson: DocumentSnapshot) {
 
-        if (postJson.id in ids) return;
-
         val castedPost = postJson.toObject(UIPost::class.java)!!
+
+        if (castedPost.id in ids || castedPost.id.isBlank() || castedPost.category == null) return;
 
         loadSaved(castedPost)
 
@@ -354,8 +354,6 @@ class DataFetchViewModel : ViewModel() {
 
 
         try {
-            if (castedPost.id.isBlank() || castedPost.category == null)
-                throw Exception("error de datos")
 
             val destination = File.createTempFile(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg")
 

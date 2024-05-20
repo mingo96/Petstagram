@@ -10,6 +10,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.petstagram.R
+import com.example.petstagram.ui.theme.Primary
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
@@ -109,12 +110,7 @@ fun TopLevelGuardarPulsadoSi(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        backgroundColor = Primary,
         isStructured = false,
         radius = 4.5,
         content = content,

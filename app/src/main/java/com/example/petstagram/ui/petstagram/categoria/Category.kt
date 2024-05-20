@@ -78,9 +78,14 @@ fun Category(
 }
 
 @Composable
-fun ListedCategory(modifier: Modifier, category: Category, onSelected : ()->Unit = {}){
+fun ListedCategory(
+    modifier: Modifier,
+    category: Category,
+    onSelected: () -> Unit = {},
+    selected: Boolean
+){
 
-    TopLevel(modifier.clickable { onSelected() }) {
+    TopLevel(modifier.clickable { onSelected() }, selected = selected) {
         ImageContainer(modifier = Modifier.rowWeight(1.0f)) {
             SubcomposeAsyncImage(
                 model = category.categoryImage,
@@ -96,7 +101,7 @@ fun ListedCategory(modifier: Modifier, category: Category, onSelected : ()->Unit
             .requiredWidth(40.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center){
-            CategoryName(texto = category.name)
+            CategoryName(texto = category.name, selected = selected)
         }
     }
 
@@ -104,12 +109,12 @@ fun ListedCategory(modifier: Modifier, category: Category, onSelected : ()->Unit
 
 
 @Composable
-fun CategoryName(modifier: Modifier = Modifier, texto: String) {
+fun CategoryName(modifier: Modifier = Modifier, texto: String, selected: Boolean) {
     RelayText(
         content = texto.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
         fontSize = 20.0.sp,
         fontFamily = inter,
-        color = Color.White,
+        color = if(selected) Color.Black else Color.White,
         height = 1.2102272033691406.em,
         fontWeight = FontWeight(800.0.toInt()),
         overflow = TextOverflow.Ellipsis,
@@ -270,15 +275,11 @@ fun Buttons(
 @Composable
 fun TopLevel(
     modifier: Modifier = Modifier,
+    selected : Boolean = false,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 0,
-            green = 0,
-            blue = 0
-        ),
+        backgroundColor = if (!selected) Color.Black else Primary,
         arrangement = RelayContainerArrangement.Column,
         padding = PaddingValues(all = 16.0.dp),
         itemSpacing = 8.0,

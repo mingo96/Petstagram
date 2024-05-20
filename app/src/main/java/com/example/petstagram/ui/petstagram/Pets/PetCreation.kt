@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.R
@@ -65,6 +67,7 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
     val resource by viewModel.resource.observeAsState()
 
     val thisContext =(LocalContext.current)
+
     /**external activity that returns the local uri of the file the user selects*/
     val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
         if(uri != null&&uri != Uri.EMPTY) {
@@ -74,6 +77,16 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
 
     LaunchedEffect(key1 = true){
         viewModel.startLoading()
+    }
+
+    if (viewModel.sending){
+        Dialog(onDismissRequest = {
+            Toast.makeText(thisContext, "Espera por favor, estamos registrando a ${viewModel.getPetName()}", Toast.LENGTH_SHORT).show()
+        }) {
+            val dots by viewModel.dots.collectAsState()
+            Text(text = "Enviando$dots")
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+        }
     }
 
     BoxWithConstraints {
@@ -98,8 +111,8 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                 Send(
                     Modifier
                         .clickable {
-                            viewModel.send(context = context){
-                                navController.navigate("perfilPropio")
+                            viewModel.send(context = context) {
+                                navController.navigateUp()
                             }
                         }
                         .fillMaxHeight()
@@ -142,7 +155,8 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
             SelectCategoryTexts(modifier = Modifier.height(height.times(0.11f)))
 
             CategoryList(onSelect = {viewModel.setCategory(it)}, categoryList = categories,
-                modifier = Modifier.height(height.times(0.42f)))
+                modifier = Modifier.height(height.times(0.42f)),
+                selected = viewModel.selectedCategory)
 
         }
     }

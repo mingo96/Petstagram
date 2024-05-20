@@ -39,17 +39,11 @@ fun PetList(modifier:Modifier= Modifier,
 
     PetListContainer (modifier){
 
-        IntersectLine(
-            Modifier
-                .fillMaxWidth(0.9f)
-                .height(8.dp)
-                .padding(top = 16.dp))
-
         if (onNewPet != null) {
             BotonMas(modifier = Modifier
                 .clickable {
                     onNewPet()
-                }) {
+                }.padding(top = 16.dp)) {
                 CuadroSumar(
                     modifier = Modifier
                         .rowWeight(1.0f)

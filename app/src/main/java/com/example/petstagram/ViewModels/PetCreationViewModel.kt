@@ -18,7 +18,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PetCreationViewModel : ViewModel() {
@@ -31,9 +33,6 @@ class PetCreationViewModel : ViewModel() {
 
     private val db = Firebase.firestore
 
-    private val _loading = MutableLiveData(true)
-
-    val loading: LiveData<Boolean> = _loading
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
@@ -45,13 +44,19 @@ class PetCreationViewModel : ViewModel() {
 
     private val storageRef = Firebase.storage.reference
 
-    private var finished by mutableStateOf(false)
+    var sending by mutableStateOf(false)
+        private set
+
+    private val _dots = MutableStateFlow("")
+
+    val dots :StateFlow<String> = _dots
+
+    var selectedCategory : Category? by mutableStateOf(null)
 
     fun startLoading() {
 
         viewModelScope.launch {
-            finished = false
-            _loading.value = true
+            sending = false
 
             base.categories()
 
@@ -63,7 +68,21 @@ class PetCreationViewModel : ViewModel() {
 
             _categories.value += newRound - _categories.value.toSet()
 
-            _loading.value = false
+            _dots.stateIn(
+                viewModelScope,
+                started = SharingStarted.WhileSubscribed(10000),
+                0
+            )
+                .collect{
+                    _dots.value = when(_dots.value){
+                        "."->".."
+                        ".."->"..."
+                        "..."->""
+                        else ->"."
+                    }
+                    delay(500)
+
+                }
         }
 
     }
@@ -78,6 +97,7 @@ class PetCreationViewModel : ViewModel() {
     }
 
     fun setCategory(newCategory: Category) {
+        selectedCategory = newCategory
         pet.category = newCategory
     }
 
@@ -85,6 +105,8 @@ class PetCreationViewModel : ViewModel() {
 
         if (validate()) {
             try {
+
+                sending = true
                 pet.owner = base.id
 
                 db.collection("Pets").add(pet).addOnSuccessListener {
@@ -101,7 +123,7 @@ class PetCreationViewModel : ViewModel() {
                                             Pair("profilePic", pet.profilePic)
                                         )
                                     )
-                                finished = true
+                                sending = false
                                 onSuccess()
 
                             }
@@ -114,7 +136,11 @@ class PetCreationViewModel : ViewModel() {
 
         }else{
             Toast.makeText(context,"Revisa la informacion dada", Toast.LENGTH_SHORT).show()
+
+            sending = false
         }
+        pet = Pet()
+        _resource.value = Uri.EMPTY
 
     }
 

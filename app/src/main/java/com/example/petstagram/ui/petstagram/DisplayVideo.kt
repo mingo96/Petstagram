@@ -2,8 +2,6 @@ package com.example.petstagram.ui.petstagram
 
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.widget.MediaController
-import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -14,14 +12,11 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,10 +36,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import com.example.petstagram.Controllers.PostsUIController
 
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
@@ -107,7 +100,7 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
 @OptIn(UnstableApi::class) @Composable
 fun DisplayVideoFromSource(source: MediaItem,
                            modifier: Modifier,
-                           onLike :()->Unit = {},
+                           onDoubleTap :()->Unit = {},
                            isVisible : Boolean = true,
                            uri: Uri = Uri.EMPTY) {
 
@@ -148,10 +141,11 @@ fun DisplayVideoFromSource(source: MediaItem,
                         PlayerView(ctx).apply {
                             useController = false
                             player = mediaPlayer
-                            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+
                         }
                     },
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .combinedClickable(
                             enabled = true,
@@ -159,13 +153,14 @@ fun DisplayVideoFromSource(source: MediaItem,
                                 mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                             },
                             onDoubleClick = {
-                                onLike.invoke()
+                                onDoubleTap.invoke()
                             }
                         )
                         .background(Color.Gray)
                 )
             }
             AnimatedVisibility(visible = !isVisible, exit = fadeOut(animationSpec = tween(1000)), enter = EnterTransition.None){
+                mediaPlayer.pause()
 
                 val retriever = MediaMetadataRetriever()
                 retriever.setDataSource(context,uri )
@@ -173,7 +168,7 @@ fun DisplayVideoFromSource(source: MediaItem,
                     mutableStateOf(retriever.getFrameAtIndex(1))
                 }
 
-                Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "primer frame", contentScale = ContentScale.Crop, modifier = modifier.fillMaxWidth())
+                Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "primer frame", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth())
 
             }
         }

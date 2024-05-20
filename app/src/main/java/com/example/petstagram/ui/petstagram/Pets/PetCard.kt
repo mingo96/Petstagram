@@ -119,14 +119,14 @@ fun NameContainer(
         crossAxisAlignment = CrossAxisAlignment.Center,
         arrangement = RelayContainerArrangement.Column,
         content = content,
-        radius = 10.0,
+        radius = 5.0,
         modifier = modifier
             .wrapContentHeight()
             .wrapContentWidth()
             .border(
                 width = 1.0.dp,
                 color = Color.Gray,
-                shape = RoundedCornerShape(40)
+                shape = RoundedCornerShape(20)
             )
     )
 }
