@@ -103,9 +103,9 @@ fun NewPostScreen(
 
         if (viewModel.petsDisplayed) viewModel.togglePetsVisibility()
         else
-        if (isSendingInfo == false) {
-            navController.navigateUp()
-        }
+            if (isSendingInfo == false) {
+                navController.navigateUp()
+            }
     }
 
     if (isSendingInfo == true)
@@ -118,7 +118,7 @@ fun NewPostScreen(
         }
 
 
-    BoxWithConstraints (contentAlignment = Alignment.BottomCenter){
+    BoxWithConstraints(contentAlignment = Alignment.BottomCenter) {
         val height = maxHeight
         TopLevel(modifier = modifier) {
 
@@ -173,12 +173,19 @@ fun NewPostScreen(
                                 )?.startsWith("image") == true
                             ) {
                                 SubcomposeAsyncImage(
-                                    modifier = modifier.fillMaxWidth(),
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            sourceSelecter.launch("*/*")
+                                        },
                                     model = uriObserver,
-                                    loading = { CircularProgressIndicator(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .height(400.dp))},
+                                    loading = {
+                                        CircularProgressIndicator(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(400.dp)
+                                        )
+                                    },
                                     contentDescription = "imagen",
                                     contentScale = ContentScale.Crop
                                 )
@@ -237,17 +244,21 @@ fun NewPostScreen(
                     .height(height.times(0.09f))
             )
         }
-        AnimatedVisibility(visible = viewModel.petsDisplayed, enter = expandVertically{it}+slideInVertically{it}, exit = shrinkVertically{it}+slideOutVertically{it}) {
+        AnimatedVisibility(
+            visible = viewModel.petsDisplayed,
+            enter = expandVertically { it } + slideInVertically { it },
+            exit = shrinkVertically { it } + slideOutVertically { it }) {
 
-            PetList(pets = pets,
+            PetList(
+                pets = pets,
                 onSelect = {
                     viewModel.selectPet(it)
                     viewModel.togglePetsVisibility()
-                           },
+                },
                 onNewPet = { navController.navigate("añadirMascota") },
                 selected = viewModel.selectedPet,
                 modifier = Modifier.fillMaxHeight(0.7f)
-                )
+            )
         }
     }
 

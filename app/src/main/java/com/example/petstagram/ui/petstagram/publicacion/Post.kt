@@ -5,6 +5,8 @@ package com.example.petstagram.publicacion
 import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,6 +15,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -77,9 +80,9 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
 
         CuadroInfoInstance(modifier = Modifier.rowWeight(1.0f), post = post, controller = controller)
 
-
         PostSource(modifier = Modifier
             .rowWeight(1.0f)
+            .heightIn(0.dp,400.dp)
             .combinedClickable(
                 enabled = true,
                 onDoubleClick = {
@@ -125,10 +128,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
                 //animations
                 AnimatedVisibility(
                     visible = commentsDisplayed && animationDisplayer,
-                    enter = slideInVertically {
-                        it
-                    },
-                    exit = slideOutVertically { it }
+                    enter = expandVertically { it } + slideInVertically { it },
+                    exit = shrinkVertically { it } + slideOutVertically { it }
                 ) {
                     //align bottom
 

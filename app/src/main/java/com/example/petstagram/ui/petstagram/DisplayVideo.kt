@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -125,7 +126,7 @@ fun DisplayVideoFromSource(source: MediaItem,
     LaunchedEffect(source) {
         mediaPlayer.setMediaItem(source)
         mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
-        mediaPlayer.trackSelectionParameters = mediaPlayer.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 500).build()
+        mediaPlayer.trackSelectionParameters = mediaPlayer.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 400).build()
         mediaPlayer.prepare()
     }
 
@@ -139,7 +140,7 @@ fun DisplayVideoFromSource(source: MediaItem,
     }
 
     if(!loading) {
-        Box{
+        Box(modifier){
 
             AnimatedVisibility (visible = isVisible, exit = fadeOut(animationSpec = tween(1000)), enter = EnterTransition.None) {
                 AndroidView(
@@ -152,7 +153,6 @@ fun DisplayVideoFromSource(source: MediaItem,
                     },
                     modifier = modifier
                         .fillMaxWidth()
-                        .fillMaxHeight()
                         .combinedClickable(
                             enabled = true,
                             onClick = {
@@ -173,7 +173,7 @@ fun DisplayVideoFromSource(source: MediaItem,
                     mutableStateOf(retriever.getFrameAtIndex(1))
                 }
 
-                Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "primer frame", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth())
+                Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "primer frame", contentScale = ContentScale.Crop, modifier = modifier.fillMaxWidth())
 
             }
         }

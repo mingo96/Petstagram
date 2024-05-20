@@ -87,11 +87,13 @@ fun PostDownBar(
             PostTitle(title = "${added.creatorUser!!.userName}: ${added.title}")
         }
         IntersectLine(modifier = Modifier)
-        Row (horizontalArrangement = Arrangement.SpaceBetween,
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)){
+                .padding(8.dp)
+        ) {
             Box()
             {
                 this@Row.AnimatedVisibility(
@@ -116,7 +118,10 @@ fun PostDownBar(
                     }, added.liked)
                 }
             }
-            Text(text = "Likes : ${(likesCount!!).quantity()}", style = TextStyle(color = Color.White))
+            Text(
+                text = "Likes : ${(likesCount!!).quantity()}",
+                style = TextStyle(color = Color.White)
+            )
             BotonSeccionComentariosVariacionInferior {
                 TextoBotonComentariosVariacionInferior(modifier = Modifier
                     .rowWeight(1.0f)
@@ -125,12 +130,12 @@ fun PostDownBar(
             }
             Box {
                 this@Row.AnimatedVisibility(
-                    visible = isSaved== SavePressed.No,
+                    visible = isSaved == SavePressed.No,
                     enter = onEnter,
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(controller?.saveClicked(added) == true)
+                        if (controller?.saveClicked(added) == true)
                             saved.value = SavePressed.Si
                         else
                             saved.value = SavePressed.No
@@ -142,7 +147,7 @@ fun PostDownBar(
                     exit = ExitTransition.None
                 ) {
                     SaveIcon(Modifier.clickable {
-                        if(controller?.saveClicked(added) == true)
+                        if (controller?.saveClicked(added) == true)
                             saved.value = SavePressed.No
                         else
                             saved.value = SavePressed.Si
@@ -157,7 +162,7 @@ fun PostDownBar(
 }
 
 @Composable
-fun DeadPostDownBar(creatorUser : Profile, title : String){
+fun DeadPostDownBar(creatorUser: Profile, title: String) {
     Container {
 
         TitleContainer {
@@ -172,12 +177,15 @@ fun DeadPostDownBar(creatorUser : Profile, title : String){
                         y = (-1.0).dp
                     )
                 )
-                .rowWeight(1.0f))
-        Row (horizontalArrangement = Arrangement.SpaceBetween,
+                .rowWeight(1.0f)
+        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)){
+                .padding(8.dp)
+        ) {
 
             LikePulsadoFalse(Modifier.clickable {
             }, Pressed.False)
@@ -200,17 +208,18 @@ fun DeadPostDownBar(creatorUser : Profile, title : String){
 }
 
 /**returns the amount as a string but if more than 3 0's, in thousands, if more than 6 0's, millions*/
-fun Int.quantity(): String{
+fun Int.quantity(): String {
 
     var spare = this.toString()
     var times = 0
-    while (spare.length>4){
-        when(times){
-            0->{
-                spare = spare.substring(0..spare.length-4)+"k"
+    while (spare.length > 4) {
+        when (times) {
+            0 -> {
+                spare = spare.substring(0..spare.length - 4) + "k"
             }
-            1->{
-                spare = spare.substring(0..spare.length-5)+"m"
+
+            1 -> {
+                spare = spare.substring(0..spare.length - 5) + "m"
             }
         }
         times++
@@ -220,10 +229,31 @@ fun Int.quantity(): String{
 }
 
 @Composable
-fun TopPostLimit(modifier : Modifier = Modifier, added : UIPost, controller: PostsUIController? = null){
+fun TopPostLimit(
+    modifier: Modifier = Modifier,
+    added: UIPost,
+    controller: PostsUIController? = null
+) {
     TopLevelVariacionSuperior(modifier = modifier) {
-        FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
-        ProfileName(added = added.creatorUser!!.userName)
+        Row(Modifier.fillMaxWidth(0.9f)) {
+            FotoPerfilSizePeque(picture = added.creatorUser!!.profilePic)
+            ProfileName(
+                added = added.creatorUser!!.userName, modifier = Modifier
+                    .padding(start = 8.dp)
+            )
+            if (added.pet.isNotBlank() && added.uiPet != null) {
+                ProfileName(
+                    added = "+", modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+                FotoPerfilSizePeque(picture = added.uiPet!!.profilePic)
+                ProfileName(
+                    added = added.uiPet!!.name, modifier = Modifier
+                        .padding(start = 8.dp)
+                )
+            }
+
+        }
         //guardar, reportar
         OpcionesOpciones(modifier.clickable {
             controller?.optionsClicked(post = added)
@@ -233,10 +263,12 @@ fun TopPostLimit(modifier : Modifier = Modifier, added : UIPost, controller: Pos
 
 @Composable
 fun FotoPerfilSizePeque(modifier: Modifier = Modifier, picture: String) {
-    FotoPerfilBase(modifier = modifier
-        .requiredWidth(32.dp)
-        .requiredHeight(32.0.dp),
-        added = picture)
+    FotoPerfilBase(
+        modifier = modifier
+            .requiredWidth(32.dp)
+            .requiredHeight(32.0.dp),
+        added = picture
+    )
 }
 
 
@@ -259,9 +291,13 @@ fun IntersectLine(modifier: Modifier = Modifier) {
     Box(
         modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)){
+            .padding(horizontal = 8.dp)
+    ) {
 
-        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cuadro_info_line_1), contentDescription = "linea")
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.cuadro_info_line_1),
+            contentDescription = "linea"
+        )
     }
 
 }
@@ -278,9 +314,7 @@ fun ProfileName(modifier: Modifier = Modifier, added: String) {
         fontWeight = FontWeight(700.0.toInt()),
         maxLines = -1,
         modifier = modifier
-            .fillMaxWidth(0.9f)
             .requiredHeight(32.0.dp)
-            .padding(horizontal = 8.dp)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = true
@@ -290,9 +324,11 @@ fun ProfileName(modifier: Modifier = Modifier, added: String) {
 
 @Composable
 fun OpcionesOpciones(modifier: Modifier = Modifier) {
-    Opciones(modifier = modifier
-        .requiredWidth(16.0.dp)
-        .requiredHeight(32.0.dp))
+    Opciones(
+        modifier = modifier
+            .requiredWidth(16.0.dp)
+            .requiredHeight(32.0.dp)
+    )
 }
 
 @Composable
@@ -307,7 +343,7 @@ fun TopLevelVariacionSuperior(
             green = 0,
             blue = 0
         ),
-        mainAxisAlignment = MainAxisAlignment.SpaceBetween,
+        mainAxisAlignment = MainAxisAlignment.SpaceAround,
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(all = 8.0.dp),
         strokeWidth = 1.0,
@@ -326,9 +362,11 @@ fun TopLevelVariacionSuperior(
 
 @Composable
 fun LikePulsadoFalse(modifier: Modifier = Modifier, pressed: Pressed) {
-    Like(modifier = modifier
-        .requiredWidth(32.0.dp)
-        .requiredHeight(32.0.dp), pressed = pressed)
+    Like(
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp), pressed = pressed
+    )
 }
 
 @Composable
@@ -387,11 +425,13 @@ fun BotonSeccionComentariosVariacionInferior(
 }
 
 @Composable
-fun SaveIcon(modifier: Modifier = Modifier, variation : SavePressed) {
-    Guardar(modifier = modifier
-        .requiredWidth(32.0.dp)
-        .requiredHeight(32.0.dp),
-        savePressed = variation)
+fun SaveIcon(modifier: Modifier = Modifier, variation: SavePressed) {
+    Guardar(
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp),
+        savePressed = variation
+    )
 }
 
 @Composable

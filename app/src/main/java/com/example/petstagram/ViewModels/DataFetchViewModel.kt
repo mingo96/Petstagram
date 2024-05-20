@@ -27,6 +27,7 @@ import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
@@ -144,7 +145,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    fun updateReportScore(){
+    private fun updateReportScore(){
 
         db.collection("Reports").whereEqualTo("user", _selfProfile.value.id).get().addOnSuccessListener {
 
@@ -339,22 +340,35 @@ class DataFetchViewModel : ViewModel() {
     private fun bootUpPost(postJson: DocumentSnapshot) {
 
         if (postJson.id in ids) return;
+
         val castedPost = postJson.toObject(UIPost::class.java)!!
+
+        loadSaved(castedPost)
 
         if (castedPost.likes.any { it.userId==_selfProfile.value.id })
             castedPost.liked= Pressed.True
-        else
-            castedPost.liked = Pressed.False
 
-        loadSaved(castedPost, postJson)
+        if (castedPost.pet.isNotBlank()){
+            loadPet(castedPost)
+        }
 
-        val destination = File.createTempFile(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg")
 
-        storageRef.child("PostImages/${castedPost.id}").getFile(destination).addOnSuccessListener {
-            castedPost.UIURL = Uri.fromFile(destination)
+        try {
+            if (castedPost.id.isBlank() || castedPost.category == null)
+                throw Exception("error de datos")
 
-            if (castedPost.typeOfMedia == "video")
-                castedPost.mediaItem = MediaItem.fromUri(castedPost.UIURL)
+            val destination = File.createTempFile(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg")
+
+            storageRef.child("PostImages/${castedPost.id}").getFile(destination).addOnSuccessListener {
+                castedPost.UIURL = Uri.fromFile(destination)
+
+                if (castedPost.typeOfMedia == "video")
+                    castedPost.mediaItem = MediaItem.fromUri(castedPost.UIURL)
+            }
+
+        }catch (e:Exception){
+            //source doesnt exist
+            _posts.removeIf { it.id == castedPost.id }
         }
 
         ids += castedPost.id
@@ -363,7 +377,23 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
-    private fun loadSaved(castedPost: UIPost, postJson: DocumentSnapshot){
+    private fun loadPet(castedPost: UIPost) {
+
+        if (_pets.any{ it.id == castedPost.pet }){
+            castedPost.uiPet = _pets.find { it.id == castedPost.pet }
+        }else{
+            db.collection("Pets").document(castedPost.pet).get().addOnSuccessListener { doc ->
+                if (doc.exists() && doc.id !in _pets.map { it.id }){
+                    val addedPet = doc.toObject(Pet::class.java)!!
+                    _pets.add(addedPet)
+                    castedPost.uiPet = addedPet
+                }
+            }
+        }
+
+    }
+
+    private fun loadSaved(castedPost: UIPost){
 
         db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).whereArrayContains("postList", castedPost.id).get()
             .addOnSuccessListener {
@@ -372,7 +402,7 @@ class DataFetchViewModel : ViewModel() {
                 }
                 _posts+=castedPost
                 _posts = _posts.sortedBy { it.postedDate }.reversed().toMutableList()
-                ids+=postJson.id
+                ids+= castedPost.id
             }
     }
 

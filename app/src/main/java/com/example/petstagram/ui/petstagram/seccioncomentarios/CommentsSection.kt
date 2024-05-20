@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -32,6 +33,7 @@ import com.example.petstagram.Controllers.CommentsUIController
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.ui.petstagram.comentario.Comment
 import com.example.petstagram.ui.petstagram.comentario.CommentContent
+import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -278,14 +280,12 @@ fun TopLevel(
             .fillMaxHeight(1.0f)
 
             .border(
-                width = 4.0.dp,
-                color = Color(
-                    alpha = 255,
-                    red = 225,
-                    green = 196,
-                    blue = 1
+                width = 4.dp,
+                Brush.verticalGradient(
+                    0.7f to Secondary,
+                    1.0f to Color.Transparent
                 ),
-                shape = RoundedCornerShape(5, 5)
+                RoundedCornerShape(15.dp, 15.dp)
             )
     )
 }

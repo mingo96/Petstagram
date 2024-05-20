@@ -23,6 +23,7 @@ import com.example.petstagram.UiData.Pet
 import com.example.petstagram.cuadroinfo.IntersectLine
 import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
+import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -104,12 +105,7 @@ fun PetListContainer(
             .border(
                 width = 4.dp,
                 Brush.verticalGradient(
-                    0.0f to Color(
-                        alpha = 255,
-                        red = 225,
-                        green = 196,
-                        blue = 1
-                    ),
+                    0.7f to Secondary,
                     1.0f to Color.Transparent
                 ),
                 RoundedCornerShape(15.dp, 15.dp)

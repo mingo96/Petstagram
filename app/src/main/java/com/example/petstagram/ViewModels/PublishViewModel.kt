@@ -80,6 +80,8 @@ class PublishViewModel : ViewModel(){
 
     val text : StateFlow<String> = _text
 
+    private var ignoredPet = false
+
     /**changes [postTitle]
      * @param input new value for [postTitle]*/
     fun changeTitle(input:String){
@@ -96,6 +98,12 @@ class PublishViewModel : ViewModel(){
 
     /**posts a [Post] with the info we have (if it is valid)*/
     fun postPost(onSuccess : ()->Unit, context : Context){
+        if (!ignoredPet && newPost.pet.isBlank()){
+            togglePetsVisibility()
+            Toast.makeText(context,"No has seleccionado ninguna mascota, estás seguro?",Toast.LENGTH_SHORT).show()
+            ignoredPet = true
+            return
+        }
         //gotta make sure we dont get any document or strange file, atleast one has to be true
 
         val isVideo = getMimeType(context = context,_resource.value!!)?.startsWith("video/")
@@ -190,7 +198,13 @@ class PublishViewModel : ViewModel(){
     }
 
     fun selectPet(pet: Pet){
-        selectedPet = pet
+        if (pet != selectedPet) {
+            selectedPet = pet
+            newPost.pet = pet.id
+        }else{
+            selectedPet = null
+            newPost.pet = ""
+        }
     }
 
     private fun List<Pet>.ofThisCategory(): List<Pet> {

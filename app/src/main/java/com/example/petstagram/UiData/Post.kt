@@ -35,12 +35,14 @@ open class Post ()
     /***/
     var comments : MutableList<String> = mutableListOf()
     var reports : MutableList<Report> = mutableListOf()
+    var pet : String = ""
 
 }
 
 class UIPost: Post() {
     var liked = Pressed.False
     var saved = SavePressed.No
+    var uiPet : Pet? = null
     var UIURL : Uri by mutableStateOf(Uri.EMPTY)
     var mediaItem: MediaItem by mutableStateOf(MediaItem.EMPTY)
 
@@ -55,6 +57,7 @@ class UIPost: Post() {
             this.source = this@UIPost.source
             this.likes = this@UIPost.likes
             this.comments = this@UIPost.comments
+            this.pet = this@UIPost.pet
         }
     }
 
