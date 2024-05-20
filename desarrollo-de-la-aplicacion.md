@@ -41,6 +41,19 @@ Aquí finaliza el proyecto base
 5. Re-Implementación de gestión de comentarios de forma que sobrecargue menos el dispositivo y esté más organizado
 6. Implementación de interfaz de publicaciones guardadas
 7. Rediseño a base estable del display, gestión de carga y scroll de la interfaz&#x20;
+8. Implementación de página de publicaciones guardadas
+9. Implementación de botones de interacción con publicación
+   1. Botón de reporte
+   2. Botón de descarga
+10. Rediseño de la interfaz de publicar
+11. Optimización de acceso a recursos con archivos temporales
+12. Optimización final de uso de videos en interfaz
+13. Implementación de mascotas y su creación
+    1. Creación de clases y edición de otras para manejar esta
+    2. Diseño e implementación de interfaz de creación
+14. Rediseño interfaz de Perfil para mostrar mascotas
+15. Ligero rediseño de publicaciones para mostrar mascotas (nombre de mascota y su foto)
+16. Arreglo de publicaciones corruptas que rompen la app por no terminar de subirse
 
 ## Dificultades encontradas
 
