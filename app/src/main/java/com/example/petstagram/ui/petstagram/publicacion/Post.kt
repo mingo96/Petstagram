@@ -6,6 +6,8 @@ import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -84,7 +86,7 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
         PostSource(modifier = Modifier
             .zIndex(0F)
             .rowWeight(1.0f)
-            .heightIn(0.dp,400.dp)
+            .heightIn(0.dp,500.dp)
             .combinedClickable(
                 enabled = true,
                 onDoubleClick = {
@@ -130,8 +132,8 @@ fun Post(modifier: Modifier = Modifier, post: UIPost,
                 //animations
                 AnimatedVisibility(
                     visible = commentsDisplayed && animationDisplayer,
-                    enter = expandVertically { it } + slideInVertically { it },
-                    exit = shrinkVertically { it } + slideOutVertically { it }
+                    enter = fadeIn()+expandVertically { it } + slideInVertically { it },
+                    exit = fadeOut()+shrinkVertically { it } + slideOutVertically { it }
                 ) {
                     //align bottom
 
@@ -201,6 +203,7 @@ fun PostSource(modifier: Modifier = Modifier,
                     controller?.likeOnPost(post)
                     likes!!.value = post.likes.size
                 },
+                    onTap = {controller?.toggleStop()},
                     isVisible = isVisible,
                     uri = post.UIURL)
 

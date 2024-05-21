@@ -166,7 +166,6 @@ class MainActivity : ComponentActivity() {
                                 viewModel = postsViewModel
                             )
 
-
                         }
                         composable("publicar", enterTransition = { onEnter }, exitTransition = {onExit}){
                             publishViewModel.category = categoriesViewModel.selectedCategory

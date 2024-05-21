@@ -3,6 +3,9 @@ package com.example.petstagram.Controllers
 import android.content.Context
 import android.os.Environment
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Like
@@ -29,6 +32,7 @@ interface PostsUIController:CommentsUIController {
 
     val funnyAhhString : StateFlow<String>
 
+    val videoStopped :LiveData<Boolean>
     fun startRollingDots()
 
     fun scroll()
@@ -136,4 +140,6 @@ interface PostsUIController:CommentsUIController {
             navController.navigate("perfilPropio")
         }
     }
+
+    fun toggleStop()
 }

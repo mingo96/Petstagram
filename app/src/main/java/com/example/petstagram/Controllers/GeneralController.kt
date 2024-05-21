@@ -73,6 +73,10 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override lateinit var navController: NavHostController
 
+    private val _videoStopped = MutableLiveData(false)
+
+    override val videoStopped = _videoStopped
+
     override fun startRollingDots(){
         viewModelScope.launch {
 
@@ -138,6 +142,8 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     }
     fun stopLoading() {
         base.stopLoading()
+        _posts.value = emptyList()
+        _isLoading.value = false
         viewModelScope.coroutineContext.cancelChildren()
     }
 
@@ -150,5 +156,9 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override fun clearOptions() {
         _optionsClicked.value = null
+    }
+
+    override fun toggleStop() {
+        _videoStopped.value = !_videoStopped.value!!
     }
 }

@@ -126,6 +126,9 @@ class PetCreationViewModel : ViewModel() {
                                 sending = false
                                 onSuccess()
 
+                                pet = Pet()
+                                _resource.value = Uri.EMPTY
+                                sending = false
                             }
                         }
                 }
@@ -137,10 +140,7 @@ class PetCreationViewModel : ViewModel() {
         }else{
             Toast.makeText(context,"Revisa la informacion dada", Toast.LENGTH_SHORT).show()
 
-            sending = false
         }
-        pet = Pet()
-        _resource.value = Uri.EMPTY
 
     }
 

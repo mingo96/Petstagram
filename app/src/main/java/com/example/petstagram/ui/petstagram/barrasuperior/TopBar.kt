@@ -44,34 +44,41 @@ fun TopBar(
             AccesoAPerfilAccesoAPerfil(navController = navController)
             ImagenDeslizableVarianteSimple()
         }
+
         Variant.WithMenu ->
             BoxWithConstraints {
-            val altomax = maxHeight
-            TopLevelVarianteConMenu(modifier = modifier) {
-                AccesoAPerfilAccesoAPerfil(
-                    modifier = Modifier.height(altomax.times(0.65f)),
-                    navController = navController
-                )
-                IconosVarianteConMenu(modifier = Modifier.height(altomax.times(0.35f))) {
-                    ContenedorDeslizarVarianteConMenu(modifier = Modifier
-                        .rowWeight(1.0f)
-                        .columnWeight(1.0f)) {
-                        ImagenDeslizableVarianteConMenu()
-                    }
-                    ContenedorAtrasVarianteConMenu(modifier = Modifier.rowWeight(1.0f)) {
-                        AtrasAtras(Modifier.height(altomax.times(0.35f)).clickable { navController.navigateUp() })
+                val altomax = maxHeight
+                TopLevelVarianteConMenu(modifier = modifier) {
+                    AccesoAPerfilAccesoAPerfil(
+                        modifier = Modifier.height(altomax.times(0.65f)),
+                        navController = navController
+                    )
+                    IconosVarianteConMenu(modifier = Modifier.height(altomax.times(0.35f))) {
+                        ContenedorDeslizarVarianteConMenu(
+                            modifier = Modifier
+                                .rowWeight(1.0f)
+                                .columnWeight(1.0f)
+                        ) {
+                            ImagenDeslizableVarianteConMenu(Modifier
+                                .clickable { navController.navigate("categorias") })
+                        }
+                        ContenedorAtrasVarianteConMenu(modifier = Modifier.rowWeight(1.0f)) {
+                            AtrasAtras(
+                                Modifier
+                                    .height(altomax.times(0.35f))
+                                    .clickable { navController.navigateUp() })
+                        }
                     }
                 }
-            }
 
-        }
+            }
     }
 }
 
 
 @Composable
 fun AccesoAPerfilAccesoAPerfil(modifier: Modifier = Modifier, navController: NavHostController) {
-    AccesoAperfil(modifier = modifier.requiredWidth(360.0.dp),navController = navController)
+    AccesoAperfil(modifier = modifier.requiredWidth(360.0.dp), navController = navController)
 }
 
 @Composable
@@ -141,8 +148,10 @@ fun ContenedorDeslizarVarianteConMenu(
 
 @Composable
 fun AtrasAtras(modifier: Modifier = Modifier) {
-    Atras(modifier = modifier
-        .requiredWidth(56.0.dp))
+    Atras(
+        modifier = modifier
+            .requiredWidth(56.0.dp)
+    )
 }
 
 @Composable

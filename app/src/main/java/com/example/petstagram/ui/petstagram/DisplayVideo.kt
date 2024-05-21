@@ -12,6 +12,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -45,7 +46,7 @@ import androidx.media3.ui.PlayerView
 @kotlin.OptIn(ExperimentalFoundationApi::class)
 @OptIn(UnstableApi::class)
 @Composable
-fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
+fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike: () -> Unit = {}) {
 
     //when we get out it releases memory
     DisposableEffect(Unit) {
@@ -54,7 +55,7 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
         }
     }
     val context = LocalContext.current
-    val coso = remember{
+    val coso = remember {
         PlayerView(context).apply {
             player = source
             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
@@ -63,7 +64,10 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
         }
     }
 
-    AnimatedVisibility(visible = !source.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
+    AnimatedVisibility(
+        visible = !source.isLoading,
+        enter = expandVertically { it },
+        exit = shrinkVertically { it }) {
         AndroidView(
             factory = {
                 coso
@@ -84,12 +88,16 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
         )
     }
 
-    AnimatedVisibility(visible = source.isLoading, enter = expandVertically { it }, exit = shrinkVertically { it }) {
+    AnimatedVisibility(
+        visible = source.isLoading,
+        enter = expandVertically { it },
+        exit = shrinkVertically { it }) {
         CircularProgressIndicator(
             modifier
                 .fillMaxWidth()
                 .height(500.dp)
-                .background(Color.Black))
+                .background(Color.Black)
+        )
     }
 }
 
@@ -97,12 +105,16 @@ fun DisplayVideo(source: ExoPlayer, modifier: Modifier, onLike :()->Unit = {}) {
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
 @kotlin.OptIn(ExperimentalFoundationApi::class)
-@OptIn(UnstableApi::class) @Composable
-fun DisplayVideoFromSource(source: MediaItem,
-                           modifier: Modifier,
-                           onDoubleTap :()->Unit = {},
-                           isVisible : Boolean = true,
-                           uri: Uri = Uri.EMPTY) {
+@OptIn(UnstableApi::class)
+@Composable
+fun DisplayVideoFromSource(
+    source: MediaItem,
+    modifier: Modifier,
+    onDoubleTap: () -> Unit = {},
+    onTap: () -> Unit = {},
+    isVisible: Boolean = true,
+    uri: Uri = Uri.EMPTY
+) {
 
     val context = LocalContext.current
     //main controller
@@ -119,7 +131,9 @@ fun DisplayVideoFromSource(source: MediaItem,
     LaunchedEffect(source) {
         mediaPlayer.setMediaItem(source)
         mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
-        mediaPlayer.trackSelectionParameters = mediaPlayer.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60).setMaxVideoSize(500, 400).build()
+        mediaPlayer.trackSelectionParameters =
+            mediaPlayer.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60)
+                .setMaxVideoSize(500, 400).build()
         mediaPlayer.prepare()
     }
 
@@ -132,17 +146,22 @@ fun DisplayVideoFromSource(source: MediaItem,
         }
     }
 
-    if(!loading) {
-        Box(modifier){
+    if (!loading) {
+        Box(modifier) {
 
-            AnimatedVisibility (visible = isVisible, exit = fadeOut(animationSpec = tween(1000)), enter = EnterTransition.None) {
+            AnimatedVisibility(
+                visible = isVisible,
+                exit = fadeOut(animationSpec = tween(1000)),
+                enter = EnterTransition.None
+            ) {
+                mediaPlayer.playWhenReady = true
+
                 AndroidView(
                     factory = { ctx ->
                         PlayerView(ctx).apply {
                             useController = false
                             player = mediaPlayer
                             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
-
                         }
                     },
                     modifier = Modifier
@@ -150,6 +169,7 @@ fun DisplayVideoFromSource(source: MediaItem,
                         .combinedClickable(
                             enabled = true,
                             onClick = {
+                                onTap()
                                 mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                             },
                             onDoubleClick = {
@@ -159,24 +179,36 @@ fun DisplayVideoFromSource(source: MediaItem,
                         .background(Color.Gray)
                 )
             }
-            AnimatedVisibility(visible = !isVisible, exit = fadeOut(animationSpec = tween(1000)), enter = EnterTransition.None){
+            AnimatedVisibility(
+                visible = !isVisible,
+                exit = fadeOut(animationSpec = tween(1000)),
+                enter = EnterTransition.None
+            ) {
                 mediaPlayer.pause()
 
                 val retriever = MediaMetadataRetriever()
-                retriever.setDataSource(context,uri )
+                retriever.setDataSource(context, uri)
                 val bitmap by remember {
                     mutableStateOf(retriever.getFrameAtIndex(1))
                 }
 
-                Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "primer frame", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxWidth())
+                Image(
+                    bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = "primer frame",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth().clickable {
+                        onTap()
+                    }
+                )
 
             }
         }
-    }else{
+    } else {
         CircularProgressIndicator(
             modifier
                 .fillMaxWidth()
                 .height(500.dp)
-                .background(Color.Black))
+                .background(Color.Black)
+        )
     }
 }

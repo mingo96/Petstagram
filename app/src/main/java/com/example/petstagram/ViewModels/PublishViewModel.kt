@@ -52,7 +52,7 @@ class PublishViewModel : ViewModel(){
         }
 
     /**[Category] for the [Post]*/
-    lateinit var category : Category
+    var category : Category?=null
 
     /**Firebase Reference*/
     private val db = Firebase.firestore
@@ -208,7 +208,7 @@ class PublishViewModel : ViewModel(){
     }
 
     private fun List<Pet>.ofThisCategory(): List<Pet> {
-        return this.filter { it.category!!.name == category.name }
+        return this.filter { it.category!!.name == (category?.name ?: "") }
     }
 
 }

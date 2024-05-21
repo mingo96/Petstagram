@@ -85,6 +85,7 @@ fun Posts(
     val dots by controller.funnyAhhString.collectAsState()
     val optionsClicked by controller.optionsClicked.observeAsState()
     val context = LocalContext.current
+    val videoStopped by controller.videoStopped.observeAsState(initial = false)
 
     LaunchedEffect(key1 = Unit) {
         controller.startRollingDots()
@@ -150,7 +151,7 @@ fun Posts(
 
                 AnimatedVisibility(visible = seen, enter = slideInHorizontally()+ expandVertically()) {
                     val isVisible by remember{
-                        derivedStateOf { (index in state.firstVisibleItemIndex-2..state.firstVisibleItemIndex+2)&& !state.isScrollInProgress }
+                        derivedStateOf { (index == state.firstVisibleItemIndex)&& !state.isScrollInProgress && !videoStopped }
                     }
                     Post(
                         modifier = Modifier

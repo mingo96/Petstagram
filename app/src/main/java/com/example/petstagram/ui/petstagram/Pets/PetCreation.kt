@@ -106,7 +106,7 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                     .fillMaxWidth()
                     .height(height.times(0.06f)),
                 horizontalArrangement = Arrangement.SpaceEvenly) {
-                PetName(modifier = Modifier.fillMaxWidth(0.7f), textValue = { viewModel.getPetName() }, changeText = {viewModel.setPetName(it)})
+                PetName(modifier = Modifier.fillMaxWidth(0.7f), textValue = { viewModel.getPetName() }, changeText = {viewModel.setPetName(it)}, editing = true)
                 val context = LocalContext.current
                 Send(
                     Modifier
