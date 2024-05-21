@@ -8,7 +8,7 @@ open class Pet {
     var owner =""
     var profilePic : String = ""
     var category : Category? = null
-
+    var followers : List<String> = emptyList()
 }
 
 class UIPet : Pet(){

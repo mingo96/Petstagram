@@ -151,7 +151,7 @@ fun DisplayVideoFromSource(
 
             AnimatedVisibility(
                 visible = isVisible,
-                exit = fadeOut(animationSpec = tween(1000)),
+                exit = fadeOut(animationSpec = tween(10)),
                 enter = EnterTransition.None
             ) {
                 mediaPlayer.playWhenReady = true
@@ -169,11 +169,14 @@ fun DisplayVideoFromSource(
                         .combinedClickable(
                             enabled = true,
                             onClick = {
-                                onTap()
                                 mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                             },
                             onDoubleClick = {
                                 onDoubleTap.invoke()
+                            },
+                            onLongClick = {
+                                onTap()
+                                mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                             }
                         )
                         .background(Color.Gray)

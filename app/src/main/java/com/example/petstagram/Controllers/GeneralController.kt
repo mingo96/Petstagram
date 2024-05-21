@@ -73,7 +73,7 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override lateinit var navController: NavHostController
 
-    private val _videoStopped = MutableLiveData(false)
+    private val _videoStopped = MutableLiveData(true)
 
     override val videoStopped = _videoStopped
 

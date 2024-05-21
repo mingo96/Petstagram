@@ -177,6 +177,8 @@ class DataFetchViewModel : ViewModel() {
                 delay(100)
             }
             alreadyLoading = true
+            delay(100)
+
             db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).get().addOnSuccessListener { document ->
                 if(!document.isEmpty) {
                     val document = document.documents.first()
@@ -248,7 +250,7 @@ class DataFetchViewModel : ViewModel() {
     }
 
 
-    private fun getUserPosts(){
+    private fun getUserPosts(id: String = _selfProfile.value.id){
 
         viewModelScope.launch {
 
@@ -260,7 +262,7 @@ class DataFetchViewModel : ViewModel() {
 
             db.collection("Posts")
                 //filters
-                .whereEqualTo("creatorUser", _selfProfile.value)
+                .whereEqualTo("creatorUser.id", id)
                 .orderBy("postedDate", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener {
@@ -290,16 +292,15 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-
     private fun moreCategoryPosts(category: Category){
         viewModelScope.launch {
 
             while(alreadyLoading) {
                 delay(100)
             }
-            delay(100)
 
             alreadyLoading = true
+            delay(100)
 
             db.collection("Posts")
                 //filters
@@ -331,6 +332,48 @@ class DataFetchViewModel : ViewModel() {
                                 "la carga de categoria fue completada pero no exitosa, ids = ${_posts.map { it.id }.toList()}"
                             )
 
+                            alreadyLoading = false
+                        }
+                    }
+                }
+
+        }
+    }
+
+    private fun fetchPostsFromPet(id: String) {
+
+        viewModelScope.launch {
+
+            while(alreadyLoading) {
+                delay(100)
+            }
+            alreadyLoading = true
+            delay(100)
+
+            db.collection("Posts")
+                //filters
+                .whereEqualTo("pet", id)
+                .orderBy("postedDate", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful){
+                        if (!it.result.isEmpty) {
+
+                            //case not empty
+                            for (postJson in it.result.documents) {
+                                bootUpPost(postJson)
+                            }
+                        }
+
+                        alreadyLoading = false
+                    }else{
+                        if(it.isCanceled) {
+                            Log.e("Error de carga", "la carga de la mascota fue cancelada")
+
+                            getUserPosts()
+                        }
+                        if(it.isComplete) {
+                            Log.d("Error de carga", "la carga dela mascota fue completada pero no exitosa, tenemos ${ids.size}")
                             alreadyLoading = false
                         }
                     }
@@ -385,10 +428,10 @@ class DataFetchViewModel : ViewModel() {
             castedPost.uiPet = _pets.find { it.id == castedPost.pet }
         }else{
             db.collection("Pets").document(castedPost.pet).get().addOnSuccessListener { doc ->
-                if (doc.exists() && doc.id !in _pets.map { it.id }){
-                    val addedPet = doc.toObject(Pet::class.java)!!
+                val addedPet = doc.toObject(Pet::class.java)!!
+                castedPost.uiPet = addedPet
+                if (doc.id !in _pets.map { it.id }){
                     _pets.add(addedPet)
-                    castedPost.uiPet = addedPet
                 }
             }
         }
@@ -421,13 +464,10 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-
-
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()
         alreadyLoading = false
     }
-
 
     fun postsFromCategory(category : Category): List<UIPost> {
 
@@ -435,11 +475,11 @@ class DataFetchViewModel : ViewModel() {
         return _posts.filter { it.category!= null && it.category!!.name == category.name }
     }
 
-
     fun postsFromUser(user : String): List<UIPost> {
+
+        getUserPosts(user)
         return _posts.filter { it.creatorUser!= null && it.creatorUser!!.id == user }
     }
-
 
     fun postsFromSaved(): List<UIPost> {
         fetchSavedList()
@@ -449,5 +489,11 @@ class DataFetchViewModel : ViewModel() {
     fun petsFromUser(id: String): List<Pet> {
         fetchPetsFromUser(id)
         return _pets.filter { it.owner == id }
+    }
+
+    fun postsFromPet(pet: Pet):List<UIPost>{
+        fetchPostsFromPet(pet.id)
+
+        return _posts.filter { it.pet == pet.id }
     }
 }

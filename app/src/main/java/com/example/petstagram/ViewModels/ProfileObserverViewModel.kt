@@ -59,7 +59,10 @@ class ProfileObserverViewModel : GeneralController(){
     private fun fetchPosts(){
         if (!_isLoading.value!!) {
             viewModelScope.launch {
+
                 _observedProfile.value = staticProfile
+
+                _follow.value = _observedProfile.value.followers.any { it == selfId }
 
                 _isLoading.value = true
 
@@ -67,7 +70,7 @@ class ProfileObserverViewModel : GeneralController(){
                 base.petsFromUser(_observedProfile.value.id)
 
                 while (base.alreadyLoading){
-                    delay(10)
+                    delay(100)
                 }
 
                 val endPosts =
@@ -146,8 +149,10 @@ class ProfileObserverViewModel : GeneralController(){
         viewModelScope.launch {
             if (_follow.value!= null) {
                 val pre = _follow.value!!
-                _follow.value = null
-                delay(1000)
+                if (!pre) {
+                    _follow.value = null
+                    delay(1000)
+                }
                 _follow.value = !pre
             }
         }

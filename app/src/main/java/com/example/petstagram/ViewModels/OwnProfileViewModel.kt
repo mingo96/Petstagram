@@ -210,6 +210,7 @@ class OwnProfileViewModel : GeneralController(){
     fun clear(){
         _posts.value = emptyList()
         _offset.value = 0.dp
+        _isEditing.value = false
     }
 
     fun ToggleState(width : Dp){

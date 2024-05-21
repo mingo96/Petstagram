@@ -9,10 +9,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Like
+import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
 import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
@@ -139,6 +141,12 @@ interface PostsUIController:CommentsUIController {
         }else{
             navController.navigate("perfilPropio")
         }
+    }
+
+    fun enterPetProfile(id : Pet){
+        PetObserverViewModel.staticPet=id
+        navController.navigate("mascota")
+
     }
 
     fun toggleStop()

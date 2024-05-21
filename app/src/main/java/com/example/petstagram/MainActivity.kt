@@ -16,7 +16,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +34,7 @@ import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PetCreationViewModel
+import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.ViewModels.SavedPostsViewModel
@@ -44,6 +44,7 @@ import com.example.petstagram.perfil.SomeonesProfile
 import com.example.petstagram.perfilpropio.MyProfile
 import com.example.petstagram.publicar.NewPostScreen
 import com.example.petstagram.ui.petstagram.Pets.PetCreation
+import com.example.petstagram.ui.petstagram.Pets.PetProfile
 import com.example.petstagram.ui.petstagram.publicacionesguardadas.SavedPosts
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
@@ -92,6 +93,7 @@ class MainActivity : ComponentActivity() {
         val savedPostsViewModel : SavedPostsViewModel by viewModels()
         val petCreationViewModel : PetCreationViewModel by viewModels()
         val profileObserverViewModel : ProfileObserverViewModel by viewModels()
+        val petObserverViewModel : PetObserverViewModel by viewModels()
 
         postsViewModel.base = dataFetchViewModel
         ownProfileViewModel.base = dataFetchViewModel
@@ -99,6 +101,7 @@ class MainActivity : ComponentActivity() {
         publishViewModel.base = dataFetchViewModel
         petCreationViewModel.base = dataFetchViewModel
         profileObserverViewModel.base = dataFetchViewModel
+        petObserverViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -190,6 +193,14 @@ class MainActivity : ComponentActivity() {
                             }
                             profileObserverViewModel.selfId = authViewModel.localProfile.id
                             SomeonesProfile(navController = navController, viewModel = profileObserverViewModel)
+                        }
+                        composable("mascota", enterTransition = { onEnter }, exitTransition = {onExit}){
+
+                            LaunchedEffect(key1 = lastStep) {
+                                lastStep = route
+                            }
+                            petObserverViewModel.selfId = authViewModel.localProfile.id
+                            PetProfile(navController = navController, viewModel = petObserverViewModel)
                         }
                         composable("añadirMascota", enterTransition = { onEnter }, exitTransition = {onExit}){
                             LaunchedEffect(key1 = lastStep) {
