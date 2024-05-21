@@ -1,9 +1,6 @@
 package com.example.petstagram.ViewModels
 
-import android.content.Context
-import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,7 +32,7 @@ class ProfileObserverViewModel : GeneralController(){
     override var actualUser = _selfProfile.value
         get() {return _selfProfile.value}
 
-    private val _observedProfile = MutableStateFlow(Profile())
+    private val _observedProfile = MutableStateFlow(staticProfile)
 
     val observedProfile : StateFlow<Profile> = _observedProfile
 
@@ -53,11 +50,16 @@ class ProfileObserverViewModel : GeneralController(){
 
     val pets : StateFlow<List<Pet>> = _pets
 
+    private val _follow : MutableLiveData<Boolean?> = MutableLiveData(false)
+
+    val follow : LiveData<Boolean?> = _follow
+
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
     private fun fetchPosts(){
         if (!_isLoading.value!!) {
             viewModelScope.launch {
+                _observedProfile.value = staticProfile
 
                 _isLoading.value = true
 
@@ -124,15 +126,31 @@ class ProfileObserverViewModel : GeneralController(){
     fun followers()= _observedProfile.value.followers.size
 
     fun follow(){
+        animation()
+        if (_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
+
         _observedProfile.value.followers += _selfProfile.value.id
         db.collection("Users").document(_observedProfile.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
     }
 
     fun unFollow(){
+        animation()
 
+        if (!_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
         _observedProfile.value.followers -= _selfProfile.value.id
         db.collection("Users").document(_observedProfile.value.id).update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
 
+    }
+
+    private fun animation(){
+        viewModelScope.launch {
+            if (_follow.value!= null) {
+                val pre = _follow.value!!
+                _follow.value = null
+                delay(1000)
+                _follow.value = !pre
+            }
+        }
     }
 
     override fun scroll() {
@@ -140,9 +158,10 @@ class ProfileObserverViewModel : GeneralController(){
     }
 
     fun clear(){
-        if (_posts.value.isNotEmpty())
-            _posts.value.drop(0)
+        _posts.value= emptyList()
         _offset.value = 0.dp
+        _state.value = false
+        _pets.value= emptyList()
     }
 
     fun ToggleState(width : Dp){
@@ -167,6 +186,10 @@ class ProfileObserverViewModel : GeneralController(){
             }
             isMoving = false
         }
+    }
+
+    companion object{
+        var staticProfile : Profile= Profile()
     }
 
 }

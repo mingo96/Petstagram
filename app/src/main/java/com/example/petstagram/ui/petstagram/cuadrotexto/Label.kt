@@ -56,13 +56,13 @@ fun Label(
 ) {
     when (variation) {
         Variation.UserName -> TopLevelVariacionNombreUsuario(modifier = modifier) {
-            TextoNombreUsuarioVariacionNombreUsuario(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            TextoNombreUsuarioVariacionNombreUsuario(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f), added)
         }
         Variation.Petstagram -> TopLevelVariacionBienvenida(modifier = modifier) {
             TextoBienvenidaVariacionBienvenida(modifier = Modifier.rowWeight(1.0f))
         }
         Variation.YourProfile -> TopLevelVariacionTuPerfil(modifier = modifier) {
-            TextoTuPerfilVariacionTuPerfil(modifier = Modifier.rowWeight(1.0f))
+            TextoTuPerfilVariacionTuPerfil(modifier = Modifier.rowWeight(1.0f), added)
         }
         Variation.User -> TopLevelVariacionUsuario(modifier = modifier) {
             TextoEmailVariacionUsuario(modifier = Modifier.rowWeight(1.0f))
@@ -284,9 +284,9 @@ private fun CuadroTextoVariacionPublicarPreview() {
 }
 
 @Composable
-fun TextoNombreUsuarioVariacionNombreUsuario(modifier: Modifier = Modifier) {
+fun TextoNombreUsuarioVariacionNombreUsuario(modifier: Modifier = Modifier, nombreusuario : String = "") {
     RelayText(
-        content = "Perfil de \${nombreusuario}",
+        content = "Perfil de $nombreusuario",
         fontSize = 20.0.sp,
         fontFamily = inter,
         color = Color(
@@ -299,7 +299,7 @@ fun TextoNombreUsuarioVariacionNombreUsuario(modifier: Modifier = Modifier) {
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
+        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
             align = Alignment.CenterVertically,
             unbounded = true
         )
@@ -315,10 +315,9 @@ fun TopLevelVariacionNombreUsuario(
         mainAxisAlignment = MainAxisAlignment.Start,
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(all = 8.0.dp),
-        itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier
     )
 }
 
@@ -366,9 +365,9 @@ fun TopLevelVariacionBienvenida(
 }
 
 @Composable
-fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier) {
+fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier, added : String = "") {
     RelayText(
-        content = "Tu perfil",
+        content = if (added.isBlank()) "Tu perfil" else added,
         fontSize = 20.0.sp,
         fontFamily = inter,
         fontWeight = FontWeight.Bold,
@@ -396,7 +395,6 @@ fun TopLevelVariacionTuPerfil(
         mainAxisAlignment = MainAxisAlignment.Start,
         arrangement = RelayContainerArrangement.Row,
         padding = PaddingValues(all = 8.0.dp),
-        itemSpacing = 10.0,
         radius = 6.0,
         strokeWidth = 2.0,
         strokeColor = Color(
@@ -406,7 +404,7 @@ fun TopLevelVariacionTuPerfil(
             blue = 0
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f)
+        modifier = modifier
     )
 }
 

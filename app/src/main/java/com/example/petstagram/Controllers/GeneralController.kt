@@ -71,8 +71,6 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override var commentContent: LiveData<String> = _commentContent
 
-    override var selectedProfile: String=""
-
     override lateinit var navController: NavHostController
 
     override fun startRollingDots(){
@@ -139,7 +137,6 @@ abstract class GeneralController : ViewModel(), PostsUIController {
         _actualComments.value = emptyList()
     }
     fun stopLoading() {
-        _posts.value = emptyList()
         base.stopLoading()
         viewModelScope.coroutineContext.cancelChildren()
     }

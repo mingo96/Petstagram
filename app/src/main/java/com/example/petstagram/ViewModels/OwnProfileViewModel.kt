@@ -208,8 +208,7 @@ class OwnProfileViewModel : GeneralController(){
     }
 
     fun clear(){
-        if (_posts.value.isNotEmpty())
-            _posts.value.drop(0)
+        _posts.value = emptyList()
         _offset.value = 0.dp
     }
 

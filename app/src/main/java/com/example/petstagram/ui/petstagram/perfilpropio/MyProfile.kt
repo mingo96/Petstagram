@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -58,9 +59,12 @@ import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
+import com.example.petstagram.perfil.FollowingText
 import com.example.petstagram.perfil.ProfilePicInstance
 import com.example.petstagram.publicaciones.Posts
 import com.example.petstagram.ui.petstagram.Pets.PetList
+import com.example.petstagram.ui.theme.Primary
+import com.example.petstagram.ui.theme.Secondary
 import com.example.petstagram.visualizarcategoria.TopLevel
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
@@ -82,7 +86,7 @@ fun MyProfile(
 ) {
 
     //on launch start loading user info
-    LaunchedEffect(key1 = viewModel) {
+    LaunchedEffect(key1 = Unit) {
         viewModel.keepUpWithUserInfo()
     }
 
@@ -157,18 +161,24 @@ fun MyProfile(
                                 changeText = changeText,
                                 modifier = Modifier.fillMaxWidth(0.7f)
                             )
-                            EditUsernameButton(
-                                Modifier.clickable {
-                                    viewModel.editUserNameClicked(thisContext)
+                            Row (horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)){
+
+                                FollowingText(modifier = Modifier, personal = true) {
+                                    viewModel.actualUser.followers.size
                                 }
-                            ) {
-                                EditUsernameBackgroundCircle(
-                                    Modifier
-                                        .requiredWidth(32.0.dp)
-                                        .requiredHeight(32.0.dp)
-                                )
-                                EditUsernameImageContainer {
-                                    EditUsernameImage()
+                                EditUsernameButton(
+                                    Modifier.clickable {
+                                        viewModel.editUserNameClicked(thisContext)
+                                    }
+                                ) {
+                                    EditUsernameBackgroundCircle(
+                                        Modifier
+                                            .requiredWidth(32.0.dp)
+                                            .requiredHeight(32.0.dp)
+                                    )
+                                    EditUsernameImageContainer {
+                                        EditUsernameImage()
+                                    }
                                 }
                             }
                         }
@@ -341,7 +351,7 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
 @Composable
 fun YourUserName(
     modifier: Modifier = Modifier,
-    editing: Boolean = true,
+    editing: Boolean = false,
     textValue: () -> String,
     changeText: (String) -> Unit = {}
 ) {
@@ -385,8 +395,9 @@ fun YourUserName(
         )
     else
         Label(
-            modifier = modifier.requiredWidth(94.0.dp),
-            variation = Variation.YourProfile
+            modifier = Modifier.wrapContentWidth(),
+            variation = Variation.YourProfile,
+            added = textValue()
         )
 }
 
@@ -404,7 +415,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
             selected = state,
             onClick = onClick,
             shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
-            colors = colors()
+            colors = colors(state)
         ) {
             Text(
                 text = "Publicaciones",
@@ -415,7 +426,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
             selected = !state,
             onClick = onClick,
             shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
-            colors = colors()
+            colors = colors(state)
         ) {
             Text(
                 text = "Mascotas",
@@ -428,26 +439,11 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun colors(): SegmentedButtonColors {
+fun colors(state : Boolean): SegmentedButtonColors {
     return SegmentedButtonDefaults.colors(
-        activeContainerColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
-        activeBorderColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
-        inactiveBorderColor = Color(
-            alpha = 255,
-            red = 224,
-            green = 164,
-            blue = 0
-        ),
+        activeContainerColor = if (state) Primary else Secondary,
+        activeBorderColor = if (state) Primary else Secondary,
+        inactiveBorderColor = if (state) Primary else Secondary,
         activeContentColor = Color.Black
     )
 }

@@ -64,6 +64,8 @@ class DataFetchViewModel : ViewModel() {
 
     private var _categories = mutableListOf<Category>()
 
+    private var _profiles = mutableListOf<Profile>()
+
     /**it tells if we are loading, so if we go out and in the view again we dont
      * start another collect, it is set to true until the collection ends*/
     var alreadyLoading by mutableStateOf(false)
@@ -136,6 +138,7 @@ class DataFetchViewModel : ViewModel() {
                             if (newVal != _selfProfile.value){
                                 _selfProfile.value = newVal
                             }
+                            if (newVal !in _profiles) _profiles.add(newVal)
                             updateReportScore()
 
                         }.continueWith { alreadyLoading = false }
@@ -352,6 +355,7 @@ class DataFetchViewModel : ViewModel() {
             loadPet(castedPost)
         }
 
+        if (castedPost.creatorUser !in _profiles) _profiles.add(castedPost.creatorUser!!)
 
         try {
 

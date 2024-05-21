@@ -1,6 +1,10 @@
 package com.example.petstagram.perfil
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -9,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,11 +31,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import com.example.petstagram.R
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
+import com.example.petstagram.cuadrotexto.Label
+import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.fotoperfil.Size
 import com.example.petstagram.perfilpropio.DataContainer
@@ -57,7 +67,7 @@ fun SomeonesProfile(
 ) {
 
     //on launch start loading user info
-    LaunchedEffect(key1 = viewModel) {
+    LaunchedEffect(key1 = Unit) {
         viewModel.keepUpWithUserInfo()
     }
 
@@ -65,10 +75,9 @@ fun SomeonesProfile(
     DisposableEffect(Unit) {
         onDispose {
             viewModel.stopLoading()
+            viewModel.clear()
         }
     }
-
-    val thisContext = (LocalContext.current)
 
     val state by viewModel.state.observeAsState()
 
@@ -80,6 +89,8 @@ fun SomeonesProfile(
     val pets by viewModel.pets.collectAsState()
 
     val observedProfile by viewModel.observedProfile.collectAsState()
+
+    val following by viewModel.follow.observeAsState()
 
     BoxWithConstraints {
         val height = maxHeight
@@ -112,13 +123,47 @@ fun SomeonesProfile(
                         }
 
                         UserNameContainer {
-                            YourUserName(
-                                textValue = { observedProfile.userName },
+                            Label(
+                                variation = Variation.UserName,
+                                added = observedProfile.userName,
                                 modifier = Modifier.fillMaxWidth(0.7f)
                             )
-                            Row {
+                            Row(Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
                                 FollowingText(modifier = Modifier) {
                                     viewModel.followers()
+                                }
+
+                                Box {
+                                    this@Row.AnimatedVisibility(visible = following == true) {
+
+                                        Image(
+                                            painter = painterResource(id = R.drawable.sustraccion),
+                                            contentDescription = "unfollow",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clickable { viewModel.unFollow() })
+
+                                    }
+                                    this@Row.AnimatedVisibility(visible = following == false) {
+
+                                        Image(
+                                            painter = painterResource(id = R.drawable.agregar),
+                                            contentDescription = "follow",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clickable { viewModel.follow() })
+
+                                    }
+                                    this@Row.AnimatedVisibility(visible = following == null) {
+
+                                        Image(
+                                            painter = painterResource(id = R.drawable.cheque),
+                                            contentDescription = "just followed",
+                                            modifier = Modifier.size(40.dp)
+                                        )
+
+                                    }
                                 }
 
                             }
@@ -157,7 +202,6 @@ fun SomeonesProfile(
                             )
                             PetList(
                                 pets = pets,
-                                onNewPet = { navController.navigate("añadirMascota") },
                                 onSelect = {},
                                 modifier = Modifier
                                     .height(height.times(0.8f))
@@ -185,23 +229,21 @@ fun ProfilePicInstance(modifier: Modifier = Modifier, url: String = "") {
 }
 
 @Composable
-fun FollowingText(modifier :Modifier, followers :()->Int){
-
-    Text(
-        text = "Le siguen: ${followers()}",
-        style = TextStyle(color = Color.White),
-        modifier = modifier
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight()
-            .background(
-                Color(
-                    alpha = 0,
-                    red = 224,
-                    green = 164,
-                    blue = 0
-                ),
-                shape = RoundedCornerShape(15)
+fun FollowingText(modifier: Modifier, personal: Boolean = false, followers: () -> Int) {
+    Box(
+        modifier = Modifier
+            .border(
+                2.dp,
+                Color.Gray,
+                RoundedCornerShape(20)
             )
-            .wrapContentSize()
-    )
+            .padding(8.dp)
+    ) {
+        Text(
+            text = "${if (personal) "Te" else "Le"} siguen: ${followers()}",
+            style = TextStyle(color = Color.White),
+            modifier = modifier
+                .wrapContentSize()
+        )
+    }
 }

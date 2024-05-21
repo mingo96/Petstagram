@@ -1,6 +1,7 @@
 package com.example.petstagram.ui.petstagram.Pets
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.petstagram.R
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.cuadroinfo.IntersectLine
 import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
@@ -43,7 +46,8 @@ fun PetList(modifier:Modifier= Modifier,
             BotonMas(modifier = Modifier
                 .clickable {
                     onNewPet()
-                }.padding(top = 16.dp)) {
+                }
+                .padding(top = 16.dp)) {
                 CuadroSumar(
                     modifier = Modifier
                         .rowWeight(1.0f)
@@ -52,6 +56,11 @@ fun PetList(modifier:Modifier= Modifier,
             }
             if (pets.isEmpty()){
                 Text(text = "No hay mascotas!!")
+            }
+        }else{
+            if (pets.isEmpty()){
+                Image(painter = painterResource(id = R.drawable.grillo), contentDescription ="grillo" )
+                Text(text = "Parece que alguien necesita una mascota...")
             }
         }
         BoxWithConstraints(Modifier.padding(16.dp)) {

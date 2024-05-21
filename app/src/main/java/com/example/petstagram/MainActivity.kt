@@ -132,22 +132,6 @@ class MainActivity : ComponentActivity() {
                         mutableStateOf(null)
                     }
 
-                    @Composable
-                    fun navigateTowardsProfile(){
-                        when(lastStep){
-                            "guardadas"->{
-
-                            }
-                            "publicaciones"->{
-
-                            }
-                            else->{
-                                val context = LocalContext.current
-                                Toast.makeText(context, "No puedes hacer eso ahora, $lastStep", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-
                     NavHost(navController = navController, startDestination = start){
                         composable("login", enterTransition = { onEnter }, exitTransition = {onExit}){
                             LaunchedEffect(key1 = lastStep) {
@@ -202,7 +186,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("perfilAjeno", enterTransition = { onEnter }, exitTransition = {onExit}){
 
-                            navigateTowardsProfile()
                             LaunchedEffect(key1 = lastStep) {
                                 lastStep = route
                             }
