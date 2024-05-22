@@ -185,10 +185,10 @@ class OwnProfileViewModel : GeneralController(){
                 Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
 
                 delay(1000)
-                db.collection("Users").whereEqualTo("id", selfId).get()
+                db.collection("Users").document(selfId).get()
                 .addOnSuccessListener {
 
-                    val newVal = it.documents[0].toObject(Profile::class.java)!!
+                    val newVal = it.toObject(Profile::class.java)!!
                     if (newVal != _selfProfile.value){
                         _selfProfile.value = newVal
                     }
@@ -222,12 +222,12 @@ class OwnProfileViewModel : GeneralController(){
             val objective = if (width.value == _offset.value.value) 0.dp else width
             while (_offset.value!= objective) {
                 if (objective > _offset.value) {
-                    _offset.value = Dp(_offset.value.value + 50)
+                    _offset.value = Dp(_offset.value.value + 90)
                 }
                 else if (objective < _offset.value) {
-                    _offset.value = Dp(_offset.value.value - 50)
+                    _offset.value = Dp(_offset.value.value - 90)
                 }
-                if ((objective - _offset.value).value in -60f..60f && objective != _offset.value) {
+                if ((objective - _offset.value).value in -100f..100f && objective != _offset.value) {
                     _offset.value = objective
                 }
                 delay(1)

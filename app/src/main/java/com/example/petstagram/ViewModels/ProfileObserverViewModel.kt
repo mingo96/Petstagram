@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
+import com.example.petstagram.Controllers.ProfileInteractor
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.FieldValue
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-class ProfileObserverViewModel : GeneralController(){
+class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
 
     /**id of our profile, to keep up with the user data*/
     var selfId by mutableStateOf("")
@@ -62,7 +63,7 @@ class ProfileObserverViewModel : GeneralController(){
 
                 _observedProfile.value = staticProfile
 
-                _follow.value = _observedProfile.value.followers.any { it == selfId }
+                _follow.value = _observedProfile.value.followers.contains(_selfProfile.value.id)
 
                 _isLoading.value = true
 
@@ -110,13 +111,23 @@ class ProfileObserverViewModel : GeneralController(){
                     Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
 
                     delay(1000)
-                    db.collection("Users").whereEqualTo("id", selfId).get()
+                    db.collection("Users").document(selfId).get()
                         .addOnSuccessListener {
 
-                            val newVal = it.documents[0].toObject(Profile::class.java)!!
-                            if (newVal != _selfProfile.value){
+                            val newVal = it.toObject(Profile::class.java)!!
+                            if (newVal.id != _selfProfile.value.id){
                                 _selfProfile.value = newVal
                             }
+                        }
+                    db.collection("Users").document(staticProfile.id).get()
+                        .addOnSuccessListener {
+
+                            val newVal = it.toObject(Profile::class.java)!!
+                            if (newVal != staticProfile || newVal != _observedProfile.value){
+                                staticProfile= newVal
+                                _observedProfile.value = newVal
+                            }
+                            _follow.value = _observedProfile.value.followers.contains(_selfProfile.value.id)
                             fetchPosts()
                         }
 
@@ -126,9 +137,9 @@ class ProfileObserverViewModel : GeneralController(){
         }
     }
 
-    fun followers()= _observedProfile.value.followers.size
+    override fun followers()= _observedProfile.value.followers.size
 
-    fun follow(){
+    override fun follow(){
         animation()
         if (_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
 
@@ -136,7 +147,7 @@ class ProfileObserverViewModel : GeneralController(){
         db.collection("Users").document(_observedProfile.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
     }
 
-    fun unFollow(){
+    override fun unFollow(){
         animation()
 
         if (!_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
@@ -169,7 +180,7 @@ class ProfileObserverViewModel : GeneralController(){
         _pets.value= emptyList()
     }
 
-    fun ToggleState(width : Dp){
+    fun toggleState(width : Dp){
         if (isMoving) return;
         isMoving = true
         _state.value = !_state.value!!
@@ -178,12 +189,12 @@ class ProfileObserverViewModel : GeneralController(){
             val objective = if (width.value == _offset.value.value) 0.dp else width
             while (_offset.value!= objective) {
                 if (objective > _offset.value) {
-                    _offset.value = Dp(_offset.value.value + 50)
+                    _offset.value = Dp(_offset.value.value + 90)
                 }
                 else if (objective < _offset.value) {
-                    _offset.value = Dp(_offset.value.value - 50)
+                    _offset.value = Dp(_offset.value.value - 90)
                 }
-                if ((objective - _offset.value).value in -60f..60f && objective != _offset.value) {
+                if ((objective - _offset.value).value in -100f..100f && objective != _offset.value) {
                     _offset.value = objective
                 }
                 delay(1)

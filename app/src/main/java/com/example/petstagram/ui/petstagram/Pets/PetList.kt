@@ -63,7 +63,7 @@ fun PetList(modifier:Modifier= Modifier,
                 Text(text = "Parece que alguien necesita una mascota...")
             }
         }
-        BoxWithConstraints(Modifier.padding(16.dp)) {
+        BoxWithConstraints(Modifier.padding(horizontal = 16.dp)) {
 
             var width = maxWidth
             LazyVerticalGrid(
@@ -112,6 +112,6 @@ fun PetListContainer(
                     1.0f to Color.Transparent
                 ),
                 RoundedCornerShape(15.dp, 15.dp)
-            )
+            ).padding(vertical = 16.dp)
     )
 }

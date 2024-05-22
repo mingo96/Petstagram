@@ -54,6 +54,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.OwnProfileViewModel
+import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
@@ -216,7 +217,10 @@ fun MyProfile(
                             PetList(
                                 pets = pets,
                                 onNewPet = { navController.navigate("añadirMascota") },
-                                onSelect = {},
+                                onSelect = {
+                                    PetObserverViewModel.staticPet = it
+                                    navController.navigate("mascota")
+                                },
                                 modifier = Modifier
                                     .height(height.times(0.8f))
                                     .offset(x = offsetObserver)
@@ -350,6 +354,7 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YourUserName(
+    added : String? = null,
     modifier: Modifier = Modifier,
     editing: Boolean = false,
     textValue: () -> String,
@@ -397,7 +402,7 @@ fun YourUserName(
         Label(
             modifier = Modifier.wrapContentWidth(),
             variation = Variation.YourProfile,
-            added = textValue()
+            added = if(added == null)textValue() else added
         )
 }
 

@@ -5,6 +5,10 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import com.example.petstagram.Controllers.ProfileInteractor
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
@@ -125,6 +130,7 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
 
                             UserNameContainer {
                                 YourUserName(
+                                    added = "Perfil de tu mascota",
                                     editing = editing!!,
                                     textValue = { viewModel.getPetNameText() },
                                     changeText = { viewModel.editPetName(it) },
@@ -132,8 +138,8 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
                                 )
                                 Row (horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)){
 
-                                    FollowingText(modifier = Modifier, personal = true) {
-                                        viewModel.actualUser.followers.size
+                                    FollowingText(modifier = Modifier, personal = false) {
+                                        viewModel.followers()
                                     }
                                     EditUsernameButton(
                                         Modifier.clickable {
@@ -173,45 +179,9 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
                                     added = observedProfile!!.name,
                                     modifier = Modifier.fillMaxWidth(0.7f)
                                 )
-                                Row(Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
 
-                                    FollowingText(modifier = Modifier) {
-                                        viewModel.followers()
-                                    }
+                                FollowingBox(following = following, profileInteractor = viewModel)
 
-                                    Box {
-                                        this@Row.AnimatedVisibility(visible = following == true) {
-
-                                            Image(
-                                                painter = painterResource(id = R.drawable.sustraccion),
-                                                contentDescription = "unfollow",
-                                                modifier = Modifier
-                                                    .size(40.dp)
-                                                    .clickable { viewModel.unFollow() })
-
-                                        }
-                                        this@Row.AnimatedVisibility(visible = following == false) {
-
-                                            Image(
-                                                painter = painterResource(id = R.drawable.agregar),
-                                                contentDescription = "follow",
-                                                modifier = Modifier
-                                                    .size(40.dp)
-                                                    .clickable { viewModel.follow() })
-
-                                        }
-                                        this@Row.AnimatedVisibility(visible = following == null) {
-
-                                            Image(
-                                                painter = painterResource(id = R.drawable.cheque),
-                                                contentDescription = "just followed",
-                                                modifier = Modifier.size(40.dp)
-                                            )
-
-                                        }
-                                    }
-
-                                }
                             }
                         }
                     }
@@ -234,4 +204,45 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
 
         }
 
+}
+
+@Composable
+fun FollowingBox(following : Boolean?, profileInteractor: ProfileInteractor) {
+    Row (Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)){
+
+        FollowingText(modifier = Modifier) {
+            profileInteractor.followers()
+        }
+        Box {
+            this@Row.AnimatedVisibility(visible = following == true, enter = expandHorizontally() + slideInHorizontally(), exit = shrinkHorizontally() + slideOutHorizontally()) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.sustraccion),
+                    contentDescription = "unfollow",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable { profileInteractor.unFollow() })
+
+            }
+            this@Row.AnimatedVisibility(visible = following == false, enter = expandHorizontally() + slideInHorizontally{it}, exit = shrinkHorizontally() + slideOutHorizontally{it}) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.agregar),
+                    contentDescription = "follow",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable { profileInteractor.follow() })
+
+            }
+            this@Row.AnimatedVisibility(visible = following == null, enter = expandHorizontally() + slideInHorizontally(), exit = shrinkHorizontally() + slideOutHorizontally{it}) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.cheque),
+                    contentDescription = "just followed",
+                    modifier = Modifier.size(40.dp)
+                )
+
+            }
+        }
+    }
 }

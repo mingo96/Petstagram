@@ -140,6 +140,7 @@ class MainActivity : ComponentActivity() {
                             LaunchedEffect(key1 = lastStep) {
                                 if (!lastStep.isNullOrBlank()){
                                     ownProfileViewModel.clear()
+                                    dataFetchViewModel.clear()
                                 }
                                 lastStep = route
                             }

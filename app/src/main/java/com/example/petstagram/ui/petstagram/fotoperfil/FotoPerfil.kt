@@ -1,5 +1,12 @@
 package com.example.petstagram.fotoperfil
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,35 +38,12 @@ enum class Size {
 @Composable
 fun FotoPerfilBase(
     modifier: Modifier = Modifier,
-    size: Size = Size.Peque,
     added :String= ""
 ) {
-    when (size) {
-        Size.Peque -> TopLevelSizePeque(modifier = modifier) {
-            ProfilePic(modifier = Modifier
-                .rowWeight(1.0f)
-                .columnWeight(1.0f), url = added)
-        }
-        Size.Enorme -> TopLevelSizeEnorme(modifier = modifier) {
-            ProfilePic(modifier = Modifier
-                .rowWeight(1.0f)
-                .columnWeight(1.0f), url = added)
-        }
-    }
-}
-
-@Preview(widthDp = 32, heightDp = 32)
-@Composable
-private fun FotoPerfilSizePequePreview() {
-    MaterialTheme {
-        RelayContainer {
-            FotoPerfilBase(
-                size = Size.Peque,
-                modifier = Modifier
-                    .rowWeight(1.0f)
-                    .columnWeight(1.0f)
-            )
-        }
+    TopLevelSizeEnorme(modifier = modifier) {
+        ProfilePic(modifier = Modifier
+            .rowWeight(1.0f)
+            .columnWeight(1.0f), url = added)
     }
 }
 
@@ -69,7 +53,6 @@ private fun FotoPerfilSizeEnormePreview() {
     MaterialTheme {
         RelayContainer {
             FotoPerfilBase(
-                size = Size.Enorme,
                 modifier = Modifier
                     .rowWeight(1.0f)
                     .columnWeight(1.0f)
@@ -90,43 +73,42 @@ fun FotoSizePeque(modifier: Modifier = Modifier, url: String) {
 }
 
 @Composable
-fun TopLevelSizePeque(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
-) {
-    RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 217,
-            green = 217,
-            blue = 217
-        ),
-        isStructured = false,
-        radius = 16.0,
-        content = content,
-        modifier = modifier
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
-    )
-}
-
-@Composable
 fun ProfilePic(modifier: Modifier = Modifier, url: String) {
-    if(url == "")
-        RelayImage(
-            image = painterResource(R.drawable.hacer_clic),
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .fillMaxWidth(1.0f)
-                .fillMaxHeight(1.0f)
-                
-        )
-    else
-        AsyncImage(model = url,
-            contentDescription = "profilePic",
-            modifier = modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    Row{
+        Box{
+
+            this@Row.AnimatedVisibility(visible = url.isBlank(), enter = expandVertically()+ expandHorizontally(), exit = shrinkVertically()+ shrinkHorizontally()) {
+                RelayImage(
+                    image = painterResource(R.drawable.hacer_clic),
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .fillMaxWidth(1.0f)
+                        .fillMaxHeight(1.0f)
+
+                )
+            }
+            this@Row.AnimatedVisibility(visible = url.isNotBlank(), enter = expandVertically()+ expandHorizontally(), exit = shrinkVertically()+ shrinkHorizontally()) {
+
+                AsyncImage(model = url,
+                    contentDescription = "profilePic",
+                    modifier = modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            this@Row.AnimatedVisibility(visible = url == "empty", enter = expandVertically()+ expandHorizontally(), exit = shrinkVertically()+ shrinkHorizontally()) {
+
+                RelayImage(
+                    image = painterResource(R.drawable.foto_perfil_foto),
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .fillMaxWidth(1.0f)
+                        .fillMaxHeight(1.0f)
+
+                )
+            }
+        }
+    }
 }
 
 @Composable

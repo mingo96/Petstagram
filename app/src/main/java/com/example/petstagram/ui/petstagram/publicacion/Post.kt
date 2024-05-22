@@ -177,7 +177,7 @@ fun CuadroInfoInstance(modifier: Modifier = Modifier, post: UIPost, controller: 
 @OptIn(UnstableApi::class) @Composable
 fun PostSource(modifier: Modifier = Modifier, 
                post: UIPost, 
-               controller: PostsUIController? = null, 
+               controller: PostsUIController,
                likes : MutableLiveData<Int>? = null,
                isVisible: Boolean) {
 
@@ -200,10 +200,10 @@ fun PostSource(modifier: Modifier = Modifier,
         "video" -> {
             if (post.mediaItem != MediaItem.EMPTY)
                 DisplayVideoFromSource(source = post.mediaItem, modifier = modifier, onDoubleTap = {
-                    controller?.likeOnPost(post)
+                    controller.likeOnPost(post)
                     likes!!.value = post.likes.size
                 },
-                    onTap = {controller?.toggleStop()},
+                    onTap = {controller.toggleStop()},
                     isVisible = isVisible,
                     uri = post.UIURL)
 

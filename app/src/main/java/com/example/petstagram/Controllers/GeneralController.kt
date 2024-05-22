@@ -75,7 +75,7 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     private val _videoStopped = MutableLiveData(true)
 
-    override val videoStopped = _videoStopped
+    override val videoStopped : LiveData<Boolean> = _videoStopped
 
     override fun startRollingDots(){
         viewModelScope.launch {

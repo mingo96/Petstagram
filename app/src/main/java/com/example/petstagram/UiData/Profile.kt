@@ -10,7 +10,7 @@ class Profile (
     /**username of the user*/
     var userName :String= "",
     /**url of the photo for this account*/
-    var profilePic : String = "",
+    var profilePic : String = "empty",
     var reportScore : Double = 1.0,
     var followers : List<String> = emptyList()
 )

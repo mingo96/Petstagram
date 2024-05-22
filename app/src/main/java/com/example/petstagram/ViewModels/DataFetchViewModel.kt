@@ -44,7 +44,6 @@ import java.util.Date
 class DataFetchViewModel : ViewModel() {
 
     var selfId = ""
-
     val id : String
         get() {return _selfProfile.value.id}
 
@@ -495,5 +494,9 @@ class DataFetchViewModel : ViewModel() {
         fetchPostsFromPet(pet.id)
 
         return _posts.filter { it.pet == pet.id }
+    }
+
+    fun clear(){
+        _posts = mutableListOf()
     }
 }

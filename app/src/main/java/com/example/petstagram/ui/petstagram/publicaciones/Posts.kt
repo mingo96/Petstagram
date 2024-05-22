@@ -85,7 +85,7 @@ fun Posts(
     val dots by controller.funnyAhhString.collectAsState()
     val optionsClicked by controller.optionsClicked.observeAsState()
     val context = LocalContext.current
-    val videoStopped by controller.videoStopped.observeAsState(initial = false)
+    val videoStopped by controller.videoStopped.observeAsState(initial = true)
 
     LaunchedEffect(key1 = Unit) {
         controller.startRollingDots()

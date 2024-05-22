@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
+import com.example.petstagram.Controllers.ProfileInteractor
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
 import com.google.firebase.firestore.FieldValue
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class PetObserverViewModel : GeneralController() {
+class PetObserverViewModel : GeneralController(), ProfileInteractor {
 
     /**id of our profile, to keep up with the user data*/
     var selfId by mutableStateOf("")
@@ -50,7 +51,7 @@ class PetObserverViewModel : GeneralController() {
 
     /**live data to access [_isEditing]*/
     val isEditing :LiveData<Boolean> = _isEditing
-    fun followers()= _observedPet.value.followers.size
+    override fun followers()= _observedPet.value.followers.size
 
     private val _follow : MutableLiveData<Boolean?> = MutableLiveData(false)
 
@@ -59,20 +60,20 @@ class PetObserverViewModel : GeneralController() {
     var imOwner by mutableStateOf(false)
         private set
 
-    fun follow(){
+    override fun follow(){
         animation()
         if (_observedPet.value.followers.contains(_selfProfile.value.id)) return;
 
         _observedPet.value.followers += _selfProfile.value.id
-        db.collection("Users").document(_observedPet.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
+        db.collection("Pets").document(_observedPet.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
     }
 
-    fun unFollow(){
+    override fun unFollow(){
         animation()
 
         if (!_observedPet.value.followers.contains(_selfProfile.value.id)) return;
         _observedPet.value.followers -= _selfProfile.value.id
-        db.collection("Users").document(_observedPet.value.id).update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
+        db.collection("Pets").document(_observedPet.value.id).update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
 
     }
 
@@ -103,8 +104,6 @@ class PetObserverViewModel : GeneralController() {
                 }
 
                 imOwner = _observedPet.value.owner == selfId
-
-                _follow.value = _observedPet.value.followers.any { it == selfId }
 
                 base.postsFromPet(_observedPet.value)
 
@@ -142,7 +141,7 @@ class PetObserverViewModel : GeneralController() {
      * only updates if we are not editing, the name we're writing could be overWritten*/
     fun keepUpWithUserInfo() {
         viewModelScope.launch {
-            _selfProfile
+            _observedPet
                 //we make it so it doesnt load more if we get out of the app
                 .stateIn(
                     viewModelScope,
@@ -154,13 +153,23 @@ class PetObserverViewModel : GeneralController() {
                     Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
 
                     delay(1000)
-                    db.collection("Users").whereEqualTo("id", selfId).get()
+                    db.collection("Users").document(selfId).get()
                         .addOnSuccessListener {
 
-                            val newVal = it.documents[0].toObject(Profile::class.java)!!
-                            if (newVal != _selfProfile.value){
+                            val newVal = it.toObject(Profile::class.java)!!
+                            if (newVal.id != _selfProfile.value.id){
                                 _selfProfile.value = newVal
                             }
+                        }
+                    db.collection("Pets").document(staticPet.id).get()
+                        .addOnSuccessListener {
+
+                            val newVal = it.toObject(Pet::class.java)!!
+                            if (newVal != _observedPet.value){
+                                _observedPet.value = newVal
+                            }
+
+                            _follow.value = _observedPet.value.followers.contains(_selfProfile.value.id)
                             fetchPosts()
                         }
 
@@ -213,8 +222,7 @@ class PetObserverViewModel : GeneralController() {
     }
 
     override fun scroll() {
-        if (!_isLoading.value!!)
-            fetchPosts()
+        fetchPosts()
     }
 
     fun clear(){

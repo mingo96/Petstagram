@@ -172,7 +172,7 @@ fun DisplayVideoFromSource(
                                 mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                             },
                             onDoubleClick = {
-                                onDoubleTap.invoke()
+                                onDoubleTap()
                             },
                             onLongClick = {
                                 onTap()
