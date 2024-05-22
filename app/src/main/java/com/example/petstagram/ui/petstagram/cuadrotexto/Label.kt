@@ -367,12 +367,12 @@ fun TopLevelVariacionBienvenida(
 @Composable
 fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier, added : String = "") {
     RelayText(
-        content = if (added.isBlank()) "Tu perfil" else added,
+        content = added.ifBlank { "Tu perfil" },
         fontSize = 20.0.sp,
         fontFamily = inter,
         fontWeight = FontWeight.Bold,
         height = 1.2102272033691406.em,
-        maxLines = -1,
+        maxLines = 2,
         modifier = modifier.wrapContentWidth().wrapContentHeight(
             align = Alignment.CenterVertically,
             unbounded = true

@@ -76,7 +76,7 @@ import com.example.petstagram.ui.theme.Secondary
 @Composable
 fun Posts(
     modifier: Modifier = Modifier,
-    controller : PostsUIController,
+    controller: PostsUIController,
     navController: NavController? = null
 ) {
 
@@ -85,7 +85,6 @@ fun Posts(
     val dots by controller.funnyAhhString.collectAsState()
     val optionsClicked by controller.optionsClicked.observeAsState()
     val context = LocalContext.current
-    val videoStopped by controller.videoStopped.observeAsState(initial = true)
 
     LaunchedEffect(key1 = Unit) {
         controller.startRollingDots()
@@ -107,40 +106,47 @@ fun Posts(
                 .background(
                     Primary,
                 )
-        ){
+        ) {
 
 
-            itemsIndexed(postsState){ index, it->
+            itemsIndexed(postsState) { index, it ->
                 var seen by rememberSaveable {
                     mutableStateOf(false)
                 }
 
-                AnimatedVisibility(visible = optionsClicked== it, enter = slideInHorizontally()+ expandVertically(), exit = slideOutHorizontally{it} + shrinkVertically()) {
-                    Row (
+                AnimatedVisibility(
+                    visible = optionsClicked == it,
+                    enter = slideInHorizontally() + expandVertically(),
+                    exit = slideOutHorizontally { it } + shrinkVertically()) {
+                    Row(
                         Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly){
-                        Button(onClick = {
-                            controller.reportPost(context = context)
-                            controller.clearOptions()
-                        },
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = {
+                                controller.reportPost(context = context)
+                                controller.clearOptions()
+                            },
                             colors = buttonColors(),
                             elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-                            ) {
-                            Text(text = "Reportar")
+                        ) {
+                            Text(text = if (controller.actualUser.id == it.creatorUser!!.id) "Borrar" else "Reportar")
                         }
-                        Button(onClick = {
-                            controller.savePostResource(context = context)
-                            controller.clearOptions()
-                        },
+                        Button(
+                            onClick = {
+                                controller.savePostResource(context = context)
+                                controller.clearOptions()
+                            },
                             colors = buttonColors(),
                             elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                         ) {
                             Text(text = "Descargar")
                         }
-                        Button(onClick = { controller.clearOptions() },
+                        Button(
+                            onClick = { controller.clearOptions() },
                             colors = buttonColors(),
                             elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                         ) {
@@ -149,9 +155,17 @@ fun Posts(
                     }
                 }
 
-                AnimatedVisibility(visible = seen, enter = slideInHorizontally()+ expandVertically()) {
-                    val isVisible by remember{
-                        derivedStateOf { (index == state.firstVisibleItemIndex)&& !state.isScrollInProgress && !videoStopped }
+                AnimatedVisibility(
+                    visible = seen,
+                    enter = slideInHorizontally() + expandVertically()
+                ) {
+                    val isVisible by remember {
+                        derivedStateOf {
+                            (index == state.firstVisibleItemIndex
+                                    || index == state.firstVisibleItemIndex + 1
+                                    && postsState[state.firstVisibleItemIndex + 1].typeOfMedia != "video")
+                                    && !state.isScrollInProgress
+                        }
                     }
                     Post(
                         modifier = Modifier
@@ -195,26 +209,32 @@ fun Posts(
             //}
             item {
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                    .fillMaxHeight(0.3f)
-                    .fillMaxWidth()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .fillMaxHeight(0.3f)
+                        .fillMaxWidth()
+                ) {
 
                     LaunchedEffect(key1 = true) {
-                        if (isLoading==false)
+                        if (isLoading == false)
                             controller.scroll()
                     }
-                    if (isLoading == true){
+                    if (isLoading == true) {
 
                         CircularProgressIndicator(
                             Modifier
                                 .width(200.dp)
                                 .height(200.dp)
-                                .padding(top = 16.dp))
-                        Text(text = "Cargando$dots",color = Color.Black)
+                                .padding(top = 16.dp)
+                        )
+                        Text(text = "Cargando$dots", color = Color.Black)
 
-                    }else{
-                        if (navController != null){
-                            Text(text = "No hay más, prueba a publicar tú mismo!", color = Color.Black)
+                    } else {
+                        if (navController != null) {
+                            Text(
+                                text = "No hay más, prueba a publicar tú mismo!",
+                                color = Color.Black
+                            )
 
                             BotonMas(modifier = Modifier
                                 .clickable {
@@ -227,15 +247,18 @@ fun Posts(
                                         .columnWeight(1.0f)
                                 )
                             }
-                        }else{
-                            Text(text = "No hay más publicaciones!", color = Color.Black, modifier = Modifier.padding(vertical = 50.dp))
+                        } else {
+                            Text(
+                                text = "No hay más publicaciones!",
+                                color = Color.Black,
+                                modifier = Modifier.padding(vertical = 50.dp)
+                            )
                         }
                     }
                 }
             }
 
         }
-
 
 
     }
@@ -247,6 +270,7 @@ fun buttonColors(): ButtonColors {
         contentColor = Color.Black,
         containerColor = Color.White.copy(0.5F),
         disabledContainerColor = Primary,
-        disabledContentColor = Primary)
+        disabledContentColor = Primary
+    )
 }
 

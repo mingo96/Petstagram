@@ -10,24 +10,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.petstagram.R
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 
-// Design to select for FotoPerfil
-enum class Size {
-    Peque,
-    Enorme
-}
 
 /**
  * foto de perfil
@@ -47,19 +40,6 @@ fun FotoPerfilBase(
     }
 }
 
-@Preview(widthDp = 216, heightDp = 216)
-@Composable
-private fun FotoPerfilSizeEnormePreview() {
-    MaterialTheme {
-        RelayContainer {
-            FotoPerfilBase(
-                modifier = Modifier
-                    .rowWeight(1.0f)
-                    .columnWeight(1.0f)
-            )
-        }
-    }
-}
 
 @Composable
 fun FotoSizePeque(modifier: Modifier = Modifier, url: String) {

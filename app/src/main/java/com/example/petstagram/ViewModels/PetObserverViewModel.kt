@@ -183,10 +183,13 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
     private fun pushNewPetName(){
         if (petName!=_observedPet.value.name) {
             _observedPet.value.name = petName
-            db.collection("Users")
+            db.collection("Pets")
                 .document(_observedPet.value.id).update("name", petName)
                 .addOnCompleteListener {
                     _isEditing.value = !_isEditing.value!!
+                    for (i in _posts.value){
+                        i.uiPet!!.name = petName
+                    }
                     fetchPosts()
                 }
         }

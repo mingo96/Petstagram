@@ -272,7 +272,7 @@ fun UserNameContainer(
         crossAxisAlignment = CrossAxisAlignment.Center,
         itemSpacing = 24.0,
         content = content,
-        modifier = modifier.fillMaxHeight()
+        modifier = modifier.fillMaxHeight().fillMaxWidth(0.8f)
     )
 }
 
@@ -402,7 +402,7 @@ fun YourUserName(
         Label(
             modifier = Modifier.wrapContentWidth(),
             variation = Variation.YourProfile,
-            added = if(added == null)textValue() else added
+            added = added ?: textValue()
         )
 }
 

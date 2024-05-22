@@ -14,11 +14,8 @@ import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.like.Pressed
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
@@ -30,11 +27,11 @@ import kotlinx.coroutines.launch
 
 abstract class GeneralController : ViewModel(), PostsUIController {
 
-    private val _optionsClicked : MutableLiveData<UIPost?> = MutableLiveData(null)
+    private val _optionsClicked: MutableLiveData<UIPost?> = MutableLiveData(null)
 
     override val optionsClicked: LiveData<UIPost?> = _optionsClicked
 
-    lateinit var base : DataFetchViewModel
+    lateinit var base: DataFetchViewModel
 
     override var storageRef = Firebase.storage.reference
 
@@ -51,13 +48,13 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     protected val _isLoading = MutableLiveData(false)
 
     /**[LiveData] for [_isLoading]*/
-    override val isLoading : LiveData<Boolean> = _isLoading
+    override val isLoading: LiveData<Boolean> = _isLoading
 
     /**actual content of [Post]s and their Uri Strings*/
     protected val _posts = MutableStateFlow<List<UIPost>>(emptyList())
 
     /**visible version of [_posts]*/
-    override val posts : StateFlow<List<UIPost>> = _posts
+    override val posts: StateFlow<List<UIPost>> = _posts
 
     private val _actualComments = MutableLiveData<List<UIComment>>(emptyList())
 
@@ -75,9 +72,57 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     private val _videoStopped = MutableLiveData(true)
 
-    override val videoStopped : LiveData<Boolean> = _videoStopped
+    override val videoStopped: LiveData<Boolean> = _videoStopped
 
-    override fun startRollingDots(){
+    override var erasing: Boolean = false
+
+    private val _videoMode = MutableLiveData<Boolean>(false)
+
+    override val videoMode: LiveData<Boolean> = _videoMode
+
+    private val _videoIsRunning: MutableLiveData<Boolean?> = MutableLiveData(false)
+
+    override val videoIsRunning: LiveData<Boolean?> = _videoIsRunning
+
+    private val _likedPost = MutableLiveData<UIPost?>(null)
+
+    override val likedPost: LiveData<UIPost?> = _likedPost
+
+    override fun animateVideoMode() {
+        if (_videoMode.value == false)
+
+            viewModelScope.launch {
+
+                _videoMode.value = true
+                delay(1000)
+                _videoMode.value = false
+
+            }
+    }
+
+    override fun animatePause() {
+        if (_videoIsRunning.value != null) {
+            viewModelScope.launch {
+                val spare = _videoIsRunning.value!!
+                _videoIsRunning.value = null
+                delay(1000)
+                _videoIsRunning.value = !spare
+            }
+        }
+    }
+
+    override fun animateLike(post: UIPost) {
+
+        if (_likedPost.value == null)
+            viewModelScope.launch {
+                _likedPost.value = post
+                delay(500)
+                _likedPost.value = null
+            }
+
+    }
+
+    override fun startRollingDots() {
         viewModelScope.launch {
 
             _funnyAhhString
@@ -87,18 +132,19 @@ abstract class GeneralController : ViewModel(), PostsUIController {
                     started = SharingStarted.WhileSubscribed(10000),
                     0
                 )
-                .collect{
-                    _funnyAhhString.value = when(_funnyAhhString.value){
-                        "."->".."
-                        ".."->"..."
-                        "..."->""
-                        else ->"."
+                .collect {
+                    _funnyAhhString.value = when (_funnyAhhString.value) {
+                        "." -> ".."
+                        ".." -> "..."
+                        "..." -> ""
+                        else -> "."
                     }
                     delay(500)
 
                 }
         }
     }
+
     override fun selectPostForComments(post: UIPost) {
         viewModelScope.launch {
 
@@ -108,13 +154,15 @@ abstract class GeneralController : ViewModel(), PostsUIController {
                 .addOnSuccessListener {
                     for (i in it) {
                         val comment = i.toObject(UIComment::class.java)
-                        db.collection("Users").document(comment.user).get().addOnSuccessListener {userjson ->
-                            comment.objectUser = userjson.toObject(Profile::class.java)!!
+                        db.collection("Users").document(comment.user).get()
+                            .addOnSuccessListener { userjson ->
+                                comment.objectUser = userjson.toObject(Profile::class.java)!!
 
-                            comment.liked = if(comment.likes.find { it.userId==actualUser.id }==null) Pressed.False else Pressed.True
+                                comment.liked =
+                                    if (comment.likes.find { it.userId == actualUser.id } == null) Pressed.False else Pressed.True
 
-                            result.add(comment)
-                        }.continueWith {
+                                result.add(comment)
+                            }.continueWith {
                             loadingComments = false
                         }
 
@@ -140,6 +188,7 @@ abstract class GeneralController : ViewModel(), PostsUIController {
         _commenting.value = false
         _actualComments.value = emptyList()
     }
+
     fun stopLoading() {
         base.stopLoading()
         _posts.value = emptyList()

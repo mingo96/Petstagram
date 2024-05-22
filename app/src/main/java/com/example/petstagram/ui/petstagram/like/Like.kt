@@ -1,6 +1,7 @@
 package com.example.petstagram.like
 
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
@@ -14,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.petstagram.R
 import com.example.petstagram.ui.theme.Secondary
+import com.google.relay.compose.Clip
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
@@ -104,7 +106,7 @@ fun ImagenLikePulsadoTrue(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.like_imagen_like),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier.fillMaxSize()
     )
 }
 
@@ -116,7 +118,7 @@ fun TopLevelPulsadoTrue(
     RelayContainer(
         backgroundColor = Secondary,
         isStructured = false,
-        radius = 16.0,
+        clip = Clip.Circle,
         content = content,
         modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
     )

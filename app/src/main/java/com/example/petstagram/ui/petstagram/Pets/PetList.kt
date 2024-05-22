@@ -6,16 +6,19 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -42,41 +45,48 @@ fun PetList(modifier:Modifier= Modifier,
 
     PetListContainer (modifier){
 
-        if (onNewPet != null) {
-            BotonMas(modifier = Modifier
-                .clickable {
-                    onNewPet()
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            item(span = { GridItemSpan(2)}) {
+                if (onNewPet != null) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+
+                        BotonMas(modifier = Modifier
+                            .clickable {
+                                onNewPet()
+                            }
+                        ) {
+                            CuadroSumar(
+                                modifier = Modifier
+                                    .rowWeight(1.0f)
+                                    .columnWeight(1.0f)
+                            )
+                        }
+                        if (pets.isEmpty()){
+                            Text(text = "No hay mascotas!!")
+                        }
+                    }
+                }else{
+                    if (pets.isEmpty()){
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+
+                            Image(painter = painterResource(id = R.drawable.grillo), contentDescription ="grillo" )
+                            Text(text = "Parece que alguien necesita una mascota...")
+                        }
+                    }
                 }
-                .padding(top = 16.dp)) {
-                CuadroSumar(
-                    modifier = Modifier
-                        .rowWeight(1.0f)
-                        .columnWeight(1.0f)
-                )
-            }
-            if (pets.isEmpty()){
-                Text(text = "No hay mascotas!!")
-            }
-        }else{
-            if (pets.isEmpty()){
-                Image(painter = painterResource(id = R.drawable.grillo), contentDescription ="grillo" )
-                Text(text = "Parece que alguien necesita una mascota...")
-            }
-        }
-        BoxWithConstraints(Modifier.padding(horizontal = 16.dp)) {
 
-            var width = maxWidth
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(pets){pet->
-
-                    PetCard(pet = pet, onSelect = { onSelect(pet) }, selected = pet == selected)
-
-                }
             }
+            items(pets){pet->
+
+                PetCard(pet = pet, onSelect = { onSelect(pet) }, selected = pet == selected)
+
+            }
+
         }
 
 
@@ -99,7 +109,6 @@ fun PetListContainer(
         ),
         mainAxisAlignment = MainAxisAlignment.Start,
         crossAxisAlignment = CrossAxisAlignment.Center,
-        arrangement = RelayContainerArrangement.Column,
         content = content,
         itemSpacing = 8.0,
         modifier = modifier
@@ -112,6 +121,7 @@ fun PetListContainer(
                     1.0f to Color.Transparent
                 ),
                 RoundedCornerShape(15.dp, 15.dp)
-            ).padding(vertical = 16.dp)
+            )
+            .padding(vertical = 16.dp)
     )
 }
