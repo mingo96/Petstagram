@@ -162,18 +162,21 @@ fun NewPostScreen(
                                 .fillMaxWidth()
                         ) {
 
-                            CuadroInfoInstance(post = viewModel.newPost,
+                            CuadroInfoInstance(
+                                post = viewModel.newPost,
                                 modifier = Modifier.zIndex(1F)
                             )
                             if (getMimeType(context, uriObserver!!)?.startsWith("video") == true) {
                                 val source = remember {
                                     MediaItem.fromUri(uriObserver!!)
                                 }
-                                DisplayVideoFromSource(source = source,
+                                DisplayVideoFromSource(
+                                    source = source,
                                     onDoubleTap = {
                                         sourceSelecter.launch("*/*")
-                                                  },
-                                    modifier = modifier)
+                                    },
+                                    modifier = modifier
+                                )
                             } else if (getMimeType(
                                     context,
                                     uriObserver!!

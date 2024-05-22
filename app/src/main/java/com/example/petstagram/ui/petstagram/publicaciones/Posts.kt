@@ -163,7 +163,7 @@ fun Posts(
                         derivedStateOf {
                             (index == state.firstVisibleItemIndex
                                     || index == state.firstVisibleItemIndex + 1
-                                    && postsState[state.firstVisibleItemIndex + 1].typeOfMedia != "video")
+                                    && postsState[state.firstVisibleItemIndex].typeOfMedia != "video")
                                     && !state.isScrollInProgress
                         }
                     }
