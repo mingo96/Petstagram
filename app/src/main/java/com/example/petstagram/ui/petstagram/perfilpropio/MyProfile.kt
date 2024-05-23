@@ -115,9 +115,6 @@ fun MyProfile(
     /**actual profile pic*/
     val profilePicObserver by viewModel.resource.observeAsState()
 
-    /**informs UI of changes in loading value*/
-    val isLoading by viewModel.isLoading.observeAsState()
-
     /**informs UI of changes in editing value*/
     val editing by viewModel.isEditing.observeAsState()
 
@@ -195,40 +192,31 @@ fun MyProfile(
                 }
 
                 item {
-
-                    if (isLoading!!)
-                        CircularProgressIndicator(
-                            modifier
-                                .rowWeight(1.0f)
+                    Box(
+                        Modifier.fillMaxWidth(),
+                    ) {
+                        PostsInstance(
+                            modifier = Modifier
+                                .zIndex(5F)
                                 .height(height.times(0.8f))
-                                .fillMaxWidth(0.8f)
+                                .offset(x = offsetObserver - width),
+                            viewModel = viewModel
                         )
-                    else {
-                        Box(
-                            Modifier.fillMaxWidth(),
-                        ) {
-                            PostsInstance(
-                                modifier = Modifier
-                                    .zIndex(5F)
-                                    .height(height.times(0.8f))
-                                    .offset(x = offsetObserver - width),
-                                viewModel = viewModel
-                            )
-                            PetList(
-                                pets = pets,
-                                onNewPet = { navController.navigate("añadirMascota") },
-                                onSelect = {
-                                    PetObserverViewModel.staticPet = it
-                                    navController.navigate("mascota")
-                                },
-                                modifier = Modifier
-                                    .height(height.times(0.8f))
-                                    .offset(x = offsetObserver)
-                            )
+                        PetList(
+                            pets = pets,
+                            onNewPet = { navController.navigate("añadirMascota") },
+                            onSelect = {
+                                PetObserverViewModel.staticPet = it
+                                navController.navigate("mascota")
+                            },
+                            modifier = Modifier
+                                .height(height.times(0.8f))
+                                .offset(x = offsetObserver)
+                        )
 
 
-                        }
                     }
+
                 }
             }
 

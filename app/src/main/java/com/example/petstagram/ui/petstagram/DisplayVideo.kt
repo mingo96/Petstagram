@@ -300,7 +300,6 @@ fun DisplayVideoFromPost(
                 exit = fadeOut(animationSpec = tween(1000)),
                 enter = EnterTransition.None
             ) {
-                mediaPlayer.pause()
 
                 Image(
                     bitmap = bitmap!!.asImageBitmap(),

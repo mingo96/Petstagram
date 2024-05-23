@@ -36,6 +36,10 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
 
     val observedPet : StateFlow<Pet> = _observedPet
 
+    private val _petsOwner = MutableStateFlow(Profile())
+
+    val petsOwner : StateFlow<Profile> = _petsOwner
+
     /**new username container*/
     private var petName by mutableStateOf("")
 
@@ -159,6 +163,14 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                             val newVal = it.toObject(Profile::class.java)!!
                             if (newVal.id != _selfProfile.value.id){
                                 _selfProfile.value = newVal
+                            }
+                        }
+                    db.collection("Users").document(staticPet.owner).get()
+                        .addOnSuccessListener {
+
+                            val newVal = it.toObject(Profile::class.java)!!
+                            if (newVal.id != _selfProfile.value.id){
+                                _petsOwner.value = newVal
                             }
                         }
                     db.collection("Pets").document(staticPet.id).get()

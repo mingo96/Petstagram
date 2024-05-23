@@ -118,6 +118,7 @@ class MainActivity : ComponentActivity() {
                     ownProfileViewModel.navController = navController
                     savedPostsViewModel.navController = navController
                     profileObserverViewModel.navController = navController
+                    petObserverViewModel.navController = navController
 
                     val start = if(authViewModel.auth.currentUser == null) {
                         "login"

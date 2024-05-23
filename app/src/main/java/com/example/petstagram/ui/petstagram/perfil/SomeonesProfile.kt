@@ -134,41 +134,32 @@ fun SomeonesProfile(
                 }
 
                 item {
-
-                    if (isLoading!!)
-                        CircularProgressIndicator(
-                            modifier
-                                .rowWeight(1.0f)
+                    Box(
+                        Modifier.fillMaxWidth(),
+                    ) {
+                        Posts(
+                            modifier = Modifier
+                                .zIndex(5F)
                                 .height(height.times(0.8f))
-                                .fillMaxWidth(0.8f)
+                                .fillMaxWidth()
+                                .offset(x = offsetObserver - width),
+                            controller = viewModel
                         )
-                    AnimatedVisibility(visible = !isLoading!!) {
-                        Box(
-                            Modifier.fillMaxWidth(),
-                        ) {
-                            Posts(
-                                modifier = Modifier
-                                    .zIndex(5F)
-                                    .height(height.times(0.8f))
-                                    .fillMaxWidth()
-                                    .offset(x = offsetObserver - width),
-                                controller = viewModel
-                            )
-                            PetList(
-                                pets = pets,
-                                onSelect = {
-                                    PetObserverViewModel.staticPet = it
-                                    navController.navigate("mascota")
-                                           },
-                                modifier = Modifier
-                                    .height(height.times(0.8f))
-                                    .offset(x = offsetObserver)
-                            )
+                        PetList(
+                            pets = pets,
+                            onSelect = {
+                                PetObserverViewModel.staticPet = it
+                                navController.navigate("mascota")
+                                       },
+                            modifier = Modifier
+                                .height(height.times(0.8f))
+                                .offset(x = offsetObserver)
+                        )
 
 
-                        }
                     }
                 }
+
             }
 
         }

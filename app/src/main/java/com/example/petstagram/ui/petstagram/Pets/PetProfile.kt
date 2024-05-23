@@ -83,10 +83,9 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
             } else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
         }
 
-    /**informs UI of changes in loading value*/
-    val isLoading by viewModel.isLoading.observeAsState()
-
     val observedProfile by viewModel.observedPet.collectAsState()
+
+    val ownerProfile by viewModel.petsOwner.collectAsState()
 
     val following by viewModel.follow.observeAsState()
 
@@ -165,18 +164,29 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
                         DataContainer(height = height) {
 
                             ImageContainer {
-                                ProfilePicInstance(
-                                    Modifier
-                                        .height(height.times(0.23f))
-                                        .width(height.times(0.23f)),
-                                    url = resource!!
-                                )
+                                Box(contentAlignment = Alignment.BottomEnd){
+                                    ProfilePicInstance(
+                                        Modifier
+                                            .height(height.times(0.23f).times(0.35f))
+                                            .width(height.times(0.23f).times(0.35f))
+                                            .zIndex(1F)
+                                            .clickable { viewModel.enterProfile(ownerProfile) },
+                                        url = ownerProfile.profilePic
+                                    )
+                                    ProfilePicInstance(
+                                        Modifier
+                                            .height(height.times(0.23f))
+                                            .width(height.times(0.23f))
+                                            .zIndex(0F),
+                                        url = resource!!
+                                    )
+                                }
                             }
 
                             UserNameContainer {
                                 Label(
                                     variation = Variation.UserName,
-                                    added = observedProfile!!.name,
+                                    added = observedProfile.name,
                                     modifier = Modifier.fillMaxWidth(0.7f)
                                 )
 
