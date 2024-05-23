@@ -54,15 +54,28 @@ Aquí finaliza el proyecto base
 14. Rediseño interfaz de Perfil para mostrar mascotas
 15. Ligero rediseño de publicaciones para mostrar mascotas (nombre de mascota y su foto)
 16. Arreglo de publicaciones corruptas que rompen la app por no terminar de subirse
+17. Diseñado e implementación de perfil ajeno
+    1. Adicion de lista de seguidores para perfil
+18. Diseñado e implementación de perfil de mascota (ajena o no)
+    1. Adicion de lista de seguidores para mascota
+19. Implementación de animación para like y cambio en modo de video/reproducción
+20. Implementación de foto del dueño en pefil de mascota a modo de enlace
+21. Cambiar boton de reporte a borrado en caso de publicación propia
+22. Rediseño de UI de Login
+    1. Implementacion de nueva UI
+23. Implementación de Google Auth para registro/inicio de sesión
+24. Cambios en animaciones para hacerlas más dinámicas
+
+Entrega inicial del proyecto
 
 ## Dificultades encontradas
 
 (Ordenadas de horrible a molesto)
 
-1. Gestión y optimización del uso de clases controladoras de publicaciones
-2. Rendimiento de composición y scroll
-3. Gestión de estado de UI y flujo de datos estable y práctico
-4. Actualización de datos (las referencias no se actualizan si el referenciado cambia)
-5. Gestión de recursos en memoria
-6. Display de video
+1. Display de video, gestión de este y de su uso de recursos
+2. Gestión y optimización del uso de clases controladoras de publicaciones
+3. Rendimiento de composición y scroll
+4. Gestión de estado de UI y flujo de datos estable y práctico
+5. Actualización de datos (las referencias no se actualizan si el referenciado cambia)
+6. Gestión de recursos en memoria
 7. Ajuste de UI a código
