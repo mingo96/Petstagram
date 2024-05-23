@@ -103,5 +103,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
     //notificaciones
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+    //google play
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
+
 
 }

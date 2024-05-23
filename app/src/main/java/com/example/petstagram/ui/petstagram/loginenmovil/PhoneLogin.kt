@@ -1,5 +1,7 @@
 package com.example.petstagram.loginenmovil
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -67,6 +69,10 @@ import com.example.petstagram.data.AuthUiState
 import com.example.petstagram.perfilpropio.StateSelector
 import com.example.petstagram.ui.theme.Primary
 import com.example.petstagram.ui.theme.Secondary
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -100,6 +106,34 @@ fun PhoneLogin(
     val state by viewModel.state.observeAsState()
 
     val registering by viewModel.registering.observeAsState(true)
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            viewModel.signInWithGoogleCredential(credential, {
+                navController.navigate("categorias")}){
+
+                navController.navigate("añadirMascota")
+            }
+        }catch (e:Exception){
+
+        }
+        
+    }
+
+    val onGoogleClick = {
+        val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
+        val options = GoogleSignInOptions.Builder(
+            GoogleSignInOptions.DEFAULT_SIGN_IN
+        ).requestIdToken(token)
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(context, options)
+        launcher.launch( googleSignInClient.signInIntent)
+
+    }
 
     BoxWithConstraints(
         Modifier.background(
@@ -163,6 +197,7 @@ fun PhoneLogin(
                         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
                             SignInButtons(
+                                onGoogleButtonClick = onGoogleClick,
                                 registering = true,
                                 viewModel = viewModel,
                                 navController = navController
@@ -192,6 +227,7 @@ fun PhoneLogin(
                         exit = slideOutHorizontally { -it }
                     ) {
                         SignInButtons(
+                            onGoogleButtonClick = onGoogleClick,
                             registering = false,
                             viewModel = viewModel,
                             navController = navController
@@ -248,6 +284,7 @@ fun DataFields(
 
 @Composable
 fun SignInButtons(
+    onGoogleButtonClick : ()->Unit,
     registering: Boolean,
     viewModel: AuthViewModel,
     navController: NavHostController
@@ -267,8 +304,7 @@ fun SignInButtons(
     ) {
 
         GoogleAuthButton(
-            onClick = {},
-            text = if (registering) "Registrarse con Google" else "Iniciar sesión con Google"
+            onClick = {onGoogleButtonClick()}
         )
         if (registering) {
 

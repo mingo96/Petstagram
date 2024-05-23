@@ -120,11 +120,14 @@ class MainActivity : ComponentActivity() {
                     profileObserverViewModel.navController = navController
                     petObserverViewModel.navController = navController
 
-                    val start = if(authViewModel.auth.currentUser == null) {
+                    var start = if(authViewModel.auth.currentUser == null) {
                         "login"
                     } else {
-                        authViewModel.loadUserFromAuth()
                         "categorias"
+                    }
+
+                    if(start == "categorias") {
+                        authViewModel.loadUserFromAuth{start = "login"}
                     }
 
                     val onEnter = slideInHorizontally ()

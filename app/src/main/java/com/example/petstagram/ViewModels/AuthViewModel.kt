@@ -12,12 +12,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.data.AuthUiState
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+const val CLIENT_ID = "750182229870-tl614hnsg0s9qdde4l789u4injqious3.apps.googleusercontent.com"
 
 class AuthViewModel : ViewModel() {
 
@@ -73,7 +78,7 @@ class AuthViewModel : ViewModel() {
                 .show()
             return
         }
-        if (password.isNotBlank() ||password.length<5) {
+        if (password.isBlank() ||password.length<5) {
             Toast.makeText(context, "Contraseña no válida", Toast.LENGTH_SHORT)
                 .show()
             return
@@ -147,11 +152,11 @@ class AuthViewModel : ViewModel() {
     }
 
     /**creates the user and persists it*/
-    private fun createUser(mail: String, onEnd: () -> Unit){
+    private fun createUser(mail: String, profilePic : String = "", onEnd: () -> Unit){
         val id = auth.currentUser!!.uid
         viewModelScope.launch {
 
-            val profile = Profile(authId = id,id = "", mail = mail, userName = mail.split("@")[0])
+            val profile = Profile(authId = id,id = "", mail = mail, userName = mail.split("@")[0], profilePic = profilePic)
 
             persistUser(profile){
                 onEnd.invoke()
@@ -189,14 +194,19 @@ class AuthViewModel : ViewModel() {
     }
 
     /**function to recover the [Profile] given that we have the [auth] from last time*/
-    fun loadUserFromAuth(){
-        db.collection("Users")
-            .whereEqualTo("authId", auth.currentUser!!.uid).get()
-            .addOnSuccessListener {
-                val user = it.first().toObject(Profile::class.java)
-                Log.i(user.authId, auth.currentUser!!.uid)
-                localProfile = user
-            }
+    fun loadUserFromAuth(onFail : ()->Unit={}){
+            db.collection("Users")
+                .whereEqualTo("authId", auth.currentUser!!.uid).get()
+                .addOnSuccessListener {
+                    try {
+
+                        val user = it.first().toObject(Profile::class.java)
+                    Log.i(user.authId, auth.currentUser!!.uid)
+                    localProfile = user
+                    }catch (e:Exception){
+                        onFail()
+                    }
+                }
     }
 
     fun clickHelp(){
@@ -214,4 +224,26 @@ class AuthViewModel : ViewModel() {
         _registering.value = !_registering.value!!
     }
 
+    fun signInWithGoogleCredential(credential: AuthCredential, onLogin: ()->Unit = {}, onSuccess: () -> Unit) = viewModelScope.launch {
+        try {
+            auth.signOut()
+            auth.signInWithCredential(credential).addOnSuccessListener {authUser->
+                db.collection("Users").whereEqualTo("mail",auth.currentUser!!.email!!).get().addOnSuccessListener {
+                    if (it.isEmpty) {
+                        createUser(auth.currentUser!!.email!!, authUser.user!!.photoUrl.toString()) {
+                            onLogin()
+                            onSuccess.invoke()
+                        }
+                    }
+                    else{
+                        loadUserFromAuth().also { onLogin() }
+                    }
+                }
+
+
+            }
+        }catch (e:Exception){
+
+        }
+    }
 }

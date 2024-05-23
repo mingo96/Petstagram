@@ -12,7 +12,20 @@
           "package_name": "com.example.Petstagram"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "750182229870-tl614hnsg0s9qdde4l789u4injqious3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.Petstagram",
+            "certificate_hash": "504edb7c5d01d70acdd7e4b7a357eab13cf112c5"
+          }
+        },
+        {
+          "client_id": "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCQRxnbl5htFCradEqSNb4sFcK_CUir2uI"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
