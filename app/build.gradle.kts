@@ -66,8 +66,8 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.3.1")
 
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation(platform("androidx.compose:compose-bom:2024.05.00"))
     implementation("androidx.compose.ui:ui")
@@ -88,7 +88,7 @@ dependencies {
 
     //AsyncImage
     implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("androidx.fragment:fragment-ktx:1.7.0")
+    implementation("androidx.fragment:fragment-ktx:1.7.1")
 
     // DCS - Firebase
     // Import the Firebase BoM
@@ -102,7 +102,7 @@ dependencies {
     // DCS - Base de datos Firestore
     implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
     //notificaciones
-    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
     //google play
     implementation("com.google.android.gms:play-services-auth:21.1.1")
 

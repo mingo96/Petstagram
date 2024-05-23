@@ -1,5 +1,6 @@
 package com.example.petstagram.loginenmovil
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -118,7 +119,7 @@ fun PhoneLogin(
                 navController.navigate("añadirMascota")
             }
         }catch (e:Exception){
-
+            Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
         }
         
     }
@@ -213,8 +214,8 @@ fun PhoneLogin(
                                         )
                                         .padding(8.dp)
                                 ) {
-                                    Text(text = "Tu nombre de usuario será tu prefijo de correo, si ya está pillado lo modificaremos un poco, pero luego lo puedes cambiar!")
-                                    Text(text = "¡Al registrarte irás a registrar a tu primera mascota así que ve preparando alguna foto en la que salga guapa!")
+                                    Text(text = "Tu nombre de usuario será tu prefijo de correo, si ya está pillado lo modificaremos un poco, pero luego lo puedes cambiar!", color = Color.White)
+                                    Text(text = "¡Al registrarte irás a registrar a tu primera mascota así que ve preparando alguna foto en la que salga guapa!", color = Color.White)
                                 }
                             }
                         }

@@ -437,7 +437,8 @@ fun colors(state : Boolean): SegmentedButtonColors {
         activeContainerColor = if (state) Primary else Secondary,
         activeBorderColor = if (state) Primary else Secondary,
         inactiveBorderColor = if (state) Primary else Secondary,
-        activeContentColor = Color.Black
+        activeContentColor = Color.Black,
+        inactiveContainerColor = Color.Black
     )
 }
 
