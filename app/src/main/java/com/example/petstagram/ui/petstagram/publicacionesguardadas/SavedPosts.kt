@@ -152,7 +152,7 @@ fun CategoryDisplay(category: Category, click : ()->Unit){
             )
         }
 
-        Text(text = "Mostrar ${category.name}", style = TextStyle(fontSize = 10.sp))
+        Text(text = "Mostrar ${category.name}", style = TextStyle(fontSize = 10.sp, color = Color.White))
     }
 }
 

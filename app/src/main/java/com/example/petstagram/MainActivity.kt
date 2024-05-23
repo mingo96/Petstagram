@@ -122,12 +122,13 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color =Color(
+                    color = Color(
                         alpha = 255,
                         red = 35,
                         green = 35,
                         blue = 35
-                    )
+                    ),
+                    contentColor = Color.White
                 ) {
                     val navController = rememberNavController()
 
@@ -147,25 +148,10 @@ class MainActivity : ComponentActivity() {
                         authViewModel.loadUserFromAuth()
                     }
 
-                    LaunchedEffect(key1 = Unit) {
-                        while (authViewModel.localProfile == null) {
-                            delay(1000)
-                        }
-                        postsViewModel.actualUser = authViewModel.localProfile!!
-                        dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
-                        dataFetchViewModel.startLoadingPosts(applicationContext)
-                        publishViewModel.user = authViewModel.localProfile!!
-                        navController.navigate("categorias")
-                    }
-
-                    val onEnter = slideInHorizontally{-it}+ scaleIn()
+                    val onEnter = slideInHorizontally { -it } + scaleIn()
                     val onExit = slideOutHorizontally {
                         it
-                    }+ scaleOut()
-
-                    var lastStep: String? by rememberSaveable {
-                        mutableStateOf(null)
-                    }
+                    } + scaleOut()
 
                     NavHost(navController = navController, startDestination = start) {
                         composable(
@@ -173,6 +159,17 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+
+                            LaunchedEffect(key1 = Unit) {
+                                while (authViewModel.localProfile == null) {
+                                    delay(1000)
+                                }
+                                postsViewModel.actualUser = authViewModel.localProfile!!
+                                dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
+                                dataFetchViewModel.startLoadingPosts(applicationContext)
+                                publishViewModel.user = authViewModel.localProfile!!
+                                navController.navigate("categorias")
+                            }
                             LoadingScreen()
 
                         }
@@ -180,10 +177,9 @@ class MainActivity : ComponentActivity() {
                             "login",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            LaunchedEffect(key1 = lastStep) {
+                            LaunchedEffect(key1 = true) {
                                 ownProfileViewModel.clear()
                                 dataFetchViewModel.clear()
-                                lastStep = route
                             }
                             PhoneLogin(navController = navController, viewModel = authViewModel)
 
@@ -193,10 +189,6 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = Unit) {
-
-                                lastStep = route
-                            }
                             CategoriesMenu(
                                 navController = navController,
                                 viewModel = categoriesViewModel
@@ -207,10 +199,9 @@ class MainActivity : ComponentActivity() {
                             "publicaciones",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
-                            postsViewModel.statedCategory = categoriesViewModel.selectedCategory
+
+                                postsViewModel.statedCategory = categoriesViewModel.selectedCategory
+
                             DisplayCategory(
                                 navController = navController,
                                 viewModel = postsViewModel
@@ -222,10 +213,8 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
                             publishViewModel.category = categoriesViewModel.selectedCategory
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
                             publishViewModel.user = authViewModel.localProfile!!
+
                             NewPostScreen(
                                 navController = navController,
                                 viewModel = publishViewModel
@@ -236,10 +225,8 @@ class MainActivity : ComponentActivity() {
                             "perfilPropio",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
                             ownProfileViewModel.selfId = authViewModel.localProfile!!.id
+
                             MyProfile(
                                 navController = navController,
                                 viewModel = ownProfileViewModel
@@ -250,10 +237,8 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
                             profileObserverViewModel.selfId = authViewModel.localProfile!!.id
+
                             SomeonesProfile(
                                 navController = navController,
                                 viewModel = profileObserverViewModel
@@ -264,10 +249,8 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
                             petObserverViewModel.selfId = authViewModel.localProfile!!.id
+
                             PetProfile(
                                 navController = navController,
                                 viewModel = petObserverViewModel
@@ -277,10 +260,8 @@ class MainActivity : ComponentActivity() {
                             "añadirMascota",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
                             petCreationViewModel.selectedCategory = publishViewModel.category
+
                             PetCreation(
                                 viewModel = petCreationViewModel,
                                 navController = navController
@@ -290,10 +271,8 @@ class MainActivity : ComponentActivity() {
                             "guardadas",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            LaunchedEffect(key1 = lastStep) {
-                                lastStep = route
-                            }
                             savedPostsViewModel.actualUser = authViewModel.localProfile!!
+
                             SavedPosts(
                                 navController = navController,
                                 viewModel = savedPostsViewModel

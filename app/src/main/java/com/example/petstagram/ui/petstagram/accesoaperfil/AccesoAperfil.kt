@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ui.theme.Primary
+import com.google.relay.compose.Clip
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -42,7 +43,12 @@ fun ImagenPerfil(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.acceso_aperfil_imagen_perfil),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(80.0.dp).requiredHeight(80.0.dp)
+        modifier = modifier.requiredWidth(96.0.dp).requiredHeight(96.0.dp),
+        padding = PaddingValues(16.dp),
+        backgroundColor = Color.Gray.copy(alpha = 0.3F),
+        radius = 25.0,
+        strokeColor = Color.Black,
+        strokeWidth = 4.0
     )
 }
 
@@ -51,7 +57,12 @@ fun ImagenGaleria(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.acceso_aperfil_imagen_galeria),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(91.0.dp).requiredHeight(80.0.dp)
+        modifier = modifier.requiredWidth(107.0.dp).requiredHeight(96.0.dp),
+                padding = PaddingValues(16.dp),
+        backgroundColor = Color.Gray.copy(alpha = 0.3F),
+        radius = 25.0,
+        strokeColor = Color.Black,
+        strokeWidth = 4.0
     )
 }
 
@@ -60,7 +71,12 @@ fun ImagenPuerta(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.acceso_aperfil_imagen_puerta),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(80.0.dp).requiredHeight(80.0.dp)
+        modifier = modifier.requiredWidth(96.0.dp).requiredHeight(96.0.dp),
+        padding = PaddingValues(16.dp),
+        backgroundColor = Color.Gray.copy(alpha = 0.3F),
+        radius = 25.0,
+        strokeColor = Color.Black,
+        strokeWidth = 4.0
     )
 }
 
@@ -73,7 +89,7 @@ fun TopLevel(
         backgroundColor = Primary,
         mainAxisAlignment = MainAxisAlignment.SpaceBetween,
         arrangement = RelayContainerArrangement.Row,
-        padding = PaddingValues(all = 16.0.dp),
+        padding = PaddingValues(vertical = 8.0.dp),
         content = content,
         modifier = modifier.fillMaxWidth(1.0f)
     )

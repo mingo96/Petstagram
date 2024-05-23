@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.barrasuperior.TopBar
+import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.Categories
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -44,13 +45,10 @@ fun CategoriesMenu(
         TopLevel(modifier = modifier) {
             TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.24f)), navController = navController)
-            BarraTipoNotificacion(modifier = Modifier
-                .rowWeight(1.0f)
-                .requiredHeight(height.times(0.07f)),navController = navController)
+                .requiredHeight(height.times(0.238f)), navController = navController)
             CategoriesInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.83f)),
+                .requiredHeight(height.times(0.91f)),
                 navController = navController,
                 categoryViewModel = viewModel)
         }
@@ -61,7 +59,7 @@ fun CategoriesMenu(
 /**top bar with which you can move in the app*/
 @Composable
 fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController)
+    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu)
 }
 
 /**esthetic bar (for now)*/

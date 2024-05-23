@@ -251,7 +251,8 @@ fun DisplayVideoFromPost(
 
     }
 
-    if (!mediaPlayer.isLoading) {
+    val loading by remember{derivedStateOf { mediaPlayer.isLoading }}
+    if (!loading) {
         Box(modifier
             .combinedClickable(
                 onClick = {
@@ -269,7 +270,7 @@ fun DisplayVideoFromPost(
                 },
                 onLongClick = {
                     onLongTap()
-                    mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
+                    mediaPlayer.playWhenReady = false
                 }
             )) {
 
