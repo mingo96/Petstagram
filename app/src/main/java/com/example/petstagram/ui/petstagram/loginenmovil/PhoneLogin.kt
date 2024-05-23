@@ -1,6 +1,7 @@
 package com.example.petstagram.loginenmovil
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -92,6 +93,9 @@ fun PhoneLogin(
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
+    BackHandler {
+
+    }
 
     val userValue: () -> String = { viewModel.user }
 
@@ -122,7 +126,7 @@ fun PhoneLogin(
         }catch (e:Exception){
             Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
         }
-        
+
     }
 
     val onGoogleClick = {

@@ -144,7 +144,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (start == "pantallaCarga") {
-                        authViewModel.loadUserFromAuth { start = "login" }
+                        authViewModel.loadUserFromAuth()
                     }
 
                     LaunchedEffect(key1 = Unit) {
