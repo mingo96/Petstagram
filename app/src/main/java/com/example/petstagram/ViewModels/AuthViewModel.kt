@@ -47,7 +47,7 @@ class AuthViewModel : ViewModel() {
     val helpDisplayed :LiveData<Boolean> = _helpDisplayed
 
     /**profile we generate the user*/
-    var localProfile: Profile by mutableStateOf(Profile())
+    var localProfile: Profile? by mutableStateOf(null)
 
     /**content for the "user" field*/
     var user by mutableStateOf("")
