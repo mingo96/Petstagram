@@ -15,23 +15,25 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 ### Objetivos implementadas
 
 * Autenticación por correo electrónico
+* Autenticación por Google Auth
 * Almacenamiento y display de publicaciones
 * Ordenado de Publicaciones por categoría
-* Perfil editable con su propia pestaña
+* Perfil editable con su propia pestaña, mostrando publicaciones y mascotas
 * Carga de datos cuando sea necesaria
 * Creación de publicaciones con archivos del usuario
-* Interacción con publicaciones en tiempo real (like, guardar)
+* Interacción con publicaciones en tiempo real (like, guardar, descargar, reportar, borrar)
 * Pestaña de comentarios por publicación
 * Colección de publicaciones guardadas
+* Interacción entre perfiles y mascotas
+* Perfiles "hijos" al usuario, orientado a ser uno por mascota
+* Pestaña para mostrar perfiles ajenos, mostrando publicaciones y mascotas
+* Pestaña para perfiles de mascota, mostrando publicaciones
 
 ### Objetivos no implementados (a futuro)
 
 * Sistema de notificaciones por comentario o like
-* Pestaña para mostrar perfiles ajenos
-* Interacción entre perfiles
 * Sección de adopción
 * Chat entre usuarios por adopción
-* Perfiles "hijos" al usuario, orientado a ser uno por mascota
 
 ### Tecnologías usadas
 
@@ -40,11 +42,10 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 * Lógica de aplicación : Android \[Jetpack compose]
   * Imagenes asíncronas : Android Coil
   * Video : Google Exoplayer
-  * Inserción de depencencias : Dagger hilt
   * Navegación : Android Navigation
   * Interacción con servidor : Firebase for Android
 * Servidor : Google Firebase
-  * Autenticación : Firebase Authentication
+  * Autenticación y Google auth: Firebase Authentication
   * Persistencia y acceso a datos : Firebase Firestore
   * Persistencia y acceso de archivos : Firebase Storage
   * Notificaciones : Firebase Cloud Message
