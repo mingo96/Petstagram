@@ -204,6 +204,8 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                     }
                     fetchPosts()
                 }
+        }else{
+            _isEditing.value = false
         }
     }
 

@@ -113,6 +113,7 @@ class OwnProfileViewModel : GeneralController(){
                     pushNewUserName()
                 }else
                 //case someone already has this name, we show it with a toast
+                    if (userName == _selfProfile.value.userName) _isEditing.value = true
                     Toast.makeText(context,"nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
             }
         }

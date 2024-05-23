@@ -42,7 +42,8 @@ fun TopBar(
     when (variant) {
         Variant.Simple -> TopLevelVarianteSimple(modifier = modifier) {
             AccesoAPerfilAccesoAPerfil(navController = navController)
-            ImagenDeslizableVarianteSimple()
+            ImagenDeslizableVarianteSimple(Modifier
+                .clickable { navController.navigate("categorias") })
         }
 
         Variant.WithMenu ->
