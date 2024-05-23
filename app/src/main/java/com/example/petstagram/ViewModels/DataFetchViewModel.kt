@@ -498,5 +498,6 @@ class DataFetchViewModel : ViewModel() {
 
     fun clear(){
         _posts = mutableListOf()
+
     }
 }

@@ -181,10 +181,8 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
                             LaunchedEffect(key1 = lastStep) {
-                                if (!lastStep.isNullOrBlank()) {
-                                    ownProfileViewModel.clear()
-                                    dataFetchViewModel.clear()
-                                }
+                                ownProfileViewModel.clear()
+                                dataFetchViewModel.clear()
                                 lastStep = route
                             }
                             PhoneLogin(navController = navController, viewModel = authViewModel)
