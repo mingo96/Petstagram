@@ -78,9 +78,6 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this,"Po no hay notificaciones, shulo", Toast.LENGTH_SHORT).show()
         }
     }
-    @OptIn(UnstableApi::class) @SuppressLint("SourceLockedOrientationActivity",
-        "CoroutineCreationDuringComposition"
-    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
@@ -104,7 +101,7 @@ class MainActivity : ComponentActivity() {
         petObserverViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContent {
             PetstagramConLogicaTheme {
                 // A surface container using the 'background' color from the theme

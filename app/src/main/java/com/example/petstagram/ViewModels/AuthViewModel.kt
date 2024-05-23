@@ -226,7 +226,6 @@ class AuthViewModel : ViewModel() {
 
     fun signInWithGoogleCredential(credential: AuthCredential, onLogin: ()->Unit = {}, onSuccess: () -> Unit) = viewModelScope.launch {
         try {
-            auth.signOut()
             auth.signInWithCredential(credential).addOnSuccessListener {authUser->
                 db.collection("Users").whereEqualTo("mail",auth.currentUser!!.email!!).get().addOnSuccessListener {
                     if (it.isEmpty) {

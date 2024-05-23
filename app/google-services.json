@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "750182229870-2tnu2htuhmlhr00hh9keid7kutmufi2o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.Petstagram",
+            "certificate_hash": "109b4fdd94fbb48bd00a7b2d6a136695789f6e2a"
+          }
+        },
+        {
           "client_id": "750182229870-tl614hnsg0s9qdde4l789u4injqious3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
