@@ -1,6 +1,5 @@
 package com.example.petstagram
 
-import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,33 +9,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.OptIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.media3.common.util.UnstableApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -62,16 +44,12 @@ import com.example.petstagram.ui.petstagram.publicacionesguardadas.SavedPosts
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
-    private lateinit var analytics: FirebaseAnalytics
 
-    // Declare the launcher at the top of your Activity/Fragment:
+    /**activity that asks for notification permission*/
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
@@ -95,7 +73,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        analytics = Firebase.analytics
         val authViewModel: AuthViewModel by viewModels()
         val categoriesViewModel: CategoriesViewModel by viewModels()
         val publishViewModel: PublishViewModel by viewModels()
@@ -108,6 +85,7 @@ class MainActivity : ComponentActivity() {
         val petObserverViewModel: PetObserverViewModel by viewModels()
 
         postsViewModel.base = dataFetchViewModel
+        categoriesViewModel.base = dataFetchViewModel
         ownProfileViewModel.base = dataFetchViewModel
         savedPostsViewModel.base = dataFetchViewModel
         publishViewModel.base = dataFetchViewModel
@@ -166,7 +144,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 postsViewModel.actualUser = authViewModel.localProfile!!
                                 dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
-                                dataFetchViewModel.startLoadingPosts(applicationContext)
+                                dataFetchViewModel.startLoadingData(applicationContext)
                                 publishViewModel.user = authViewModel.localProfile!!
                                 navController.navigate("categorias")
                             }

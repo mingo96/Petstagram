@@ -22,8 +22,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val CLIENT_ID = "750182229870-tl614hnsg0s9qdde4l789u4injqious3.apps.googleusercontent.com"
-
+/**[ViewModel] for the in-app authentication, works with plain e-mail and Google auth*/
 class AuthViewModel : ViewModel() {
 
     /**Firebase Auth reference*/
@@ -38,18 +37,22 @@ class AuthViewModel : ViewModel() {
     /**visible version of [_state]*/
     var state: LiveData<AuthUiState> = _state
 
+    /**`true` if the user is trying to register, `false` if trying to log in*/
     private val _registering = MutableLiveData(true)
 
+    /**visible version of [_registering]*/
     val registering :LiveData<Boolean> = _registering
 
+    /**`true` if the info button has been clicked 10 seconds ago or less*/
     private val _helpDisplayed = MutableLiveData(false)
 
+    /**visible version of [_helpDisplayed]*/
     val helpDisplayed :LiveData<Boolean> = _helpDisplayed
 
-    /**profile we generate the user*/
+    /**profile we generate for the user*/
     var localProfile: Profile? by mutableStateOf(null)
 
-    /**content for the "user" field*/
+    /**content for the [Profile.mail] field*/
     var user by mutableStateOf("")
         private set
 
@@ -151,7 +154,7 @@ class AuthViewModel : ViewModel() {
         return this.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex())
     }
 
-    /**creates the user and persists it*/
+    /**creates the user given its data and persists it*/
     private fun createUser(mail: String, profilePic : String = "", onEnd: () -> Unit){
         val id = auth.currentUser!!.uid
         viewModelScope.launch {
@@ -209,6 +212,7 @@ class AuthViewModel : ViewModel() {
                 }
     }
 
+    /**executes when the help button is clicked, after 10 seconds it hides again*/
     fun clickHelp(){
         if (_helpDisplayed.value!!) {
             return
@@ -220,10 +224,12 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    /**executes when the type of the authentication is changed, changes [_registering]*/
     fun toggleAuthType(){
         _registering.value = !_registering.value!!
     }
 
+    /**given the credentials, tries to find the user in the db, if not found, registers it, if found, just get it to local*/
     fun signInWithGoogleCredential(credential: AuthCredential, onLogin: ()->Unit = {}, onSuccess: () -> Unit) = viewModelScope.launch {
         try {
             auth.signInWithCredential(credential).addOnSuccessListener {authUser->
@@ -236,7 +242,10 @@ class AuthViewModel : ViewModel() {
                     }
                     else{
                         val firstLoad = localProfile ==null
-                        loadUserFromAuth().also { if(!firstLoad)onLogin() }
+
+                        localProfile = it.first().toObject(Profile::class.java)
+
+                        if(!firstLoad)onLogin()
                     }
                 }
 
@@ -245,17 +254,5 @@ class AuthViewModel : ViewModel() {
         }catch (e:Exception){
 
         }
-    }
-
-    fun signOut(context: Context){
-        auth.signOut()
-        val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
-        val options = GoogleSignInOptions.Builder(
-            GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken(token)
-            .requestEmail()
-            .build()
-        val googleSignInClient = GoogleSignIn.getClient(context, options)
-        googleSignInClient.signOut()
     }
 }

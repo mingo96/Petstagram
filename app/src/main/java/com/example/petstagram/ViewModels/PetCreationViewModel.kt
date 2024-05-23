@@ -107,7 +107,7 @@ class PetCreationViewModel : ViewModel() {
             try {
 
                 sending = true
-                pet.owner = base.id
+                pet.owner = base.profile().id
 
                 db.collection("Pets").add(pet).addOnSuccessListener {
                     pet.id = it.id

@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 
 class CategoriesViewModel : ViewModel() {
 
+    lateinit var base: DataFetchViewModel
+
     /**Firebase Firestore reference*/
     private val db = Firebase.firestore
 
@@ -28,25 +30,16 @@ class CategoriesViewModel : ViewModel() {
     /**selected [Category]*/
     var selectedCategory: Category by mutableStateOf(Category())
 
-    /**gets executed once at Launch, tells [_categories] to keep collecting info from [db]*/
+    /**gets executed once at Launch, tells [_categories] to keep collecting info from [base]*/
     fun fetchCategories() {
         viewModelScope.launch {
 
             _categories.collect {
 
-                val categories = mutableListOf<Category>()
-                db.collection("Categories")
-                    .get()
-                    .addOnSuccessListener {
-                        if (!it.isEmpty) {
-                            for (catJson in it.documents) {
-                                val castedCategory = catJson.toObject(Category::class.java)!!
-                                categories.add(castedCategory)
-                            }
-                        }
-                        _categories.value = categories
-                    }
-                delay(10000)
+                _categories.value = base.categories()
+                delay(2000)
+
+                _categories.value = base.categories()
             }
         }
     }

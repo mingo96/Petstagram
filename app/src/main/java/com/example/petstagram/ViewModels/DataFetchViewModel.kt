@@ -7,9 +7,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.util.rangeTo
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -19,7 +16,6 @@ import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
-import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
 import com.example.petstagram.guardar.SavePressed
@@ -27,7 +23,6 @@ import com.example.petstagram.like.Pressed
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
@@ -41,32 +36,37 @@ import java.time.Instant
 import java.util.Date
 
 @SuppressLint("MutableCollectionMutableState", "StaticFieldLeak")
+/**[ViewModel] that contains almost all the info, others will use it as main data source*/
 class DataFetchViewModel : ViewModel() {
 
+    /**id of the user*/
     var selfId = ""
-    val id : String
-        get() {return _selfProfile.value.id}
 
+    /**actual profile*/
     private val _selfProfile = MutableStateFlow(Profile())
 
+    /**context gotten to generate the [Uri]'s for local storage*/
     lateinit var context: Context
 
+    /**storage reference*/
     private val storageRef = Firebase.storage.reference
 
     /**Firebase FireStore reference*/
     val db = Firebase.firestore
 
-    /**actual content of [Post]s and their Uri Strings*/
+    /**actual content of [Post]s*/
     private var _posts = mutableListOf<UIPost>()
 
+    /**actual content of [Pet]s*/
     private var _pets = mutableListOf<Pet>()
 
+    /**actual content of [Category]s*/
     private var _categories = mutableListOf<Category>()
 
+    /**actual content of [Profile]s*/
     private var _profiles = mutableListOf<Profile>()
 
-    /**it tells if we are loading, so if we go out and in the view again we dont
-     * start another collect, it is set to true until the collection ends*/
+    /**it tells if we are loading anything yet*/
     var alreadyLoading by mutableStateOf(false)
 
     /**ids of the already saved [Post]s*/
@@ -75,10 +75,11 @@ class DataFetchViewModel : ViewModel() {
     /**number of indexes we'll be getting at a time*/
     private var indexesOfPosts = 5L
 
+    /**actual [SavedList]s*/
     private var savedList by mutableStateOf(SavedList())
 
-    /**gets executed on Launch, tells [_posts] to keep collecting the data from the [db]*/
-    fun startLoadingPosts(context: Context){
+    /**gets executed on Launch, makes initial load*/
+    fun startLoadingData(context: Context){
         this.context = context
 
         fetchPetsFromUser()
@@ -90,6 +91,7 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
+    /**gets more [Category]*/
     private fun fetchCategories(){
         alreadyLoading = true
         db.collection("Categories").get().addOnSuccessListener {
@@ -106,14 +108,17 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
+    /**returns [Category] and tries to get more*/
     fun categories():List<Category>{
         fetchCategories()
 
         return _categories.toList()
     }
 
+    /**returns value of [_selfProfile]*/
     fun profile()=_selfProfile.value
 
+    /**states a flow that keeps [_selfProfile] updated*/
     private fun keepUpWithUser(){
         viewModelScope.launch {
 
@@ -125,6 +130,7 @@ class DataFetchViewModel : ViewModel() {
                     0
                 )
                 .collect{
+                    //delay until we have an id
                     while (selfId.isBlank()){
                         delay(100)
                     }
@@ -147,6 +153,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    /**gets our actual report score for [_selfProfile]*/
     private fun updateReportScore(){
 
         db.collection("Reports").whereEqualTo("user", _selfProfile.value.id).get().addOnSuccessListener {
@@ -154,7 +161,7 @@ class DataFetchViewModel : ViewModel() {
             val before = _selfProfile.value.reportScore
             for (i in it.documents){
                 val report = i.toObject(Report::class.java)
-                if (report!!.reportDate.daysAwayFrom()>=10 && _selfProfile.value.reportScore>=0.1){
+                if (report!!.reportDate.daysAgo()>=10 && _selfProfile.value.reportScore>=0.1){
                     _selfProfile.value.reportScore-=0.1
                 }
             }
@@ -164,10 +171,12 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    fun Date.daysAwayFrom(other : Date = Date.from(Instant.now())): Long {
+    /**how many days have passed from the date that calls it*/
+    private fun Date.daysAgo(): Long {
         return this.time - Date.from(Instant.now()).time/1000/60/60/24
     }
 
+    /**updates [savedList]*/
     private fun fetchSavedList(){
 
         viewModelScope.launch {
@@ -196,13 +205,14 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    /**gets one post given its id*/
     private fun individualPostFetch(id :String){
         db.collection("Posts").document(id).get().addOnSuccessListener {
             bootUpPost(it)
         }
     }
 
-    /**gets [Post] JSONs, filtering them for the [statedCategory] we have, ordered by [Post.postedDate]*/
+    /**gets [Post] JSONs, ordered by [Post.postedDate], if it fails it calls itself*/
     private fun getPostsFromFirebase(){
 
 
@@ -248,7 +258,8 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
-
+    /**gets all the posts that correspond to the given id
+     * @param id the id of the user, if not given, [_selfProfile]'s, if it fails it calls itself*/
     private fun getUserPosts(id: String = _selfProfile.value.id){
 
         viewModelScope.launch {
@@ -291,6 +302,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    /**gets more [Post] from the given [Category], if it fails it calls itself*/
     private fun moreCategoryPosts(category: Category){
         viewModelScope.launch {
 
@@ -339,6 +351,8 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    /**gets all posts that correspond to a [Pet], if it fails it calls itself
+     * @param id the [Pet]'s id*/
     private fun fetchPostsFromPet(id: String) {
 
         viewModelScope.launch {
@@ -381,7 +395,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    /**given a JSON, saves its [Post] info and its url*/
+    /**given a JSON, parses it to a [Post] and prepares it to be displayed*/
     private fun bootUpPost(postJson: DocumentSnapshot) {
 
         val castedPost = postJson.toObject(UIPost::class.java)!!
@@ -399,6 +413,7 @@ class DataFetchViewModel : ViewModel() {
 
         if (castedPost.creatorUser !in _profiles) _profiles.add(castedPost.creatorUser!!)
 
+        //download to a temporary file
         try {
 
             val destination = File.createTempFile(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg")
@@ -411,7 +426,7 @@ class DataFetchViewModel : ViewModel() {
             }
 
         }catch (e:Exception){
-            //source doesnt exist
+            //source doesnt exist, erase it
             _posts.removeIf { it.id == castedPost.id }
         }
 
@@ -421,6 +436,7 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
+    /**gets the [Pet] from the given [Post] as a whole item*/
     private fun loadPet(castedPost: UIPost) {
 
         if (_pets.any{ it.id == castedPost.pet }){
@@ -437,6 +453,7 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
+    /**sets [UIPost.saved] up for the ui*/
     private fun loadSaved(castedPost: UIPost){
 
         db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).whereArrayContains("postList", castedPost.id).get()
@@ -450,6 +467,8 @@ class DataFetchViewModel : ViewModel() {
             }
     }
 
+    /**gets all pets from given user
+     * @param id id of the user, if not given its [_selfProfile]'s*/
     private fun fetchPetsFromUser(id: String = _selfProfile.value.id) {
         db.collection("Pets").whereEqualTo("owner", id).get().addOnSuccessListener {
             if (!it.isEmpty){
@@ -463,39 +482,46 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    /**stops all current processes*/
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()
         alreadyLoading = false
     }
 
+    /**asks for more posts of the given category while returns current ones*/
     fun postsFromCategory(category : Category): List<UIPost> {
 
         moreCategoryPosts(category)
         return _posts.filter { it.category!= null && it.category!!.name == category.name }
     }
 
+    /**asks for more posts of the given user while returns current ones*/
     fun postsFromUser(user : String): List<UIPost> {
 
         getUserPosts(user)
         return _posts.filter { it.creatorUser!= null && it.creatorUser!!.id == user }
     }
 
+    /**asks for more posts of the given Saved list while returns current ones*/
     fun postsFromSaved(): List<UIPost> {
         fetchSavedList()
         return _posts.filter { it.id in savedList.postList }
     }
 
+    /**asks for pets of the given user while returns current ones*/
     fun petsFromUser(id: String): List<Pet> {
         fetchPetsFromUser(id)
         return _pets.filter { it.owner == id }
     }
 
+    /**asks for more posts of the pet category while returns current ones*/
     fun postsFromPet(pet: Pet):List<UIPost>{
         fetchPostsFromPet(pet.id)
 
         return _posts.filter { it.pet == pet.id }
     }
 
+    /**clears [_posts] list*/
     fun clear(){
         _posts = mutableListOf()
 
