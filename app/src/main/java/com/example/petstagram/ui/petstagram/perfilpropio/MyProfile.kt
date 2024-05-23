@@ -398,7 +398,7 @@ fun YourUserName(
 /**pass-by function to call a [Label], not much to see (logic-wise)*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> Unit) {
+fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> Unit, text1:String = "Publicaciones", text2 : String = "Mascotas") {
     SingleChoiceSegmentedButtonRow(
         modifier
             .fillMaxWidth()
@@ -411,7 +411,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
             colors = colors(state)
         ) {
             Text(
-                text = "Publicaciones",
+                text = text1,
                 style = TextStyle(color = if (state) Color.Black else Color.White)
             )
         }
@@ -422,7 +422,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
             colors = colors(state)
         ) {
             Text(
-                text = "Mascotas",
+                text = text2,
                 style = TextStyle(color = if (!state) Color.Black else Color.White)
             )
 

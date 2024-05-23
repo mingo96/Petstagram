@@ -112,6 +112,7 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                     Modifier
                         .clickable {
                             viewModel.send(context = context) {
+
                                 navController.navigateUp()
                             }
                         }

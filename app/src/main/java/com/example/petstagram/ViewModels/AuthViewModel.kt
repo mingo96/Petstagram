@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
@@ -32,11 +33,19 @@ class AuthViewModel : ViewModel() {
     /**visible version of [_state]*/
     var state: LiveData<AuthUiState> = _state
 
+    private val _registering = MutableLiveData(true)
+
+    val registering :LiveData<Boolean> = _registering
+
+    private val _helpDisplayed = MutableLiveData(false)
+
+    val helpDisplayed :LiveData<Boolean> = _helpDisplayed
+
     /**profile we generate the user*/
     var localProfile: Profile by mutableStateOf(Profile())
 
     /**content for the "user" field*/
-    var user by mutableStateOf("usuario@gmail.com")
+    var user by mutableStateOf("")
         private set
 
     /**changes content of [user]
@@ -46,7 +55,7 @@ class AuthViewModel : ViewModel() {
     }
 
     /**content for the "password" field*/
-    var password by mutableStateOf("contraseña")
+    var password by mutableStateOf("")
         private set
 
     /**changes content of [password]
@@ -59,6 +68,16 @@ class AuthViewModel : ViewModel() {
      * to authenticate, changes [_state] depending on the result*/
     fun login(context: Context, onSuccess : ()-> Unit){
 
+        if (!user.isValidEmail()) {
+            Toast.makeText(context, "Corrreo no válido", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+        if (password.isNotBlank() ||password.length<5) {
+            Toast.makeText(context, "Contraseña no válida", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
         _state.value = AuthUiState.IsLoading
 
         viewModelScope.launch {
@@ -89,6 +108,17 @@ class AuthViewModel : ViewModel() {
      * to authenticate, changes [_state] depending on the result*/
     fun register(context: Context, onSuccess : ()-> Unit){
 
+
+        if (!user.isValidEmail()) {
+            Toast.makeText(context, "Corrreo no válido", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+        if (password.isBlank() ||password.length<5) {
+            Toast.makeText(context, "Contraseña no válida", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
         _state.value = AuthUiState.IsLoading
 
         if(user.isValidEmail())
@@ -169,5 +199,19 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    fun clickHelp(){
+        if (_helpDisplayed.value!!) {
+            return
+        }
+        viewModelScope.launch {
+            _helpDisplayed.value = true
+            delay(10000)
+            _helpDisplayed.value = false
+        }
+    }
+
+    fun toggleAuthType(){
+        _registering.value = !_registering.value!!
+    }
 
 }

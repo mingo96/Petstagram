@@ -8,5 +8,4 @@ sealed interface AuthUiState {
 
     data class Success(val user:Profile) : AuthUiState
 
-    object Base : AuthUiState
 }
