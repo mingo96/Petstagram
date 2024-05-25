@@ -247,7 +247,8 @@ class AuthViewModel : ViewModel() {
                         localProfile = it.first().toObject(Profile::class.java)
                         _state.value = AuthUiState.Success(localProfile!!)
 
-                        if(!firstLoad)onLogin()
+                        onLogin()
+                        if(!firstLoad)onSuccess()
                     }
                 }
 

@@ -476,7 +476,8 @@ fun UserText(
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = true
-            )
+            ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
     )
 }
 
