@@ -176,6 +176,13 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     }
 
+    override fun deletePost(post: UIPost) {
+
+        db.collection("Posts").document(post.id).delete()
+        storageRef.child("PostImages").child(post.id).delete()
+        _posts.value-=post
+    }
+
     override fun commentingToggle() {
         _commenting.value = !_commenting.value!!
     }

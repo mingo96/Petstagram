@@ -90,8 +90,7 @@ interface PostsUIController : CommentsUIController {
                 "La publicación ha sido borrada, no le saldrá a nadie más, gracias por tu tiempo",
                 Toast.LENGTH_LONG
             ).show()
-            db.collection("Posts").document(post.id).delete()
-            storageRef.child("PostImages").child(post.id).delete()
+            deletePost(post)
             return;
         }
 
@@ -112,8 +111,7 @@ interface PostsUIController : CommentsUIController {
                 Toast.LENGTH_LONG
             ).show()
 
-            db.collection("Posts").document(post.id).delete()
-            storageRef.child("PostImages").child(post.id).delete()
+            deletePost(post)
         } else {
             Toast.makeText(
                 context,
@@ -125,6 +123,8 @@ interface PostsUIController : CommentsUIController {
         }
 
     }
+
+    fun deletePost(post: UIPost)
 
     fun savePostResource(post: UIPost = optionsClicked.value!!, context: Context) {
         try {

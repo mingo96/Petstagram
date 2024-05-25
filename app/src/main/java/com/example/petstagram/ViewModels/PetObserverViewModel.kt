@@ -242,7 +242,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
         fetchPosts()
     }
 
-    fun clear(){
+    fun clean(){
         _posts.value= emptyList()
         _follow.value = false
         petName = ""

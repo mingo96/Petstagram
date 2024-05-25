@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +40,6 @@ import androidx.navigation.NavHostController
 import com.example.petstagram.Controllers.ProfileInteractor
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.PetObserverViewModel
-import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.perfil.FollowingText
@@ -53,7 +50,6 @@ import com.example.petstagram.perfilpropio.EditUsernameButton
 import com.example.petstagram.perfilpropio.EditUsernameImage
 import com.example.petstagram.perfilpropio.EditUsernameImageContainer
 import com.example.petstagram.perfilpropio.ImageContainer
-import com.example.petstagram.perfilpropio.StateSelector
 import com.example.petstagram.perfilpropio.TopBarInstance
 import com.example.petstagram.perfilpropio.UserNameContainer
 import com.example.petstagram.perfilpropio.YourUserName
@@ -69,7 +65,7 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
 
     DisposableEffect(key1 = Unit) {
         onDispose {
-            viewModel.clear()
+            viewModel.clean()
         }
     }
 

@@ -173,7 +173,7 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
         fetchPosts()
     }
 
-    fun clear(){
+    fun clean(){
         _posts.value= emptyList()
         _offset.value = 0.dp
         _state.value = false

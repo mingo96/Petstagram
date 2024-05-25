@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 
-class OwnProfileViewModel : GeneralController(){
+class OwnProfileViewModel : GeneralController() {
 
     /**id of our profile, to keep up with the user data*/
     var selfId by mutableStateOf("")
@@ -32,28 +32,30 @@ class OwnProfileViewModel : GeneralController(){
     private var _selfProfile = MutableStateFlow(Profile())
 
     override var actualUser = _selfProfile.value
-        get() {return _selfProfile.value}
+        get() {
+            return _selfProfile.value
+        }
 
     private val _state = MutableLiveData(false)
 
-    val state : LiveData<Boolean> = _state
+    val state: LiveData<Boolean> = _state
 
     private val _offset = MutableStateFlow(0.dp)
 
-    val offset : StateFlow<Dp> = _offset
+    val offset: StateFlow<Dp> = _offset
 
     private var isMoving by mutableStateOf(false)
 
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
 
-    val pets : StateFlow<List<Pet>> = _pets
+    val pets: StateFlow<List<Pet>> = _pets
 
     /**indicates if we are editing the UserName, because if we are editing and reload,
      * username will go back to original*/
     private val _isEditing = MutableLiveData(false)
 
     /**live data to access [_isEditing]*/
-    val isEditing :LiveData<Boolean> = _isEditing
+    val isEditing: LiveData<Boolean> = _isEditing
 
     /**new username container*/
     private var userName by mutableStateOf("")
@@ -62,12 +64,12 @@ class OwnProfileViewModel : GeneralController(){
     private var _resource = MutableLiveData<String>()
 
     /**visible version of [_resource]*/
-    val resource :LiveData<String> = _resource
+    val resource: LiveData<String> = _resource
 
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
-    private fun fetchPosts(){
+    private fun fetchPosts() {
         if (!_isLoading.value!!) {
             viewModelScope.launch {
 
@@ -76,7 +78,7 @@ class OwnProfileViewModel : GeneralController(){
                 base.postsFromUser(actualUser.id)
                 base.petsFromUser(actualUser.id)
 
-                while (base.alreadyLoading){
+                while (base.alreadyLoading) {
                     delay(10)
                 }
 
@@ -84,10 +86,10 @@ class OwnProfileViewModel : GeneralController(){
 
                 val endPets = base.petsFromUser(actualUser.id)
 
-                for (pet in endPets- pets.value.toSet()){
+                for (pet in endPets - pets.value.toSet()) {
                     _pets.value += pet
                 }
-                for (post in endPosts- _posts.value.toSet()){
+                for (post in endPosts - _posts.value.toSet()) {
                     _posts.value += post
                     delay(500)
                 }
@@ -100,36 +102,38 @@ class OwnProfileViewModel : GeneralController(){
 
 
     /**gets executed when we click te button for editing [userName]*/
-    fun editUserNameClicked(context : Context){
-        if (!_isEditing.value!!){
+    fun editUserNameClicked(context: Context) {
+        if (!_isEditing.value!!) {
             //if we were not editing, just set the username to the profile one and set _isEditing to true
             userName = _selfProfile.value.userName
             _isEditing.value = !_isEditing.value!!
-        }else{
+        } else {
             //if editing already, searches for any profile with the given username
             db.collection("Users").whereEqualTo("userName", userName).get().addOnSuccessListener {
-                if (it.isEmpty){
+                if (it.isEmpty) {
                     //case there's not someone with that username, we push the Update the username
                     pushNewUserName()
-                }else
+                } else
                 //case someone already has this name, we show it with a toast
                     if (userName == _selfProfile.value.userName) _isEditing.value = true
-                    Toast.makeText(context,"nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "nombre de usuario no disponible", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
     /**if [userName] is valid, updates the username of this [_selfProfile]*/
-    private fun pushNewUserName(){
-        if (userName!=_selfProfile.value.userName) {
+    private fun pushNewUserName() {
+        if (userName != _selfProfile.value.userName) {
             _selfProfile.value.userName = userName
             db.collection("Users")
                 .document(_selfProfile.value.id).update("userName", userName)
                 .addOnCompleteListener {
                     //i don't think im supposed to need to do this but it doesn't work if i dont
                     for (i in _posts.value) {
-                        db.collection("Posts").document(i.id).update("creatorUser", _selfProfile.value)
-                        i.creatorUser=_selfProfile.value
+                        db.collection("Posts").document(i.id)
+                            .update("creatorUser", _selfProfile.value)
+                        i.creatorUser = _selfProfile.value
                     }
                     _isEditing.value = !_isEditing.value!!
                     fetchPosts()
@@ -139,13 +143,13 @@ class OwnProfileViewModel : GeneralController(){
 
     /**edit [userName]
      * @param newtext text that is going to [userName]]*/
-    fun editUserName(newtext : String){
+    fun editUserName(newtext: String) {
         userName = newtext
     }
 
     /**get [userName]
      * @return actual value of [userName]*/
-    fun getUserNameText():String{
+    fun getUserNameText(): String {
         return userName
     }
 
@@ -161,7 +165,8 @@ class OwnProfileViewModel : GeneralController(){
                         db.collection("Users").document(_selfProfile.value.id)
                             .update("profilePic", it.toString()).addOnSuccessListener {
                                 for (i in _posts.value) {
-                                    db.collection("Posts").document(i.id).update("creatorUser", _selfProfile.value)
+                                    db.collection("Posts").document(i.id)
+                                        .update("creatorUser", _selfProfile.value)
                                 }
                             }
 
@@ -181,24 +186,27 @@ class OwnProfileViewModel : GeneralController(){
                     started = SharingStarted.WhileSubscribed(10000),
                     0
                 )
-                .collect{
+                .collect {
 
-                Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
+                    Log.i(
+                        "Profile",
+                        "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
+                    )
 
-                delay(1000)
-                db.collection("Users").document(selfId).get()
-                .addOnSuccessListener {
+                    delay(1000)
+                    db.collection("Users").document(selfId).get()
+                        .addOnSuccessListener {
 
-                    val newVal = it.toObject(Profile::class.java)!!
-                    if (newVal != _selfProfile.value){
-                        _selfProfile.value = newVal
-                    }
-                    _resource.value = _selfProfile.value.profilePic
-                    fetchPosts()
+                            val newVal = it.toObject(Profile::class.java)!!
+                            if (newVal != _selfProfile.value) {
+                                _selfProfile.value = newVal
+                            }
+                            _resource.value = _selfProfile.value.profilePic
+                            fetchPosts()
+                        }
+
+                    delay(15000)
                 }
-
-                delay(15000)
-            }
 
         }
     }
@@ -208,24 +216,23 @@ class OwnProfileViewModel : GeneralController(){
         fetchPosts()
     }
 
-    fun clear(){
+    fun clear() {
         _posts.value = emptyList()
         _offset.value = 0.dp
         _isEditing.value = false
     }
 
-    fun ToggleState(width : Dp){
+    fun ToggleState(width: Dp) {
         if (isMoving) return;
         isMoving = true
         _state.value = !_state.value!!
 
         viewModelScope.launch {
             val objective = if (width.value == _offset.value.value) 0.dp else width
-            while (_offset.value!= objective) {
+            while (_offset.value != objective) {
                 if (objective > _offset.value) {
                     _offset.value = Dp(_offset.value.value + 90)
-                }
-                else if (objective < _offset.value) {
+                } else if (objective < _offset.value) {
                     _offset.value = Dp(_offset.value.value - 90)
                 }
                 if ((objective - _offset.value).value in -100f..100f && objective != _offset.value) {
