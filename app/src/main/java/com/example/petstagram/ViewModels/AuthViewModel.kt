@@ -232,6 +232,7 @@ class AuthViewModel : ViewModel() {
     /**given the credentials, tries to find the user in the db, if not found, registers it, if found, just get it to local*/
     fun signInWithGoogleCredential(credential: AuthCredential, onLogin: ()->Unit = {}, onSuccess: () -> Unit) = viewModelScope.launch {
         try {
+            _state.value=AuthUiState.IsLoading
             auth.signInWithCredential(credential).addOnSuccessListener {authUser->
                 db.collection("Users").whereEqualTo("mail",auth.currentUser!!.email!!).get().addOnSuccessListener {
                     if (it.isEmpty) {

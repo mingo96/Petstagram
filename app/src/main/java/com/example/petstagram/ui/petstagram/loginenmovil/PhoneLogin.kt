@@ -36,6 +36,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -61,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.AuthViewModel
@@ -113,21 +115,23 @@ fun PhoneLogin(
 
     val registering by viewModel.registering.observeAsState(true)
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            viewModel.signInWithGoogleCredential(credential, {
-                navController.navigate("categorias")}){
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                viewModel.signInWithGoogleCredential(credential, {
+                    navController.navigate("categorias")
+                }) {
 
-                navController.navigate("añadirMascota")
+                    navController.navigate("añadirMascota")
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
             }
-        }catch (e:Exception){
-            Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
-        }
 
-    }
+        }
 
     val onGoogleClick = {
         val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
@@ -138,8 +142,18 @@ fun PhoneLogin(
             .build()
         val googleSignInClient = GoogleSignIn.getClient(context, options)
         googleSignInClient.signOut()
-        launcher.launch( googleSignInClient.signInIntent)
+        launcher.launch(googleSignInClient.signInIntent)
 
+    }
+
+
+    if (state == AuthUiState.IsLoading) {
+        Dialog(onDismissRequest = { }) {
+            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Text(text = "Procesando")
+                LinearProgressIndicator(color = Primary, modifier = Modifier.fillMaxWidth(0.8f))
+            }
+        }
     }
 
     BoxWithConstraints(
@@ -180,66 +194,64 @@ fun PhoneLogin(
                 text2 = "Registrarse"
             )
 
-            if (state == AuthUiState.IsLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(150.dp)
-                )
-            } else {
+            DataFields(
+                userValue = userValue,
+                userOnChange = userOnChange,
+                passwordOnChange = passwordOnChange,
+                passwordValue = passwordValue
+            )
 
-                DataFields(
-                    userValue = userValue,
-                    userOnChange = userOnChange,
-                    passwordOnChange = passwordOnChange,
-                    passwordValue = passwordValue
-                )
+            Box {
 
-                Box {
+                AnimatedVisibility(
+                    visible = registering,
+                    enter = slideInHorizontally { it },
+                    exit = slideOutHorizontally { it }) {
 
-                    AnimatedVisibility(
-                        visible = registering,
-                        enter = slideInHorizontally { it },
-                        exit = slideOutHorizontally { it }) {
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-
-                            SignInButtons(
-                                onGoogleButtonClick = onGoogleClick,
-                                registering = true,
-                                viewModel = viewModel,
-                                navController = navController
-                            )
-
-                            val helpDisplayed by viewModel.helpDisplayed.observeAsState(false)
-                            AnimatedVisibility(visible = helpDisplayed) {
-                                Column(
-                                    Modifier
-                                        .border(
-                                            BorderStroke(2.dp, Color.White),
-                                            RoundedCornerShape(5.dp)
-                                        )
-                                        .padding(8.dp)
-                                ) {
-                                    Text(text = "Tu nombre de usuario será tu prefijo de correo, si ya está pillado lo modificaremos un poco, pero luego lo puedes cambiar!", color = Color.White)
-                                    Text(text = "¡Al registrarte irás a registrar a tu primera mascota así que ve preparando alguna foto en la que salga guapa!", color = Color.White)
-                                }
-                            }
-                        }
-
-
-                    }
-                    AnimatedVisibility(
-                        visible = !registering,
-                        enter = slideInHorizontally { -it },
-                        exit = slideOutHorizontally { -it }
-                    ) {
                         SignInButtons(
                             onGoogleButtonClick = onGoogleClick,
-                            registering = false,
+                            registering = true,
                             viewModel = viewModel,
                             navController = navController
                         )
+
+                        val helpDisplayed by viewModel.helpDisplayed.observeAsState(false)
+                        AnimatedVisibility(visible = helpDisplayed) {
+                            Column(
+                                Modifier
+                                    .border(
+                                        BorderStroke(2.dp, Color.White),
+                                        RoundedCornerShape(5.dp)
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "Tu nombre de usuario será tu prefijo de correo, si ya está pillado lo modificaremos un poco, pero luego lo puedes cambiar!",
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "¡Al registrarte irás a registrar a tu primera mascota así que ve preparando alguna foto en la que salga guapa!",
+                                    color = Color.White
+                                )
+                            }
+                        }
                     }
+
+
+                }
+                AnimatedVisibility(
+                    visible = !registering,
+                    enter = slideInHorizontally { -it },
+                    exit = slideOutHorizontally { -it }
+                ) {
+                    SignInButtons(
+                        onGoogleButtonClick = onGoogleClick,
+                        registering = false,
+                        viewModel = viewModel,
+                        navController = navController
+                    )
                 }
             }
 
@@ -291,7 +303,7 @@ fun DataFields(
 
 @Composable
 fun SignInButtons(
-    onGoogleButtonClick : ()->Unit,
+    onGoogleButtonClick: () -> Unit,
     registering: Boolean,
     viewModel: AuthViewModel,
     navController: NavHostController
@@ -311,7 +323,7 @@ fun SignInButtons(
     ) {
 
         GoogleAuthButton(
-            onClick = {onGoogleButtonClick()}
+            onClick = { onGoogleButtonClick() }
         )
         if (registering) {
 
