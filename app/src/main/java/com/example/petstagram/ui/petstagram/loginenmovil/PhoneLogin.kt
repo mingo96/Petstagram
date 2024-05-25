@@ -36,6 +36,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -45,6 +46,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -88,6 +90,8 @@ fun PhoneLogin(
 
     }
 
+    val focusManager = LocalFocusManager.current
+
     val userValue: () -> String = { viewModel.user }
 
     val userOnChange: (String) -> Unit = { viewModel.userTextChange(it) }
@@ -112,6 +116,7 @@ fun PhoneLogin(
                 viewModel.signInWithGoogleCredential(credential = credential, onLogin = {
                     navController.navigate("categorias")
                 }, onRegister = {
+                    focusManager.clearFocus(true)
                     navController.navigate("añadirMascota")
                 })
             } catch (e: Exception) {
@@ -173,10 +178,10 @@ fun PhoneLogin(
             }
 
             StateSelector(
-                state = !registering,
-                onClick = { viewModel.toggleAuthType() },
-                text1 = "Iniciar sesión",
-                text2 = "Registrarse"
+                state = !registering, onClick = {
+                    viewModel.toggleAuthType()
+                    focusManager.clearFocus(true)
+                }, text1 = "Iniciar sesión", text2 = "Registrarse"
             )
 
             DataFields(
@@ -288,6 +293,7 @@ fun SignInButtons(
     navController: NavHostController
 ) {
 
+    val focusManager = LocalFocusManager.current
 
     val context = LocalContext.current
     Row(
@@ -317,13 +323,17 @@ fun SignInButtons(
                         viewModel.register(
                             context = context
                         ) {
+                            focusManager.clearFocus(true)
                             navController.navigate("categorias")
                             navController.navigate("añadirMascota")
                         }
                     } else {
                         viewModel.login(
                             context = context
-                        ) { navController.navigate("categorias") }
+                        ) {
+                            focusManager.clearFocus(true)
+                            navController.navigate("categorias")
+                        }
                     }
                 })
     }

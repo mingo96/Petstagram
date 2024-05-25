@@ -131,13 +131,13 @@ fun NewPostScreen(
                     .rowWeight(
                         1.0f
                     )
-                    .height(height.times(0.23f)), navController = navController
+                    .height(height.times(0.238f)), navController = navController
             )
 
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(height.times(0.845f))
+                    .height(height.times(0.838f))
             ) {
 
                 LazyColumn(

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
@@ -22,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -79,6 +82,14 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
         viewModel.startLoading()
     }
 
+    val focusManager = LocalFocusManager.current
+
+    DisposableEffect(key1 = true){
+        onDispose {
+            focusManager.clearFocus()
+        }
+    }
+
     if (viewModel.sending){
         Dialog(onDismissRequest = {
             Toast.makeText(thisContext, "Espera por favor, estamos registrando a ${viewModel.getPetName()}", Toast.LENGTH_SHORT).show()
@@ -97,14 +108,16 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.24f)),
+                    .height(height.times(0.238f) + 16.dp)
+                    .padding(bottom = 16.dp),
                 navController = navController
             )
 
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .height(height.times(0.06f)),
+                    .height(height.times(0.06f) + 16.dp)
+                    .padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly) {
                 PetName(modifier = Modifier.fillMaxWidth(0.7f), textValue = { viewModel.getPetName() }, changeText = {viewModel.setPetName(it)}, editing = true)
                 val context = LocalContext.current
@@ -126,7 +139,8 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
             }
 
             ImageBackground(modifier = Modifier
-                .height(height.times(0.25f))
+                .height(height.times(0.25f) + 16.dp)
+                .padding(bottom = 16.dp)
                 .width(height.times(0.25f))
                 .clickable { sourceSelector.launch("image/*") }) {
 
@@ -153,7 +167,9 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                 }
                 IndicativeText()
             }
-            SelectCategoryTexts(modifier = Modifier.height(height.times(0.11f)))
+            SelectCategoryTexts(modifier = Modifier
+                .height(height.times(0.11f) + 16.dp)
+                .padding(bottom = 16.dp))
 
             CategoryList(onSelect = {viewModel.setCategory(it)}, categoryList = categories,
                 modifier = Modifier.height(height.times(0.42f)),
@@ -237,7 +253,6 @@ fun TopLevel(
         mainAxisAlignment = MainAxisAlignment.End,
         scrollAnchor = ScrollAnchor.End,
         scrollable = true,
-        itemSpacing = 16.0,
         content = content,
         modifier = modifier
             .fillMaxWidth(1.0f)

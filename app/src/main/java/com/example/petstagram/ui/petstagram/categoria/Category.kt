@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -53,7 +54,7 @@ fun Category(
                 contentScale = ContentScale.Crop
             )
         }
-        Buttons(modifier = Modifier.rowWeight(1.0f)) {
+        Buttons(modifier = Modifier.rowWeight(1.0f).padding(top=8.dp)) {
             PostsAccessButton(modifier = Modifier
                 .rowWeight(1.0f)
                 .columnWeight(1.0f)
@@ -98,7 +99,7 @@ fun ListedCategory(
         }
         Row (modifier = Modifier
             .fillMaxWidth()
-            .requiredWidth(40.dp),
+            .requiredWidth(40.dp).padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center){
             CategoryName(texto = category.name, selected = selected)
@@ -282,7 +283,6 @@ fun TopLevel(
         backgroundColor = if (!selected) Color.Black else Primary,
         arrangement = RelayContainerArrangement.Column,
         padding = PaddingValues(all = 16.0.dp),
-        itemSpacing = 8.0,
         strokeWidth = 8.0,
         strokeColor = Color(
             alpha = 255,
