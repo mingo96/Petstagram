@@ -5,8 +5,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
@@ -26,18 +24,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -47,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -76,7 +68,6 @@ import com.example.petstagram.ui.theme.Secondary
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -91,9 +82,7 @@ import com.google.relay.compose.RelayVector
  */
 @Composable
 fun PhoneLogin(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    viewModel: AuthViewModel
+    modifier: Modifier = Modifier, navController: NavHostController, viewModel: AuthViewModel
 ) {
     BackHandler {
 
@@ -107,8 +96,7 @@ fun PhoneLogin(
 
     val passwordOnChange: (String) -> Unit = { viewModel.passwordTextChange(it) }
 
-    val context =
-        LocalContext.current.applicationContext
+    val context = LocalContext.current.applicationContext
 
     //state of the authentication
     val state by viewModel.state.observeAsState()
@@ -121,12 +109,11 @@ fun PhoneLogin(
             try {
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                viewModel.signInWithGoogleCredential(credential, {
+                viewModel.signInWithGoogleCredential(credential = credential, onLogin = {
                     navController.navigate("categorias")
-                }) {
-
+                }, onRegister = {
                     navController.navigate("añadirMascota")
-                }
+                })
             } catch (e: Exception) {
                 Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
             }
@@ -137,9 +124,7 @@ fun PhoneLogin(
         val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
         val options = GoogleSignInOptions.Builder(
             GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken(token)
-            .requestEmail()
-            .build()
+        ).requestIdToken(token).requestEmail().build()
         val googleSignInClient = GoogleSignIn.getClient(context, options)
         googleSignInClient.signOut()
         launcher.launch(googleSignInClient.signInIntent)
@@ -149,7 +134,11 @@ fun PhoneLogin(
 
     if (state == AuthUiState.IsLoading) {
         Dialog(onDismissRequest = { }) {
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Column(
+                Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(text = "Procesando")
                 LinearProgressIndicator(color = Primary, modifier = Modifier.fillMaxWidth(0.8f))
             }
@@ -159,10 +148,7 @@ fun PhoneLogin(
     BoxWithConstraints(
         Modifier.background(
             Color(
-                alpha = 255,
-                red = 35,
-                green = 35,
-                blue = 35
+                alpha = 255, red = 35, green = 35, blue = 35
             )
         )
     ) {
@@ -176,8 +162,7 @@ fun PhoneLogin(
                     enter = slideInHorizontally { it },
                     exit = slideOutHorizontally { it }) {
                     WelcomeText(
-                        Modifier.height(statedHeight.times(0.16f)),
-                        "Bienvenido a Petstagram!"
+                        Modifier.height(statedHeight.times(0.16f)), "Bienvenido a Petstagram!"
                     )
                 }
                 AnimatedVisibility(visible = !registering,
@@ -203,8 +188,7 @@ fun PhoneLogin(
 
             Box {
 
-                AnimatedVisibility(
-                    visible = registering,
+                AnimatedVisibility(visible = registering,
                     enter = slideInHorizontally { it },
                     exit = slideOutHorizontally { it }) {
 
@@ -222,8 +206,7 @@ fun PhoneLogin(
                             Column(
                                 Modifier
                                     .border(
-                                        BorderStroke(2.dp, Color.White),
-                                        RoundedCornerShape(5.dp)
+                                        BorderStroke(2.dp, Color.White), RoundedCornerShape(5.dp)
                                     )
                                     .padding(8.dp)
                             ) {
@@ -241,11 +224,9 @@ fun PhoneLogin(
 
 
                 }
-                AnimatedVisibility(
-                    visible = !registering,
+                AnimatedVisibility(visible = !registering,
                     enter = slideInHorizontally { -it },
-                    exit = slideOutHorizontally { -it }
-                ) {
+                    exit = slideOutHorizontally { -it }) {
                     SignInButtons(
                         onGoogleButtonClick = onGoogleClick,
                         registering = false,
@@ -280,8 +261,7 @@ fun DataFields(
                 )
             }
             UserText(
-                textAccess = userValue,
-                changeText = userOnChange
+                textAccess = userValue, changeText = userOnChange
             )
         }
         Column {
@@ -294,8 +274,7 @@ fun DataFields(
                     .padding(start = 8.dp)
             )
             PasswordText(
-                textAccess = passwordValue,
-                changeText = passwordOnChange
+                textAccess = passwordValue, changeText = passwordOnChange
             )
         }
     }
@@ -314,30 +293,22 @@ fun SignInButtons(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(40.dp),
-        horizontalArrangement = Arrangement.spacedBy(
-            8.dp,
-            alignment = Alignment.CenterHorizontally
-        ),
-        verticalAlignment = Alignment.CenterVertically
+            .height(40.dp), horizontalArrangement = Arrangement.spacedBy(
+            8.dp, alignment = Alignment.CenterHorizontally
+        ), verticalAlignment = Alignment.CenterVertically
     ) {
 
-        GoogleAuthButton(
-            onClick = { onGoogleButtonClick() }
-        )
+        GoogleAuthButton(onClick = { onGoogleButtonClick() })
         if (registering) {
 
-            Icon(
-                imageVector = Icons.Outlined.Info,
+            Icon(imageVector = Icons.Outlined.Info,
                 contentDescription = "info",
                 Modifier
                     .clickable { viewModel.clickHelp() }
-                    .size(40.dp)
-            )
+                    .size(40.dp))
         }
 
-        Image(
-            painter = painterResource(id = R.drawable.cheque),
+        Image(painter = painterResource(id = R.drawable.cheque),
             contentDescription = "Send",
             modifier = Modifier
                 .size(40.dp)
@@ -354,8 +325,7 @@ fun SignInButtons(
                             context = context
                         ) { navController.navigate("categorias") }
                     }
-                }
-        )
+                })
     }
 }
 
@@ -380,8 +350,7 @@ fun GoogleAuthButton(onClick: () -> Unit, text: String = "Iniciar con Google") {
             .fillMaxWidth(0.7f)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
+        horizontalArrangement = Arrangement.SpaceEvenly) {
         Image(painter = painterResource(id = R.drawable.google), contentDescription = "google")
         Text(text = text, color = Color.Black, style = TextStyle(fontSize = 14.sp))
     }
@@ -396,10 +365,7 @@ fun LoginImage(modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(
                 paddingValues = PaddingValues(
-                    start = 0.0.dp,
-                    top = 0.0.dp,
-                    end = 0.0.dp,
-                    bottom = 484.0.dp
+                    start = 0.0.dp, top = 0.0.dp, end = 0.0.dp, bottom = 484.0.dp
                 )
             )
             .fillMaxWidth(1.0f)
@@ -410,14 +376,10 @@ fun LoginImage(modifier: Modifier = Modifier) {
 @Composable
 fun DiagonalRectangle(modifier: Modifier = Modifier) {
     RelayVector(
-        vector = painterResource(R.drawable.diagonal_rectangle),
-        modifier = modifier
+        vector = painterResource(R.drawable.diagonal_rectangle), modifier = modifier
             .padding(
                 paddingValues = PaddingValues(
-                    start = 0.0.dp,
-                    top = 206.5.dp,
-                    end = 0.0.dp,
-                    bottom = 480.0.dp
+                    start = 0.0.dp, top = 206.5.dp, end = 0.0.dp, bottom = 480.0.dp
                 )
             )
             .fillMaxWidth(1.0f)
@@ -427,8 +389,7 @@ fun DiagonalRectangle(modifier: Modifier = Modifier) {
 
 @Composable
 fun WelcomeText(modifier: Modifier = Modifier, text: String = "") {
-    Column(
-        verticalArrangement = Arrangement.Center,
+    Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
@@ -440,8 +401,7 @@ fun WelcomeText(modifier: Modifier = Modifier, text: String = "") {
                     end = Offset(size.width, size.height),
                     strokeWidth = borderSize
                 )
-            }
-    ) {
+            }) {
 
         Text(
             text = text,
@@ -454,9 +414,7 @@ fun WelcomeText(modifier: Modifier = Modifier, text: String = "") {
 /**just some in-out text field, not too much to see (logic wise)*/
 @Composable
 fun UserText(
-    modifier: Modifier = Modifier,
-    textAccess: () -> String,
-    changeText: (String) -> Unit
+    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit
 ) {
     TextField(
         label = { Text("Correo", color = Primary) },
@@ -474,8 +432,7 @@ fun UserText(
         modifier = modifier
             .fillMaxWidth(1.0f)
             .wrapContentHeight(
-                align = Alignment.CenterVertically,
-                unbounded = true
+                align = Alignment.CenterVertically, unbounded = true
             ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
     )
@@ -484,9 +441,7 @@ fun UserText(
 /**just some in-out text field, password formatted, not too much to see (logic wise)*/
 @Composable
 fun PasswordText(
-    modifier: Modifier = Modifier,
-    textAccess: () -> String,
-    changeText: (String) -> Unit
+    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit
 ) {
     TextField(
         label = { Text("Contraseña", color = Primary) },
@@ -503,8 +458,7 @@ fun PasswordText(
         modifier = modifier
             .fillMaxWidth(1.0f)
             .wrapContentHeight(
-                align = Alignment.CenterVertically,
-                unbounded = true
+                align = Alignment.CenterVertically, unbounded = true
             ),
         shape = RoundedCornerShape(10),
         visualTransformation = PasswordVisualTransformation('*'),
@@ -528,8 +482,7 @@ fun myTextFieldColors(): TextFieldColors {
 @Composable
 fun RegisterTextButton(modifier: Modifier = Modifier) {
     Label(
-        modifier = modifier.fillMaxWidth(1.0f),
-        variation = Variation.Register
+        modifier = modifier.fillMaxWidth(1.0f), variation = Variation.Register
     )
 }
 
@@ -537,22 +490,17 @@ fun RegisterTextButton(modifier: Modifier = Modifier) {
 @Composable
 fun LogInTextButton(modifier: Modifier = Modifier) {
     Label(
-        modifier = modifier.fillMaxWidth(1.0f),
-        variation = Variation.Login
+        modifier = modifier.fillMaxWidth(1.0f), variation = Variation.Login
     )
 }
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         itemSpacing = 24.0,
         isStructured = true,

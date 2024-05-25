@@ -49,7 +49,7 @@ fun PetList(modifier:Modifier= Modifier,
             columns = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(all = 16.dp)
         ) {
             item(span = { GridItemSpan(2)}) {
                 if (onNewPet != null) {
@@ -118,10 +118,15 @@ fun PetListContainer(
                 width = 4.dp,
                 Brush.verticalGradient(
                     0.7f to Secondary,
-                    1.0f to Color.Transparent
+                    0.9f to Color.Transparent,
+                    1.0f to Color(
+                        alpha = 255,
+                        red = 35,
+                        green = 35,
+                        blue = 35
+                    )
                 ),
                 RoundedCornerShape(15.dp, 15.dp)
             )
-            .padding(vertical = 16.dp)
     )
 }

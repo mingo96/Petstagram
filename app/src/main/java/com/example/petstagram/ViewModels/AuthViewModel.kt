@@ -12,8 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.data.AuthUiState
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -230,7 +228,7 @@ class AuthViewModel : ViewModel() {
     }
 
     /**given the credentials, tries to find the user in the db, if not found, registers it, if found, just get it to local*/
-    fun signInWithGoogleCredential(credential: AuthCredential, onLogin: ()->Unit = {}, onSuccess: () -> Unit) = viewModelScope.launch {
+    fun signInWithGoogleCredential(credential: AuthCredential, onLogin: ()->Unit = {}, onRegister: () -> Unit) = viewModelScope.launch {
         try {
             _state.value=AuthUiState.IsLoading
             auth.signInWithCredential(credential).addOnSuccessListener {authUser->
@@ -238,7 +236,7 @@ class AuthViewModel : ViewModel() {
                     if (it.isEmpty) {
                         createUser(auth.currentUser!!.email!!, authUser.user!!.photoUrl.toString()) {
                             onLogin()
-                            onSuccess.invoke()
+                            onRegister.invoke()
                         }
                     }
                     else{
@@ -248,7 +246,7 @@ class AuthViewModel : ViewModel() {
                         _state.value = AuthUiState.Success(localProfile!!)
 
                         onLogin()
-                        if(!firstLoad)onSuccess()
+                        if(firstLoad)onRegister()
                     }
                 }
 

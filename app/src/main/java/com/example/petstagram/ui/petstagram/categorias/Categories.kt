@@ -3,6 +3,7 @@ package com.example.petstagram.categorias
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,8 +42,6 @@ fun Categories(
     LaunchedEffect(Unit) {
         categoryViewModel.fetchCategories()
     }
-    BoxWithConstraints {
-        val width = maxWidth
         val categories by categoryViewModel.categories.collectAsState()
         LazyColumn(
             modifier = modifier
@@ -49,12 +49,12 @@ fun Categories(
                     Secondary
                 )
                 .wrapContentHeight(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
         ) {
             items(categories) { category ->
 
                 CategoryInstance(
-                    Modifier.width(width),
+                    Modifier.fillMaxWidth(),
                     navController = navController,
                     category = category,
                     viewModel = categoryViewModel
@@ -62,7 +62,7 @@ fun Categories(
             }
         }
 
-    }
+
 }
 
 @Composable

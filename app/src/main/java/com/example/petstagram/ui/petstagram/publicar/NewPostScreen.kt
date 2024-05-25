@@ -17,6 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -133,13 +134,11 @@ fun NewPostScreen(
                     .height(height.times(0.23f)), navController = navController
             )
 
-
-            BoxWithConstraints(
+            Box(
                 Modifier
                     .fillMaxWidth()
                     .height(height.times(0.845f))
             ) {
-                val height = maxHeight
 
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,

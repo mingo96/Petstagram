@@ -283,6 +283,7 @@ fun TopLevel(
                 width = 4.dp,
                 Brush.verticalGradient(
                     0.7f to Secondary,
+                    0.9f to Color.Transparent,
                     1.0f to Color.Transparent
                 ),
                 RoundedCornerShape(15.dp, 15.dp)

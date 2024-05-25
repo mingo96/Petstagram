@@ -40,6 +40,7 @@ fun CategoriesMenu(
         }
     }
 
+
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val height = maxHeight
         TopLevel(modifier = modifier) {
@@ -94,7 +95,6 @@ fun TopLevel(
             green = 35,
             blue = 35
         ),
-        mainAxisAlignment = MainAxisAlignment.End,
         scrollAnchor = ScrollAnchor.End,
         scrollable = true,
         itemSpacing = 8.0,
