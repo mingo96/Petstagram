@@ -91,6 +91,7 @@ interface PostsUIController : CommentsUIController {
                 Toast.LENGTH_LONG
             ).show()
             db.collection("Posts").document(post.id).delete()
+            storageRef.child("PostImages").child(post.id).delete()
             return;
         }
 
@@ -112,6 +113,7 @@ interface PostsUIController : CommentsUIController {
             ).show()
 
             db.collection("Posts").document(post.id).delete()
+            storageRef.child("PostImages").child(post.id).delete()
         } else {
             Toast.makeText(
                 context,

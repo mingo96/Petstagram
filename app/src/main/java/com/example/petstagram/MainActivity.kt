@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
                     profileObserverViewModel.navController = navController
                     petObserverViewModel.navController = navController
 
-                    var start = if (authViewModel.auth.currentUser == null) {
+                    val start = if (authViewModel.auth.currentUser == null) {
                         "login"
                     } else {
                         "pantallaCarga"
