@@ -416,16 +416,25 @@ class DataFetchViewModel : ViewModel() {
         //download to a temporary file
         try {
 
-            val destination = File.createTempFile(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg")
+            if (!File(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg").exists()) {
 
-            storageRef.child("PostImages/${castedPost.id}").getFile(destination).addOnSuccessListener {
-                castedPost.UIURL = Uri.fromFile(destination)
+                val destination = File.createTempFile(
+                    castedPost.typeOfMedia + "s",
+                    if (castedPost.typeOfMedia == "video") "mp4" else "jpeg"
+                )
 
-                if (castedPost.typeOfMedia == "video")
-                    castedPost.mediaItem = MediaItem.fromUri(castedPost.UIURL)
+                storageRef.child("PostImages/${castedPost.id}").getFile(destination)
+                    .addOnSuccessListener {
+                        castedPost.UIURL = Uri.fromFile(destination)
+
+                        if (castedPost.typeOfMedia == "video")
+                            castedPost.mediaItem = MediaItem.fromUri(castedPost.UIURL)
+                    }
+            }else{
+                castedPost.UIURL = Uri.fromFile(File(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg"))
             }
-
         }catch (e:Exception){
+            Log.e("tipo",e.stackTraceToString())
             //source doesnt exist, erase it
             _posts.removeIf { it.id == castedPost.id }
         }
@@ -524,6 +533,6 @@ class DataFetchViewModel : ViewModel() {
     /**clears [_posts] list*/
     fun clear(){
         _posts = mutableListOf()
-
+        ids = emptyList()
     }
 }
