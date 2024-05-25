@@ -18,6 +18,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -131,6 +132,8 @@ class MainActivity : ComponentActivity() {
                         it
                     } + scaleOut()
 
+                    val focusManager = LocalFocusManager.current
+
                     NavHost(navController = navController, startDestination = start) {
                         composable(
                             "pantallaCarga",
@@ -148,6 +151,7 @@ class MainActivity : ComponentActivity() {
                                 publishViewModel.user = authViewModel.localProfile!!
                                 navController.navigate("categorias")
                             }
+                            focusManager.clearFocus(true)
                             LoadingScreen()
 
                         }
@@ -159,6 +163,8 @@ class MainActivity : ComponentActivity() {
                                 ownProfileViewModel.clear()
                                 dataFetchViewModel.clear()
                             }
+
+                            focusManager.clearFocus(true)
                             PhoneLogin(navController = navController, viewModel = authViewModel)
 
                         }
@@ -167,10 +173,11 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = true){
+                            LaunchedEffect(key1 = true) {
                                 categoriesViewModel.fetchCategories()
                             }
 
+                            focusManager.clearFocus(true)
                             CategoriesMenu(
                                 navController = navController,
                                 viewModel = categoriesViewModel
@@ -182,8 +189,9 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                                postsViewModel.statedCategory = categoriesViewModel.selectedCategory
+                            postsViewModel.statedCategory = categoriesViewModel.selectedCategory
 
+                            focusManager.clearFocus(true)
                             DisplayCategory(
                                 navController = navController,
                                 viewModel = postsViewModel
@@ -197,6 +205,7 @@ class MainActivity : ComponentActivity() {
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             publishViewModel.user = authViewModel.localProfile!!
 
+                            focusManager.clearFocus(true)
                             NewPostScreen(
                                 navController = navController,
                                 viewModel = publishViewModel
@@ -209,6 +218,7 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { onExit }) {
                             ownProfileViewModel.selfId = authViewModel.localProfile!!.id
 
+                            focusManager.clearFocus(true)
                             MyProfile(
                                 navController = navController,
                                 viewModel = ownProfileViewModel
@@ -219,6 +229,7 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            focusManager.clearFocus(true)
                             profileObserverViewModel.selfId = authViewModel.localProfile!!.id
 
                             SomeonesProfile(
@@ -231,6 +242,7 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            focusManager.clearFocus(true)
                             petObserverViewModel.selfId = authViewModel.localProfile!!.id
 
                             PetProfile(
@@ -244,6 +256,7 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { onExit }) {
                             petCreationViewModel.selectedCategory = publishViewModel.category
 
+                            focusManager.clearFocus(true)
                             PetCreation(
                                 viewModel = petCreationViewModel,
                                 navController = navController
@@ -255,6 +268,7 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { onExit }) {
                             savedPostsViewModel.actualUser = authViewModel.localProfile!!
 
+                            focusManager.clearFocus(true)
                             SavedPosts(
                                 navController = navController,
                                 viewModel = savedPostsViewModel
