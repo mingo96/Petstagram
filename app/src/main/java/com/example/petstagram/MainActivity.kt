@@ -167,6 +167,10 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            LaunchedEffect(key1 = true){
+                                categoriesViewModel.fetchCategories()
+                            }
+
                             CategoriesMenu(
                                 navController = navController,
                                 viewModel = categoriesViewModel

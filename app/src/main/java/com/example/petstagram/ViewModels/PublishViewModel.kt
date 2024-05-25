@@ -162,7 +162,7 @@ class PublishViewModel : ViewModel(){
                         postTitle = "Titulo Publicacion"
                         _resource.value = Uri.EMPTY
                         _isSendingInfo.value = false
-                        onSuccess.invoke()
+                        onSuccess()
                     }
 
                 }

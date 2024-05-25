@@ -364,10 +364,10 @@ fun TopLevel(
             green = 35,
             blue = 35
         ),
-        mainAxisAlignment = MainAxisAlignment.Center,
+        scrollAnchor = ScrollAnchor.End,
         scrollable = true,
         content = content,
-        scrollAnchor = ScrollAnchor.End,
+        mainAxisAlignment = MainAxisAlignment.Center,
         modifier = modifier
             .fillMaxWidth(1.0f)
             .fillMaxHeight(1.0f)

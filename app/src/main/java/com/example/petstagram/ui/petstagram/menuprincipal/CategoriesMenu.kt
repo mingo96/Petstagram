@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
@@ -28,11 +31,6 @@ fun CategoriesMenu(
     navController: NavHostController,
     viewModel: CategoriesViewModel
 ) {
-    //on start, start loading categories
-    LaunchedEffect(key1 = viewModel){
-        viewModel.fetchCategories()
-    }
-
     //stop loading when closed
     DisposableEffect(Unit) {
         onDispose {
@@ -40,16 +38,17 @@ fun CategoriesMenu(
         }
     }
 
-
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val height = maxHeight
         TopLevel(modifier = modifier) {
             TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.238f)), navController = navController)
+                .height(height.times(0.238f)),
+                navController = navController)
             CategoriesInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .requiredHeight(height.times(0.91f)),
+                .height(height.times(0.917f)+8.dp)
+                .padding(top = 8.dp),
                 navController = navController,
                 categoryViewModel = viewModel)
         }
@@ -97,8 +96,8 @@ fun TopLevel(
         ),
         scrollAnchor = ScrollAnchor.End,
         scrollable = true,
-        itemSpacing = 8.0,
         content = content,
+        mainAxisAlignment = MainAxisAlignment.Center,
         modifier = modifier
             .fillMaxWidth(1.0f)
             .fillMaxHeight(1.0f)
