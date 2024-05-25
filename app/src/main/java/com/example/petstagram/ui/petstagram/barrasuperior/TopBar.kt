@@ -107,7 +107,7 @@ fun TopLevelVarianteSimple(
             bottom = 8.0.dp
         ),
         itemSpacing = 16.0,
-        clipToParent = false,
+        clipToParent = false, strokeWidth = 1.0, strokeColor = Color.Black,
         radius = 6.0,
         content = content,
         modifier = modifier
@@ -189,7 +189,8 @@ fun TopLevelVarianteConMenu(
         backgroundColor = Primary,
         itemSpacing = 8.0,
         clipToParent = false,
-        radius = 6.0,
+        radius = 6.0,strokeWidth = 1.0,
+        strokeColor = Color.Black,
         content = content,
         modifier = modifier
     )

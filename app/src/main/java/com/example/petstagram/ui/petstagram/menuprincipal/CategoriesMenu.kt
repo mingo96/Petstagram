@@ -48,8 +48,7 @@ fun CategoriesMenu(
                 navController = navController)
             CategoriesInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .height(height.times(0.917f)+8.dp)
-                .padding(top = 8.dp),
+                .height(height.times(0.927f)),
                 navController = navController,
                 categoryViewModel = viewModel)
         }
@@ -89,12 +88,7 @@ fun TopLevel(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
-        ),
+        backgroundColor = Color.Transparent,
         scrollAnchor = ScrollAnchor.End,
         scrollable = true,
         content = content,

@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
         petObserverViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
                 // A surface container using the 'background' color from the theme
