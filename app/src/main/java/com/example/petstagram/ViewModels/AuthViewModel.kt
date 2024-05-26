@@ -153,7 +153,7 @@ class AuthViewModel : ViewModel() {
     }
 
     /**creates the user given its data and persists it*/
-    private fun createUser(mail: String, profilePic : String = "", onEnd: () -> Unit){
+    private fun createUser(mail: String, profilePic : String = "empty", onEnd: () -> Unit){
         val id = auth.currentUser!!.uid
         viewModelScope.launch {
 

@@ -34,13 +34,15 @@ class CategoriesViewModel : ViewModel() {
     fun fetchCategories() {
         viewModelScope.launch {
 
-            _categories.collect {
+            base.categories()
+            delay(2000)
 
-                _categories.value = base.categories()
-                delay(2000)
-
-                _categories.value = base.categories()
+            val end = base.categories()
+            for (i in end) {
+                if (i.name !in _categories.value.map { it.name })
+                    _categories.value += i
             }
+
         }
     }
 

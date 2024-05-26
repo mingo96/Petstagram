@@ -39,28 +39,25 @@ fun Categories(
     navController: NavHostController,
     categoryViewModel: CategoriesViewModel
 ) {
-    LaunchedEffect(Unit) {
-        categoryViewModel.fetchCategories()
-    }
-        val categories by categoryViewModel.categories.collectAsState()
-        LazyColumn(
-            modifier = modifier
-                .background(
-                    Secondary
-                )
-                .wrapContentHeight(),
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
-        ) {
-            items(categories) { category ->
+    val categories by categoryViewModel.categories.collectAsState()
+    LazyColumn(
+        modifier = modifier
+            .background(
+                Secondary
+            )
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
+    ) {
+        items(categories) { category ->
 
-                CategoryInstance(
-                    Modifier.fillMaxWidth(),
-                    navController = navController,
-                    category = category,
-                    viewModel = categoryViewModel
-                )
-            }
+            CategoryInstance(
+                Modifier.fillMaxWidth(),
+                navController = navController,
+                category = category,
+                viewModel = categoryViewModel
+            )
         }
+    }
 
 
 }

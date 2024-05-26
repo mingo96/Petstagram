@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.time.Instant
 import java.util.Date
+import kotlin.random.Random
 
 @SuppressLint("MutableCollectionMutableState", "StaticFieldLeak")
 /**[ViewModel] that contains almost all the info, others will use it as main data source*/
@@ -103,6 +104,7 @@ class DataFetchViewModel : ViewModel() {
                     }
                 }
             }
+            _categories.sortBy { Random.nextInt() }
             alreadyLoading = false
         }
 
@@ -437,6 +439,10 @@ class DataFetchViewModel : ViewModel() {
             Log.e("tipo",e.stackTraceToString())
             //source doesnt exist, erase it
             _posts.removeIf { it.id == castedPost.id }
+        }
+
+        if (castedPost.creatorUser!!.profilePic== "empty"){
+            castedPost.creatorUser!!.profilePic = ""
         }
 
         ids += castedPost.id

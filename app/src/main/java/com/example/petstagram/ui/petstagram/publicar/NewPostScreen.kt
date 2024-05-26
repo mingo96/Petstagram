@@ -292,11 +292,12 @@ fun TitleTextInput(
     changeText: (String) -> Unit
 ) {
     OutlinedTextField(
+        placeholder = { Text(text = "Título de la publicación")},
         singleLine = true,
         value = textValue.invoke(),
         onValueChange = changeText,
         textStyle = TextStyle(
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Left,
             fontSize = 16.0.sp,
             fontFamily = inter,
             lineHeight = 1.2102272033691406.em,

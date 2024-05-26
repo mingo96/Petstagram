@@ -58,7 +58,7 @@ class PublishViewModel : ViewModel(){
     private val db = Firebase.firestore
 
     /**Title the [Post] will have*/
-    private var postTitle by mutableStateOf("Titulo Publicación")
+    private var postTitle by mutableStateOf("")
 
     /**[Uri] the resource of the [Post] will have*/
     private var _resource = MutableLiveData(Uri.EMPTY)

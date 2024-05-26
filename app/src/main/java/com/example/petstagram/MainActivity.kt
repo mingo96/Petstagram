@@ -164,8 +164,11 @@ class MainActivity : ComponentActivity() {
                             ownProfileViewModel.clear()
                             dataFetchViewModel.clear()
 
+                            LaunchedEffect(key1 = Unit){
 
-                            focusManager.clearFocus(true)
+                                focusManager.clearFocus(true)
+                            }
+
                             PhoneLogin(navController = navController, viewModel = authViewModel)
 
                         }
@@ -176,6 +179,11 @@ class MainActivity : ComponentActivity() {
 
                             LaunchedEffect(key1 = true) {
                                 categoriesViewModel.fetchCategories()
+                            }
+
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
                             }
 
                             focusManager.clearFocus(true)
@@ -190,6 +198,10 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
 
                             focusManager.clearFocus(true)
@@ -207,6 +219,10 @@ class MainActivity : ComponentActivity() {
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             publishViewModel.user = authViewModel.localProfile!!
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             focusManager.clearFocus(true)
                             NewPostScreen(
                                 navController = navController,
@@ -220,6 +236,10 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { onExit }) {
                             ownProfileViewModel.selfId = authViewModel.localProfile!!.id
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             focusManager.clearFocus(true)
                             MyProfile(
                                 navController = navController,
@@ -231,6 +251,10 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             focusManager.clearFocus(true)
                             profileObserverViewModel.selfId = authViewModel.localProfile!!.id
 
@@ -244,6 +268,10 @@ class MainActivity : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             focusManager.clearFocus(true)
                             petObserverViewModel.selfId = authViewModel.localProfile!!.id
 
@@ -258,6 +286,10 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { onExit }) {
                             petCreationViewModel.selectedCategory = publishViewModel.category
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             focusManager.clearFocus(true)
                             PetCreation(
                                 viewModel = petCreationViewModel,
@@ -270,6 +302,10 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { onExit }) {
                             savedPostsViewModel.actualUser = authViewModel.localProfile!!
 
+                            LaunchedEffect(key1 = Unit){
+
+                                focusManager.clearFocus(true)
+                            }
                             focusManager.clearFocus(true)
                             SavedPosts(
                                 navController = navController,
