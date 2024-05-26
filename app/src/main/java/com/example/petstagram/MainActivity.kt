@@ -142,11 +142,13 @@ class MainActivity : ComponentActivity() {
 
 
                             LaunchedEffect(key1 = Unit) {
+
                                 while (authViewModel.localProfile == null) {
                                     delay(1000)
                                 }
                                 postsViewModel.actualUser = authViewModel.localProfile!!
                                 dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
+                                ownProfileViewModel.selfId = authViewModel.localProfile!!.id
                                 dataFetchViewModel.startLoadingData(applicationContext)
                                 publishViewModel.user = authViewModel.localProfile!!
                                 navController.navigate("categorias")
@@ -159,10 +161,9 @@ class MainActivity : ComponentActivity() {
                             "login",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            LaunchedEffect(key1 = true) {
-                                ownProfileViewModel.clear()
-                                dataFetchViewModel.clear()
-                            }
+                            ownProfileViewModel.clear()
+                            dataFetchViewModel.clear()
+
 
                             focusManager.clearFocus(true)
                             PhoneLogin(navController = navController, viewModel = authViewModel)
@@ -202,6 +203,7 @@ class MainActivity : ComponentActivity() {
                             "publicar",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
+
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             publishViewModel.user = authViewModel.localProfile!!
 

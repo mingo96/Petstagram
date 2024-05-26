@@ -187,13 +187,17 @@ class PublishViewModel : ViewModel(){
 
     fun togglePetsVisibility(){
         petsDisplayed = !petsDisplayed
-        viewModelScope.launch {
+        if (petsDisplayed)
+            viewModelScope.launch {
 
-            _pets.collect{
-                base.petsFromUser(user.id).ofThisCategory()
-                delay(1000)
-                _pets.value = base.petsFromUser(user.id).ofThisCategory()
+                _pets.collect{
+                    base.petsFromUser(user.id)
+                    delay(1000)
+                    _pets.value = base.petsFromUser(user.id).ofThisCategory()
+                }
             }
+        else{
+            _pets.value = emptyList()
         }
     }
 
@@ -208,7 +212,7 @@ class PublishViewModel : ViewModel(){
     }
 
     private fun List<Pet>.ofThisCategory(): List<Pet> {
-        return this.filter { it.category!!.name == (category?.name ?: "") }
+        return this.filter { category == null||it.category!!.name == (category?.name ?: "") }
     }
 
 }
