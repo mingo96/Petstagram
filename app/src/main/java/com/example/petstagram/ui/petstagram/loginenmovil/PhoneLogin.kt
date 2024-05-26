@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -36,12 +37,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -188,7 +189,25 @@ fun PhoneLogin(
                 userValue = userValue,
                 userOnChange = userOnChange,
                 passwordOnChange = passwordOnChange,
-                passwordValue = passwordValue
+                passwordValue = passwordValue,
+                send = {
+                    if (registering) {
+                        viewModel.register(
+                            context = context
+                        ) {
+                            focusManager.clearFocus(true)
+                            navController.navigate("categorias")
+                            navController.navigate("añadirMascota")
+                        }
+                    } else {
+                        viewModel.login(
+                            context = context
+                        ) {
+                            focusManager.clearFocus(true)
+                            navController.navigate("categorias")
+                        }
+                    }
+                }
             )
 
             Box {
@@ -251,8 +270,11 @@ fun DataFields(
     userValue: () -> String,
     userOnChange: (String) -> Unit,
     passwordOnChange: (String) -> Unit,
-    passwordValue: () -> String
+    passwordValue: () -> String,
+    send: () -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Column {
 
@@ -266,7 +288,10 @@ fun DataFields(
                 )
             }
             UserText(
-                textAccess = userValue, changeText = userOnChange
+                textAccess = userValue, changeText = userOnChange,
+                focusChange = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
             )
         }
         Column {
@@ -279,7 +304,7 @@ fun DataFields(
                     .padding(start = 8.dp)
             )
             PasswordText(
-                textAccess = passwordValue, changeText = passwordOnChange
+                textAccess = passwordValue, changeText = passwordOnChange, send = send
             )
         }
     }
@@ -424,7 +449,7 @@ fun WelcomeText(modifier: Modifier = Modifier, text: String = "") {
 /**just some in-out text field, not too much to see (logic wise)*/
 @Composable
 fun UserText(
-    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit
+    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit,focusChange:()->Unit={}
 ) {
     TextField(
         label = { Text("Correo", color = Primary) },
@@ -444,14 +469,15 @@ fun UserText(
             .wrapContentHeight(
                 align = Alignment.CenterVertically, unbounded = true
             ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        keyboardActions = KeyboardActions(onDone = { focusChange() })
     )
 }
 
 /**just some in-out text field, password formatted, not too much to see (logic wise)*/
 @Composable
 fun PasswordText(
-    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit
+    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit, send : ()->Unit = {}
 ) {
     TextField(
         label = { Text("Contraseña", color = Primary) },
@@ -472,7 +498,8 @@ fun PasswordText(
             ),
         shape = RoundedCornerShape(10),
         visualTransformation = PasswordVisualTransformation('*'),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardActions = KeyboardActions(onDone = { send() })
     )
 }
 
