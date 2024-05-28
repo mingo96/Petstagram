@@ -6,6 +6,8 @@ import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -291,7 +293,7 @@ fun DisplayVideoFromPost(
 
     if (!loading) {
         Box(modifier
-            .animateContentSize()
+            .animateContentSize(spring(Spring.DampingRatioHighBouncy, Spring.StiffnessMediumLow))
             .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 400.dp)
             .combinedClickable(
                 onClick = {

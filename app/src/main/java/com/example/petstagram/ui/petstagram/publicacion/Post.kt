@@ -316,12 +316,7 @@ fun TopLevel(
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        backgroundColor = Color(
-            alpha = 255,
-            red = 217,
-            green = 217,
-            blue = 217
-        ),
+        backgroundColor = Color.Black,
         mainAxisAlignment = MainAxisAlignment.Start,
         content = content,
         modifier = modifier
