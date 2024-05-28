@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,7 +72,10 @@ fun DisplayCategory(
                 navController = navController
             )
 
-            CategoryText(modifier.requiredHeight(height.times(0.05f)+48.dp).padding(vertical = 24.dp), added = viewModel.statedCategory.name)
+            CategoryText(
+                modifier
+                    .requiredHeight(height.times(0.05f) + 48.dp)
+                    .padding(vertical = 24.dp), added = viewModel.statedCategory.name)
 
             AnimatedVisibility(visible = isLoading!!,
                 enter = slideInVertically { it },

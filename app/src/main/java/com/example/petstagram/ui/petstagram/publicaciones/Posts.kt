@@ -5,8 +5,13 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -33,6 +38,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -91,14 +97,18 @@ fun Posts(
             .pullRefresh(
                 pullState
             )
+            .rotate(180f)
     ) {
 
         val localwidth by rememberSaveable {
             mutableFloatStateOf(maxWidth.value)
         }
 
+
         val state: LazyListState = rememberLazyListState()
+
         LazyColumn(
+            reverseLayout = true,
             state = state,
             modifier = modifier
                 .width(Dp(localwidth))
@@ -117,7 +127,8 @@ fun Posts(
                 AnimatedVisibility(
                     visible = optionsClicked == it,
                     enter = slideInHorizontally() + expandVertically(),
-                    exit = slideOutHorizontally { it } + shrinkVertically()) {
+                    exit = slideOutHorizontally { it } + shrinkVertically(),
+                    modifier = Modifier.rotate(180f)) {
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -157,8 +168,8 @@ fun Posts(
 
                 AnimatedVisibility(
                     visible = seen,
-                    enter = slideInHorizontally() + expandVertically()
-                ) {
+                    enter = slideInHorizontally() + expandVertically(),
+                    modifier = Modifier.rotate(180f)) {
                     val isVisible by remember {
                         derivedStateOf {
                             (index == state.firstVisibleItemIndex
@@ -212,8 +223,8 @@ fun Posts(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .fillMaxHeight(0.3f)
-                        .fillMaxWidth()
-                ) {
+                        .rotate(180f)
+                        .fillMaxWidth()) {
 
                     LaunchedEffect(key1 = true) {
                         if (isLoading == false) {
@@ -260,8 +271,10 @@ fun Posts(
             }
 
         }
-        PullRefreshIndicator(refreshing = isLoading!!, state =pullState, modifier = Modifier.align(
-            Alignment.TopCenter))
+        PullRefreshIndicator(refreshing = isLoading!!, state =pullState, modifier = Modifier
+            .align(
+                Alignment.TopCenter
+            ))
 
 
     }
