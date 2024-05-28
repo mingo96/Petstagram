@@ -293,7 +293,7 @@ fun DisplayVideoFromPost(
 
     if (!loading) {
         Box(modifier
-            .animateContentSize(spring(Spring.DampingRatioHighBouncy, Spring.StiffnessMediumLow))
+            .animateContentSize(spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow))
             .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 400.dp)
             .combinedClickable(
                 onClick = {
