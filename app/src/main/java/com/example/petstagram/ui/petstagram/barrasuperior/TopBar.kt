@@ -19,6 +19,7 @@ import com.example.petstagram.R
 import com.example.petstagram.ui.petstagram.accesoaperfil.AccesoAperfil
 import com.example.petstagram.atras.Atras
 import com.example.petstagram.ui.theme.Primary
+import com.google.relay.compose.BorderAlignment
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -108,7 +109,8 @@ fun TopLevelVarianteSimple(
         ),
         itemSpacing = 16.0,
         clipToParent = false, strokeWidth = 1.0, strokeColor = Color.Black,
-        radius = 6.0,
+        borderAlignment = BorderAlignment.Outside,
+        radius = 15.0,
         content = content,
         modifier = modifier
     )
