@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 
 class PetCreationViewModel : ViewModel() {
 
+    var selfId by mutableStateOf("")
+
     var pet by mutableStateOf(Pet())
 
     private var name by mutableStateOf("")
@@ -107,7 +109,7 @@ class PetCreationViewModel : ViewModel() {
             try {
 
                 sending = true
-                pet.owner = base.profile().id
+                pet.owner = selfId
 
                 db.collection("Pets").add(pet).addOnSuccessListener {
                     pet.id = it.id

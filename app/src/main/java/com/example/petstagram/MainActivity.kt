@@ -284,6 +284,8 @@ class MainActivity : ComponentActivity() {
                             "añadirMascota",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
+                            petCreationViewModel.selfId = authViewModel.localProfile!!.id
+
                             petCreationViewModel.selectedCategory = publishViewModel.category
 
                             LaunchedEffect(key1 = Unit){
