@@ -100,7 +100,6 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
 
                     Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
 
-                    delay(1000)
                     db.collection("Users").document(selfId).get()
                         .addOnSuccessListener {
 

@@ -102,9 +102,7 @@ class OwnProfileViewModel : GeneralController() {
                     pushNewUserName()
                 } else
                 //case someone already has this name, we show it with a toast
-                    _isEditing.value = true
-                Toast.makeText(context, "nombre de usuario no disponible", Toast.LENGTH_SHORT)
-                    .show()
+                    _isEditing.value = false
             }
         }
     }
@@ -176,7 +174,6 @@ class OwnProfileViewModel : GeneralController() {
                         "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
                     )
 
-                    delay(1000)
                     db.collection("Users").document(selfId).get().addOnSuccessListener {
 
                             val newVal = it.toObject(Profile::class.java)!!
