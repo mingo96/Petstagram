@@ -1,6 +1,8 @@
 package com.example.petstagram.perfil
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -11,14 +13,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +40,7 @@ import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.perfilpropio.DataContainer
 import com.example.petstagram.perfilpropio.ImageContainer
+import com.example.petstagram.perfilpropio.PostsInstance
 import com.example.petstagram.perfilpropio.StateSelector
 import com.example.petstagram.perfilpropio.TopBarInstance
 import com.example.petstagram.perfilpropio.UserNameContainer
@@ -40,6 +48,7 @@ import com.example.petstagram.publicaciones.Posts
 import com.example.petstagram.ui.petstagram.Pets.FollowingBox
 import com.example.petstagram.ui.petstagram.Pets.PetList
 import com.example.petstagram.visualizarcategoria.TopLevel
+import kotlinx.coroutines.launch
 
 /**
  * perfil ajeno
@@ -47,6 +56,7 @@ import com.example.petstagram.visualizarcategoria.TopLevel
  * This composable was generated from the UI Package 'perfil'.
  * Generated code; do not edit directly
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SomeonesProfile(
     modifier: Modifier = Modifier,
@@ -67,18 +77,15 @@ fun SomeonesProfile(
         }
     }
 
-    val state by viewModel.state.observeAsState()
-
-    val offsetObserver by viewModel.offset.collectAsState()
-
-    /**informs UI of changes in loading value*/
-    val isLoading by viewModel.isLoading.observeAsState()
-
     val pets by viewModel.pets.collectAsState()
 
     val observedProfile by viewModel.observedProfile.collectAsState()
 
     val following by viewModel.follow.observeAsState()
+
+    val scroll = rememberLazyListState()
+
+    val scope = rememberCoroutineScope()
 
     BoxWithConstraints {
         val height = maxHeight
@@ -125,34 +132,49 @@ fun SomeonesProfile(
 
                 item {
 
+                    val state by remember {
+                        derivedStateOf { scroll.firstVisibleItemIndex==0 }
+                    }
                     StateSelector(
                         Modifier.height(height.times(0.06f)),
-                        state = state!!,
-                        onClick = { viewModel.toggleState(width) })
+                        state = state,
+                        onClick = {
+                            scope.launch {
+                                scroll.animateScrollToItem(it)
+                            }
+                        })
                 }
 
                 item {
-                    Box(
-                        Modifier.fillMaxWidth(),
+                    val flingBehavior = rememberSnapFlingBehavior(lazyListState = scroll)
+                    LazyRow(
+                        state = scroll,
+                        flingBehavior = flingBehavior,
+                        modifier = Modifier.width(width*2),
                     ) {
-                        Posts(
-                            modifier = Modifier
-                                .zIndex(5F)
-                                .height(height.times(0.8f))
-                                .fillMaxWidth()
-                                .offset(x = offsetObserver - width),
-                            controller = viewModel
-                        )
-                        PetList(
-                            pets = pets,
-                            onSelect = {
-                                PetObserverViewModel.staticPet = it
-                                navController.navigate("mascota")
-                                       },
-                            modifier = Modifier
-                                .height(height.times(0.8f))
-                                .offset(x = offsetObserver)
-                        )
+                        item{
+
+                            Posts(
+                                modifier = Modifier
+                                    .zIndex(5F)
+                                    .height(height.times(0.8f))
+                                    .width(width),
+                                controller = viewModel
+                            )
+                        }
+                        item {
+                            PetList(
+                                pets = pets,
+                                onSelect = {
+                                    PetObserverViewModel.staticPet = it
+                                    navController.navigate("mascota")
+                                },
+                                modifier = Modifier
+                                    .height(height.times(0.8f))
+                                    .width(width),
+
+                                )
+                        }
 
 
                     }

@@ -36,16 +36,6 @@ class OwnProfileViewModel : GeneralController() {
             return _selfProfile.value
         }
 
-    private val _state = MutableLiveData(false)
-
-    val state: LiveData<Boolean> = _state
-
-    private val _offset = MutableStateFlow(0.dp)
-
-    val offset: StateFlow<Dp> = _offset
-
-    private var isMoving by mutableStateOf(false)
-
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
 
     val pets: StateFlow<List<Pet>> = _pets
@@ -213,31 +203,7 @@ class OwnProfileViewModel : GeneralController() {
 
     fun clear() {
         _posts.value = emptyList()
-        _offset.value = 0.dp
         _isEditing.value = false
-    }
-
-    fun ToggleState(width: Dp) {
-        if (isMoving) return;
-        isMoving = true
-        _state.value = !_state.value!!
-
-        viewModelScope.launch {
-            val objective = if (width.value == _offset.value.value) 0.dp else width
-            while (_offset.value != objective) {
-                if (objective > _offset.value) {
-                    _offset.value = Dp(_offset.value.value + 90)
-                } else if (objective < _offset.value) {
-                    _offset.value = Dp(_offset.value.value - 90)
-                }
-                if ((objective - _offset.value).value in -100f..100f && objective != _offset.value) {
-                    _offset.value = objective
-                }
-                delay(1)
-
-            }
-            isMoving = false
-        }
     }
 
 }

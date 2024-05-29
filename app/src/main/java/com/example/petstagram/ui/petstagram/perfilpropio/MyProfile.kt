@@ -4,11 +4,12 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -23,8 +24,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
@@ -36,8 +38,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -74,11 +80,13 @@ import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayVector
+import kotlinx.coroutines.launch
 
 /**UI screen for the user info and data input (profile pic, username)
  * @param navController to navigate
  * @param viewModel to receive and send information
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyProfile(
     modifier: Modifier = Modifier,
@@ -108,10 +116,6 @@ fun MyProfile(
             } else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
         }
 
-    val state by viewModel.state.observeAsState()
-
-    val offsetObserver by viewModel.offset.collectAsState()
-
     /**actual profile pic*/
     val profilePicObserver by viewModel.resource.observeAsState()
 
@@ -123,6 +127,10 @@ fun MyProfile(
     val accessText: () -> String = { viewModel.getUserNameText() }
 
     val changeText: (String) -> Unit = { viewModel.editUserName(it) }
+
+    val scroll = rememberLazyListState()
+
+    val scope = rememberCoroutineScope()
 
     BoxWithConstraints {
         val height = maxHeight
@@ -138,6 +146,7 @@ fun MyProfile(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 item {
 
                     DataContainer(height = height) {
@@ -185,34 +194,51 @@ fun MyProfile(
 
                 item {
 
+                    val state by remember {
+                        derivedStateOf { scroll.firstVisibleItemIndex==0 }
+                    }
                     StateSelector(
                         Modifier.height(height.times(0.06f)),
                         state = state!!,
-                        onClick = { viewModel.ToggleState(width) })
+                        onClick = {
+                            scope.launch {
+                                scroll.animateScrollToItem(it)
+                            }
+                        })
                 }
 
                 item {
-                    Box(
-                        Modifier.fillMaxWidth(),
+
+                    val flingBehavior = rememberSnapFlingBehavior(lazyListState = scroll)
+                    LazyRow(
+                        state = scroll,
+                        flingBehavior = flingBehavior,
+                        modifier = Modifier.width(width*2),
                     ) {
-                        PostsInstance(
-                            modifier = Modifier
-                                .zIndex(5F)
-                                .height(height.times(0.8f))
-                                .offset(x = offsetObserver - width),
-                            viewModel = viewModel
-                        )
-                        PetList(
-                            pets = pets,
-                            onNewPet = { navController.navigate("añadirMascota") },
-                            onSelect = {
-                                PetObserverViewModel.staticPet = it
-                                navController.navigate("mascota")
-                            },
-                            modifier = Modifier
-                                .height(height.times(0.8f))
-                                .offset(x = offsetObserver)
-                        )
+                        item{
+
+                            PostsInstance(
+                                modifier = Modifier
+                                    .zIndex(5F)
+                                    .height(height.times(0.8f))
+                                    .width(width),
+                                viewModel = viewModel
+                            )
+                        }
+                        item {
+                            PetList(
+                                pets = pets,
+                                onNewPet = { navController.navigate("añadirMascota") },
+                                onSelect = {
+                                    PetObserverViewModel.staticPet = it
+                                    navController.navigate("mascota")
+                                },
+                                modifier = Modifier
+                                    .height(height.times(0.8f))
+                                    .width(width),
+
+                                )
+                        }
 
 
                     }
@@ -260,7 +286,9 @@ fun UserNameContainer(
         crossAxisAlignment = CrossAxisAlignment.Center,
         itemSpacing = 24.0,
         content = content,
-        modifier = modifier.fillMaxHeight().fillMaxWidth(0.8f)
+        modifier = modifier
+            .fillMaxHeight()
+            .fillMaxWidth(0.8f)
     )
 }
 
@@ -398,7 +426,7 @@ fun YourUserName(
 /**pass-by function to call a [Label], not much to see (logic-wise)*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> Unit, text1:String = "Publicaciones", text2 : String = "Mascotas") {
+fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: (Int) -> Unit, text1:String = "Publicaciones", text2 : String = "Mascotas") {
     SingleChoiceSegmentedButtonRow(
         modifier
             .fillMaxWidth()
@@ -406,7 +434,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
     ) {
         SegmentedButton(
             selected = state,
-            onClick = onClick,
+            onClick = { onClick(0) },
             shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
             colors = colors(state)
         ) {
@@ -417,7 +445,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: () -> 
         }
         SegmentedButton(
             selected = !state,
-            onClick = onClick,
+            onClick = { onClick(1) },
             shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
             colors = colors(state)
         ) {
