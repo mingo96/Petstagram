@@ -4,21 +4,25 @@ description: Explicación de componentes
 
 # Prototipado de la aplicación
 
-El flujo es algo usuario-dependiente, sería tal que así
+El flujo es bastante libre, sería tal que así
 
-1. Interfaz de autenticación del usuario (solo una vez)
-   1. Caso de ser primera vez, registro de mascota
-2. Interfaz de categorías (aquí varía y se puede ir de todos a todos casi)
-   1. Interfaz de publicaciones
-      1. (por implementar) Interfaz de perfil ajeno
-   2. Interfaz de perfil
-      1. Interfaz de perfiles de mascotas
-      2. interfaz de creación de perfil de mascota
-   3. Interfaz de creación de publicación
+1. Autenticación del usuario (saltada si ya está autenticado)
+   1. En caso de registrarse, acceso a registro de una mascota, posterior, acceso a perfil propio
+      1. Registro de mascota
+      2. Barra superior
+2. Categorías de mascotas
+   1. Barra superior
+   2. Publicaciones
+      1. Barra superior
+      2. Perfil de usuario
+         1. Barra superior
+      3. Perfil de mascota
+         1. Barra superior
+      4. Comentarios
 
 ## Componentes sueltos relevantes
 
-* Barra superior
-* Publicaciones
+* Barra superior (contiene enlaces a categorías, perfil propio, guardados y Autenticación)
+  * Guardadas
 
 ## Las siguientes pestañas están desactualizadas, hasta el punto 15 del desarrollo

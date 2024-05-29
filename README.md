@@ -44,6 +44,7 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
   * Video : Google Exoplayer
   * Navegación : Android Navigation
   * Interacción con servidor : Firebase for Android
+  * Utilidades de diseño : Material 3
 * Servidor : Google Firebase
   * Autenticación y Google auth: Firebase Authentication
   * Persistencia y acceso a datos : Firebase Firestore

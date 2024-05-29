@@ -23,5 +23,6 @@ description: Funcionalidades logradas
   * Reporte y borrado de publicaciones
   * Modo solo imagen para videos
   * Pausa o reproducción de videos
+  * Modificación de tamaño de video
   * Animaciones para interacciones
 * Display de las publicaciones guardadas, filtrando, o no, por especie
