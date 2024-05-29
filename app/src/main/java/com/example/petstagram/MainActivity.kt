@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
                             "login",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            ownProfileViewModel.clear()
+                            ownProfileViewModel.clean()
                             dataFetchViewModel.clear()
 
                             LaunchedEffect(key1 = Unit){

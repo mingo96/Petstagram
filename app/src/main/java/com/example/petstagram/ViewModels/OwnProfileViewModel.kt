@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -21,7 +19,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 
 class OwnProfileViewModel : GeneralController() {
 
@@ -201,7 +198,7 @@ class OwnProfileViewModel : GeneralController() {
         fetchPosts()
     }
 
-    fun clear() {
+    fun clean() {
         _posts.value = emptyList()
         _isEditing.value = false
     }

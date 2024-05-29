@@ -157,7 +157,7 @@ fun MyProfile(
                                     .height(height.times(0.23f))
                                     .width(height.times(0.23f))
                                     .clickable { sourceSelector.launch("image/*") },
-                                url = profilePicObserver.orEmpty()
+                                url = if (profilePicObserver=="empty") "" else profilePicObserver.orEmpty()
                             )
                         }
 

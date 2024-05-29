@@ -448,10 +448,6 @@ class DataFetchViewModel : ViewModel() {
             _posts.removeIf { it.id == castedPost.id }
         }
 
-        if (castedPost.creatorUser!!.profilePic== "empty"){
-            castedPost.creatorUser!!.profilePic = ""
-        }
-
         ids += castedPost.id
 
         indexesOfPosts++
