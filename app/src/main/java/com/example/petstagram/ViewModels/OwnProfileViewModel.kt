@@ -115,7 +115,7 @@ class OwnProfileViewModel : GeneralController() {
                     pushNewUserName()
                 } else
                 //case someone already has this name, we show it with a toast
-                    if (userName == _selfProfile.value.userName) _isEditing.value = true
+                    _isEditing.value = true
                 Toast.makeText(context, "nombre de usuario no disponible", Toast.LENGTH_SHORT)
                     .show()
             }
@@ -126,8 +126,7 @@ class OwnProfileViewModel : GeneralController() {
     private fun pushNewUserName() {
         if (userName != _selfProfile.value.userName) {
             _selfProfile.value.userName = userName
-            db.collection("Users")
-                .document(_selfProfile.value.id).update("userName", userName)
+            db.collection("Users").document(_selfProfile.value.id).update("userName", userName)
                 .addOnCompleteListener {
                     //i don't think im supposed to need to do this but it doesn't work if i dont
                     for (i in _posts.value) {
@@ -182,11 +181,8 @@ class OwnProfileViewModel : GeneralController() {
             _selfProfile
                 //we make it so it doesnt load more if we get out of the app
                 .stateIn(
-                    viewModelScope,
-                    started = SharingStarted.WhileSubscribed(10000),
-                    0
-                )
-                .collect {
+                    viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
+                ).collect {
 
                     Log.i(
                         "Profile",
@@ -194,8 +190,7 @@ class OwnProfileViewModel : GeneralController() {
                     )
 
                     delay(1000)
-                    db.collection("Users").document(selfId).get()
-                        .addOnSuccessListener {
+                    db.collection("Users").document(selfId).get().addOnSuccessListener {
 
                             val newVal = it.toObject(Profile::class.java)!!
                             if (newVal != _selfProfile.value) {

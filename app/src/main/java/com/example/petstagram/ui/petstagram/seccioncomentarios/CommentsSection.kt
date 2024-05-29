@@ -121,7 +121,6 @@ fun CommentsSection(
                                 .show()
                         } else if (content!!.isNotEmpty()) {
                             controller.comment( post)
-                            controller.commentingToggle()
                         } else {
                             Toast
                                 .makeText(context, "Comentario vacío", Toast.LENGTH_SHORT)

@@ -127,6 +127,7 @@ class PetCreationViewModel : ViewModel() {
                                 onSuccess()
 
                                 pet = Pet()
+                                name=""
                                 _resource.value = Uri.EMPTY
                                 sending = false
                             }

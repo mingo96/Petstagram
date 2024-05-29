@@ -170,6 +170,7 @@ abstract class GeneralController : ViewModel(), PostsUIController {
                 }
             while (loadingComments) delay(100)
 
+            _commentContent.value=""
             _actualComments.value = result
 
         }

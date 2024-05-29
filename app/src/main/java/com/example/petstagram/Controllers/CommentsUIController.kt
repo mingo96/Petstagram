@@ -81,6 +81,7 @@ interface CommentsUIController {
             selectPostForComments(post)
 
         }
+        commentingToggle()
     }
 
 
