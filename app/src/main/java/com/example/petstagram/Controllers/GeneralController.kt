@@ -14,6 +14,7 @@ import com.example.petstagram.UiData.UIComment
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.ViewModels.DataFetchViewModel
 import com.example.petstagram.like.Pressed
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -180,6 +181,11 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     override fun deletePost(post: UIPost) {
 
         db.collection("Posts").document(post.id).delete()
+        db.collection("SavedLists").whereArrayContains("postList", post.id).get().addOnSuccessListener {
+            for (doc in it.documents){
+                db.collection("SavedLists").document(doc.id).update("postList", FieldValue.arrayRemove(post.id))
+            }
+        }
         storageRef.child("PostImages").child(post.id).delete()
         _posts.value-=post
     }

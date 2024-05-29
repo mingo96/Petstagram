@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -209,8 +210,14 @@ class DataFetchViewModel : ViewModel() {
 
     /**gets one post given its id*/
     private fun individualPostFetch(id :String){
-        db.collection("Posts").document(id).get().addOnSuccessListener {
-            bootUpPost(it)
+        try {
+
+            db.collection("Posts").document(id).get().addOnSuccessListener {
+                if (it.exists())
+                    bootUpPost(it)
+            }
+        }catch (e:Exception){
+            Toast.makeText(context, "Una publicación ha dejado de existir en tus guardados", Toast.LENGTH_SHORT).show()
         }
     }
 
