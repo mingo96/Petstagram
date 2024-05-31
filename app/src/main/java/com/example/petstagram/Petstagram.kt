@@ -1,5 +1,7 @@
 package com.example.petstagram
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -13,12 +15,18 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,6 +43,7 @@ import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.ViewModels.SavedPostsViewModel
 import com.example.petstagram.loginenmovil.PhoneLogin
 import com.example.petstagram.menuprincipal.CategoriesMenu
+import com.example.petstagram.notifications.PetstagramNotificationService
 import com.example.petstagram.perfil.SomeonesProfile
 import com.example.petstagram.perfilpropio.MyProfile
 import com.example.petstagram.publicar.NewPostScreen
@@ -44,11 +53,13 @@ import com.example.petstagram.ui.petstagram.Pets.PetProfile
 import com.example.petstagram.ui.petstagram.publicacionesguardadas.SavedPosts
 import com.example.petstagram.ui.theme.PetstagramConLogicaTheme
 import com.example.petstagram.visualizarcategoria.DisplayCategory
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
 
-class MainActivity : ComponentActivity() {
+class Petstagram : ComponentActivity() {
 
     /**activity that asks for notification permission*/
     private val requestPermissionLauncher = registerForActivityResult(
@@ -64,16 +75,28 @@ class MainActivity : ComponentActivity() {
 
                 // Get new FCM registration token
                 val token = task.result
+                PetstagramNotificationService.hasPermission = true
 
 
             })
         } else {
             Toast.makeText(this, "Po no hay notificaciones, shulo", Toast.LENGTH_SHORT).show()
+            PetstagramNotificationService.hasPermission = false
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val notificationChannel= NotificationChannel(
+            "petstagram_notifications",
+            "Petstagram",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        val notificationManager=getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notificationChannel)
+
+
         val authViewModel: AuthViewModel by viewModels()
         val categoriesViewModel: CategoriesViewModel by viewModels()
         val publishViewModel: PublishViewModel by viewModels()
@@ -98,6 +121,7 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -333,6 +357,8 @@ class MainActivity : ComponentActivity() {
             ) ==
             PackageManager.PERMISSION_GRANTED
         ) {
+
+            PetstagramNotificationService.hasPermission = true
             // FCM SDK (and your app) can post notifications.
         } else {
             // Directly ask for the permission

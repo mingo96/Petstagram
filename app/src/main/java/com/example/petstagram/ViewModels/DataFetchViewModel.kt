@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Comment
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
@@ -21,9 +22,12 @@ import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
+import com.example.petstagram.notifications.PetstagramNotificationService
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
@@ -80,9 +84,15 @@ class DataFetchViewModel : ViewModel() {
     /**actual [SavedList]s*/
     private var savedList by mutableStateOf(SavedList())
 
+    private var snapshots: MutableList<ListenerRegistration> = mutableListOf()
+
+    private lateinit var notificationService: PetstagramNotificationService
+
     /**gets executed on Launch, makes initial load*/
-    fun startLoadingData(context: Context){
+    fun startLoadingData(context: Context) {
         this.context = context
+
+        notificationService = PetstagramNotificationService(context)
 
         fetchPetsFromUser()
         keepUpWithUser()
@@ -94,13 +104,13 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**gets more [Category]*/
-    private fun fetchCategories(){
+    private fun fetchCategories() {
         alreadyLoading = true
         db.collection("Categories").get().addOnSuccessListener {
-            if (!it.isEmpty){
-                for (categoryJson in it.documents){
+            if (!it.isEmpty) {
+                for (categoryJson in it.documents) {
                     val newCategory = categoryJson.toObject(Category::class.java)!!
-                    if (newCategory.name !in _categories.map { it.name }){
+                    if (newCategory.name !in _categories.map { it.name }) {
                         _categories.add(newCategory)
                     }
                 }
@@ -112,29 +122,26 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**returns [Category] and tries to get more*/
-    fun categories():List<Category>{
+    fun categories(): List<Category> {
         fetchCategories()
 
         return _categories.toList()
     }
 
     /**returns value of [_selfProfile]*/
-    fun profile()=_selfProfile.value
+    fun profile() = _selfProfile.value
 
     /**states a flow that keeps [_selfProfile] updated*/
-    private fun keepUpWithUser(){
+    private fun keepUpWithUser() {
         viewModelScope.launch {
 
             _selfProfile
                 //we make it so it doesnt load more if we get out of the app
                 .stateIn(
-                    viewModelScope,
-                    started = SharingStarted.WhileSubscribed(10000),
-                    0
-                )
-                .collect{
+                    viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
+                ).collect {
                     //delay until we have an id
-                    while (selfId.isBlank()){
+                    while (selfId.isBlank()) {
                         delay(100)
                     }
 
@@ -143,7 +150,31 @@ class DataFetchViewModel : ViewModel() {
                         .addOnSuccessListener {
 
                             val newVal = it.documents[0].toObject(Profile::class.java)!!
-                            if (newVal != _selfProfile.value){
+                            if (newVal != _selfProfile.value) {
+                                if (_selfProfile.value.followers.size < newVal.followers.size) {
+
+                                    if (_selfProfile.value.id != "") {
+                                        for (newFollower in newVal.followers - _selfProfile.value.followers.toSet()) {
+
+                                            val follower = _profiles.find { it.id == newFollower }
+
+                                            if (follower != null) {
+                                                notificationService.showBasicNotification(
+                                                    "Nuevo seguidor!",
+                                                    content = "${follower.userName} te ha seguido!"
+                                                )
+                                            } else {
+                                                getUser(newFollower) {
+                                                    notificationService.showBasicNotification(
+                                                        "Nuevo seguidor!",
+                                                        content = "${it} te ha seguido!"
+                                                    )
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
                                 _selfProfile.value = newVal
                             }
                             if (newVal !in _profiles) _profiles.add(newVal)
@@ -156,78 +187,92 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    /**gets our actual report score for [_selfProfile]*/
-    private fun updateReportScore(){
-
-        db.collection("Reports").whereEqualTo("user", _selfProfile.value.id).get().addOnSuccessListener {
-
-            val before = _selfProfile.value.reportScore
-            for (i in it.documents){
-                val report = i.toObject(Report::class.java)
-                if (report!!.reportDate.daysAgo()>=10 && _selfProfile.value.reportScore>=0.1){
-                    _selfProfile.value.reportScore-=0.1
-                }
+    private fun getUser(user: String, afterFetch: (String) -> Unit = {}) {
+        if (user !in _profiles.map { it.id }) {
+            db.collection("Users").document(user).get().addOnSuccessListener {
+                val newVal = it.toObject(Profile::class.java)!!
+                _profiles.add(newVal)
+                afterFetch(newVal.userName)
             }
-            if (before != _selfProfile.value.reportScore)
-                db.collection("Users").document(_selfProfile.value.id).update("reportScore", _selfProfile.value.reportScore)
-
         }
+    }
+
+    /**gets our actual report score for [_selfProfile]*/
+    private fun updateReportScore() {
+
+        db.collection("Reports").whereEqualTo("user", _selfProfile.value.id).get()
+            .addOnSuccessListener {
+
+                val before = _selfProfile.value.reportScore
+                for (i in it.documents) {
+                    val report = i.toObject(Report::class.java)
+                    if (report!!.reportDate.daysAgo() >= 10 && _selfProfile.value.reportScore >= 0.1) {
+                        _selfProfile.value.reportScore -= 0.1
+                    }
+                }
+                if (before != _selfProfile.value.reportScore) db.collection("Users")
+                    .document(_selfProfile.value.id)
+                    .update("reportScore", _selfProfile.value.reportScore)
+
+            }
     }
 
     /**how many days have passed from the date that calls it*/
     private fun Date.daysAgo(): Long {
-        return this.time - Date.from(Instant.now()).time/1000/60/60/24
+        return this.time - Date.from(Instant.now()).time / 1000 / 60 / 60 / 24
     }
 
     /**updates [savedList]*/
-    private fun fetchSavedList(){
+    private fun fetchSavedList() {
 
         viewModelScope.launch {
 
-            while(alreadyLoading) {
+            while (alreadyLoading) {
                 delay(100)
             }
             alreadyLoading = true
             delay(100)
 
-            db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).get().addOnSuccessListener { document ->
-                if(!document.isEmpty) {
-                    val document = document.documents.first()
-                    val spareSavedList = document.toObject(UISavedList::class.java)!!
-                    savedList = spareSavedList
+            db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).get()
+                .addOnSuccessListener { document ->
+                    if (!document.isEmpty) {
+                        val document = document.documents.first()
+                        val spareSavedList = document.toObject(UISavedList::class.java)!!
+                        savedList = spareSavedList
 
-                    for (id in spareSavedList.postList){
-                        individualPostFetch(id)
+                        for (id in spareSavedList.postList) {
+                            individualPostFetch(id)
+                        }
                     }
+                }.continueWith {
+
+                    alreadyLoading = false
+
                 }
-            }.continueWith {
-
-                alreadyLoading = false
-
-            }
         }
     }
 
     /**gets one post given its id*/
-    private fun individualPostFetch(id :String){
+    private fun individualPostFetch(id: String) {
         try {
 
             db.collection("Posts").document(id).get().addOnSuccessListener {
-                if (it.exists())
-                    bootUpPost(it)
+                if (it.exists()) bootUpPost(it)
             }
-        }catch (e:Exception){
-            Toast.makeText(context, "Una publicación ha dejado de existir en tus guardados", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(
+                context, "Una publicación ha dejado de existir en tus guardados", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     /**gets [Post] JSONs, ordered by [Post.postedDate], if it fails it calls itself*/
-    private fun getPostsFromFirebase(){
+    private fun getPostsFromFirebase() {
 
 
         viewModelScope.launch {
 
-            while(alreadyLoading) {
+            while (alreadyLoading) {
                 delay(100)
             }
             alreadyLoading = true
@@ -236,11 +281,9 @@ class DataFetchViewModel : ViewModel() {
 
             db.collection("Posts")
                 //request filters
-                .orderBy("postedDate", Query.Direction.DESCENDING)
-                .limit(indexesOfPosts)
-                .get()
+                .orderBy("postedDate", Query.Direction.DESCENDING).limit(indexesOfPosts).get()
                 .addOnCompleteListener {
-                    if (it.isSuccessful){
+                    if (it.isSuccessful) {
                         if (!it.result.isEmpty) {
 
                             //case not empty
@@ -251,14 +294,17 @@ class DataFetchViewModel : ViewModel() {
                         }
 
                         alreadyLoading = false
-                    }else{
-                        if(it.isCanceled) {
+                    } else {
+                        if (it.isCanceled) {
                             Log.i("Error de carga", "la carga general fue cancelada")
                             getPostsFromFirebase()
 
                         }
-                        if(it.isComplete) {
-                            Log.i("Error de carga", "la carga general fue completada pero no exitosa, tenemos ${ids.size}")
+                        if (it.isComplete) {
+                            Log.i(
+                                "Error de carga",
+                                "la carga general fue completada pero no exitosa, tenemos ${ids.size}"
+                            )
                             alreadyLoading = false
                         }
                     }
@@ -269,11 +315,11 @@ class DataFetchViewModel : ViewModel() {
 
     /**gets all the posts that correspond to the given id
      * @param id the id of the user, if not given, [_selfProfile]'s, if it fails it calls itself*/
-    private fun getUserPosts(id: String = _selfProfile.value.id){
+    private fun getUserPosts(id: String = _selfProfile.value.id) {
 
         viewModelScope.launch {
 
-            while(alreadyLoading) {
+            while (alreadyLoading) {
                 delay(100)
             }
             alreadyLoading = true
@@ -282,10 +328,8 @@ class DataFetchViewModel : ViewModel() {
             db.collection("Posts")
                 //filters
                 .whereEqualTo("creatorUser.id", id)
-                .orderBy("postedDate", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful){
+                .orderBy("postedDate", Query.Direction.DESCENDING).get().addOnCompleteListener {
+                    if (it.isSuccessful) {
                         if (!it.result.isEmpty) {
 
                             //case not empty
@@ -295,14 +339,17 @@ class DataFetchViewModel : ViewModel() {
                         }
 
                         alreadyLoading = false
-                    }else{
-                        if(it.isCanceled) {
+                    } else {
+                        if (it.isCanceled) {
                             Log.e("Error de carga", "la carga del usuario fue cancelada")
 
                             getUserPosts()
                         }
-                        if(it.isComplete) {
-                            Log.d("Error de carga", "la carga del usuario fue completada pero no exitosa, tenemos ${ids.size}")
+                        if (it.isComplete) {
+                            Log.d(
+                                "Error de carga",
+                                "la carga del usuario fue completada pero no exitosa, tenemos ${ids.size}"
+                            )
                             alreadyLoading = false
                         }
                     }
@@ -312,10 +359,10 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**gets more [Post] from the given [Category], if it fails it calls itself*/
-    private fun moreCategoryPosts(category: Category){
+    private fun moreCategoryPosts(category: Category) {
         viewModelScope.launch {
 
-            while(alreadyLoading) {
+            while (alreadyLoading) {
                 delay(100)
             }
 
@@ -325,9 +372,7 @@ class DataFetchViewModel : ViewModel() {
             db.collection("Posts")
                 //filters
                 .whereEqualTo("category", category)
-                .orderBy("postedDate", Query.Direction.DESCENDING)
-                .limit(indexesOfPosts)
-                .get()
+                .orderBy("postedDate", Query.Direction.DESCENDING).limit(indexesOfPosts).get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         if (!it.result.isEmpty) {
@@ -349,7 +394,9 @@ class DataFetchViewModel : ViewModel() {
                         if (it.isComplete) {
                             Log.d(
                                 "Error de carga",
-                                "la carga de categoria fue completada pero no exitosa, ids = ${_posts.map { it.id }.toList()}"
+                                "la carga de categoria fue completada pero no exitosa, ids = ${
+                                    _posts.map { it.id }.toList()
+                                }"
                             )
 
                             alreadyLoading = false
@@ -366,7 +413,7 @@ class DataFetchViewModel : ViewModel() {
 
         viewModelScope.launch {
 
-            while(alreadyLoading) {
+            while (alreadyLoading) {
                 delay(100)
             }
             alreadyLoading = true
@@ -374,11 +421,9 @@ class DataFetchViewModel : ViewModel() {
 
             db.collection("Posts")
                 //filters
-                .whereEqualTo("pet", id)
-                .orderBy("postedDate", Query.Direction.DESCENDING)
-                .get()
+                .whereEqualTo("pet", id).orderBy("postedDate", Query.Direction.DESCENDING).get()
                 .addOnCompleteListener {
-                    if (it.isSuccessful){
+                    if (it.isSuccessful) {
                         if (!it.result.isEmpty) {
 
                             //case not empty
@@ -388,14 +433,17 @@ class DataFetchViewModel : ViewModel() {
                         }
 
                         alreadyLoading = false
-                    }else{
-                        if(it.isCanceled) {
+                    } else {
+                        if (it.isCanceled) {
                             Log.e("Error de carga", "la carga de la mascota fue cancelada")
 
                             getUserPosts()
                         }
-                        if(it.isComplete) {
-                            Log.d("Error de carga", "la carga dela mascota fue completada pero no exitosa, tenemos ${ids.size}")
+                        if (it.isComplete) {
+                            Log.d(
+                                "Error de carga",
+                                "la carga dela mascota fue completada pero no exitosa, tenemos ${ids.size}"
+                            )
                             alreadyLoading = false
                         }
                     }
@@ -413,10 +461,10 @@ class DataFetchViewModel : ViewModel() {
 
         loadSaved(castedPost)
 
-        if (castedPost.likes.any { it.userId==_selfProfile.value.id })
-            castedPost.liked= Pressed.True
+        if (castedPost.likes.any { it.userId == _selfProfile.value.id }) castedPost.liked =
+            Pressed.True
 
-        if (castedPost.pet.isNotBlank()){
+        if (castedPost.pet.isNotBlank()) {
             loadPet(castedPost)
         }
 
@@ -425,7 +473,11 @@ class DataFetchViewModel : ViewModel() {
         //download to a temporary file
         try {
 
-            if (!File(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg").exists()) {
+            if (!File(
+                    castedPost.typeOfMedia + "s",
+                    if (castedPost.typeOfMedia == "video") "mp4" else "jpeg"
+                ).exists()
+            ) {
 
                 val destination = File.createTempFile(
                     castedPost.typeOfMedia + "s",
@@ -436,16 +488,28 @@ class DataFetchViewModel : ViewModel() {
                     .addOnSuccessListener {
                         castedPost.UIURL = Uri.fromFile(destination)
 
-                        if (castedPost.typeOfMedia == "video")
-                            castedPost.mediaItem = MediaItem.fromUri(castedPost.UIURL)
+                        if (castedPost.typeOfMedia == "video") castedPost.mediaItem =
+                            MediaItem.fromUri(castedPost.UIURL)
                     }
-            }else{
-                castedPost.UIURL = Uri.fromFile(File(castedPost.typeOfMedia+"s", if (castedPost.typeOfMedia == "video") "mp4" else "jpeg"))
+            } else {
+                castedPost.UIURL = Uri.fromFile(
+                    File(
+                        castedPost.typeOfMedia + "s",
+                        if (castedPost.typeOfMedia == "video") "mp4" else "jpeg"
+                    )
+                )
             }
-        }catch (e:Exception){
-            Log.e("tipo",e.stackTraceToString())
+        } catch (e: Exception) {
+            Log.e("tipo", e.stackTraceToString())
             //source doesnt exist, erase it
             _posts.removeIf { it.id == castedPost.id }
+        }
+
+        if (castedPost.creatorUser!!.id == _selfProfile.value.id) {
+
+            prepareNotificationsForPost(castedPost)
+
+            prepareNotificationsForPostComments(castedPost)
         }
 
         ids += castedPost.id
@@ -454,16 +518,64 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
+    private fun prepareNotificationsForPost(castedPost: UIPost) {
+        val likesNotifier =
+            db.collection("Posts").document(castedPost.id).addSnapshotListener { value, error ->
+                if (value != null && _posts.map { it.id }.contains(castedPost.id)) {
+                    val newValue = value.toObject(UIPost::class.java)!!
+                    val newLikes =
+                        newValue.likes.count { it.userId !in castedPost.likes.map { it.userId } }
+
+                    if (newLikes > 0) {
+                        notificationService.showBasicNotification(
+                            title = "A la gente le gusta tu post!",
+                            content = "Tienes $newLikes like${if (newLikes > 1) "s" else ""} nuevo${if (newLikes > 1) "s" else ""}!"
+                        )
+                        castedPost.likes = newValue.likes
+                    }
+
+                }
+            }
+        snapshots.add(likesNotifier)
+    }
+
+    private fun prepareNotificationsForPostComments(castedPost: UIPost) {
+        val commentsNotifier = db.collection("Comments").whereEqualTo("commentPost", castedPost.id)
+            .addSnapshotListener { value, error ->
+                if (value != null) for (i in value.documents) {
+                    if (i.id !in castedPost.comments) {
+                        val newComment = i.toObject(Comment::class.java)!!
+                        val user = _profiles.find { it.id == newComment.user }
+                        if (user != null) {
+                            notificationService.showBasicNotification(
+                                title = "Alguien ha comentado en tu post ${if (castedPost.pet.isNotBlank()) "sobre ${castedPost.uiPet!!.name}" else ""}!",
+                                content = "${user.userName}: ${newComment.commentText}!"
+                            )
+                        } else {
+                            getUser(newComment.user) {
+                                notificationService.showBasicNotification(
+                                    title = "Alguien ha comentado en tu post ${if (castedPost.pet.isNotBlank()) "sobre ${castedPost.uiPet!!.name}" else ""}!",
+                                    content = "${it}: ${newComment.commentText}!"
+                                )
+                            }
+                        }
+                        castedPost.comments += i.id
+                    }
+                }
+            }
+        snapshots += commentsNotifier
+    }
+
     /**gets the [Pet] from the given [Post] as a whole item*/
     private fun loadPet(castedPost: UIPost) {
 
-        if (_pets.any{ it.id == castedPost.pet }){
+        if (_pets.any { it.id == castedPost.pet }) {
             castedPost.uiPet = _pets.find { it.id == castedPost.pet }
-        }else{
+        } else {
             db.collection("Pets").document(castedPost.pet).get().addOnSuccessListener { doc ->
                 val addedPet = doc.toObject(Pet::class.java)!!
                 castedPost.uiPet = addedPet
-                if (doc.id !in _pets.map { it.id }){
+                if (doc.id !in _pets.map { it.id }) {
                     _pets.add(addedPet)
                 }
             }
@@ -472,16 +584,16 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**sets [UIPost.saved] up for the ui*/
-    private fun loadSaved(castedPost: UIPost){
+    private fun loadSaved(castedPost: UIPost) {
 
-        db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).whereArrayContains("postList", castedPost.id).get()
-            .addOnSuccessListener {
-                if(!it.isEmpty){
-                    castedPost.saved= SavePressed.Si
+        db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id)
+            .whereArrayContains("postList", castedPost.id).get().addOnSuccessListener {
+                if (!it.isEmpty) {
+                    castedPost.saved = SavePressed.Si
                 }
-                _posts+=castedPost
+                _posts += castedPost
                 _posts = _posts.sortedBy { it.postedDate }.reversed().toMutableList()
-                ids+= castedPost.id
+                ids += castedPost.id
             }
     }
 
@@ -489,8 +601,8 @@ class DataFetchViewModel : ViewModel() {
      * @param id id of the user, if not given its [_selfProfile]'s*/
     private fun fetchPetsFromUser(id: String = _selfProfile.value.id) {
         db.collection("Pets").whereEqualTo("owner", id).get().addOnSuccessListener {
-            if (!it.isEmpty){
-                for (petJson in it.documents){
+            if (!it.isEmpty) {
+                for (petJson in it.documents) {
                     if (petJson.id !in _pets.map { it.id }) {
                         val newPet = petJson.toObject(Pet::class.java)!!
                         _pets.add(newPet)
@@ -507,17 +619,17 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**asks for more posts of the given category while returns current ones*/
-    fun postsFromCategory(category : Category): List<UIPost> {
+    fun postsFromCategory(category: Category): List<UIPost> {
 
         moreCategoryPosts(category)
-        return _posts.filter { it.category!= null && it.category!!.name == category.name }
+        return _posts.filter { it.category != null && it.category!!.name == category.name }
     }
 
     /**asks for more posts of the given user while returns current ones*/
-    fun postsFromUser(user : String): List<UIPost> {
+    fun postsFromUser(user: String): List<UIPost> {
 
         getUserPosts(user)
-        return _posts.filter { it.creatorUser!= null && it.creatorUser!!.id == user }
+        return _posts.filter { it.creatorUser != null && it.creatorUser!!.id == user }
     }
 
     /**asks for more posts of the given Saved list while returns current ones*/
@@ -533,15 +645,20 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**asks for more posts of the pet category while returns current ones*/
-    fun postsFromPet(pet: Pet):List<UIPost>{
+    fun postsFromPet(pet: Pet): List<UIPost> {
         fetchPostsFromPet(pet.id)
 
         return _posts.filter { it.pet == pet.id }
     }
 
     /**clears [_posts] list*/
-    fun clear(){
+    fun clear() {
         _posts = mutableListOf()
+        snapshots.forEach {
+            it.remove()
+            notificationService.cancelNotification(snapshots.indexOf(it))
+        }
+
         ids = emptyList()
     }
 }

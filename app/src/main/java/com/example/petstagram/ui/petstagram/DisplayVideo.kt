@@ -314,7 +314,7 @@ fun DisplayVideoFromPost(
                     mediaPlayer.playWhenReady = false
                 }
             )
-            .zIndex( 0f)) {
+            .zIndex(0f)) {
 
             AnimatedVisibility(
                 visible = isVisible == true,
