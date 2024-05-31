@@ -94,6 +94,17 @@ class DataFetchViewModel : ViewModel() {
 
         notificationService = PetstagramNotificationService(context)
 
+        snapshots += db.collection("Posts").whereEqualTo("creatorUser.id", _selfProfile.value.id)
+            .addSnapshotListener { value, error ->
+                if (value != null) {
+                    for (i in value.documents) {
+                        if (i.id !in _posts.map { it.id }) {
+                            bootUpPost(i)
+                        }
+                    }
+                }
+            }
+
         fetchPetsFromUser()
         keepUpWithUser()
         getUserPosts()
@@ -521,20 +532,23 @@ class DataFetchViewModel : ViewModel() {
     private fun prepareNotificationsForPost(castedPost: UIPost) {
         val likesNotifier =
             db.collection("Posts").document(castedPost.id).addSnapshotListener { value, error ->
-                if (value != null && _posts.map { it.id }.contains(castedPost.id)) {
-                    val newValue = value.toObject(UIPost::class.java)!!
-                    val newLikes =
-                        newValue.likes.count { it.userId !in castedPost.likes.map { it.userId } }
+                try {
 
-                    if (newLikes > 0) {
-                        notificationService.showBasicNotification(
-                            title = "A la gente le gusta tu post!",
-                            content = "Tienes $newLikes like${if (newLikes > 1) "s" else ""} nuevo${if (newLikes > 1) "s" else ""}!"
-                        )
-                        castedPost.likes = newValue.likes
+
+                    if (value != null && _posts.map { it.id }.contains(castedPost.id)) {
+                        val newValue = value.toObject(UIPost::class.java)!!
+                        val newLikes =
+                            newValue.likes.count { it.userId !in castedPost.likes.map { it.userId } }
+
+                        if (newLikes > 0) {
+                            notificationService.showBasicNotification(
+                                title = "A la gente le gusta tu post!",
+                                content = "Tienes $newLikes like${if (newLikes > 1) "s" else ""} nuevo${if (newLikes > 1) "s" else ""}!"
+                            )
+                            castedPost.likes = newValue.likes
+                        }
                     }
-
-                }
+                }catch (e:Exception){}
             }
         snapshots.add(likesNotifier)
     }
@@ -549,13 +563,13 @@ class DataFetchViewModel : ViewModel() {
                         if (user != null) {
                             notificationService.showBasicNotification(
                                 title = "Alguien ha comentado en tu post ${if (castedPost.pet.isNotBlank()) "sobre ${castedPost.uiPet!!.name}" else ""}!",
-                                content = "${user.userName}: ${newComment.commentText}!"
+                                content = "${user.userName}: ${newComment.commentText}"
                             )
                         } else {
                             getUser(newComment.user) {
                                 notificationService.showBasicNotification(
                                     title = "Alguien ha comentado en tu post ${if (castedPost.pet.isNotBlank()) "sobre ${castedPost.uiPet!!.name}" else ""}!",
-                                    content = "${it}: ${newComment.commentText}!"
+                                    content = "${it}: ${newComment.commentText}"
                                 )
                             }
                         }

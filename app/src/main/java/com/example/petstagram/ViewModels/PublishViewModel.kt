@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -25,34 +26,37 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 fun getMimeType(context: Context, uri: Uri): String? {
     val contentResolver: ContentResolver = context.contentResolver
     return contentResolver.getType(uri)
 }
 
-class PublishViewModel : ViewModel(){
+class PublishViewModel : ViewModel() {
 
-    lateinit var base : DataFetchViewModel
+    lateinit var base: DataFetchViewModel
 
     val newPost by mutableStateOf(UIPost())
 
     private var _isSendingInfo = MutableLiveData(false)
 
-    val isSendingInfo : LiveData<Boolean> = _isSendingInfo
+    val isSendingInfo: LiveData<Boolean> = _isSendingInfo
 
     /**Firebase Storage reference, since it will only push, doesnt need a route*/
     private var storageRef = Firebase.storage.reference
 
     /**[Profile] of the user posting*/
-    var user : Profile = Profile()
+    var user: Profile = Profile()
         set(value) {
             newPost.creatorUser = value
             field = value
         }
 
     /**[Category] for the [Post]*/
-    var category : Category?=null
+    var category: Category? = null
 
     /**Firebase Reference*/
     private val db = Firebase.firestore
@@ -64,27 +68,35 @@ class PublishViewModel : ViewModel(){
     private var _resource = MutableLiveData(Uri.EMPTY)
 
     /**[LiveData] for [_resource]*/
-    var resource :LiveData<Uri> =_resource
+    var resource: LiveData<Uri> = _resource
 
     var petsDisplayed by mutableStateOf(false)
         private set
 
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
 
-    val pets : StateFlow<List<Pet>> = _pets
+    val pets: StateFlow<List<Pet>> = _pets
 
-    var selectedPet : Pet? = null
+    var selectedPet: Pet? = null
         private set
 
     private var _text = MutableStateFlow("Enviando")
 
-    val text : StateFlow<String> = _text
+    val text: StateFlow<String> = _text
 
     private var ignoredPet = false
 
+    var total: Long by mutableLongStateOf(1L)
+    var actual: Long by mutableLongStateOf(1L)
+
+    private var start: Date? by mutableStateOf(null)
+
+    var estimated: String by mutableStateOf("calculando")
+
+
     /**changes [postTitle]
      * @param input new value for [postTitle]*/
-    fun changeTitle(input:String){
+    fun changeTitle(input: String) {
         newPost.title = input
         postTitle = input
     }
@@ -97,23 +109,22 @@ class PublishViewModel : ViewModel(){
 
 
     /**posts a [Post] with the info we have (if it is valid)*/
-    fun postPost(onSuccess : ()->Unit, context : Context){
-        if (!ignoredPet && newPost.pet.isBlank()){
+    fun postPost(onSuccess: () -> Unit, context: Context) {
+        if (!ignoredPet && newPost.pet.isBlank()) {
             togglePetsVisibility()
-            Toast.makeText(context,"No has seleccionado ninguna mascota, estás seguro?",Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context, "No has seleccionado ninguna mascota, estás seguro?", Toast.LENGTH_SHORT
+            ).show()
             ignoredPet = true
             return
         }
         //gotta make sure we dont get any document or strange file, atleast one has to be true
 
-        val isVideo = getMimeType(context = context,_resource.value!!)?.startsWith("video/")
-        val isImage = getMimeType(context = context,_resource.value!!)?.startsWith("image/")
+        val isVideo = getMimeType(context = context, _resource.value!!)?.startsWith("video/")
+        val isImage = getMimeType(context = context, _resource.value!!)?.startsWith("image/")
 
-        if(isVideo == true || isImage == true) {
-            if (resource.value != null &&
-                resource.value != Uri.EMPTY &&
-                postTitle != "Titulo Publicacion"
-            ) {
+        if (isVideo == true || isImage == true) {
+            if (resource.value != null && resource.value != Uri.EMPTY && postTitle != "Titulo Publicacion") {
 
                 //creates a post with given info
                 newPost.title = postTitle
@@ -123,24 +134,22 @@ class PublishViewModel : ViewModel(){
 
                 persistPost(onSuccess)
             }
+        } else {
+            Log.i("intento de seleccion no valido", "$isImage, $isVideo")
+            Toast.makeText(context, "tipo de archivo no válido", Toast.LENGTH_SHORT).show()
         }
-        else {
-                Log.i("intento de seleccion no valido", "$isImage, $isVideo")
-                Toast.makeText(context, "tipo de archivo no válido", Toast.LENGTH_SHORT).show()
-            }
 
         viewModelScope.launch {
-            _text.collect{
-                _text.value =
-                    when(it){
-                        "Enviando"->"Enviando."
-                        "Enviando."->"Enviando.."
-                        "Enviando.."->"Enviando..."
-                        else-> "Enviando"
-                    }
+            _text.collect {
+                _text.value = when (it) {
+                    "Enviando" -> "Enviando."
+                    "Enviando." -> "Enviando.."
+                    "Enviando.." -> "Enviando..."
+                    else -> "Enviando"
+                }
                 delay(500)
-                if (isSendingInfo.value == false){
-                    _text.value=it
+                if (isSendingInfo.value == false) {
+                    _text.value = it
                 }
             }
         }
@@ -149,12 +158,23 @@ class PublishViewModel : ViewModel(){
     /**sends the created [Post] to the [db]
      * @param post the post about to be persisted
      * @param onSuccess code given for execution once we're finished*/
-    private fun persistPost(onSuccess: () -> Unit){
+    private fun persistPost(onSuccess: () -> Unit) {
 
         _isSendingInfo.value = true
-        db.collection("Posts")
-            .add(newPost.basePost()).addOnSuccessListener {doc ->
-                pushResource(doc.id).addOnSuccessListener{
+        db.collection("Posts").add(newPost.basePost()).addOnSuccessListener { doc ->
+                pushResource(doc.id).addOnProgressListener {
+                    if (start == null) {
+                        start = Date.from(Instant.now())
+                    }
+                    actual = it.bytesTransferred
+                    total = it.totalByteCount
+                    val timeElapsed =
+                        TimeUnit.MILLISECONDS.toSeconds(Date.from(Instant.now()).time - start!!.time)
+                    val total = (1 * timeElapsed / progress()).toInt() - timeElapsed
+                    estimated = total.parseToTime()
+
+
+                }.addOnSuccessListener {
                     db.collection("Posts").document(doc.id).update("id", doc.id)
 
                     storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
@@ -162,6 +182,7 @@ class PublishViewModel : ViewModel(){
                         postTitle = "Titulo Publicacion"
                         _resource.value = Uri.EMPTY
                         _isSendingInfo.value = false
+                        start = null
                         onSuccess()
                     }
 
@@ -169,9 +190,28 @@ class PublishViewModel : ViewModel(){
             }
     }
 
+    private fun Long.parseToTime(): String {
+
+        val hours = TimeUnit.SECONDS.toHours(this)
+        val minutes = TimeUnit.SECONDS.toMinutes(this) % 60
+        val seconds = this % 60
+        var spare = ""
+        if (hours >= 1) spare += "$hours horas,"
+
+        if (minutes >= 1) spare += "$minutes minutos,"
+
+        try {
+
+            if (seconds >= 1) spare += "$seconds segundos" else spare =
+                spare.substring(0, spare.length - 1)
+        } catch (e: Exception) {
+        }
+        return spare
+    }
+
     /**simply sends the file in [_resource]
      * @param id the name the file will have (same as post)*/
-    private fun pushResource(id:String): UploadTask {
+    private fun pushResource(id: String): UploadTask {
         return storageRef.child("PostImages/$id").putFile(_resource.value!!)
     }
 
@@ -180,39 +220,43 @@ class PublishViewModel : ViewModel(){
         newPost.source = uri.toString()
         val type = getMimeType(context, uri)
         if (type != null) {
-            newPost.typeOfMedia = type.substring(0,5)
+            newPost.typeOfMedia = type.substring(0, 5)
         }
         _resource.value = uri
     }
 
-    fun togglePetsVisibility(){
+    fun togglePetsVisibility() {
         petsDisplayed = !petsDisplayed
-        if (petsDisplayed)
-            viewModelScope.launch {
+        if (petsDisplayed) viewModelScope.launch {
 
-                _pets.collect{
-                    base.petsFromUser(user.id)
-                    delay(1000)
-                    _pets.value = base.petsFromUser(user.id).ofThisCategory()
-                }
+            _pets.collect {
+                base.petsFromUser(user.id)
+                delay(1000)
+                _pets.value = base.petsFromUser(user.id).ofThisCategory()
             }
-        else{
+        }
+        else {
             _pets.value = emptyList()
         }
     }
 
-    fun selectPet(pet: Pet){
+    fun selectPet(pet: Pet) {
         if (pet != selectedPet) {
             selectedPet = pet
             newPost.pet = pet.id
-        }else{
+        } else {
             selectedPet = null
             newPost.pet = ""
         }
     }
 
     private fun List<Pet>.ofThisCategory(): List<Pet> {
-        return this.filter { category == null||it.category!!.name == (category?.name ?: "") }
+        return this.filter { category == null || it.category!!.name == (category?.name ?: "") }
+    }
+
+    fun progress(): Float {
+        val result = actual.toFloat() / (total.toFloat() + 1)
+        return result
     }
 
 }

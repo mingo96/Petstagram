@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -114,11 +115,18 @@ fun NewPostScreen(
 
     if (isSendingInfo == true)
         Dialog(onDismissRequest = {}) {
-            LinearProgressIndicator(
-                modifier.fillMaxWidth(0.7f),
-                color = Color.Green
-            )
-            Text(text = loadingText)
+            Column(Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                LinearProgressIndicator(
+                    modifier = modifier.fillMaxWidth(0.7f),
+                    color = Color.Green,
+                    progress = { viewModel.progress()}
+                )
+                Text(text = loadingText)
+                Text(text = "Tiempo estimado : ${viewModel.estimated}", textAlign = TextAlign.Center)
+            }
         }
 
 

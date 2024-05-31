@@ -142,7 +142,6 @@ fun DisplayVideoFromSource(
                 enter = EnterTransition.None,
                 modifier = Modifier.zIndex(0F)
             ) {
-                mediaPlayer.playWhenReady = true
 
                 AndroidView(
                     factory = { ctx ->
