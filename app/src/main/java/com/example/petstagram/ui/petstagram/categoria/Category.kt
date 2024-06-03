@@ -234,6 +234,8 @@ fun AddButton(
     RelayContainer(
         backgroundColor = Primary,
         arrangement = RelayContainerArrangement.Row,
+        mainAxisAlignment = MainAxisAlignment.Center,
+        crossAxisAlignment = CrossAxisAlignment.Center,
         padding = PaddingValues(
             start = 8.0.dp,
             top = 0.0.dp,

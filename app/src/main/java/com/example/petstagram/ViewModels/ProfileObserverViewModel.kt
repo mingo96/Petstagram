@@ -11,8 +11,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
 import com.example.petstagram.Controllers.ProfileInteractor
+import com.example.petstagram.UiData.Notification
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.TypeOfNotification
 import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -131,6 +133,15 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
     override fun follow(){
         animation()
         if (_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
+
+        val newNotification = Notification(
+            sender = actualUser.id,
+            userName = actualUser.userName,
+            type = TypeOfNotification.Follow
+        )
+
+        db.collection("NotificationsChannels").document(observedProfile.value.notificationChannel)
+            .update("notifications", FieldValue.arrayUnion(newNotification))
 
         _observedProfile.value.followers += _selfProfile.value.id
         db.collection("Users").document(_observedProfile.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))

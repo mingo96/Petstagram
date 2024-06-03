@@ -14,10 +14,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Notification
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.TypeOfNotification
 import com.example.petstagram.UiData.UIPost
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask
@@ -162,32 +165,51 @@ class PublishViewModel : ViewModel() {
 
         _isSendingInfo.value = true
         db.collection("Posts").add(newPost.basePost()).addOnSuccessListener { doc ->
-                pushResource(doc.id).addOnProgressListener {
-                    if (start == null) {
-                        start = Date.from(Instant.now())
-                    }
-                    actual = it.bytesTransferred
-                    total = it.totalByteCount
-                    val timeElapsed =
-                        TimeUnit.MILLISECONDS.toSeconds(Date.from(Instant.now()).time - start!!.time)
-                    val total = (1 * timeElapsed / progress()).toInt() - timeElapsed
-                    estimated = total.parseToTime()
+            pushResource(doc.id).addOnProgressListener {
+                if (start == null) {
+                    start = Date.from(Instant.now())
+                }
+                actual = it.bytesTransferred
+                total = it.totalByteCount
+                val timeElapsed =
+                    TimeUnit.MILLISECONDS.toSeconds(Date.from(Instant.now()).time - start!!.time)
+                val total = (1 * timeElapsed / progress()).toInt() - timeElapsed
+                estimated = total.parseToTime()
 
 
-                }.addOnSuccessListener {
-                    db.collection("Posts").document(doc.id).update("id", doc.id)
+            }.addOnSuccessListener {
+                db.collection("Posts").document(doc.id).update("id", doc.id)
 
-                    storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
-                        db.collection("Posts").document(doc.id).update("source", it.toString())
-                        postTitle = "Titulo Publicacion"
-                        _resource.value = Uri.EMPTY
-                        _isSendingInfo.value = false
-                        start = null
-                        onSuccess()
-                    }
+                storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
+                    db.collection("Posts").document(doc.id).update("source", it.toString())
+                    postTitle = "Titulo Publicacion"
+                    _resource.value = Uri.EMPTY
+                    _isSendingInfo.value = false
+                    start = null
+                    notifyFollowers()
+                    onSuccess()
+                }
+
+            }
+        }
+    }
+
+    private fun notifyFollowers() {
+        val newNotification = Notification(
+            sender = user.id,
+            userName = user.userName,
+            type = TypeOfNotification.NewPost,
+            notificationText = newPost.title
+        )
+        user.followers.forEach { follower ->
+            db.collection("NotificationsChannels").whereEqualTo("user", follower).get()
+                .addOnSuccessListener {
+                    db.collection("NotificationsChannels").document(it.documents[0].id)
+                        .update("notifications", FieldValue.arrayUnion(newNotification))
 
                 }
-            }
+
+        }
     }
 
     private fun Long.parseToTime(): String {

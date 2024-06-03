@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.Petstagram"
-        minSdk = 33
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -88,6 +88,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     //AsyncImage
+    implementation("io.coil-kt:coil:2.6.0")
+    implementation("io.coil-kt:coil-base:2.6.0") // Incluye coil-base para mayor compatibilidad
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.fragment:fragment-ktx:1.7.1")
 

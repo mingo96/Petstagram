@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.petstagram.UiData.NotificationChannel
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.data.AuthUiState
 import com.google.firebase.auth.AuthCredential
@@ -99,6 +100,13 @@ class AuthViewModel : ViewModel() {
                                 onSuccess.invoke()
                                 _state.value = AuthUiState.Success(user)
                                 localProfile = user
+
+                                db.collection("NotificationsChannels").whereEqualTo("user", user.id).get().addOnSuccessListener {
+                                    if (it.isEmpty){
+                                        createNotificationsChannel(localProfile!!)
+                                    }
+                                }
+
                             }
                     }
                     else {
@@ -188,8 +196,28 @@ class AuthViewModel : ViewModel() {
                         localProfile = profile
                         _state.value = AuthUiState.Success(profile)
                         db.collection("Users").document(it.id).update("id", it.id)
+                        createNotificationsChannel(localProfile!!)
                         onEnd.invoke()
                     }
+            }
+        }
+    }
+
+    private fun createNotificationsChannel(profile: Profile) {
+        val notificationChannel = NotificationChannel(profile.id)
+        db.collection("NotificationsChannels").add(notificationChannel).addOnSuccessListener {
+            notificationChannel.id = it.id
+            profile.notificationChannel = it.id
+            db.collection("NotificationsChannels").document(it.id).update("id", it.id)
+            db.collection("Users").document(profile.id).set(profile)
+            updateProfileFromPosts(profile)
+        }
+    }
+
+    private fun updateProfileFromPosts(profile: Profile){
+        db.collection("Posts").whereEqualTo("creatorUser.id", profile.id).get().addOnSuccessListener {
+            for (i in it.documents){
+                db.collection("Posts").document(i.id).update("creatorUser", profile)
             }
         }
     }
@@ -235,6 +263,7 @@ class AuthViewModel : ViewModel() {
                 db.collection("Users").whereEqualTo("mail",auth.currentUser!!.email!!).get().addOnSuccessListener {
                     if (it.isEmpty) {
                         createUser(auth.currentUser!!.email!!, authUser.user!!.photoUrl.toString()) {
+                            createNotificationsChannel(localProfile!!)
                             onLogin()
                             onRegister.invoke()
                         }
@@ -246,6 +275,11 @@ class AuthViewModel : ViewModel() {
                         _state.value = AuthUiState.Success(localProfile!!)
 
                         onLogin()
+                        db.collection("NotificationsChannels").whereEqualTo("user", localProfile!!.id).get().addOnSuccessListener {
+                            if (it.isEmpty){
+                                createNotificationsChannel(localProfile!!)
+                            }
+                        }
                         if(firstLoad)onRegister()
                     }
                 }
@@ -255,5 +289,9 @@ class AuthViewModel : ViewModel() {
         }catch (e:Exception){
 
         }
+    }
+
+    fun startLoading() {
+        _state.value=AuthUiState.IsLoading
     }
 }

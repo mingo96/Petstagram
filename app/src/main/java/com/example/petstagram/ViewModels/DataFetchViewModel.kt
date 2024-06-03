@@ -1,23 +1,33 @@
 package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.UiData.Comment
+import com.example.petstagram.UiData.Notification
+import com.example.petstagram.UiData.NotificationChannel
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
+import com.example.petstagram.UiData.TypeOfNotification
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
 import com.example.petstagram.guardar.SavePressed
@@ -27,14 +37,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.Instant
@@ -49,7 +55,9 @@ class DataFetchViewModel : ViewModel() {
     var selfId = ""
 
     /**actual profile*/
-    private val _selfProfile = MutableStateFlow(Profile())
+    private var _selfProfile = Profile()
+
+    private var _notificationsChannel: NotificationChannel? = null
 
     /**context gotten to generate the [Uri]'s for local storage*/
     lateinit var context: Context
@@ -94,20 +102,8 @@ class DataFetchViewModel : ViewModel() {
 
         notificationService = PetstagramNotificationService(context)
 
-        snapshots += db.collection("Posts").whereEqualTo("creatorUser.id", _selfProfile.value.id)
-            .addSnapshotListener { value, error ->
-                if (value != null) {
-                    for (i in value.documents) {
-                        if (i.id !in _posts.map { it.id }) {
-                            bootUpPost(i)
-                        }
-                    }
-                }
-            }
-
         fetchPetsFromUser()
         keepUpWithUser()
-        getUserPosts()
         getPostsFromFirebase()
         fetchSavedList()
         fetchCategories()
@@ -140,62 +136,272 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**returns value of [_selfProfile]*/
-    fun profile() = _selfProfile.value
+    fun profile() = _selfProfile
 
     /**states a flow that keeps [_selfProfile] updated*/
     private fun keepUpWithUser() {
         viewModelScope.launch {
 
-            _selfProfile
-                //we make it so it doesnt load more if we get out of the app
-                .stateIn(
-                    viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
-                ).collect {
-                    //delay until we have an id
-                    while (selfId.isBlank()) {
-                        delay(100)
+            //delay until we have an id
+            while (selfId.isBlank()) {
+                delay(100)
+            }
+
+            alreadyLoading = true
+            snapshots += db.collection("Users").whereEqualTo("authId", selfId)
+                .addSnapshotListener { value, error ->
+                    if (value != null) {
+                        val newVal = value.documents[0].toObject(Profile::class.java)!!
+                        if (newVal != _selfProfile) {
+                            _selfProfile = newVal
+                            if (_selfProfile.id != "") {
+                                updateProfileToPosts(_selfProfile)
+                                prepareNotifications()
+                            }
+                        }
+
+                        if (newVal !in _profiles) _profiles.add(newVal)
+                        updateReportScore()
+                        keepUpWithPosts()
+                        alreadyLoading = false
+                    }
+                }
+
+        }
+    }
+
+    private fun updateProfileToPosts(profile: Profile) {
+        db.collection("Posts").whereEqualTo("creatorUser.id", profile.id).get()
+            .addOnSuccessListener {
+                for (i in it.documents) {
+                    db.collection("Posts").document(i.id).update("creatorUser", profile)
+                }
+            }
+    }
+
+    private fun prepareNotifications() {
+        if (_notificationsChannel == null) db.collection("NotificationsChannels")
+            .whereEqualTo("user", _selfProfile.id).get().addOnSuccessListener { docs ->
+                _notificationsChannel = docs.documents[0].toObject(
+                    NotificationChannel::class.java
+                )!!
+                snapshots += db.collection("NotificationsChannels")
+                    .document(_notificationsChannel!!.id).addSnapshotListener { value, error ->
+                        if (value != null) {
+                            val newNotif = value.toObject(
+                                NotificationChannel::class.java
+                            )!!
+
+                            setLikesNotifications(newNotif)
+
+                            val newValues =
+                                newNotif.notifications - _notificationsChannel!!.notifications.toSet()
+                                    .filter { !it.seen }.toSet()
+
+                            _notificationsChannel = newNotif
+                            for (i in newValues) {
+                                when (i.type) {
+                                    TypeOfNotification.Comment -> {
+                                        newCommentNotification(i)
+                                    }
+
+                                    TypeOfNotification.Follow -> {
+                                        getUser(i.sender){
+
+                                            val user = _profiles.find { it.id == i.sender }
+                                            notificationService.followingNotification(
+                                                "Nuevo seguidor!",
+                                                content = "${i.userName} te ha seguido!",
+                                                url = user!!.profilePic
+                                                )
+                                        }
+
+                                    }
+
+                                    TypeOfNotification.NewPost -> {
+
+                                        newPostNotification(i)
+                                    }
+
+                                    else -> {}
+                                }
+                                db.collection("NotificationsChannel").document(
+                                    _notificationsChannel!!.id
+                                ).update(
+                                    "notifications.seen", true
+                                )
+                            }
+                        }
                     }
 
-                    alreadyLoading = true
-                    db.collection("Users").whereEqualTo("authId", selfId).get()
-                        .addOnSuccessListener {
+            }
+    }
 
-                            val newVal = it.documents[0].toObject(Profile::class.java)!!
-                            if (newVal != _selfProfile.value) {
-                                if (_selfProfile.value.followers.size < newVal.followers.size) {
+    private fun newCommentNotification(i : Notification){
+        viewModelScope.launch {
 
-                                    if (_selfProfile.value.id != "") {
-                                        for (newFollower in newVal.followers - _selfProfile.value.followers.toSet()) {
-
-                                            val follower = _profiles.find { it.id == newFollower }
-
-                                            if (follower != null) {
-                                                notificationService.showBasicNotification(
-                                                    "Nuevo seguidor!",
-                                                    content = "${follower.userName} te ha seguido!"
-                                                )
-                                            } else {
-                                                getUser(newFollower) {
-                                                    notificationService.showBasicNotification(
-                                                        "Nuevo seguidor!",
-                                                        content = "${it} te ha seguido!"
-                                                    )
-                                                }
-                                            }
-
-                                        }
-                                    }
-                                }
-                                _selfProfile.value = newVal
-                            }
-                            if (newVal !in _profiles) _profiles.add(newVal)
-                            updateReportScore()
-
-                        }.continueWith { alreadyLoading = false }
-
-                    delay(15000)
+            val found = _posts.find { it.id == i.notificationText.split("=")[0] }
+            if (found != null) {
+                while (found.UIURL == Uri.EMPTY){
+                    delay(100)
                 }
+                val bitmap: Bitmap =
+                    if (found.typeOfMedia == "image")
+                        uriToBitmap(context, found.UIURL)
+                    else {
+
+                        val retriever = MediaMetadataRetriever()
+                        retriever.setDataSource(context, found.UIURL)
+                        retriever.getFrameAtIndex(1)!!
+                    }
+
+
+                notificationService.showNotSoBasicNotification(
+                    "Nuevo comentario de ${i.userName}!",
+                    content = "${i.userName}: ${i.notificationText.split("=")[1]}",
+                    bitmap
+                )
+            } else {
+
+                individualPostFetch(i.notificationText.split("=")[0]) { uri, isVideo ->
+                    notificationService.showNotSoBasicNotification(
+                        "Nueva publicacion de ${i.userName}!",
+                        content = "${i.userName}: ${i.notificationText.split("=")[1]}",
+                        if (!isVideo) {
+                            uriToBitmap(context, uri)
+                        }else{
+
+                            val retriever = MediaMetadataRetriever()
+                            retriever.setDataSource(context, uri)
+                            retriever.getFrameAtIndex(1)!!
+                        }
+                    )
+                }
+            }
+
         }
+    }
+
+    private fun newPostNotification(i : Notification){
+        viewModelScope.launch {
+
+            val found = _posts.find { it.id == i.notificationText.split("=")[0] }
+            if (found != null) {
+                while (found.UIURL == Uri.EMPTY){
+                    delay(100)
+                }
+                val bitmap: Bitmap =
+                    if (found.typeOfMedia == "image")
+                        uriToBitmap(context, found.UIURL)
+                    else {
+
+                        val retriever = MediaMetadataRetriever()
+                        retriever.setDataSource(context, found.UIURL)
+                        retriever.getFrameAtIndex(1)!!
+                    }
+
+
+                notificationService.showNotSoBasicNotification(
+                    "Nueva publicacion de ${i.userName}!",
+                    content = "${i.userName}: ${i.notificationText.split("=")[1]}",
+                    bitmap
+                )
+            } else {
+
+                individualPostFetch(i.notificationText.split("=")[0]) { uri, isVideo ->
+                    notificationService.showNotSoBasicNotification(
+                        "Nueva publicacion de ${i.userName}!",
+                        content = "${i.userName}: ${i.notificationText.split("=")[1]}",
+                        if (!isVideo) {
+                            uriToBitmap(context, uri)
+                        }else{
+
+                            val retriever = MediaMetadataRetriever()
+                            retriever.setDataSource(context, uri)
+                            retriever.getFrameAtIndex(1)!!
+                        }
+                    )
+                }
+            }
+
+        }
+    }
+
+    private fun setLikesNotifications(newNotif: NotificationChannel) {
+
+        val count =
+            (newNotif.notifications - _notificationsChannel!!.notifications.toSet()).filter { it.type == TypeOfNotification.Like }
+        val postsNotified = count.map { it.notificationText }
+
+        for (i in postsNotified) {
+            val number = count.count { it.notificationText == i }
+            viewModelScope.launch {
+
+                val found = _posts.find { it.id == i }
+                if (found != null) {
+                    while (found.UIURL == Uri.EMPTY){
+                        delay(100)
+                    }
+                    val bitmap: Bitmap =
+                        if (found.typeOfMedia == "image")
+                            uriToBitmap(context, found.UIURL)
+                        else {
+
+                            val retriever = MediaMetadataRetriever()
+                            retriever.setDataSource(context, found.UIURL)
+                            retriever.getFrameAtIndex(1)!!
+                        }
+
+
+                    notificationService.showNotSoBasicNotification(
+                        title = "A la gente le gusta tu post!",
+                        content = "Tienes $number like${if (number > 1) "s" else ""} nuevo${if (number > 1) "s" else ""}!",
+                        bitmap
+                    )
+                } else {
+
+                    individualPostFetch(i) { uri, isVideo ->
+                        notificationService.showNotSoBasicNotification(
+                            title = "A la gente le gusta tu post!",
+                            content = "Tienes $number like${if (number > 1) "s" else ""} nuevo${if (number > 1) "s" else ""}!",
+                            if (!isVideo) {
+                                uriToBitmap(context, uri)
+                            }else{
+
+                                val retriever = MediaMetadataRetriever()
+                                retriever.setDataSource(context, uri)
+                                retriever.getFrameAtIndex(1)!!
+                            }
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+
+    fun uriToBitmap(context: Context, uri: Uri): Bitmap {
+
+        val contentResolver: ContentResolver = context.contentResolver
+
+        val source = ImageDecoder.createSource(contentResolver, uri)
+
+        return ImageDecoder.decodeBitmap(source)
+    }
+
+    private fun keepUpWithPosts() {
+        if (alreadyLoading)
+
+            snapshots += db.collection("Posts").whereEqualTo("creatorUser.id", _selfProfile.id)
+                .addSnapshotListener { value, error ->
+                    if (value != null) {
+                        for (i in value.documents) {
+                            if (i.id !in _posts.map { it.id }) {
+                                bootUpPost(i)
+                            }
+                        }
+                    }
+                }
     }
 
     private fun getUser(user: String, afterFetch: (String) -> Unit = {}) {
@@ -205,27 +411,27 @@ class DataFetchViewModel : ViewModel() {
                 _profiles.add(newVal)
                 afterFetch(newVal.userName)
             }
+        }else{
+            afterFetch("")
         }
     }
 
     /**gets our actual report score for [_selfProfile]*/
     private fun updateReportScore() {
 
-        db.collection("Reports").whereEqualTo("user", _selfProfile.value.id).get()
-            .addOnSuccessListener {
+        db.collection("Reports").whereEqualTo("user", _selfProfile.id).get().addOnSuccessListener {
 
-                val before = _selfProfile.value.reportScore
-                for (i in it.documents) {
-                    val report = i.toObject(Report::class.java)
-                    if (report!!.reportDate.daysAgo() >= 10 && _selfProfile.value.reportScore >= 0.1) {
-                        _selfProfile.value.reportScore -= 0.1
-                    }
+            val before = _selfProfile.reportScore
+            for (i in it.documents) {
+                val report = i.toObject(Report::class.java)
+                if (report!!.reportDate.daysAgo() >= 10 && _selfProfile.reportScore >= 0.1) {
+                    _selfProfile.reportScore -= 0.1
                 }
-                if (before != _selfProfile.value.reportScore) db.collection("Users")
-                    .document(_selfProfile.value.id)
-                    .update("reportScore", _selfProfile.value.reportScore)
-
             }
+            if (before != _selfProfile.reportScore) db.collection("Users").document(_selfProfile.id)
+                .update("reportScore", _selfProfile.reportScore)
+
+        }
     }
 
     /**how many days have passed from the date that calls it*/
@@ -244,7 +450,7 @@ class DataFetchViewModel : ViewModel() {
             alreadyLoading = true
             delay(100)
 
-            db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id).get()
+            db.collection("SavedLists").whereEqualTo("userId", _selfProfile.id).get()
                 .addOnSuccessListener { document ->
                     if (!document.isEmpty) {
                         val document = document.documents.first()
@@ -264,11 +470,11 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**gets one post given its id*/
-    private fun individualPostFetch(id: String) {
+    private fun individualPostFetch(id: String, laterOn: (Uri, Boolean) -> Unit = {uri, isvideo->}) {
         try {
 
             db.collection("Posts").document(id).get().addOnSuccessListener {
-                if (it.exists()) bootUpPost(it)
+                if (it.exists()) bootUpPost(it, laterOn)
             }
         } catch (e: Exception) {
             Toast.makeText(
@@ -326,7 +532,7 @@ class DataFetchViewModel : ViewModel() {
 
     /**gets all the posts that correspond to the given id
      * @param id the id of the user, if not given, [_selfProfile]'s, if it fails it calls itself*/
-    private fun getUserPosts(id: String = _selfProfile.value.id) {
+    private fun getUserPosts(id: String = _selfProfile.id) {
 
         viewModelScope.launch {
 
@@ -464,7 +670,7 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**given a JSON, parses it to a [Post] and prepares it to be displayed*/
-    private fun bootUpPost(postJson: DocumentSnapshot) {
+    private fun bootUpPost(postJson: DocumentSnapshot, laterOn: (Uri, Boolean) -> Unit = {uri, isVideo->}) {
 
         val castedPost = postJson.toObject(UIPost::class.java)!!
 
@@ -472,8 +678,7 @@ class DataFetchViewModel : ViewModel() {
 
         loadSaved(castedPost)
 
-        if (castedPost.likes.any { it.userId == _selfProfile.value.id }) castedPost.liked =
-            Pressed.True
+        if (castedPost.likes.any { it.userId == _selfProfile.id }) castedPost.liked = Pressed.True
 
         if (castedPost.pet.isNotBlank()) {
             loadPet(castedPost)
@@ -510,17 +715,11 @@ class DataFetchViewModel : ViewModel() {
                     )
                 )
             }
+            laterOn(castedPost.UIURL, castedPost.typeOfMedia == "video")
         } catch (e: Exception) {
             Log.e("tipo", e.stackTraceToString())
             //source doesnt exist, erase it
             _posts.removeIf { it.id == castedPost.id }
-        }
-
-        if (castedPost.creatorUser!!.id == _selfProfile.value.id) {
-
-            prepareNotificationsForPost(castedPost)
-
-            prepareNotificationsForPostComments(castedPost)
         }
 
         ids += castedPost.id
@@ -529,56 +728,6 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
-    private fun prepareNotificationsForPost(castedPost: UIPost) {
-        val likesNotifier =
-            db.collection("Posts").document(castedPost.id).addSnapshotListener { value, error ->
-                try {
-
-
-                    if (value != null && _posts.map { it.id }.contains(castedPost.id)) {
-                        val newValue = value.toObject(UIPost::class.java)!!
-                        val newLikes =
-                            newValue.likes.count { it.userId !in castedPost.likes.map { it.userId } }
-
-                        if (newLikes > 0) {
-                            notificationService.showBasicNotification(
-                                title = "A la gente le gusta tu post!",
-                                content = "Tienes $newLikes like${if (newLikes > 1) "s" else ""} nuevo${if (newLikes > 1) "s" else ""}!"
-                            )
-                            castedPost.likes = newValue.likes
-                        }
-                    }
-                }catch (e:Exception){}
-            }
-        snapshots.add(likesNotifier)
-    }
-
-    private fun prepareNotificationsForPostComments(castedPost: UIPost) {
-        val commentsNotifier = db.collection("Comments").whereEqualTo("commentPost", castedPost.id)
-            .addSnapshotListener { value, error ->
-                if (value != null) for (i in value.documents) {
-                    if (i.id !in castedPost.comments) {
-                        val newComment = i.toObject(Comment::class.java)!!
-                        val user = _profiles.find { it.id == newComment.user }
-                        if (user != null) {
-                            notificationService.showBasicNotification(
-                                title = "Alguien ha comentado en tu post ${if (castedPost.pet.isNotBlank()) "sobre ${castedPost.uiPet!!.name}" else ""}!",
-                                content = "${user.userName}: ${newComment.commentText}"
-                            )
-                        } else {
-                            getUser(newComment.user) {
-                                notificationService.showBasicNotification(
-                                    title = "Alguien ha comentado en tu post ${if (castedPost.pet.isNotBlank()) "sobre ${castedPost.uiPet!!.name}" else ""}!",
-                                    content = "${it}: ${newComment.commentText}"
-                                )
-                            }
-                        }
-                        castedPost.comments += i.id
-                    }
-                }
-            }
-        snapshots += commentsNotifier
-    }
 
     /**gets the [Pet] from the given [Post] as a whole item*/
     private fun loadPet(castedPost: UIPost) {
@@ -600,7 +749,7 @@ class DataFetchViewModel : ViewModel() {
     /**sets [UIPost.saved] up for the ui*/
     private fun loadSaved(castedPost: UIPost) {
 
-        db.collection("SavedLists").whereEqualTo("userId", _selfProfile.value.id)
+        db.collection("SavedLists").whereEqualTo("userId", _selfProfile.id)
             .whereArrayContains("postList", castedPost.id).get().addOnSuccessListener {
                 if (!it.isEmpty) {
                     castedPost.saved = SavePressed.Si
@@ -613,7 +762,7 @@ class DataFetchViewModel : ViewModel() {
 
     /**gets all pets from given user
      * @param id id of the user, if not given its [_selfProfile]'s*/
-    private fun fetchPetsFromUser(id: String = _selfProfile.value.id) {
+    private fun fetchPetsFromUser(id: String = _selfProfile.id) {
         db.collection("Pets").whereEqualTo("owner", id).get().addOnSuccessListener {
             if (!it.isEmpty) {
                 for (petJson in it.documents) {
@@ -672,6 +821,7 @@ class DataFetchViewModel : ViewModel() {
             it.remove()
             notificationService.cancelNotification(snapshots.indexOf(it))
         }
+        _notificationsChannel = null
 
         ids = emptyList()
     }

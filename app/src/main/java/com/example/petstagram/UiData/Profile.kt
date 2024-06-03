@@ -12,5 +12,6 @@ class Profile (
     /**url of the photo for this account*/
     var profilePic : String = "empty",
     var reportScore : Double = 1.0,
-    var followers : List<String> = emptyList()
+    var followers : List<String> = emptyList(),
+    var notificationChannel : String = ""
 )

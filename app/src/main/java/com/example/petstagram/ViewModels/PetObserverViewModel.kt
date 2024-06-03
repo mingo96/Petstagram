@@ -11,8 +11,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.Controllers.GeneralController
 import com.example.petstagram.Controllers.ProfileInteractor
+import com.example.petstagram.UiData.Notification
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.TypeOfNotification
 import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,15 +32,17 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
     private var _selfProfile = MutableStateFlow(Profile())
 
     override var actualUser = _selfProfile.value
-        get() {return _selfProfile.value}
+        get() {
+            return _selfProfile.value
+        }
 
     private val _observedPet = MutableStateFlow(Pet())
 
-    val observedPet : StateFlow<Pet> = _observedPet
+    val observedPet: StateFlow<Pet> = _observedPet
 
     private val _petsOwner = MutableStateFlow(Profile())
 
-    val petsOwner : StateFlow<Profile> = _petsOwner
+    val petsOwner: StateFlow<Profile> = _petsOwner
 
     /**new username container*/
     private var petName by mutableStateOf("")
@@ -47,43 +51,53 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
     private var _resource = MutableLiveData<String>("")
 
     /**visible version of [_resource]*/
-    val resource :LiveData<String> = _resource
+    val resource: LiveData<String> = _resource
 
     /**indicates if we are editing the UserName, because if we are editing and reload,
      * username will go back to original*/
     private val _isEditing = MutableLiveData(false)
 
     /**live data to access [_isEditing]*/
-    val isEditing :LiveData<Boolean> = _isEditing
-    override fun followers()= _observedPet.value.followers.size
+    val isEditing: LiveData<Boolean> = _isEditing
+    override fun followers() = _observedPet.value.followers.size
 
-    private val _follow : MutableLiveData<Boolean?> = MutableLiveData(false)
+    private val _follow: MutableLiveData<Boolean?> = MutableLiveData(false)
 
-    val follow : LiveData<Boolean?> = _follow
+    val follow: LiveData<Boolean?> = _follow
 
     var imOwner by mutableStateOf(false)
         private set
 
-    override fun follow(){
+    override fun follow() {
         animation()
         if (_observedPet.value.followers.contains(_selfProfile.value.id)) return;
+        val newNotification = Notification(
+            sender = actualUser.id,
+            userName = actualUser.userName,
+            type = TypeOfNotification.Follow
+        )
+
+        db.collection("NotificationsChannels").document(petsOwner.value.notificationChannel)
+            .update("notifications", FieldValue.arrayUnion(newNotification))
 
         _observedPet.value.followers += _selfProfile.value.id
-        db.collection("Pets").document(_observedPet.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
+        db.collection("Pets").document(_observedPet.value.id)
+            .update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
     }
 
-    override fun unFollow(){
+    override fun unFollow() {
         animation()
 
         if (!_observedPet.value.followers.contains(_selfProfile.value.id)) return;
         _observedPet.value.followers -= _selfProfile.value.id
-        db.collection("Pets").document(_observedPet.value.id).update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
+        db.collection("Pets").document(_observedPet.value.id)
+            .update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
 
     }
 
-    private fun animation(){
+    private fun animation() {
         viewModelScope.launch {
-            if (_follow.value!= null) {
+            if (_follow.value != null) {
                 val pre = _follow.value!!
                 if (!pre) {
                     _follow.value = null
@@ -96,7 +110,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
-    private fun fetchPosts(){
+    private fun fetchPosts() {
         if (!_isLoading.value!!) {
 
             viewModelScope.launch {
@@ -111,14 +125,14 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
 
                 base.postsFromPet(_observedPet.value)
 
-                while (base.alreadyLoading){
+                while (base.alreadyLoading) {
                     delay(100)
                 }
 
                 val endPosts =
                     base.postsFromPet(_observedPet.value)
 
-                for (post in endPosts- _posts.value.toSet()){
+                for (post in endPosts - _posts.value.toSet()) {
                     _posts.value += post
                     delay(500)
                 }
@@ -130,12 +144,12 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
     }
 
     /**gets executed when we click te button for editing [petName]*/
-    fun editUserNameClicked(context : Context){
-        if (!_isEditing.value!!){
+    fun editUserNameClicked(context: Context) {
+        if (!_isEditing.value!!) {
             //if we were not editing, just set the username to the profile one and set _isEditing to true
             petName = _observedPet.value.name
             _isEditing.value = !_isEditing.value!!
-        }else{
+        } else {
             pushNewPetName()
         }
     }
@@ -152,16 +166,19 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                     started = SharingStarted.WhileSubscribed(10000),
                     0
                 )
-                .collect{
+                .collect {
 
-                    Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
+                    Log.i(
+                        "Profile",
+                        "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
+                    )
 
                     delay(1000)
                     db.collection("Users").document(selfId).get()
                         .addOnSuccessListener {
 
                             val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal.id != _selfProfile.value.id){
+                            if (newVal.id != _selfProfile.value.id) {
                                 _selfProfile.value = newVal
                             }
                         }
@@ -169,7 +186,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                         .addOnSuccessListener {
 
                             val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal.id != _selfProfile.value.id){
+                            if (newVal.id != _selfProfile.value.id) {
                                 _petsOwner.value = newVal
                             }
                         }
@@ -177,11 +194,12 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                         .addOnSuccessListener {
 
                             val newVal = it.toObject(Pet::class.java)!!
-                            if (newVal != _observedPet.value){
+                            if (newVal != _observedPet.value) {
                                 _observedPet.value = newVal
                             }
 
-                            _follow.value = _observedPet.value.followers.contains(_selfProfile.value.id)
+                            _follow.value =
+                                _observedPet.value.followers.contains(_selfProfile.value.id)
                             fetchPosts()
                         }
 
@@ -192,32 +210,32 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
     }
 
     /**if [petName] is valid, updates the username of this [_selfProfile]*/
-    private fun pushNewPetName(){
-        if (petName!=_observedPet.value.name) {
+    private fun pushNewPetName() {
+        if (petName != _observedPet.value.name) {
             _observedPet.value.name = petName
             db.collection("Pets")
                 .document(_observedPet.value.id).update("name", petName)
                 .addOnCompleteListener {
                     _isEditing.value = !_isEditing.value!!
-                    for (i in _posts.value){
+                    for (i in _posts.value) {
                         i.uiPet!!.name = petName
                     }
                     fetchPosts()
                 }
-        }else{
+        } else {
             _isEditing.value = false
         }
     }
 
     /**edit [userName]
      * @param newtext text that is going to [userName]]*/
-    fun editPetName(newtext : String){
+    fun editPetName(newtext: String) {
         petName = newtext
     }
 
     /**get [userName]
      * @return actual value of [userName]*/
-    fun getPetNameText():String{
+    fun getPetNameText(): String {
         return petName
     }
 
@@ -242,14 +260,14 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
         fetchPosts()
     }
 
-    fun clean(){
-        _posts.value= emptyList()
+    fun clean() {
+        _posts.value = emptyList()
         _follow.value = false
         petName = ""
         _isEditing.value = false
     }
 
-    companion object{
-        var staticPet : Pet = Pet()
+    companion object {
+        var staticPet: Pet = Pet()
     }
 }

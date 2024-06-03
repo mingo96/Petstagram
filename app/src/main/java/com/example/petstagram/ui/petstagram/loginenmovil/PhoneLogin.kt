@@ -127,6 +127,7 @@ fun PhoneLogin(
         }
 
     val onGoogleClick = {
+        viewModel.startLoading()
         val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
         val options = GoogleSignInOptions.Builder(
             GoogleSignInOptions.DEFAULT_SIGN_IN

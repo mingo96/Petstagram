@@ -6,10 +6,12 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Like
+import com.example.petstagram.UiData.Notification
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
+import com.example.petstagram.UiData.TypeOfNotification
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
@@ -55,6 +57,17 @@ interface PostsUIController : CommentsUIController {
                 .update("likes", FieldValue.arrayUnion(newLike))
 
             animateLike(post)
+            if (actualUser.id != post.creatorUser!!.id) {
+                val newNotification = Notification(
+                    type = TypeOfNotification.Like,
+                    userName = actualUser.userName,
+                    sender = actualUser.id,
+                    notificationText = post.id
+                )
+                db.collection("NotificationsChannels")
+                    .document(post.creatorUser!!.notificationChannel)
+                    .update("notifications", FieldValue.arrayUnion(newNotification))
+            }
             post.liked = Pressed.True
         } else {
 
