@@ -11,8 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,12 +42,10 @@ import com.google.relay.compose.ScrollAnchor
 /**UI screen to display a [Category] posts*/
 @Composable
 fun DisplayCategory(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    viewModel: PostsViewModel
+    modifier: Modifier = Modifier, navController: NavHostController, viewModel: PostsViewModel
 ) {
     //starts loading when entering
-    LaunchedEffect(viewModel){
+    LaunchedEffect(viewModel) {
         viewModel.startLoadingPosts()
     }
 
@@ -68,40 +65,54 @@ fun DisplayCategory(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.24f)),
-                navController = navController
+                    .height(180.dp), navController = navController
             )
 
-            CategoryText(
-                modifier
-                    .requiredHeight(height.times(0.05f) + 48.dp)
-                    .padding(vertical = 24.dp), added = viewModel.statedCategory.name)
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.height(height - 60.dp)
+            ) {
 
-            AnimatedVisibility(visible = isLoading!!,
-                enter = slideInVertically { it },
-                exit = slideOutVertically { 1 }) {
+                CategoryText(
+                    modifier
+                        .wrapContentHeight()
+                        .padding(vertical = 24.dp),
+                    added = viewModel.statedCategory.name
+                )
 
-                Dialog(onDismissRequest = {  }) {
-                    val dots by viewModel.funnyAhhString.collectAsState()
+                AnimatedVisibility(visible = isLoading!!,
+                    enter = slideInVertically { it },
+                    exit = slideOutVertically { 1 }) {
 
-                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Dialog(onDismissRequest = { }) {
+                        val dots by viewModel.funnyAhhString.collectAsState()
 
-                        CircularProgressIndicator(
-                            modifier
-                                .height(height.times(0.6f))
-                                .fillMaxWidth(0.8f))
-                        Text(text = "Cargando, por favor, espere$dots", style = TextStyle(color = Color.White))
+                        Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            CircularProgressIndicator(
+                                modifier
+                                    .height(height.times(0.6f))
+                                    .fillMaxWidth(0.8f)
+                            )
+                            Text(
+                                text = "Cargando, por favor, espere$dots",
+                                style = TextStyle(color = Color.White)
+                            )
+                        }
                     }
                 }
-            }
 
-            PostsInstance(
-                modifier = Modifier
-                    .rowWeight(1.0f)
-                    .height(height.times(0.81f)),
-                viewModel = viewModel,
-                navController = navController
-            )
+                PostsInstance(
+                    modifier = Modifier.fillMaxSize(),
+                    viewModel = viewModel,
+                    navController = navController
+                )
+            }
         }
     }
 }
@@ -121,18 +132,17 @@ fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostControll
 @Composable
 fun CategoryText(modifier: Modifier = Modifier, added: String) {
     Label(
-        variation = Variation.CategoryPosts,
-        modifier = modifier,
-        added = added
+        variation = Variation.CategoryPosts, modifier = modifier, added = added
     )
 }
 
 /**pass-by function to display [Posts]*/
 @Composable
-fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel, navController: NavHostController) {
+fun PostsInstance(
+    modifier: Modifier = Modifier, viewModel: PostsViewModel, navController: NavHostController
+) {
     Posts(
-        modifier = modifier
-            .fillMaxWidth(1.0f),
+        modifier = modifier.fillMaxWidth(1.0f),
         controller = viewModel,
         navController = navController
     )
@@ -140,15 +150,11 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: PostsViewModel, navC
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         mainAxisAlignment = MainAxisAlignment.End,
         scrollAnchor = ScrollAnchor.End,

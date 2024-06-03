@@ -16,17 +16,18 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
@@ -43,10 +44,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -66,6 +65,7 @@ import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
+import com.example.petstagram.loginenmovil.myTextFieldColors
 import com.example.petstagram.perfil.FollowingText
 import com.example.petstagram.perfil.ProfilePicInstance
 import com.example.petstagram.publicaciones.Posts
@@ -89,9 +89,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyProfile(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    viewModel: OwnProfileViewModel
+    modifier: Modifier = Modifier, navController: NavHostController, viewModel: OwnProfileViewModel
 ) {
 
     //on launch start loading user info
@@ -139,10 +137,10 @@ fun MyProfile(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.24f)), navController = navController
+                    .height(180.dp), navController = navController
             )
             LazyColumn(
-                Modifier.height(height.times(0.926f)),
+                Modifier.height(height - 60.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -157,7 +155,7 @@ fun MyProfile(
                                     .height(height.times(0.23f))
                                     .width(height.times(0.23f))
                                     .clickable { sourceSelector.launch("image/*") },
-                                url = if (profilePicObserver=="empty") "" else profilePicObserver.orEmpty()
+                                url = if (profilePicObserver == "empty") "" else profilePicObserver.orEmpty()
                             )
                         }
 
@@ -168,21 +166,17 @@ fun MyProfile(
                                 changeText = changeText,
                                 modifier = Modifier.fillMaxWidth(0.7f)
                             )
-                            Row (horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)){
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(8.dp)
+                            ) {
 
                                 FollowingText(modifier = Modifier, personal = true) {
                                     viewModel.actualUser.followers.size
                                 }
-                                EditUsernameButton(
-                                    Modifier.clickable {
-                                        viewModel.editUserNameClicked(thisContext)
-                                    }
-                                ) {
-                                    EditUsernameBackgroundCircle(
-                                        Modifier
-                                            .requiredWidth(32.0.dp)
-                                            .requiredHeight(32.0.dp)
-                                    )
+                                EditUsernameButton(Modifier.clickable {
+                                    viewModel.editUserNameClicked(thisContext)
+                                }) {
                                     EditUsernameImageContainer {
                                         EditUsernameImage()
                                     }
@@ -195,16 +189,13 @@ fun MyProfile(
                 item {
 
                     val state by remember {
-                        derivedStateOf { scroll.firstVisibleItemIndex==0 }
+                        derivedStateOf { scroll.firstVisibleItemIndex == 0 }
                     }
-                    StateSelector(
-                        Modifier.height(height.times(0.06f)),
-                        state = state!!,
-                        onClick = {
-                            scope.launch {
-                                scroll.animateScrollToItem(it)
-                            }
-                        })
+                    StateSelector(Modifier.height(56.dp), state = state, onClick = {
+                        scope.launch {
+                            scroll.animateScrollToItem(it)
+                        }
+                    })
                 }
 
                 item {
@@ -213,16 +204,16 @@ fun MyProfile(
                     LazyRow(
                         state = scroll,
                         flingBehavior = flingBehavior,
-                        modifier = Modifier.width(width*2),
+                        modifier = Modifier.width(width * 2)
+                            .height(height-60.dp-56.dp-48.dp),
                     ) {
-                        item{
+                        item {
 
                             PostsInstance(
                                 modifier = Modifier
                                     .zIndex(5F)
                                     .height(height.times(0.8f))
-                                    .width(width),
-                                viewModel = viewModel
+                                    .width(width), viewModel = viewModel
                             )
                         }
                         item {
@@ -277,8 +268,7 @@ fun DataContainer(height: Dp, content: @Composable RowScope.() -> Unit) {
 
 @Composable
 fun UserNameContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         arrangement = RelayContainerArrangement.Column,
@@ -294,30 +284,28 @@ fun UserNameContainer(
 
 @Composable
 fun EditUsernameButton(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         isStructured = false,
         content = content,
         modifier = modifier
-            .requiredWidth(32.0.dp)
-            .requiredHeight(32.0.dp)
+            .requiredWidth(40.0.dp)
+            .requiredHeight(40.0.dp)
     )
 }
 
 @Composable
 fun EditUsernameImageContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         arrangement = RelayContainerArrangement.Row,
         content = content,
         modifier = modifier
-            .requiredWidth(32.0.dp)
-            .requiredHeight(32.0.dp)
-            .alpha(alpha = 100.0f)
+            .wrapContentSize(align = Alignment.Center)
+            .background(Primary, RoundedCornerShape(100))
+            .border(2.dp, Color.Transparent.copy(alpha = 0.5f), RoundedCornerShape(100))
     )
 }
 
@@ -327,8 +315,9 @@ fun EditUsernameImage(modifier: Modifier = Modifier) {
         image = painterResource(R.drawable.perfil_propio_imagen_cambiar_nombre_usuario),
         contentScale = ContentScale.Crop,
         modifier = modifier
-            .requiredWidth(18.0.dp)
-            .requiredHeight(18.0.dp)
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
+            .padding(8.dp)
     )
 }
 
@@ -342,12 +331,10 @@ fun EditUsernameBackgroundCircle(modifier: Modifier = Modifier) {
 
 @Composable
 fun ImageContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
-        content = content,
-        modifier = modifier
+        content = content, modifier = modifier
     )
 }
 
@@ -357,9 +344,7 @@ fun ImageContainer(
 fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel) {
 
     Posts(
-        modifier = modifier
-            .fillMaxWidth(1.0f),
-        controller = viewModel
+        modifier = modifier.fillMaxWidth(1.0f), controller = viewModel
     )
 }
 
@@ -370,63 +355,56 @@ fun PostsInstance(modifier: Modifier = Modifier, viewModel: OwnProfileViewModel)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YourUserName(
-    added : String? = null,
+    added: String? = null,
     modifier: Modifier = Modifier,
     editing: Boolean = false,
     textValue: () -> String,
-    changeText: (String) -> Unit = {}
+    changeText: (String) -> Unit = {},
+    onSend: () -> Unit = {}
 ) {
 
-    if (editing)
-        OutlinedTextField(
-            value = textValue.invoke(),
-            onValueChange = changeText,
-            textStyle = TextStyle(
-                fontSize = 20.0.sp,
-                fontFamily = inter,
-                lineHeight = 1.2102272033691406.em,
-                color = Color.Black
-            ),
-            singleLine = true,
-            shape = RoundedCornerShape(10),
-            modifier = modifier
-                .wrapContentHeight(
-                    align = Alignment.CenterVertically,
-                    unbounded = true
-                )
-                .border(
-                    width = 2.dp,
-                    shape = RoundedCornerShape(10.dp),
-                    color = Color(
-                        alpha = 38,
-                        red = 0,
-                        green = 0,
-                        blue = 0
-                    )
-                )
-                .background(
-                    Color(
-                        alpha = 255,
-                        red = 225,
-                        green = 196,
-                        blue = 1
-                    ),
-                    shape = RoundedCornerShape(10)
-                )
-        )
-    else
-        Label(
-            modifier = Modifier.wrapContentWidth(),
-            variation = Variation.YourProfile,
-            added = added ?: textValue()
-        )
+    if (editing) OutlinedTextField(
+        label = { Text(text = "Nombre") },
+        value = textValue.invoke(),
+        onValueChange = changeText,
+        textStyle = TextStyle(
+            fontSize = 20.0.sp,
+            fontFamily = inter,
+            lineHeight = 1.2102272033691406.em,
+            color = Color.Black
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(10),
+        modifier = modifier
+            .wrapContentHeight(
+                align = Alignment.CenterVertically, unbounded = true
+            )
+            .wrapContentHeight(),
+        colors = myTextFieldColors().copy(
+
+            unfocusedContainerColor = Secondary,
+            focusedContainerColor = Secondary,
+        ),
+        keyboardActions = KeyboardActions(onDone = { onSend() })
+    )
+    else Label(
+        modifier = Modifier.wrapContentWidth(),
+        variation = Variation.YourProfile,
+        added = added ?: textValue()
+    )
 }
 
 
 /**pass-by function to call a [Label], not much to see (logic-wise)*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: (Int) -> Unit, text1:String = "Publicaciones", text2 : String = "Mascotas") {
+fun StateSelector(
+    modifier: Modifier = Modifier,
+    state: Boolean,
+    onClick: (Int) -> Unit,
+    text1: String = "Publicaciones",
+    text2: String = "Mascotas"
+) {
     SingleChoiceSegmentedButtonRow(
         modifier
             .fillMaxWidth()
@@ -439,8 +417,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: (Int) 
             colors = colors(state)
         ) {
             Text(
-                text = text1,
-                style = TextStyle(color = if (state) Color.Black else Color.White)
+                text = text1, style = TextStyle(color = if (state) Color.Black else Color.White)
             )
         }
         SegmentedButton(
@@ -450,8 +427,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: (Int) 
             colors = colors(state)
         ) {
             Text(
-                text = text2,
-                style = TextStyle(color = if (!state) Color.Black else Color.White)
+                text = text2, style = TextStyle(color = if (!state) Color.Black else Color.White)
             )
 
         }
@@ -460,7 +436,7 @@ fun StateSelector(modifier: Modifier = Modifier, state: Boolean, onClick: (Int) 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun colors(state : Boolean): SegmentedButtonColors {
+fun colors(state: Boolean): SegmentedButtonColors {
     return SegmentedButtonDefaults.colors(
         activeContainerColor = if (state) Primary else Secondary,
         activeBorderColor = if (state) Primary else Secondary,
@@ -472,15 +448,11 @@ fun colors(state : Boolean): SegmentedButtonColors {
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         scrollable = true,
         itemSpacing = 24.0,

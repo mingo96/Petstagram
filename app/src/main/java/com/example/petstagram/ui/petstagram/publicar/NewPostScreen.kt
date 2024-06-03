@@ -7,10 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
@@ -79,9 +76,7 @@ import com.google.relay.compose.ScrollAnchor
  * from [viewModel]*/
 @Composable
 fun NewPostScreen(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    viewModel: PublishViewModel
+    modifier: Modifier = Modifier, navController: NavHostController, viewModel: PublishViewModel
 ) {
     val loadingText by viewModel.text.collectAsState()
 
@@ -107,27 +102,27 @@ fun NewPostScreen(
     BackHandler {
 
         if (viewModel.petsDisplayed) viewModel.togglePetsVisibility()
-        else
-            if (isSendingInfo == false) {
-                navController.navigateUp()
-            }
+        else if (isSendingInfo == false) {
+            navController.navigateUp()
+        }
     }
 
-    if (isSendingInfo == true)
-        Dialog(onDismissRequest = {}) {
-            Column(Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+    if (isSendingInfo == true) Dialog(onDismissRequest = {}) {
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-                LinearProgressIndicator(
-                    modifier = modifier.fillMaxWidth(0.7f),
-                    color = Color.Green,
-                    progress = { viewModel.progress()}
-                )
-                Text(text = loadingText)
-                Text(text = "Tiempo estimado : ${viewModel.estimated}", textAlign = TextAlign.Center)
-            }
+            LinearProgressIndicator(modifier = modifier.fillMaxWidth(0.7f),
+                color = Color.Green,
+                progress = { viewModel.progress() })
+            Text(text = loadingText)
+            Text(
+                text = "Tiempo estimado : ${viewModel.estimated}", textAlign = TextAlign.Center
+            )
         }
+    }
 
 
     BoxWithConstraints(contentAlignment = Alignment.BottomCenter) {
@@ -139,13 +134,13 @@ fun NewPostScreen(
                     .rowWeight(
                         1.0f
                     )
-                    .height(height.times(0.238f)), navController = navController
+                    .height(180.dp), navController = navController
             )
 
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(height.times(0.838f))
+                    .height(height - 60.dp - 64.dp)
             ) {
 
                 LazyColumn(
@@ -159,10 +154,7 @@ fun NewPostScreen(
                             modifier = Modifier
                                 .background(
                                     Color(
-                                        alpha = 255,
-                                        red = 35,
-                                        green = 35,
-                                        blue = 35
+                                        alpha = 255, red = 35, green = 35, blue = 35
                                     )
                                 )
                                 .wrapContentHeight()
@@ -170,31 +162,26 @@ fun NewPostScreen(
                         ) {
 
                             CuadroInfoInstance(
-                                post = viewModel.newPost,
-                                modifier = Modifier.zIndex(1F)
+                                post = viewModel.newPost, modifier = Modifier.zIndex(1F)
                             )
                             if (getMimeType(context, uriObserver!!)?.startsWith("video") == true) {
                                 val source = remember {
                                     MediaItem.fromUri(uriObserver!!)
                                 }
                                 DisplayVideoFromSource(
-                                    source = source,
-                                    onDoubleTap = {
+                                    source = source, onDoubleTap = {
                                         sourceSelecter.launch("*/*")
-                                    },
-                                    modifier = modifier
+                                    }, modifier = modifier
                                 )
                             } else if (getMimeType(
-                                    context,
-                                    uriObserver!!
+                                    context, uriObserver!!
                                 )?.startsWith("image") == true
                             ) {
-                                SubcomposeAsyncImage(
-                                    modifier = modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            sourceSelecter.launch("*/*")
-                                        },
+                                SubcomposeAsyncImage(modifier = modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        sourceSelecter.launch("*/*")
+                                    },
                                     model = uriObserver,
                                     loading = {
                                         CircularProgressIndicator(
@@ -207,8 +194,7 @@ fun NewPostScreen(
                                     contentScale = ContentScale.Crop
                                 )
                             } else {
-                                Image(
-                                    painter = painterResource(id = R.drawable.hacer_clic),
+                                Image(painter = painterResource(id = R.drawable.hacer_clic),
                                     contentDescription = "Aún nada",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
@@ -216,12 +202,10 @@ fun NewPostScreen(
                                         .padding(8.dp)
                                         .clickable {
                                             sourceSelecter.launch("*/*")
-                                        }
-                                )
+                                        })
                             }
                             DeadPostDownBar(
-                                creatorUser = viewModel.newPost.creatorUser!!,
-                                viewModel.getTitle()
+                                creatorUser = viewModel.newPost.creatorUser!!, viewModel.getTitle()
                             )
 
                         }
@@ -233,14 +217,11 @@ fun NewPostScreen(
                             modifier = Modifier.padding(vertical = 32.dp)
                         ) {
 
-                            TitleTextInput(
-                                textValue = { viewModel.getTitle() },
+                            TitleTextInput(textValue = { viewModel.getTitle() },
                                 changeText = { viewModel.changeTitle(it) })
-                            SourceSelectorTextButton(
-                                modifier.clickable {
-                                    viewModel.togglePetsVisibility()
-                                }
-                            )
+                            SourceSelectorTextButton(modifier.clickable {
+                                viewModel.togglePetsVisibility()
+                            })
 
                         }
 
@@ -255,19 +236,15 @@ fun NewPostScreen(
                     .clickable {
                         viewModel.postPost(context = context, onSuccess = {
                             navController.navigateUp()
-                        }
-                        )
+                        })
                     }
-                    .height(height.times(0.09f))
-            )
+                    .height(64.dp))
         }
-        AnimatedVisibility(
-            visible = viewModel.petsDisplayed,
+        AnimatedVisibility(visible = viewModel.petsDisplayed,
             enter = expandVertically { it } + slideInVertically { it },
             exit = shrinkVertically { it } + slideOutVertically { it }) {
 
-            PetList(
-                pets = pets,
+            PetList(pets = pets,
                 onSelect = {
                     viewModel.selectPet(it)
                     viewModel.togglePetsVisibility()
@@ -295,12 +272,10 @@ fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostControll
 /**basic in-out info representation text, not much to see (logic-wise)*/
 @Composable
 fun TitleTextInput(
-    modifier: Modifier = Modifier,
-    textValue: () -> String,
-    changeText: (String) -> Unit
+    modifier: Modifier = Modifier, textValue: () -> String, changeText: (String) -> Unit
 ) {
     OutlinedTextField(
-        placeholder = { Text(text = "Título de la publicación")},
+        placeholder = { Text(text = "Título de la publicación") },
         singleLine = true,
         value = textValue.invoke(),
         onValueChange = changeText,
@@ -318,12 +293,8 @@ fun TitleTextInput(
             .fillMaxHeight()
             .background(
                 Color(
-                    alpha = 0,
-                    red = 224,
-                    green = 164,
-                    blue = 0
-                ),
-                shape = RoundedCornerShape(15)
+                    alpha = 0, red = 224, green = 164, blue = 0
+                ), shape = RoundedCornerShape(15)
             )
             .wrapContentSize()
     )
@@ -336,8 +307,7 @@ fun SourceSelectorTextButton(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredWidth(296.0.dp)
             .wrapContentHeight()
-            .border(1.dp, Color.Gray, RoundedCornerShape(50)),
-        variation = Variation.SelectResource
+            .border(1.dp, Color.Gray, RoundedCornerShape(50)), variation = Variation.SelectResource
     )
 }
 
@@ -363,15 +333,11 @@ fun PublishPostTextButton(modifier: Modifier = Modifier) {
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         scrollAnchor = ScrollAnchor.End,
         scrollable = true,

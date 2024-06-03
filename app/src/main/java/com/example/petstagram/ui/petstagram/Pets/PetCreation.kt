@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
@@ -50,49 +51,54 @@ import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.CategoryList
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.ui.theme.Primary
-import com.example.petstagram.cuadrotexto.TopLevelVariacionTusPublicaciones as ImageBackground
-import com.example.petstagram.perfilpropio.EditUsernameBackgroundCircle as SendBackground
-import com.example.petstagram.perfilpropio.EditUsernameButton as Send
-import com.example.petstagram.perfilpropio.EditUsernameImageContainer as SendImageContainer
-import com.example.petstagram.perfilpropio.YourUserName as PetName
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayText
 import com.google.relay.compose.ScrollAnchor
+import com.example.petstagram.cuadrotexto.TopLevelVariacionTusPublicaciones as ImageBackground
+import com.example.petstagram.perfilpropio.EditUsernameBackgroundCircle as SendBackground
+import com.example.petstagram.perfilpropio.EditUsernameButton as Send
+import com.example.petstagram.perfilpropio.EditUsernameImageContainer as SendImageContainer
+import com.example.petstagram.perfilpropio.YourUserName as PetName
 
 @Composable
-fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostController){
+fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostController) {
 
     val categories by viewModel.categories.collectAsState()
-    
+
     val resource by viewModel.resource.observeAsState()
 
-    val thisContext =(LocalContext.current)
+    val thisContext = (LocalContext.current)
 
     /**external activity that returns the local uri of the file the user selects*/
-    val sourceSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){ uri ->
-        if(uri != null&&uri != Uri.EMPTY) {
-            viewModel.setResource(uri, thisContext)
-        }else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
-    }
+    val sourceSelector =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null && uri != Uri.EMPTY) {
+                viewModel.setResource(uri, thisContext)
+            } else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
+        }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.startLoading()
     }
 
     val focusManager = LocalFocusManager.current
 
-    DisposableEffect(key1 = true){
+    DisposableEffect(key1 = true) {
         onDispose {
             focusManager.clearFocus()
         }
     }
 
-    if (viewModel.sending){
+    if (viewModel.sending) {
         Dialog(onDismissRequest = {
-            Toast.makeText(thisContext, "Espera por favor, estamos registrando a ${viewModel.getPetName()}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                thisContext,
+                "Espera por favor, estamos registrando a ${viewModel.getPetName()}",
+                Toast.LENGTH_SHORT
+            ).show()
         }) {
             val dots by viewModel.dots.collectAsState()
             Text(text = "Enviando$dots")
@@ -108,73 +114,91 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.238f) + 16.dp)
-                    .padding(bottom = 16.dp),
-                navController = navController
+                    .height(180.dp), navController = navController
             )
 
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(height.times(0.06f) + 16.dp)
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly) {
-                PetName(modifier = Modifier.fillMaxWidth(0.7f), textValue = { viewModel.getPetName() }, changeText = {viewModel.setPetName(it)}, editing = true)
-                val context = LocalContext.current
-                Send(
-                    Modifier
-                        .clickable {
-                            viewModel.send(context = context) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .height(height - 60.dp)
+                    .padding(top = 16.dp)
+            ) {
 
-                                navController.navigateUp()
-                            }
-                        }
-                        .fillMaxHeight()
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(height.times(0.06f) + 16.dp)
+                        .padding(bottom = 16.dp), horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    SendBackground(Modifier.fillMaxSize())
-                    SendImageContainer {
-                        SendImage()
+                    val context = LocalContext.current
+                    PetName(
+                        modifier = Modifier.fillMaxWidth(0.7f),
+                        textValue = { viewModel.getPetName() },
+                        changeText = { viewModel.setPetName(it) },
+                        editing = true,
+                        onSend = {viewModel.send(context = context) {
+
+                            navController.navigateUp()
+                        }}
+                    )
+                    Send(
+                        Modifier
+                            .clickable {
+                                viewModel.send(context = context) {
+
+                                    navController.navigateUp()
+                                }
+                            }
+                            .fillMaxHeight()) {
+                        SendImageContainer {
+                            SendImage()
+                        }
                     }
                 }
-            }
 
-            ImageBackground(modifier = Modifier
-                .height(height.times(0.25f) + 16.dp)
-                .padding(bottom = 16.dp)
-                .width(height.times(0.25f))
-                .clickable { sourceSelector.launch("image/*") }) {
+                ImageBackground(
+                    modifier = Modifier
+                        .height(height.times(0.25f) + 16.dp)
+                        .padding(bottom = 16.dp)
+                        .width(height.times(0.25f))
+                        .clickable { sourceSelector.launch("image/*") }) {
 
 
-                if (resource== Uri.EMPTY){
-                    Image(painter = painterResource(id = R.drawable.hacer_clic),
-                        contentDescription = "clica para cambiar",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(0.65f)
-                    )
-                }else{
-                    SubcomposeAsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize(0.65f),
-                        model = resource,
-                        loading = { CircularProgressIndicator(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(400.dp))
-                        },
-                        contentDescription = "imagen",
-                        contentScale = ContentScale.Crop
-                    )
+                    if (resource == Uri.EMPTY) {
+                        Image(
+                            painter = painterResource(id = R.drawable.hacer_clic),
+                            contentDescription = "clica para cambiar",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(0.65f)
+                        )
+                    } else {
+                        SubcomposeAsyncImage(
+                            modifier = Modifier.fillMaxSize(0.65f), model = resource, loading = {
+                                CircularProgressIndicator(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(400.dp)
+                                )
+                            }, contentDescription = "imagen", contentScale = ContentScale.Crop
+                        )
+                    }
+                    IndicativeText()
                 }
-                IndicativeText()
+                SelectCategoryTexts(
+                    modifier = Modifier
+                        .height(height.times(0.11f) + 16.dp)
+                        .padding(bottom = 16.dp)
+                )
+
+                CategoryList(
+                    onSelect = { viewModel.setCategory(it) },
+                    categoryList = categories,
+                    modifier = Modifier.height(height.times(0.42f)),
+                    selected = viewModel.selectedCategory
+                )
+
             }
-            SelectCategoryTexts(modifier = Modifier
-                .height(height.times(0.11f) + 16.dp)
-                .padding(bottom = 16.dp))
-
-            CategoryList(onSelect = {viewModel.setCategory(it)}, categoryList = categories,
-                modifier = Modifier.height(height.times(0.42f)),
-                selected = viewModel.selectedCategory)
-
         }
     }
 
@@ -182,18 +206,22 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
 }
 
 @Composable
-fun IndicativeText(){
+fun IndicativeText() {
 
-    Text("Pulsa para cambiar la foto de perfil",
+    Text(
+        "Pulsa para cambiar la foto de perfil",
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(),
-        textAlign = TextAlign.Center)
+        textAlign = TextAlign.Center
+    )
 }
+
 @Composable
-fun SelectCategoryTexts( modifier: Modifier){
-    Column (modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)){
+fun SelectCategoryTexts(modifier: Modifier) {
+    Column(
+        modifier, verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         RelayText(
             content = "Selecciona la categoría",
             fontSize = 24.0.sp,
@@ -205,8 +233,7 @@ fun SelectCategoryTexts( modifier: Modifier){
             modifier = Modifier
                 .fillMaxWidth(1.0f)
                 .wrapContentHeight(
-                    align = Alignment.CenterVertically,
-                    unbounded = true
+                    align = Alignment.CenterVertically, unbounded = true
                 )
         )
         RelayText(
@@ -220,8 +247,7 @@ fun SelectCategoryTexts( modifier: Modifier){
             modifier = Modifier
                 .fillMaxWidth(1.0f)
                 .wrapContentHeight(
-                    align = Alignment.CenterVertically,
-                    unbounded = true
+                    align = Alignment.CenterVertically, unbounded = true
                 )
         )
     }
@@ -233,22 +259,19 @@ fun SendImage(modifier: Modifier = Modifier) {
         image = painterResource(R.drawable.enviar_por_correo),
         contentScale = ContentScale.Crop,
         modifier = modifier
-            .requiredWidth(18.0.dp)
-            .requiredHeight(18.0.dp)
+            .requiredWidth(40.0.dp)
+            .requiredHeight(40.0.dp)
+            .padding(8.dp)
     )
 }
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         mainAxisAlignment = MainAxisAlignment.End,
         scrollAnchor = ScrollAnchor.End,
@@ -264,5 +287,9 @@ fun TopLevel(
 /**top bar with which you can move in the app*/
 @Composable
 fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu)
+    TopBar(
+        modifier = modifier.fillMaxWidth(1.0f),
+        navController = navController,
+        variant = Variant.WithMenu
+    )
 }

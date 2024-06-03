@@ -57,7 +57,7 @@ fun SavedPosts(
     viewModel: SavedPostsViewModel
 ) {
     //starts loading when entering
-    LaunchedEffect(viewModel){
+    LaunchedEffect(viewModel) {
         viewModel.startLoadingPosts()
     }
 
@@ -79,69 +79,85 @@ fun SavedPosts(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.24f)),
+                    .height(180.dp),
                 navController = navController
             )
 
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier.height(height - 60.dp)
+            ) {
 
-            Row(Modifier.height(height.times(0.07f)).fillMaxWidth().padding(start = 8.dp)) {
-
-                LazyRow (horizontalArrangement = Arrangement.spacedBy(8.dp),
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .padding(end = 8.dp))
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(horizontal = 8.dp)
+                )
                 {
-                    items(categories){i->
-                        CategoryDisplay(category = i, click = {viewModel.selectCategory(i)})
+                    items(categories) { i ->
+                        CategoryDisplay(category = i, click = { viewModel.selectCategory(i) })
+                    }
+                    item {
+
+                        AtrasAtras(
+                            Modifier
+                                .fillMaxHeight()
+                                .clickable { navController.navigateUp() })
                     }
                 }
-                AtrasAtras(
-                    Modifier
-                        .fillMaxHeight()
-                        .clickable { navController.navigateUp() })
-            }
 
-            if (viewModel.statedCategory!= null) {
-                CategoryText(
-                    modifier.requiredHeight(height.times(0.05f)),
-                    added = viewModel.statedCategory!!.name
+
+                if (viewModel.statedCategory != null) {
+                    CategoryText(
+                        modifier.requiredHeight(height.times(0.05f)),
+                        added = viewModel.statedCategory!!.name
+                    )
+                }
+                AnimatedVisibility(visible = isLoading!!,
+                    enter = slideInVertically { it },
+                    exit = slideOutVertically { 1 }) {
+
+                    Dialog(onDismissRequest = { }) {
+                        CircularProgressIndicator(
+                            modifier
+                                .height(height.times(0.825f))
+                                .fillMaxWidth(0.8f)
+                        )
+                    }
+                }
+
+                PostsInstance(
+                    modifier = Modifier
+                        .height(height.times(if (viewModel.statedCategory == null) 0.825f else 0.773f)),
+                    viewModel = viewModel
                 )
             }
-            AnimatedVisibility(visible = isLoading!!,
-                enter = slideInVertically { it },
-                exit = slideOutVertically { 1 }) {
 
-                Dialog(onDismissRequest = {  }) {
-                    CircularProgressIndicator(
-                        modifier
-                            .rowWeight(1.0f)
-                            .height(height.times(0.825f))
-                            .fillMaxWidth(0.8f))
-                }
-            }
 
-            PostsInstance(
-                modifier = Modifier
-                    .rowWeight(1.0f)
-                    .height(height.times(if (viewModel.statedCategory== null)0.825f else 0.773f)),
-                viewModel = viewModel
-            )
         }
     }
 }
 
 @Composable
-fun CategoryDisplay(category: Category, click : ()->Unit){
-    Column(modifier = Modifier
-        .fillMaxHeight()
-        .width(168.dp)
-        .background(Color.Black)
-        .clickable { click.invoke() },
+fun CategoryDisplay(category: Category, click: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(168.dp)
+            .background(Color.Black)
+            .clickable { click.invoke() },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        RelayContainer (
-            modifier = Modifier.fillMaxHeight(0.7f).padding(top = 4.dp),
-            radius = 6.0){
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        RelayContainer(
+            modifier = Modifier
+                .fillMaxHeight(0.7f)
+                .padding(top = 4.dp),
+            radius = 6.0
+        ) {
             SubcomposeAsyncImage(
                 model = category.categoryImage,
                 loading = {
@@ -152,7 +168,10 @@ fun CategoryDisplay(category: Category, click : ()->Unit){
             )
         }
 
-        Text(text = "Mostrar ${category.name}", style = TextStyle(fontSize = 10.sp, color = Color.White))
+        Text(
+            text = "Mostrar ${category.name}",
+            style = TextStyle(fontSize = 10.sp, color = Color.White)
+        )
     }
 }
 

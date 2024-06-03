@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -40,7 +39,6 @@ import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.fotoperfil.FotoPerfilBase
 import com.example.petstagram.perfilpropio.DataContainer
 import com.example.petstagram.perfilpropio.ImageContainer
-import com.example.petstagram.perfilpropio.PostsInstance
 import com.example.petstagram.perfilpropio.StateSelector
 import com.example.petstagram.perfilpropio.TopBarInstance
 import com.example.petstagram.perfilpropio.UserNameContainer
@@ -95,12 +93,12 @@ fun SomeonesProfile(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.24f)), navController = navController
+                    .height(180.dp), navController = navController
             )
 
 
             LazyColumn(
-                Modifier.height(height.times(0.926f)),
+                Modifier.height(height - 60.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -133,16 +131,13 @@ fun SomeonesProfile(
                 item {
 
                     val state by remember {
-                        derivedStateOf { scroll.firstVisibleItemIndex==0 }
+                        derivedStateOf { scroll.firstVisibleItemIndex == 0 }
                     }
-                    StateSelector(
-                        Modifier.height(height.times(0.06f)),
-                        state = state,
-                        onClick = {
-                            scope.launch {
-                                scroll.animateScrollToItem(it)
-                            }
-                        })
+                    StateSelector(Modifier.height(56.dp), state = state, onClick = {
+                        scope.launch {
+                            scroll.animateScrollToItem(it)
+                        }
+                    })
                 }
 
                 item {
@@ -150,16 +145,16 @@ fun SomeonesProfile(
                     LazyRow(
                         state = scroll,
                         flingBehavior = flingBehavior,
-                        modifier = Modifier.width(width*2),
+                        modifier = Modifier.width(width * 2)
+                            .height(height-60.dp-56.dp-48.dp),
                     ) {
-                        item{
+                        item {
 
                             Posts(
                                 modifier = Modifier
                                     .zIndex(5F)
                                     .height(height.times(0.8f))
-                                    .width(width),
-                                controller = viewModel
+                                    .width(width), controller = viewModel
                             )
                         }
                         item {
@@ -190,8 +185,7 @@ fun SomeonesProfile(
 @Composable
 fun ProfilePicInstance(modifier: Modifier = Modifier, url: String = "a") {
     FotoPerfilBase(
-        modifier = modifier,
-        added = url
+        modifier = modifier, added = url
     )
 }
 
@@ -200,17 +194,14 @@ fun FollowingText(modifier: Modifier, personal: Boolean = false, followers: () -
     Box(
         modifier = Modifier
             .border(
-                2.dp,
-                Color.Gray,
-                RoundedCornerShape(20)
+                2.dp, Color.Gray, RoundedCornerShape(20)
             )
             .padding(8.dp)
     ) {
         Text(
             text = "${if (personal) "Te" else "Le"} siguen: ${followers()}",
             style = TextStyle(color = Color.White),
-            modifier = modifier
-                .wrapContentSize()
+            modifier = modifier.wrapContentSize()
         )
     }
 }

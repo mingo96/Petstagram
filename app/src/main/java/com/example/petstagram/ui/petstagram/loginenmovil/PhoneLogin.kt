@@ -511,26 +511,11 @@ fun myTextFieldColors(): TextFieldColors {
         focusedIndicatorColor = Primary,
         unfocusedIndicatorColor = Primary,
         focusedTextColor = Primary,
-        unfocusedTextColor = Primary
+        unfocusedTextColor = Primary,
+        focusedLabelColor = Primary,
+        unfocusedLabelColor = Primary
     )
 }
-
-/**just some ouput text, not too much to see (logic wise)*/
-@Composable
-fun RegisterTextButton(modifier: Modifier = Modifier) {
-    Label(
-        modifier = modifier.fillMaxWidth(1.0f), variation = Variation.Register
-    )
-}
-
-/**just some ouput text, not too much to see (logic wise)*/
-@Composable
-fun LogInTextButton(modifier: Modifier = Modifier) {
-    Label(
-        modifier = modifier.fillMaxWidth(1.0f), variation = Variation.Login
-    )
-}
-
 @Composable
 fun TopLevel(
     modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit

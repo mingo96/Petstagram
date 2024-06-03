@@ -99,98 +99,99 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(height.times(0.24f)), navController = navController
+                    .height(180.dp), navController = navController
             )
 
             LazyColumn(
-                Modifier.height(height.times(0.926f)),
+                Modifier.height(height - 60.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                if (viewModel.imOwner)
-                    item {
+                if (viewModel.imOwner) item {
 
-                        DataContainer(height = height) {
+                    DataContainer(height = height) {
 
-                            ImageContainer {
+                        ImageContainer {
+                            ProfilePicInstance(
+                                Modifier
+                                    .height(height.times(0.23f))
+                                    .width(height.times(0.23f))
+                                    .clickable { sourceSelector.launch("image/*") },
+                                url = resource.orEmpty()
+                            )
+                        }
+
+                        UserNameContainer {
+                            YourUserName(
+                                added = "Perfil de tu mascota",
+                                editing = editing!!,
+                                textValue = { viewModel.getPetNameText() },
+                                changeText = { viewModel.editPetName(it) },
+                                modifier = Modifier.fillMaxWidth(0.7f)
+                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+
+                                FollowingText(modifier = Modifier, personal = false) {
+                                    viewModel.followers()
+                                }
+                                EditUsernameButton(Modifier.clickable {
+                                    viewModel.editUserNameClicked(thisContext)
+                                }) {
+                                    EditUsernameImageContainer {
+                                        EditUsernameImage()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else item {
+
+                    DataContainer(height = height) {
+
+                        ImageContainer {
+                            Box(contentAlignment = Alignment.BottomEnd) {
+                                ProfilePicInstance(
+                                    Modifier
+                                        .height(
+                                            height
+                                                .times(0.23f)
+                                                .times(0.35f)
+                                        )
+                                        .width(
+                                            height
+                                                .times(0.23f)
+                                                .times(0.35f)
+                                        )
+                                        .zIndex(1F)
+                                        .clickable { viewModel.enterProfile(ownerProfile) },
+                                    url = ownerProfile.profilePic
+                                )
                                 ProfilePicInstance(
                                     Modifier
                                         .height(height.times(0.23f))
                                         .width(height.times(0.23f))
-                                        .clickable { sourceSelector.launch("image/*") },
-                                    url = resource.orEmpty()
+                                        .zIndex(0F), url = resource!!
                                 )
-                            }
-
-                            UserNameContainer {
-                                YourUserName(
-                                    added = "Perfil de tu mascota",
-                                    editing = editing!!,
-                                    textValue = { viewModel.getPetNameText() },
-                                    changeText = { viewModel.editPetName(it) },
-                                    modifier = Modifier.fillMaxWidth(0.7f)
-                                )
-                                Row (horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)){
-
-                                    FollowingText(modifier = Modifier, personal = false) {
-                                        viewModel.followers()
-                                    }
-                                    EditUsernameButton(
-                                        Modifier.clickable {
-                                            viewModel.editUserNameClicked(thisContext)
-                                        }
-                                    ) {
-                                        EditUsernameBackgroundCircle(
-                                            Modifier
-                                                .requiredWidth(32.0.dp)
-                                                .requiredHeight(32.0.dp)
-                                        )
-                                        EditUsernameImageContainer {
-                                            EditUsernameImage()
-                                        }
-                                    }
-                                }
                             }
                         }
-                    }
-                else
-                    item {
 
-                        DataContainer(height = height) {
+                        UserNameContainer {
+                            Label(
+                                variation = Variation.UserName,
+                                added = observedProfile.name,
+                                modifier = Modifier.fillMaxWidth(0.7f)
+                            )
 
-                            ImageContainer {
-                                Box(contentAlignment = Alignment.BottomEnd){
-                                    ProfilePicInstance(
-                                        Modifier
-                                            .height(height.times(0.23f).times(0.35f))
-                                            .width(height.times(0.23f).times(0.35f))
-                                            .zIndex(1F)
-                                            .clickable { viewModel.enterProfile(ownerProfile) },
-                                        url = ownerProfile.profilePic
-                                    )
-                                    ProfilePicInstance(
-                                        Modifier
-                                            .height(height.times(0.23f))
-                                            .width(height.times(0.23f))
-                                            .zIndex(0F),
-                                        url = resource!!
-                                    )
-                                }
-                            }
+                            FollowingBox(following = following, profileInteractor = viewModel)
 
-                            UserNameContainer {
-                                Label(
-                                    variation = Variation.UserName,
-                                    added = observedProfile.name,
-                                    modifier = Modifier.fillMaxWidth(0.7f)
-                                )
-
-                                FollowingBox(following = following, profileInteractor = viewModel)
-
-                            }
                         }
                     }
+                }
                 item {
 
 
@@ -208,39 +209,49 @@ fun PetProfile(navController: NavHostController, viewModel: PetObserverViewModel
             }
         }
 
-        }
+    }
 
 }
 
 @Composable
-fun FollowingBox(following : Boolean?, profileInteractor: ProfileInteractor) {
-    Row (Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)){
+fun FollowingBox(following: Boolean?, profileInteractor: ProfileInteractor) {
+    Row(
+        Modifier.wrapContentSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
 
         FollowingText(modifier = Modifier) {
             profileInteractor.followers()
         }
         Box {
-            this@Row.AnimatedVisibility(visible = following == true, enter = expandHorizontally() + slideInHorizontally(), exit = shrinkHorizontally() + slideOutHorizontally()) {
+            this@Row.AnimatedVisibility(
+                visible = following == true,
+                enter = expandHorizontally() + slideInHorizontally(),
+                exit = shrinkHorizontally() + slideOutHorizontally()
+            ) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.sustraccion),
+                Image(painter = painterResource(id = R.drawable.sustraccion),
                     contentDescription = "unfollow",
                     modifier = Modifier
                         .size(40.dp)
                         .clickable { profileInteractor.unFollow() })
 
             }
-            this@Row.AnimatedVisibility(visible = following == false, enter = expandHorizontally() + slideInHorizontally{it}, exit = shrinkHorizontally() + slideOutHorizontally{it}) {
+            this@Row.AnimatedVisibility(visible = following == false,
+                enter = expandHorizontally() + slideInHorizontally { it },
+                exit = shrinkHorizontally() + slideOutHorizontally { it }) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.agregar),
+                Image(painter = painterResource(id = R.drawable.agregar),
                     contentDescription = "follow",
                     modifier = Modifier
                         .size(40.dp)
                         .clickable { profileInteractor.follow() })
 
             }
-            this@Row.AnimatedVisibility(visible = following == null, enter = expandHorizontally() + slideInHorizontally(), exit = shrinkHorizontally() + slideOutHorizontally{it}) {
+            this@Row.AnimatedVisibility(visible = following == null,
+                enter = expandHorizontally() + slideInHorizontally(),
+                exit = shrinkHorizontally() + slideOutHorizontally { it }) {
 
                 Image(
                     painter = painterResource(id = R.drawable.cheque),

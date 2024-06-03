@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +29,7 @@ import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.ScrollAnchor
 
 /**UI representacion of BaseMenu, interactuates with [viewModel] to get the data*/
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesMenu(
     modifier: Modifier = Modifier,
@@ -44,11 +48,11 @@ fun CategoriesMenu(
         TopLevel(modifier = modifier) {
             TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .height(height.times(0.238f)),
+                .height(180.dp),
                 navController = navController)
             CategoriesInstance(modifier = Modifier
                 .rowWeight(1.0f)
-                .height(height.times(0.927f)),
+                .height(height-60.dp),
                 navController = navController,
                 categoryViewModel = viewModel)
         }
