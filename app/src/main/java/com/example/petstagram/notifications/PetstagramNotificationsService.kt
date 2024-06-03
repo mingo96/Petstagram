@@ -49,7 +49,9 @@ class PetstagramNotificationsService() : Service() {
     val db = Firebase.firestore
 
     private val storageRef = Firebase.storage.reference
-    var id: String = ""
+    companion object{
+        var id: String = ""
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -76,7 +78,9 @@ class PetstagramNotificationsService() : Service() {
         notificationService.cancelNotification(1)
         snapshots = mutableListOf()
 
-        id = intent?.getStringExtra("id").toString()
+        val spare = intent?.getStringExtra("id").toString()
+        if (spare != "null"&&!spare.isNullOrBlank())
+            id = spare
 
         prepareNotifications()
 
