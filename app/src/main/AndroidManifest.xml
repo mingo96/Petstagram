@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
 
     <application
         android:largeHeap="true"
@@ -16,6 +18,8 @@
         >
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logo"/>
+        <service android:name=".notifications.PetstagramNotificationsService"
+            android:foregroundServiceType="dataSync"/>
         <activity
             android:name=".Petstagram"
             android:exported="true"

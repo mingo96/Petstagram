@@ -4,18 +4,14 @@ import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -32,7 +28,7 @@ import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
-import com.example.petstagram.notifications.PetstagramNotificationService
+import com.example.petstagram.notifications.PetstagramNotificationGenerator
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -56,8 +52,6 @@ class DataFetchViewModel : ViewModel() {
 
     /**actual profile*/
     private var _selfProfile = Profile()
-
-    private var _notificationsChannel: NotificationChannel? = null
 
     /**context gotten to generate the [Uri]'s for local storage*/
     lateinit var context: Context
@@ -94,13 +88,13 @@ class DataFetchViewModel : ViewModel() {
 
     private var snapshots: MutableList<ListenerRegistration> = mutableListOf()
 
-    private lateinit var notificationService: PetstagramNotificationService
+    private lateinit var notificationService: PetstagramNotificationGenerator
 
     /**gets executed on Launch, makes initial load*/
     fun startLoadingData(context: Context) {
         this.context = context
 
-        notificationService = PetstagramNotificationService(context)
+        notificationService = PetstagramNotificationGenerator(context)
 
         fetchPetsFromUser()
         keepUpWithUser()
@@ -156,7 +150,6 @@ class DataFetchViewModel : ViewModel() {
                             _selfProfile = newVal
                             if (_selfProfile.id != "") {
                                 updateProfileToPosts(_selfProfile)
-                                prepareNotifications()
                             }
                         }
 
@@ -177,216 +170,6 @@ class DataFetchViewModel : ViewModel() {
                     db.collection("Posts").document(i.id).update("creatorUser", profile)
                 }
             }
-    }
-
-    private fun prepareNotifications() {
-        if (_notificationsChannel == null) db.collection("NotificationsChannels")
-            .whereEqualTo("user", _selfProfile.id).get().addOnSuccessListener { docs ->
-                _notificationsChannel = docs.documents[0].toObject(
-                    NotificationChannel::class.java
-                )!!
-                snapshots += db.collection("NotificationsChannels")
-                    .document(_notificationsChannel!!.id).addSnapshotListener { value, error ->
-                        if (value != null) {
-                            val newNotif = value.toObject(
-                                NotificationChannel::class.java
-                            )!!
-
-                            setLikesNotifications(newNotif)
-
-                            val newValues =
-                                newNotif.notifications - _notificationsChannel!!.notifications.toSet()
-                                    .filter { !it.seen }.toSet()
-
-                            _notificationsChannel = newNotif
-                            for (i in newValues) {
-                                when (i.type) {
-                                    TypeOfNotification.Comment -> {
-                                        newCommentNotification(i)
-                                    }
-
-                                    TypeOfNotification.Follow -> {
-                                        getUser(i.sender){
-
-                                            val user = _profiles.find { it.id == i.sender }
-                                            notificationService.followingNotification(
-                                                "Nuevo seguidor!",
-                                                content = "${i.userName} te ha seguido!",
-                                                url = user!!.profilePic
-                                                )
-                                        }
-
-                                    }
-
-                                    TypeOfNotification.NewPost -> {
-
-                                        newPostNotification(i)
-                                    }
-
-                                    else -> {}
-                                }
-                                db.collection("NotificationsChannel").document(
-                                    _notificationsChannel!!.id
-                                ).update(
-                                    "notifications.seen", true
-                                )
-                            }
-                        }
-                    }
-
-            }
-    }
-
-    private fun newCommentNotification(i : Notification){
-        viewModelScope.launch {
-
-            val found = _posts.find { it.id == i.notificationText.split("=")[0] }
-            if (found != null) {
-                while (found.UIURL == Uri.EMPTY){
-                    delay(100)
-                }
-                val bitmap: Bitmap =
-                    if (found.typeOfMedia == "image")
-                        uriToBitmap(context, found.UIURL)
-                    else {
-
-                        val retriever = MediaMetadataRetriever()
-                        retriever.setDataSource(context, found.UIURL)
-                        retriever.getFrameAtIndex(1)!!
-                    }
-
-
-                notificationService.showNotSoBasicNotification(
-                    "Nuevo comentario de ${i.userName}!",
-                    content = "${i.userName}: ${i.notificationText.split("=")[1]}",
-                    bitmap
-                )
-            } else {
-
-                individualPostFetch(i.notificationText.split("=")[0]) { uri, isVideo ->
-                    notificationService.showNotSoBasicNotification(
-                        "Nueva publicacion de ${i.userName}!",
-                        content = "${i.userName}: ${i.notificationText.split("=")[1]}",
-                        if (!isVideo) {
-                            uriToBitmap(context, uri)
-                        }else{
-
-                            val retriever = MediaMetadataRetriever()
-                            retriever.setDataSource(context, uri)
-                            retriever.getFrameAtIndex(1)!!
-                        }
-                    )
-                }
-            }
-
-        }
-    }
-
-    private fun newPostNotification(i : Notification){
-        viewModelScope.launch {
-
-            val found = _posts.find { it.id == i.notificationText.split("=")[0] }
-            if (found != null) {
-                while (found.UIURL == Uri.EMPTY){
-                    delay(100)
-                }
-                val bitmap: Bitmap =
-                    if (found.typeOfMedia == "image")
-                        uriToBitmap(context, found.UIURL)
-                    else {
-
-                        val retriever = MediaMetadataRetriever()
-                        retriever.setDataSource(context, found.UIURL)
-                        retriever.getFrameAtIndex(1)!!
-                    }
-
-
-                notificationService.showNotSoBasicNotification(
-                    "Nueva publicacion de ${i.userName}!",
-                    content = "${i.userName}: ${i.notificationText.split("=")[1]}",
-                    bitmap
-                )
-            } else {
-
-                individualPostFetch(i.notificationText.split("=")[0]) { uri, isVideo ->
-                    notificationService.showNotSoBasicNotification(
-                        "Nueva publicacion de ${i.userName}!",
-                        content = "${i.userName}: ${i.notificationText.split("=")[1]}",
-                        if (!isVideo) {
-                            uriToBitmap(context, uri)
-                        }else{
-
-                            val retriever = MediaMetadataRetriever()
-                            retriever.setDataSource(context, uri)
-                            retriever.getFrameAtIndex(1)!!
-                        }
-                    )
-                }
-            }
-
-        }
-    }
-
-    private fun setLikesNotifications(newNotif: NotificationChannel) {
-
-        val count =
-            (newNotif.notifications - _notificationsChannel!!.notifications.toSet()).filter { it.type == TypeOfNotification.Like }
-        val postsNotified = count.map { it.notificationText }
-
-        for (i in postsNotified) {
-            val number = count.count { it.notificationText == i }
-            viewModelScope.launch {
-
-                val found = _posts.find { it.id == i }
-                if (found != null) {
-                    while (found.UIURL == Uri.EMPTY){
-                        delay(100)
-                    }
-                    val bitmap: Bitmap =
-                        if (found.typeOfMedia == "image")
-                            uriToBitmap(context, found.UIURL)
-                        else {
-
-                            val retriever = MediaMetadataRetriever()
-                            retriever.setDataSource(context, found.UIURL)
-                            retriever.getFrameAtIndex(1)!!
-                        }
-
-
-                    notificationService.showNotSoBasicNotification(
-                        title = "A la gente le gusta tu post!",
-                        content = "Tienes $number like${if (number > 1) "s" else ""} nuevo${if (number > 1) "s" else ""}!",
-                        bitmap
-                    )
-                } else {
-
-                    individualPostFetch(i) { uri, isVideo ->
-                        notificationService.showNotSoBasicNotification(
-                            title = "A la gente le gusta tu post!",
-                            content = "Tienes $number like${if (number > 1) "s" else ""} nuevo${if (number > 1) "s" else ""}!",
-                            if (!isVideo) {
-                                uriToBitmap(context, uri)
-                            }else{
-
-                                val retriever = MediaMetadataRetriever()
-                                retriever.setDataSource(context, uri)
-                                retriever.getFrameAtIndex(1)!!
-                            }
-                        )
-                    }
-                }
-
-            }
-        }
-    }
-
-    fun uriToBitmap(context: Context, uri: Uri): Bitmap {
-
-        val contentResolver: ContentResolver = context.contentResolver
-
-        val source = ImageDecoder.createSource(contentResolver, uri)
-
-        return ImageDecoder.decodeBitmap(source)
     }
 
     private fun keepUpWithPosts() {
@@ -817,11 +600,6 @@ class DataFetchViewModel : ViewModel() {
     /**clears [_posts] list*/
     fun clear() {
         _posts = mutableListOf()
-        snapshots.forEach {
-            it.remove()
-            notificationService.cancelNotification(snapshots.indexOf(it))
-        }
-        _notificationsChannel = null
 
         ids = emptyList()
     }

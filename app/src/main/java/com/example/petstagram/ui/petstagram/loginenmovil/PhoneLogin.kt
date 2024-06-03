@@ -114,7 +114,7 @@ fun PhoneLogin(
             try {
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                viewModel.signInWithGoogleCredential(credential = credential, onLogin = {
+                viewModel.signInWithGoogleCredential(credential = credential, context = context, onLogin = {
                     navController.navigate("categorias")
                 }, onRegister = {
                     focusManager.clearFocus(true)
