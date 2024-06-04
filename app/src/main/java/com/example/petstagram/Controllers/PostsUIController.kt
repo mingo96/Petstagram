@@ -1,8 +1,11 @@
 package com.example.petstagram.Controllers
 
 import android.content.Context
+import android.media.MediaScannerConnection
+import android.media.MediaScannerConnection.OnScanCompletedListener
 import android.os.Environment
 import android.widget.Toast
+import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import com.example.petstagram.UiData.Like
@@ -17,9 +20,11 @@ import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
+import com.google.android.play.integrity.internal.f
 import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
+
 
 interface PostsUIController : CommentsUIController {
 
@@ -142,8 +147,10 @@ interface PostsUIController : CommentsUIController {
     fun savePostResource(post: UIPost = optionsClicked.value!!, context: Context) {
         try {
             var routeToDownloads =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath+"/Petstagram/"
+            if (!File(routeToDownloads).isDirectory) {
+                File(routeToDownloads).mkdir()
+            }
             val destination = File(
                 routeToDownloads,
                 post.id + "." + if (post.typeOfMedia == "video") "mp4" else "jpeg"
@@ -154,14 +161,14 @@ interface PostsUIController : CommentsUIController {
                 return
             }
 
-            storageRef.child("PostImages/${post.id}").getFile(destination).addOnCompleteListener {
-                if (it.isCanceled)
-                    Toast.makeText(context, "Algo salió mal", Toast.LENGTH_LONG).show()
-                if (it.isSuccessful)
-                    Toast.makeText(context, "Archivo bajado", Toast.LENGTH_LONG).show()
-            }
+            post.UIURL.toFile().copyTo(destination,overwrite = true)
+
+            MediaScannerConnection.scanFile(context, arrayOf<String>(routeToDownloads),
+                null,
+                { path, uri -> })
+
         } catch (e: Exception) {
-            Toast.makeText(context, "Ya has bajado este post!", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Ya has bajado este post!!", Toast.LENGTH_LONG).show()
         }
     }
 
