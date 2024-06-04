@@ -318,7 +318,6 @@ class AuthViewModel : ViewModel() {
 
                             }
                         } else {
-                            val firstLoad = auth.currentUser == null
 
                             localProfile = it.first().toObject(Profile::class.java)
                             _state.value = AuthUiState.Success(localProfile!!)
@@ -345,7 +344,6 @@ class AuthViewModel : ViewModel() {
                                     localProfile!!.id
                                 )
                             )
-                            if (firstLoad) onRegister()
                         }
                     }
 
