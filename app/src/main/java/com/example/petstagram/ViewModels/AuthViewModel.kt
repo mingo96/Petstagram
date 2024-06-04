@@ -212,6 +212,7 @@ class AuthViewModel : ViewModel() {
                         _state.value = AuthUiState.Success(profile)
                         db.collection("Users").document(it.id).update("id", it.id)
                         createNotificationsChannel(localProfile!!) {
+                            onEnd()
 
                             context.stopService(
                                 Intent(
@@ -312,9 +313,9 @@ class AuthViewModel : ViewModel() {
                                 context,
                                 authUser.user!!.photoUrl.toString()
                             ) {
-                                createNotificationsChannel(localProfile!!)
                                 onLogin()
-                                onRegister.invoke()
+                                onRegister()
+
                             }
                         } else {
                             val firstLoad = auth.currentUser == null
