@@ -211,28 +211,29 @@ class AuthViewModel : ViewModel() {
                         localProfile = profile
                         _state.value = AuthUiState.Success(profile)
                         db.collection("Users").document(it.id).update("id", it.id)
-                        createNotificationsChannel(localProfile!!)
-                        context.stopService(
-                            Intent(
-                                context, PetstagramNotificationsService::class.java
-                            )
-                        )
+                        createNotificationsChannel(localProfile!!) {
 
-                        context.startForegroundService(
-                            Intent(
-                                context, PetstagramNotificationsService::class.java
-                            ).putExtra(
-                                "id",
-                                localProfile!!.id
+                            context.stopService(
+                                Intent(
+                                    context, PetstagramNotificationsService::class.java
+                                )
                             )
-                        )
-                        onEnd.invoke()
+
+                            context.startForegroundService(
+                                Intent(
+                                    context, PetstagramNotificationsService::class.java
+                                ).putExtra(
+                                    "id",
+                                    localProfile!!.id
+                                )
+                            )
+                        }
                     }
                 }
             }
     }
 
-    private fun createNotificationsChannel(profile: Profile) {
+    private fun createNotificationsChannel(profile: Profile, onComplete : ()->Unit={}) {
         val notificationChannel = NotificationChannel(profile.id)
         db.collection("NotificationsChannels").add(notificationChannel).addOnSuccessListener {
             notificationChannel.id = it.id
@@ -240,6 +241,7 @@ class AuthViewModel : ViewModel() {
             db.collection("NotificationsChannels").document(it.id).update("id", it.id)
             db.collection("Users").document(profile.id).set(profile)
             updateProfileFromPosts(profile)
+            onComplete()
         }
     }
 
