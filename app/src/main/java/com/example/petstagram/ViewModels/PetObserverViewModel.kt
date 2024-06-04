@@ -173,13 +173,13 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                         "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
                     )
 
-                    delay(1000)
                     db.collection("Users").document(selfId).get()
                         .addOnSuccessListener {
 
                             val newVal = it.toObject(Profile::class.java)!!
                             if (newVal.id != _selfProfile.value.id) {
                                 _selfProfile.value = newVal
+                                actualUser = newVal
                             }
                         }
                     db.collection("Users").document(staticPet.owner).get()
