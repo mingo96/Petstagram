@@ -13,6 +13,7 @@
   * [Publicaciones](prototipado-de-la-aplicacion/publicaciones.md)
 * [Diseño funcional](diseno-funcional.md)
 * [Desarrollo de la aplicación](desarrollo-de-la-aplicacion.md)
+* [Pruebas](pruebas.md)
 * [Distribución](distribucion.md)
 * [Manual](manual.md)
 * [Índice de tablas e imágenes](indice-de-tablas-e-imagenes.md)
