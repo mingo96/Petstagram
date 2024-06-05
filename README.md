@@ -28,10 +28,10 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 * Perfiles "hijos" al usuario, orientado a ser uno por mascota
 * Pestaña para mostrar perfiles ajenos, mostrando publicaciones y mascotas
 * Pestaña para perfiles de mascota, mostrando publicaciones
+* Sistema de notificaciones por comentarios, likes, follows o nuevas publicaciones de seguidos
 
 ### Objetivos no implementados (a futuro)
 
-* Sistema de notificaciones por comentario o like
 * Sección de adopción
 * Chat entre usuarios por adopción
 

@@ -68,6 +68,14 @@ Aquí finaliza el proyecto base
 
 Entrega inicial del proyecto
 
+25. Implementación de scroll real en perfil de usuario entre posts y mascotas
+26. Creación de aplicación ajena de administración
+27. Implementación de notificaciones observando TODOS los datos del usuario
+28. Cambio de sistema de notificaciones a observación de colección notificaciones
+29. Implementación de servicio para notificaciones, ahora es ajeno a la interfaz y funciona con la app cerrada/segundo plano también
+30. Cambiar forma de descarga permanente de recursos, ahora es reflejada en la galería del movil, y sin hacer descarga, ya que el archivo debemos tenerlo de antes
+31. Cambios varios en interfaz
+
 ## Dificultades encontradas
 
 (Ordenadas de horrible a molesto)
@@ -75,7 +83,8 @@ Entrega inicial del proyecto
 1. Display de video, gestión de este y de su uso de recursos
 2. Gestión y optimización del uso de clases controladoras de publicaciones
 3. Rendimiento de composición y scroll
-4. Gestión de estado de UI y flujo de datos estable y práctico
-5. Actualización de datos (las referencias no se actualizan si el referenciado cambia)
-6. Gestión de recursos en memoria
-7. Ajuste de UI a código
+4. Implementación de notificaciones y servicio para estas
+5. Gestión de estado de UI y flujo de datos estable y práctico
+6. Actualización de datos en BBDD (las referencias no se actualizan si el referenciado cambia)
+7. Gestión de recursos en memoria
+8. Ajuste de UI a código
