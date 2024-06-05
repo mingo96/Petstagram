@@ -2,6 +2,7 @@
 
 package com.example.petstagram.publicacion
 
+import android.net.Uri
 import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
@@ -233,6 +234,15 @@ fun PostSource(
         when (post.typeOfMedia) {
             "image" -> {
 
+                if (post.UIURL== Uri.EMPTY){
+                    LinearProgressIndicator(
+                        modifier
+                            .fillMaxWidth()
+                            .height(500.dp)
+                            .background(Color.Black),
+                        color = Secondary,
+                    )
+                }else
                 PostImg(modifier = modifier, post = post)
 
             }
