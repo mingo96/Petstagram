@@ -243,8 +243,12 @@ fun Posts(
 
                     } else {
                         if (navController != null) {
+
+                            if (postsState.isEmpty()){
+                                Text(text = "Prueba a deslizar hacia arriba!", color = Color.Black)
+                            }
                             Text(
-                                text = "No hay más, prueba a publicar tú mismo!",
+                                text = "Prueba a publicar tú mismo!",
                                 color = Color.Black
                             )
 

@@ -145,13 +145,14 @@ interface PostsUIController : CommentsUIController {
     fun deletePost(post: UIPost)
 
     fun savePostResource(post: UIPost = optionsClicked.value!!, context: Context) {
+        var destination = File("")
         try {
             var routeToDownloads =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/Petstagram/"
             if (!File(routeToDownloads).isDirectory) {
                 File(routeToDownloads).mkdir()
             }
-            val destination = File(
+            destination = File(
                 routeToDownloads,
                 post.id + "." + if (post.typeOfMedia == "video") "mp4" else "jpeg"
             )
@@ -168,7 +169,8 @@ interface PostsUIController : CommentsUIController {
                 { path, uri -> })
 
         } catch (e: Exception) {
-            Toast.makeText(context, "Ya has bajado este post!!", Toast.LENGTH_LONG).show()
+            destination.delete()
+            Toast.makeText(context, "Aún no ha cargado esta publicación!", Toast.LENGTH_LONG).show()
         }
     }
 

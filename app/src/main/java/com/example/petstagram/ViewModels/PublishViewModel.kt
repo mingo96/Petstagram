@@ -218,13 +218,13 @@ class PublishViewModel : ViewModel() {
         val minutes = TimeUnit.SECONDS.toMinutes(this) % 60
         val seconds = this % 60
         var spare = ""
-        if (hours >= 1) spare += "$hours horas,"
+        if (hours >= 1) spare += "$hours horas,"+if (hours>1)"s" else ""
 
-        if (minutes >= 1) spare += "$minutes minutos,"
+        if (minutes >= 1) spare += "$minutes minutos,"+if (minutes>1)"s" else ""
 
         try {
 
-            if (seconds >= 1) spare += "$seconds segundos" else spare =
+            if (seconds >= 1) spare += "$seconds segundo"+if (seconds>1)"s" else "" else spare =
                 spare.substring(0, spare.length - 1)
         } catch (e: Exception) {
         }

@@ -108,7 +108,7 @@ fun Post(
             modifier = Modifier
                 .zIndex(0F)
                 .rowWeight(1.0f)
-                .heightIn(200.dp, 500.dp)
+                .heightIn(100.dp, 500.dp)
                 .combinedClickable(
                     enabled = true,
                     onDoubleClick = {

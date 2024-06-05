@@ -109,16 +109,10 @@ fun TopLevelVarianteSimple(
 ) {
     RelayContainer(
         backgroundColor = Primary,
-        padding = PaddingValues(
-            start = 0.0.dp,
-            top = 0.0.dp,
-            end = 0.0.dp,
-            bottom = 8.0.dp
-        ),
-        itemSpacing = 16.0,
-        clipToParent = false, strokeWidth = 1.0, strokeColor = Color.Black,
-        borderAlignment = BorderAlignment.Outside,
-        radius = 15.0,
+        itemSpacing = 8.0,
+        clipToParent = false,
+        radius = 6.0, strokeWidth = 1.0,
+        strokeColor = Color.Black,
         content = content,
         modifier = modifier
     )

@@ -502,6 +502,7 @@ class DataFetchViewModel : ViewModel() {
         } catch (e: Exception) {
             Log.e("tipo", e.stackTraceToString())
             //source doesnt exist, erase it
+            db.collection("Posts").document(castedPost.id).delete()
             _posts.removeIf { it.id == castedPost.id }
         }
 
