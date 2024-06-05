@@ -87,9 +87,7 @@ import com.google.relay.compose.RelayVector
 fun PhoneLogin(
     modifier: Modifier = Modifier, navController: NavHostController, viewModel: AuthViewModel
 ) {
-    BackHandler {
 
-    }
 
     val focusManager = LocalFocusManager.current
 
@@ -146,7 +144,7 @@ fun PhoneLogin(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "Procesando")
+                Text(text = "Procesando"+ if(registering) ", ahora registrarás a tu primera mascota, si no tienes simplemente sal c:" else "")
                 LinearProgressIndicator(color = Primary, modifier = Modifier.fillMaxWidth(0.8f))
             }
         }
@@ -514,7 +512,8 @@ fun myTextFieldColors(): TextFieldColors {
         focusedTextColor = Primary,
         unfocusedTextColor = Primary,
         focusedLabelColor = Primary,
-        unfocusedLabelColor = Primary
+        unfocusedLabelColor = Primary,
+        cursorColor = Primary
     )
 }
 @Composable

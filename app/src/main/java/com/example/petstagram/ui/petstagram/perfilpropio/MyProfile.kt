@@ -364,7 +364,7 @@ fun YourUserName(
 ) {
 
     if (editing) OutlinedTextField(
-        label = { Text(text = "Nombre") },
+        placeholder = { if (added==" de tu mascota")Text(text = "Nombre de tu mascota") },
         value = textValue.invoke(),
         onValueChange = changeText,
         textStyle = TextStyle(
@@ -382,6 +382,8 @@ fun YourUserName(
             .wrapContentHeight(),
         colors = myTextFieldColors().copy(
 
+            focusedPlaceholderColor = Color.Black,
+            unfocusedPlaceholderColor = Color.Black,
             unfocusedContainerColor = Secondary,
             focusedContainerColor = Secondary,
         ),

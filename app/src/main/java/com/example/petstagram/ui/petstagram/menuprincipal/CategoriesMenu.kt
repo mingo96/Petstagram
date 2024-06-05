@@ -34,7 +34,8 @@ import com.google.relay.compose.ScrollAnchor
 fun CategoriesMenu(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: CategoriesViewModel
+    viewModel: CategoriesViewModel,
+    onExit: () -> Unit
 ) {
     //stop loading when closed
     DisposableEffect(Unit) {
@@ -49,7 +50,8 @@ fun CategoriesMenu(
             TopBarInstance(modifier = Modifier
                 .rowWeight(1.0f)
                 .height(180.dp),
-                navController = navController)
+                navController = navController,
+                onExit = onExit)
             CategoriesInstance(modifier = Modifier
                 .rowWeight(1.0f)
                 .height(height-60.dp),
@@ -62,8 +64,8 @@ fun CategoriesMenu(
 
 /**top bar with which you can move in the app*/
 @Composable
-fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController) {
-    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu)
+fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController, onExit : ()->Unit) {
+    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu, onExit = onExit)
 }
 
 /**esthetic bar (for now)*/

@@ -38,7 +38,8 @@ enum class Variant {
 fun TopBar(
     modifier: Modifier = Modifier,
     variant: Variant = Variant.Simple,
-    navController: NavHostController
+    navController: NavHostController,
+    onExit: (() -> Unit)? = null
 ) {
     when (variant) {
         Variant.Simple -> TopLevelVarianteSimple(modifier = modifier) {
@@ -68,7 +69,14 @@ fun TopBar(
                             AtrasAtras(
                                 Modifier
                                     .height(altomax.times(0.35f))
-                                    .clickable { navController.navigateUp() })
+                                    .clickable {
+                                        if (onExit == null) {
+
+                                            navController.navigateUp()
+                                        } else {
+                                            onExit()
+                                        }
+                                    })
                         }
                     }
                 }
@@ -191,7 +199,7 @@ fun TopLevelVarianteConMenu(
         backgroundColor = Primary,
         itemSpacing = 8.0,
         clipToParent = false,
-        radius = 6.0,strokeWidth = 1.0,
+        radius = 6.0, strokeWidth = 1.0,
         strokeColor = Color.Black,
         content = content,
         modifier = modifier

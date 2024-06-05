@@ -147,7 +147,7 @@ interface PostsUIController : CommentsUIController {
     fun savePostResource(post: UIPost = optionsClicked.value!!, context: Context) {
         try {
             var routeToDownloads =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath+"/Petstagram/"
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/Petstagram/"
             if (!File(routeToDownloads).isDirectory) {
                 File(routeToDownloads).mkdir()
             }

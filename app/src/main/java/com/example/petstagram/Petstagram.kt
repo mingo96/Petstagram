@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -50,6 +51,7 @@ import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 
 class Petstagram : ComponentActivity() {
 
@@ -171,6 +173,9 @@ class Petstagram : ComponentActivity() {
                             focusManager.clearFocus(true)
                             LoadingScreen()
 
+                            BackHandler {
+                                moveTaskToBack(true)
+                            }
                         }
                         composable(
                             "login",
@@ -178,6 +183,8 @@ class Petstagram : ComponentActivity() {
                             exitTransition = { onExit }) {
                             ownProfileViewModel.clean()
                             dataFetchViewModel.clear()
+
+
 
                             LaunchedEffect(key1 = Unit){
 
@@ -201,11 +208,17 @@ class Petstagram : ComponentActivity() {
                                 focusManager.clearFocus(true)
                             }
 
+                            BackHandler {
+                                moveTaskToBack(true)
+                            }
+
                             focusManager.clearFocus(true)
                             CategoriesMenu(
                                 navController = navController,
                                 viewModel = categoriesViewModel
-                            )
+                            ){
+                                moveTaskToBack(true)
+                            }
 
                         }
                         composable(

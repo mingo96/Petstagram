@@ -11,15 +11,14 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -58,7 +57,6 @@ import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayText
 import com.google.relay.compose.ScrollAnchor
 import com.example.petstagram.cuadrotexto.TopLevelVariacionTusPublicaciones as ImageBackground
-import com.example.petstagram.perfilpropio.EditUsernameBackgroundCircle as SendBackground
 import com.example.petstagram.perfilpropio.EditUsernameButton as Send
 import com.example.petstagram.perfilpropio.EditUsernameImageContainer as SendImageContainer
 import com.example.petstagram.perfilpropio.YourUserName as PetName
@@ -117,86 +115,97 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
                     .height(180.dp), navController = navController
             )
 
-            Column(
-                verticalArrangement = Arrangement.Center,
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .height(height - 60.dp)
-                    .padding(top = 16.dp)
             ) {
 
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(height.times(0.06f) + 16.dp)
-                        .padding(bottom = 16.dp), horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    val context = LocalContext.current
-                    PetName(
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        textValue = { viewModel.getPetName() },
-                        changeText = { viewModel.setPetName(it) },
-                        editing = true,
-                        onSend = {viewModel.send(context = context) {
-
-                            navController.navigateUp()
-                        }}
-                    )
-                    Send(
+                item {
+                    Row(
                         Modifier
-                            .clickable {
+                            .fillMaxWidth()
+                            .height(height.times(0.06f)+24.dp)
+                            .padding(top = 24.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val context = LocalContext.current
+                        PetName(added = " de tu mascota",
+                            modifier = Modifier.fillMaxWidth(0.7f),
+                            textValue = { viewModel.getPetName() },
+                            changeText = { viewModel.setPetName(it) },
+                            editing = true,
+                            onSend = {
                                 viewModel.send(context = context) {
 
                                     navController.navigateUp()
                                 }
+                            })
+                        Send(
+                            Modifier
+                                .clickable {
+                                    viewModel.send(context = context) {
+
+                                        navController.navigateUp()
+                                    }
+                                }
+                                .wrapContentHeight()) {
+                            SendImageContainer {
+                                SendImage()
                             }
-                            .fillMaxHeight()) {
-                        SendImageContainer {
-                            SendImage()
                         }
                     }
                 }
+                item {
 
-                ImageBackground(
-                    modifier = Modifier
-                        .height(height.times(0.25f) + 16.dp)
-                        .padding(bottom = 16.dp)
-                        .width(height.times(0.25f))
+                    ImageBackground(modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth(0.5f)
                         .clickable { sourceSelector.launch("image/*") }) {
 
 
-                    if (resource == Uri.EMPTY) {
-                        Image(
-                            painter = painterResource(id = R.drawable.hacer_clic),
-                            contentDescription = "clica para cambiar",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(0.65f)
-                        )
-                    } else {
-                        SubcomposeAsyncImage(
-                            modifier = Modifier.fillMaxSize(0.65f), model = resource, loading = {
-                                CircularProgressIndicator(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(400.dp)
-                                )
-                            }, contentDescription = "imagen", contentScale = ContentScale.Crop
-                        )
+                        if (resource == Uri.EMPTY) {
+                            Image(
+                                painter = painterResource(id = R.drawable.hacer_clic),
+                                contentDescription = "clica para cambiar",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(height * 0.2f)
+                            )
+                        } else {
+                            SubcomposeAsyncImage(
+                                modifier = Modifier.size(height * 0.2f),
+                                model = resource,
+                                loading = {
+                                    CircularProgressIndicator(
+                                        Modifier
+                                            .size(height * 0.2f)
+                                            .height(400.dp)
+                                    )
+                                },
+                                contentDescription = "imagen",
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        IndicativeText()
                     }
-                    IndicativeText()
                 }
-                SelectCategoryTexts(
-                    modifier = Modifier
-                        .height(height.times(0.11f) + 16.dp)
-                        .padding(bottom = 16.dp)
-                )
+                item {
 
-                CategoryList(
-                    onSelect = { viewModel.setCategory(it) },
-                    categoryList = categories,
-                    modifier = Modifier.height(height.times(0.42f)),
-                    selected = viewModel.selectedCategory
-                )
+                    SelectCategoryTexts(
+                        modifier = Modifier.height(height.times(0.11f))
+                    )
+                }
+                item {
+                    CategoryList(
+                        onSelect = { viewModel.setCategory(it) },
+                        categoryList = categories,
+                        modifier = Modifier.height(height.times(0.42f)),
+                        selected = viewModel.selectedCategory
+                    )
+                }
+
 
             }
         }
@@ -209,11 +218,7 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
 fun IndicativeText() {
 
     Text(
-        "Pulsa para cambiar la foto de perfil",
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        textAlign = TextAlign.Center
+        "Pulsa para cambiar la foto de tu mascota", textAlign = TextAlign.Center
     )
 }
 
