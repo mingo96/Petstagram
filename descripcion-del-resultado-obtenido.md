@@ -26,3 +26,4 @@ description: Funcionalidades logradas
   * Modificación de tamaño de video
   * Animaciones para interacciones
 * Display de las publicaciones guardadas, filtrando, o no, por especie
+* Notificaciones en primer y segundo plano

@@ -10,7 +10,9 @@
 
 Aplicación orientada a contenido sobre mascotas o animales en general, con apartado para dar en adopción o adoptar
 
-Contenido generado por el usuario, basandose en sus mascotas, con perfiles individuales para estas
+Contenido generado por el usuario, basándose en sus mascotas, con perfiles individuales para estas
+
+Concepto inspirado en redes sociales tipicas como Instagram
 
 ### Objetivos implementadas
 
@@ -28,10 +30,10 @@ Contenido generado por el usuario, basandose en sus mascotas, con perfiles indiv
 * Perfiles "hijos" al usuario, orientado a ser uno por mascota
 * Pestaña para mostrar perfiles ajenos, mostrando publicaciones y mascotas
 * Pestaña para perfiles de mascota, mostrando publicaciones
+* Sistema de notificaciones por comentarios, likes, follows o nuevas publicaciones de seguidos
 
 ### Objetivos no implementados (a futuro)
 
-* Sistema de notificaciones por comentario o like
 * Sección de adopción
 * Chat entre usuarios por adopción
 
