@@ -2,11 +2,7 @@
 
 package com.example.petstagram.publicacion
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
 import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
@@ -30,7 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -45,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -60,13 +54,13 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.R
 import com.example.petstagram.UiData.UIPost
+import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.cuadroinfo.PostDownBar
 import com.example.petstagram.cuadroinfo.TopPostLimit
 import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.ui.petstagram.DisplayVideoFromPost
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
-import com.example.petstagram.ui.theme.Primary
 import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -175,7 +169,18 @@ fun Post(
                             .fillMaxHeight(0.7f),
 
                         controller = controller,
-                        post = post
+                        post = post,
+                        navigateToUser = {
+                            coroutine.launch {
+                                animationDisplayer = false
+                                delay(300)
+                                commentsDisplayed = !commentsDisplayed
+                            }
+                            controller.navController.navigate(if (controller.actualUser.id == it) "perfilPropio" else {
+                                ProfileObserverViewModel.staticProfile.id = it
+                                "perfilAjeno"
+                            })
+                        }
                         //postComment = onComment,
                         //commentLiked = onCommentLiked
                     )

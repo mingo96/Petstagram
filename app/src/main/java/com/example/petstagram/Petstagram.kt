@@ -162,7 +162,7 @@ class Petstagram : ComponentActivity() {
                             LaunchedEffect(key1 = Unit) {
 
                                 while (authViewModel.localProfile == null) {
-                                    delay(1000)
+                                    delay(100)
                                 }
                                 postsViewModel.actualUser = authViewModel.localProfile!!
                                 dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
@@ -171,7 +171,7 @@ class Petstagram : ComponentActivity() {
                                 publishViewModel.user = authViewModel.localProfile!!
 
                                 while (dataFetchViewModel.categories().isEmpty()){
-                                    delay(1000)
+                                    delay(100)
                                 }
 
                                 navController.navigate("categorias")
@@ -204,6 +204,18 @@ class Petstagram : ComponentActivity() {
                             exitTransition = { onExit }) {
 
                             LaunchedEffect(key1 = true) {
+                                while (authViewModel.localProfile == null) {
+                                    delay(100)
+                                }
+                                postsViewModel.actualUser = authViewModel.localProfile!!
+                                dataFetchViewModel.selfId = authViewModel.auth.currentUser!!.uid
+                                ownProfileViewModel.selfId = authViewModel.localProfile!!.id
+                                dataFetchViewModel.startLoadingData(applicationContext)
+                                publishViewModel.user = authViewModel.localProfile!!
+
+                                while (dataFetchViewModel.categories().isEmpty()){
+                                    delay(100)
+                                }
                                 categoriesViewModel.fetchCategories()
                             }
 

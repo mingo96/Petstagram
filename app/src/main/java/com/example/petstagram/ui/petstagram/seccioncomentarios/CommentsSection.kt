@@ -51,7 +51,8 @@ import com.google.relay.compose.RelayText
 fun CommentsSection(
     modifier: Modifier = Modifier,
     controller: CommentsUIController,
-    post: UIPost
+    post: UIPost,
+    navigateToUser: (String) -> Unit
 ) {
     LaunchedEffect(key1 = post.id) {
         controller.selectPostForComments(post)
@@ -138,7 +139,7 @@ fun CommentsSection(
         Comentarios(modifier = Modifier.rowWeight(1.0f)) {
 
             for (i in commentList!!){
-                Comment(comment = i, onLike = {
+                Comment( modifier = Modifier.clickable { navigateToUser(i.user) },comment = i, onLike = {
                     controller.likeOnComment(i)
                 })
             }
