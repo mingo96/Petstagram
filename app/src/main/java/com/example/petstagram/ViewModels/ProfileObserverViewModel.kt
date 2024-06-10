@@ -33,23 +33,25 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
     private var _selfProfile = MutableStateFlow(Profile())
 
     override var actualUser = _selfProfile.value
-        get() {return _selfProfile.value}
+        get() {
+            return _selfProfile.value
+        }
 
     private val _observedProfile = MutableStateFlow(staticProfile)
 
-    val observedProfile : StateFlow<Profile> = _observedProfile
+    val observedProfile: StateFlow<Profile> = _observedProfile
 
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
 
-    val pets : StateFlow<List<Pet>> = _pets
+    val pets: StateFlow<List<Pet>> = _pets
 
-    private val _follow : MutableLiveData<Boolean?> = MutableLiveData(false)
+    private val _follow: MutableLiveData<Boolean?> = MutableLiveData(false)
 
-    val follow : LiveData<Boolean?> = _follow
+    val follow: LiveData<Boolean?> = _follow
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
-    private fun fetchPosts(){
+    private fun fetchPosts() {
         if (!_isLoading.value!!) {
             viewModelScope.launch {
 
@@ -62,20 +64,18 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
                 base.postsFromUser(_observedProfile.value.id)
                 base.petsFromUser(_observedProfile.value.id)
 
-                while (base.alreadyLoading){
+                while (base.alreadyLoading) {
                     delay(100)
                 }
 
-                val endPosts =
-                    base.postsFromUser(_observedProfile.value.id)
+                val endPosts = base.postsFromUser(_observedProfile.value.id)
 
-                val endPets =
-                    base.petsFromUser(_observedProfile.value.id)
+                val endPets = base.petsFromUser(_observedProfile.value.id)
 
-                for (pet in endPets- pets.value.toSet()){
+                for (pet in endPets - pets.value.toSet()) {
                     _pets.value += pet
                 }
-                for (post in endPosts- _posts.value.toSet()){
+                for (post in endPosts - _posts.value.toSet()) {
                     _posts.value += post
                     delay(500)
                 }
@@ -94,33 +94,32 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
             _observedProfile
                 //we make it so it doesnt load more if we get out of the app
                 .stateIn(
-                    viewModelScope,
-                    started = SharingStarted.WhileSubscribed(10000),
-                    0
-                )
-                .collect{
+                    viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
+                ).collect {
 
-                    Log.i("Profile", "loading user ${_selfProfile.value.userName} data, ${posts.value.size}")
+                    Log.i(
+                        "Profile",
+                        "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
+                    )
 
-                    db.collection("Users").document(selfId).get()
-                        .addOnSuccessListener {
+                    db.collection("Users").document(selfId).get().addOnSuccessListener {
 
-                            val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal.id != _selfProfile.value.id){
-                                _selfProfile.value = newVal
-                            }
+                        val newVal = it.toObject(Profile::class.java)!!
+                        if (newVal.id != _selfProfile.value.id) {
+                            _selfProfile.value = newVal
                         }
-                    db.collection("Users").document(staticProfile.id).get()
-                        .addOnSuccessListener {
+                    }
+                    db.collection("Users").document(staticProfile.id).get().addOnSuccessListener {
 
-                            val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal != staticProfile || newVal != _observedProfile.value){
-                                staticProfile= newVal
-                                _observedProfile.value = newVal
-                            }
-                            _follow.value = _observedProfile.value.followers.contains(_selfProfile.value.id)
-                            fetchPosts()
+                        val newVal = it.toObject(Profile::class.java)!!
+                        if (newVal != staticProfile || newVal != _observedProfile.value) {
+                            staticProfile = newVal
+                            _observedProfile.value = newVal
                         }
+                        _follow.value =
+                            _observedProfile.value.followers.contains(_selfProfile.value.id)
+                        fetchPosts()
+                    }
 
                     delay(15000)
                 }
@@ -128,37 +127,37 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
         }
     }
 
-    override fun followers()= _observedProfile.value.followers.size
+    override fun followers() = _observedProfile.value.followers.size
 
-    override fun follow(){
+    override fun follow() {
         animation()
         if (_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
 
         val newNotification = Notification(
-            sender = actualUser.id,
-            userName = actualUser.userName,
-            type = TypeOfNotification.Follow
+            sender = actualUser.id, userName = actualUser.userName, type = TypeOfNotification.Follow
         )
 
         db.collection("NotificationsChannels").document(observedProfile.value.notificationChannel)
             .update("notifications", FieldValue.arrayUnion(newNotification))
 
         _observedProfile.value.followers += _selfProfile.value.id
-        db.collection("Users").document(_observedProfile.value.id).update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
+        db.collection("Users").document(_observedProfile.value.id)
+            .update("followers", FieldValue.arrayUnion(_selfProfile.value.id))
     }
 
-    override fun unFollow(){
+    override fun unFollow() {
         animation()
 
         if (!_observedProfile.value.followers.contains(_selfProfile.value.id)) return;
         _observedProfile.value.followers -= _selfProfile.value.id
-        db.collection("Users").document(_observedProfile.value.id).update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
+        db.collection("Users").document(_observedProfile.value.id)
+            .update("followers", FieldValue.arrayRemove(_selfProfile.value.id))
 
     }
 
-    private fun animation(){
+    private fun animation() {
         viewModelScope.launch {
-            if (_follow.value!= null) {
+            if (_follow.value != null) {
                 val pre = _follow.value!!
                 if (!pre) {
                     _follow.value = null
@@ -169,16 +168,19 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
         }
     }
 
-    override fun scroll() {
-        fetchPosts()
+    override fun scroll(generatedByScroll: Boolean) {
+        if (!generatedByScroll && _posts.value.isEmpty() || generatedByScroll) {
+            fetchPosts()
+        }
     }
 
-    fun clean(){
-        _posts.value= emptyList()
-        _pets.value= emptyList()
+    fun clean() {
+        _posts.value = emptyList()
+        _pets.value = emptyList()
     }
-    companion object{
-        var staticProfile : Profile= Profile()
+
+    companion object {
+        var staticProfile: Profile = Profile()
     }
 
 }

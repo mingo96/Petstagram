@@ -51,7 +51,11 @@ fun Category(
                     CircularProgressIndicator()
                 },
                 contentDescription = category.name,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth().clickable {
+                    viewModel.selectedCategory = category
+                    navController.navigate("publicaciones")
+                }
             )
         }
         Buttons(modifier = Modifier.rowWeight(1.0f).padding(top=8.dp)) {

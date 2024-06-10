@@ -93,15 +93,17 @@ class DataFetchViewModel : ViewModel() {
     /**gets executed on Launch, makes initial load*/
     fun startLoadingData(context: Context) {
         this.context = context
+        db.disableNetwork()
 
         notificationService = PetstagramNotificationGenerator(context)
 
-        fetchPetsFromUser()
         keepUpWithUser()
+        fetchPetsFromUser()
         getPostsFromFirebase()
         fetchSavedList()
         fetchCategories()
 
+        db.enableNetwork()
     }
 
     /**gets more [Category]*/
@@ -136,12 +138,12 @@ class DataFetchViewModel : ViewModel() {
     private fun keepUpWithUser() {
         viewModelScope.launch {
 
+            alreadyLoading = true
             //delay until we have an id
             while (selfId.isBlank()) {
                 delay(100)
             }
 
-            alreadyLoading = true
             snapshots += db.collection("Users").whereEqualTo("authId", selfId)
                 .addSnapshotListener { value, error ->
                     if (value != null) {
@@ -163,7 +165,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    private fun updateProfileToPosts(profile: Profile) {
+    fun updateProfileToPosts(profile: Profile) {
         db.collection("Posts").whereEqualTo("creatorUser.id", profile.id).get()
             .addOnSuccessListener {
                 for (i in it.documents) {
@@ -173,18 +175,17 @@ class DataFetchViewModel : ViewModel() {
     }
 
     private fun keepUpWithPosts() {
-        if (alreadyLoading)
 
-            snapshots += db.collection("Posts").whereEqualTo("creatorUser.id", _selfProfile.id)
-                .addSnapshotListener { value, error ->
-                    if (value != null) {
-                        for (i in value.documents) {
-                            if (i.id !in _posts.map { it.id }) {
-                                bootUpPost(i)
-                            }
+        snapshots += db.collection("Posts").whereEqualTo("creatorUser.id", _selfProfile.id)
+            .addSnapshotListener { value, error ->
+                if (value != null) {
+                    for (i in value.documents) {
+                        if (i.id !in _posts.map { it.id }) {
+                            bootUpPost(i)
                         }
                     }
                 }
+            }
     }
 
     private fun getUser(user: String, afterFetch: (String) -> Unit = {}) {
@@ -194,7 +195,7 @@ class DataFetchViewModel : ViewModel() {
                 _profiles.add(newVal)
                 afterFetch(newVal.userName)
             }
-        }else{
+        } else {
             afterFetch("")
         }
     }
@@ -253,7 +254,10 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**gets one post given its id*/
-    private fun individualPostFetch(id: String, laterOn: (Uri, Boolean) -> Unit = {uri, isvideo->}) {
+    private fun individualPostFetch(
+        id: String,
+        laterOn: (Uri, Boolean) -> Unit = { uri, isvideo -> }
+    ) {
         try {
 
             db.collection("Posts").document(id).get().addOnSuccessListener {
@@ -453,7 +457,10 @@ class DataFetchViewModel : ViewModel() {
     }
 
     /**given a JSON, parses it to a [Post] and prepares it to be displayed*/
-    private fun bootUpPost(postJson: DocumentSnapshot, laterOn: (Uri, Boolean) -> Unit = {uri, isVideo->}) {
+    private fun bootUpPost(
+        postJson: DocumentSnapshot,
+        laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
+    ) {
 
         val castedPost = postJson.toObject(UIPost::class.java)!!
 
@@ -470,6 +477,18 @@ class DataFetchViewModel : ViewModel() {
         if (castedPost.creatorUser !in _profiles) _profiles.add(castedPost.creatorUser!!)
 
         //download to a temporary file
+        loadResource(castedPost, laterOn)
+
+        ids += castedPost.id
+
+        indexesOfPosts++
+
+    }
+
+    private fun loadResource(
+        castedPost: UIPost,
+        laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
+    ) {
         try {
 
             if (!File(
@@ -498,6 +517,10 @@ class DataFetchViewModel : ViewModel() {
                     )
                 )
             }
+
+            _posts += castedPost
+            _posts = _posts.sortedBy { it.postedDate }.reversed().toMutableList()
+            ids += castedPost.id
             laterOn(castedPost.UIURL, castedPost.typeOfMedia == "video")
         } catch (e: Exception) {
             Log.e("tipo", e.stackTraceToString())
@@ -505,11 +528,6 @@ class DataFetchViewModel : ViewModel() {
             db.collection("Posts").document(castedPost.id).delete()
             _posts.removeIf { it.id == castedPost.id }
         }
-
-        ids += castedPost.id
-
-        indexesOfPosts++
-
     }
 
 
@@ -538,9 +556,6 @@ class DataFetchViewModel : ViewModel() {
                 if (!it.isEmpty) {
                     castedPost.saved = SavePressed.Si
                 }
-                _posts += castedPost
-                _posts = _posts.sortedBy { it.postedDate }.reversed().toMutableList()
-                ids += castedPost.id
             }
     }
 
@@ -557,6 +572,17 @@ class DataFetchViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    fun getUser(id: String): Profile {
+        fetchPetsFromUser(id)
+        postsFromUser(id)
+        return _profiles.find { it.id == id }!!
+    }
+
+    fun getPet(id: String):Pet{
+        fetchPostsFromPet(id)
+        return _pets.find { it.id==id }!!
     }
 
     /**stops all current processes*/

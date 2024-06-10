@@ -47,6 +47,8 @@ class AuthViewModel : ViewModel() {
     /**`true` if the info button has been clicked 10 seconds ago or less*/
     private val _helpDisplayed = MutableLiveData(false)
 
+    val userIsNew by mutableStateOf(auth.currentUser==null)
+
     /**visible version of [_helpDisplayed]*/
     val helpDisplayed: LiveData<Boolean> = _helpDisplayed
 

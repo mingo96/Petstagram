@@ -25,8 +25,6 @@ import kotlinx.coroutines.launch
 
 class PetCreationViewModel : ViewModel() {
 
-    var selfId by mutableStateOf("")
-
     var pet by mutableStateOf(Pet())
 
     private var name by mutableStateOf("")
@@ -34,7 +32,6 @@ class PetCreationViewModel : ViewModel() {
     lateinit var base: DataFetchViewModel
 
     private val db = Firebase.firestore
-
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
@@ -109,7 +106,7 @@ class PetCreationViewModel : ViewModel() {
             try {
 
                 sending = true
-                pet.owner = selfId
+                pet.owner = base.profile().id
 
                 db.collection("Pets").add(pet).addOnSuccessListener {
                     pet.id = it.id

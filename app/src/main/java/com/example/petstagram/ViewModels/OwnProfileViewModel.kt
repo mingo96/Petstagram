@@ -111,17 +111,8 @@ class OwnProfileViewModel : GeneralController() {
     private fun pushNewUserName() {
         if (userName != _selfProfile.value.userName) {
             _selfProfile.value.userName = userName
-            db.collection("Users").document(_selfProfile.value.id).update("userName", userName)
-                .addOnCompleteListener {
-                    //i don't think im supposed to need to do this but it doesn't work if i dont
-                    for (i in _posts.value) {
-                        db.collection("Posts").document(i.id)
-                            .update("creatorUser", _selfProfile.value)
-                        i.creatorUser = _selfProfile.value
-                    }
-                    _isEditing.value = !_isEditing.value!!
-                    fetchPosts()
-                }
+            base.updateProfileToPosts(_selfProfile.value)
+            fetchPosts()
         }
     }
 
@@ -148,10 +139,7 @@ class OwnProfileViewModel : GeneralController() {
                         _selfProfile.value.profilePic = it.toString()
                         db.collection("Users").document(_selfProfile.value.id)
                             .update("profilePic", it.toString()).addOnSuccessListener {
-                                for (i in _posts.value) {
-                                    db.collection("Posts").document(i.id)
-                                        .update("creatorUser", _selfProfile.value)
-                                }
+                                base.updateProfileToPosts(_selfProfile.value)
                             }
 
                     }
@@ -169,21 +157,8 @@ class OwnProfileViewModel : GeneralController() {
                     viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
                 ).collect {
 
-                    Log.i(
-                        "Profile",
-                        "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
-                    )
-
-                    db.collection("Users").document(selfId).get().addOnSuccessListener {
-
-                            val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal != _selfProfile.value) {
-                                _selfProfile.value = newVal
-                            }
-                            _resource.value = _selfProfile.value.profilePic
-                            fetchPosts()
-                        }
-
+                    _selfProfile.value = base.profile()
+                    _resource.value = _selfProfile.value.profilePic
                     delay(15000)
                 }
 
@@ -191,8 +166,10 @@ class OwnProfileViewModel : GeneralController() {
     }
 
 
-    override fun scroll() {
-        fetchPosts()
+    override fun scroll(generatedByScroll: Boolean) {
+        if (!generatedByScroll && _posts.value.isEmpty() || generatedByScroll) {
+            fetchPosts()
+        }
     }
 
     fun clean() {

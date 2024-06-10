@@ -37,8 +37,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -78,6 +82,7 @@ import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayImage
 import com.google.relay.compose.RelayVector
+import kotlinx.coroutines.delay
 
 /**
  * login, interactuates with [viewModel] to get the user authenticated
@@ -144,7 +149,7 @@ fun PhoneLogin(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "Procesando"+ if(registering) ", ahora registrarás a tu primera mascota, si no tienes simplemente sal c:" else "")
+                Text(text = "Procesando")
                 LinearProgressIndicator(color = Primary, modifier = Modifier.fillMaxWidth(0.8f))
             }
         }
@@ -225,21 +230,46 @@ fun PhoneLogin(
                         )
 
                         val helpDisplayed by viewModel.helpDisplayed.observeAsState(false)
-                        AnimatedVisibility(visible = helpDisplayed) {
+                        AnimatedVisibility(visible = helpDisplayed||viewModel.userIsNew) {
+                            var color by remember {
+                                mutableStateOf(Color(red = 0,
+                                    green = 164, blue = 0, alpha = 255))
+                            }
+                            LaunchedEffect(key1 = Unit) {
+                                var upOrDown = true
+                                while (!helpDisplayed){
+                                    if (upOrDown) {
+                                        color = color.copy(red = color.red + 0.05f)
+                                        if (color.red>=0.9){
+                                            upOrDown = false
+                                            delay(1000)
+                                        }
+                                    }else{
+                                        color = color.copy(red = color.red - 0.05f)
+
+                                        if (color.red<=0.1){
+                                            upOrDown = true
+                                            delay(1000)
+                                        }
+                                    }
+                                    delay(50)
+                                }
+                                color = Color.White
+                            }
                             Column(
                                 Modifier
                                     .border(
-                                        BorderStroke(2.dp, Color.White), RoundedCornerShape(5.dp)
+                                        BorderStroke(2.dp, color), RoundedCornerShape(5.dp)
                                     )
                                     .padding(8.dp)
                             ) {
                                 Text(
                                     text = "Tu nombre de usuario será tu prefijo de correo, si ya está pillado lo modificaremos un poco, pero luego lo puedes cambiar!",
-                                    color = Color.White
+                                    color = color
                                 )
                                 Text(
                                     text = "¡Al registrarte irás a registrar a tu primera mascota así que ve preparando alguna foto en la que salga guapa!",
-                                    color = Color.White
+                                    color = color
                                 )
                             }
                         }

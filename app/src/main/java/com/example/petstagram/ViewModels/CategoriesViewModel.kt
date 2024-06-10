@@ -18,9 +18,6 @@ class CategoriesViewModel : ViewModel() {
 
     lateinit var base: DataFetchViewModel
 
-    /**Firebase Firestore reference*/
-    private val db = Firebase.firestore
-
     /**list of [Category] to be shown*/
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
@@ -33,9 +30,6 @@ class CategoriesViewModel : ViewModel() {
     /**gets executed once at Launch, tells [_categories] to keep collecting info from [base]*/
     fun fetchCategories() {
         viewModelScope.launch {
-
-            base.categories()
-            delay(2000)
 
             val end = base.categories()
             for (i in end) {

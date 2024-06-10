@@ -105,9 +105,15 @@ class PetstagramNotificationsService() : Service() {
     private fun prepareNotifications() {
         if (_notificationsChannel == null) db.collection("NotificationsChannels")
             .whereEqualTo("user", id).get().addOnSuccessListener { docs ->
-                _notificationsChannel = docs.documents[0].toObject(
-                    NotificationChannel::class.java
-                )!!
+                try {
+
+                    _notificationsChannel = docs.documents[0].toObject(
+                        NotificationChannel::class.java
+                    )!!
+                }catch (e:Exception){
+                    prepareNotifications()
+                    return@addOnSuccessListener
+                }
                 snapshots += db.collection("NotificationsChannels")
                     .document(_notificationsChannel!!.id).addSnapshotListener { value, error ->
                         if (value != null) {

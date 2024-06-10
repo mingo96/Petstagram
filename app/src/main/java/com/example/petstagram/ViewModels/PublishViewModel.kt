@@ -2,6 +2,8 @@ package com.example.petstagram.ViewModels
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -163,34 +165,45 @@ class PublishViewModel : ViewModel() {
      * @param onSuccess code given for execution once we're finished*/
     private fun persistPost(onSuccess: () -> Unit) {
 
-        _isSendingInfo.value = true
-        db.collection("Posts").add(newPost.basePost()).addOnSuccessListener { doc ->
-            pushResource(doc.id).addOnProgressListener {
-                if (start == null) {
-                    start = Date.from(Instant.now())
+
+        viewModelScope.launch {
+
+            _isSendingInfo.value = true
+            db.collection("Posts").add(newPost.basePost()).addOnSuccessListener { doc ->
+                pushResource(doc.id).addOnProgressListener {
+                    if (start == null) {
+                        start = Date.from(Instant.now())
+                    }
+                    actual = it.bytesTransferred
+                    total = it.totalByteCount
+                    val timeElapsed =
+                        TimeUnit.MILLISECONDS.toSeconds(Date.from(Instant.now()).time - start!!.time)
+                    val total = (1 * timeElapsed / progress()).toInt() - timeElapsed
+                    estimated = total.parseToTime()
+
+
+                }.addOnSuccessListener {
+                    db.collection("Posts").document(doc.id).update("id", doc.id)
+
+                    storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
+                        db.collection("Posts").document(doc.id).update("source", it.toString())
+                        postTitle = "Titulo Publicacion"
+                        _resource.value = Uri.EMPTY
+                        _isSendingInfo.value = false
+                        start = null
+                        notifyFollowers()
+                        onSuccess()
+                    }
+
                 }
-                actual = it.bytesTransferred
-                total = it.totalByteCount
-                val timeElapsed =
-                    TimeUnit.MILLISECONDS.toSeconds(Date.from(Instant.now()).time - start!!.time)
-                val total = (1 * timeElapsed / progress()).toInt() - timeElapsed
-                estimated = total.parseToTime()
-
-
-            }.addOnSuccessListener {
-                db.collection("Posts").document(doc.id).update("id", doc.id)
-
-                storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
-                    db.collection("Posts").document(doc.id).update("source", it.toString())
-                    postTitle = "Titulo Publicacion"
-                    _resource.value = Uri.EMPTY
-                    _isSendingInfo.value = false
-                    start = null
-                    notifyFollowers()
-                    onSuccess()
-                }
-
             }
+        }
+
+    }
+
+    private fun getBitmapFromUri(uri: Uri, context: Context): Bitmap? {
+        return context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream)
         }
     }
 
@@ -218,13 +231,13 @@ class PublishViewModel : ViewModel() {
         val minutes = TimeUnit.SECONDS.toMinutes(this) % 60
         val seconds = this % 60
         var spare = ""
-        if (hours >= 1) spare += "$hours horas,"+if (hours>1)"s" else ""
+        if (hours >= 1) spare += "$hours horas," + if (hours > 1) "s" else ""
 
-        if (minutes >= 1) spare += "$minutes minutos,"+if (minutes>1)"s" else ""
+        if (minutes >= 1) spare += "$minutes minutos," + if (minutes > 1) "s" else ""
 
         try {
 
-            if (seconds >= 1) spare += "$seconds segundo"+if (seconds>1)"s" else "" else spare =
+            if (seconds >= 1) spare += "$seconds segundo" + if (seconds > 1) "s" else "" else spare =
                 spare.substring(0, spare.length - 1)
         } catch (e: Exception) {
         }

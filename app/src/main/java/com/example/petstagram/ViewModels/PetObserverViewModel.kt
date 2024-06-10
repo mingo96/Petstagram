@@ -72,9 +72,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
         animation()
         if (_observedPet.value.followers.contains(_selfProfile.value.id)) return;
         val newNotification = Notification(
-            sender = actualUser.id,
-            userName = actualUser.userName,
-            type = TypeOfNotification.Follow
+            sender = actualUser.id, userName = actualUser.userName, type = TypeOfNotification.Follow
         )
 
         db.collection("NotificationsChannels").document(petsOwner.value.notificationChannel)
@@ -129,8 +127,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                     delay(100)
                 }
 
-                val endPosts =
-                    base.postsFromPet(_observedPet.value)
+                val endPosts = base.postsFromPet(_observedPet.value)
 
                 for (post in endPosts - _posts.value.toSet()) {
                     _posts.value += post
@@ -162,46 +159,30 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
             _observedPet
                 //we make it so it doesnt load more if we get out of the app
                 .stateIn(
-                    viewModelScope,
-                    started = SharingStarted.WhileSubscribed(10000),
-                    0
-                )
-                .collect {
+                    viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
+                ).collect {
 
                     Log.i(
                         "Profile",
                         "loading user ${_selfProfile.value.userName} data, ${posts.value.size}"
                     )
 
-                    db.collection("Users").document(selfId).get()
-                        .addOnSuccessListener {
+                    _selfProfile.value = base.profile()
+                    actualUser = base.profile()
 
-                            val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal.id != _selfProfile.value.id) {
-                                _selfProfile.value = newVal
-                                actualUser = newVal
-                            }
-                        }
-                    db.collection("Users").document(staticPet.owner).get()
-                        .addOnSuccessListener {
+                    val newOwner = base.getUser(staticPet.owner)
+                    if (newOwner.id != _selfProfile.value.id) {
+                        _petsOwner.value = newOwner
+                    }
 
-                            val newVal = it.toObject(Profile::class.java)!!
-                            if (newVal.id != _selfProfile.value.id) {
-                                _petsOwner.value = newVal
-                            }
-                        }
-                    db.collection("Pets").document(staticPet.id).get()
-                        .addOnSuccessListener {
+                    val newPet = base.getPet(staticPet.id)
+                    if (newPet != _observedPet.value) {
+                        _observedPet.value = newPet
+                        _resource.value = newPet.profilePic
+                    }
 
-                            val newVal = it.toObject(Pet::class.java)!!
-                            if (newVal != _observedPet.value) {
-                                _observedPet.value = newVal
-                            }
-
-                            _follow.value =
-                                _observedPet.value.followers.contains(_selfProfile.value.id)
-                            fetchPosts()
-                        }
+                    _follow.value = _observedPet.value.followers.contains(_selfProfile.value.id)
+                    fetchPosts()
 
                     delay(15000)
                 }
@@ -213,8 +194,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
     private fun pushNewPetName() {
         if (petName != _observedPet.value.name) {
             _observedPet.value.name = petName
-            db.collection("Pets")
-                .document(_observedPet.value.id).update("name", petName)
+            db.collection("Pets").document(_observedPet.value.id).update("name", petName)
                 .addOnCompleteListener {
                     _isEditing.value = !_isEditing.value!!
                     for (i in _posts.value) {
@@ -256,8 +236,11 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
         }
     }
 
-    override fun scroll() {
-        fetchPosts()
+    override fun scroll(generatedByScroll: Boolean) {
+
+        if (!generatedByScroll && _posts.value.isEmpty() || generatedByScroll) {
+            fetchPosts()
+        }
     }
 
     fun clean() {

@@ -81,9 +81,7 @@ fun DisplayCategory(
                     added = viewModel.statedCategory.name
                 )
 
-                AnimatedVisibility(visible = isLoading!!,
-                    enter = slideInVertically { it },
-                    exit = slideOutVertically { 1 }) {
+                if (isLoading!!) {
 
                     Dialog(onDismissRequest = { }) {
                         val dots by viewModel.funnyAhhString.collectAsState()

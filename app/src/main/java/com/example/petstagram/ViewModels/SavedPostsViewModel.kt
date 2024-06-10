@@ -10,13 +10,13 @@ import kotlinx.coroutines.launch
 
 class SavedPostsViewModel : GeneralController() {
 
-    var statedCategory :Category? = null
+    var statedCategory: Category? = null
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
-    val categories : StateFlow<List<Category>> = _categories
+    val categories: StateFlow<List<Category>> = _categories
 
-    fun startLoadingPosts(){
+    fun startLoadingPosts() {
 
         if (!_isLoading.value!!) {
             viewModelScope.launch {
@@ -25,7 +25,7 @@ class SavedPostsViewModel : GeneralController() {
 
                 base.postsFromSaved()
 
-                while (base.alreadyLoading){
+                while (base.alreadyLoading) {
                     delay(10)
                 }
 
@@ -33,14 +33,15 @@ class SavedPostsViewModel : GeneralController() {
 
                 val end = base.postsFromSaved()
 
-                for (post in end- _posts.value.toSet()){
-                    if(statedCategory == null || post.category!!.name == statedCategory!!.name) {
+                for (post in end - _posts.value.toSet()) {
+                    if (statedCategory == null || post.category!!.name == statedCategory!!.name) {
                         _posts.value += post
                         delay(500)
                     }
                 }
 
-                if(statedCategory == null)_categories.value = _posts.value.distinctBy { it.category!!.name }.map { it.category!! }
+                if (statedCategory == null) _categories.value =
+                    _posts.value.distinctBy { it.category!!.name }.map { it.category!! }
 
                 _isLoading.value = false
 
@@ -49,14 +50,17 @@ class SavedPostsViewModel : GeneralController() {
         }
     }
 
-    fun selectCategory(category: Category?){
-        statedCategory = if (category == statedCategory)
-            null
+    fun selectCategory(category: Category?) {
+        statedCategory = if (category == statedCategory) null
         else category
-        _posts.value = _posts.value.filter { statedCategory == null ||it.category!!.name == statedCategory!!.name }
+        _posts.value =
+            _posts.value.filter { statedCategory == null || it.category!!.name == statedCategory!!.name }
 
     }
-    override fun scroll() {
-        startLoadingPosts()
+
+    override fun scroll(generatedByScroll: Boolean) {
+        if (!generatedByScroll && _posts.value.isEmpty() || generatedByScroll) {
+            startLoadingPosts()
+        }
     }
 }

@@ -51,7 +51,7 @@ import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
-import kotlin.system.exitProcess
+import kotlinx.coroutines.selects.whileSelect
 
 class Petstagram : ComponentActivity() {
 
@@ -115,6 +115,7 @@ class Petstagram : ComponentActivity() {
         setContent {
             PetstagramConLogicaTheme {
 
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -168,6 +169,11 @@ class Petstagram : ComponentActivity() {
                                 ownProfileViewModel.selfId = authViewModel.localProfile!!.id
                                 dataFetchViewModel.startLoadingData(applicationContext)
                                 publishViewModel.user = authViewModel.localProfile!!
+
+                                while (dataFetchViewModel.categories().isEmpty()){
+                                    delay(1000)
+                                }
+
                                 navController.navigate("categorias")
                             }
                             focusManager.clearFocus(true)
@@ -183,8 +189,6 @@ class Petstagram : ComponentActivity() {
                             exitTransition = { onExit }) {
                             ownProfileViewModel.clean()
                             dataFetchViewModel.clear()
-
-
 
                             LaunchedEffect(key1 = Unit){
 
@@ -312,7 +316,6 @@ class Petstagram : ComponentActivity() {
                             "añadirMascota",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
-                            petCreationViewModel.selfId = authViewModel.localProfile!!.id
 
                             petCreationViewModel.selectedCategory = publishViewModel.category
 

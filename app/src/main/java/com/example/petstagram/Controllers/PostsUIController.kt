@@ -50,7 +50,7 @@ interface PostsUIController : CommentsUIController {
 
     fun startRollingDots()
 
-    fun scroll()
+    fun scroll(generatedByScroll : Boolean = false)
 
     fun likeOnPost(post: UIPost) {
         val newLike = Like(userId = actualUser.id)

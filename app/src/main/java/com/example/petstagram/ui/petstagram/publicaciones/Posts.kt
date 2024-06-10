@@ -78,7 +78,7 @@ fun Posts(
 ) {
 
     val postsState by controller.posts.collectAsState()
-    val isLoading by controller.isLoading.observeAsState()
+    val isLoading by controller.isLoading.observeAsState(false)
     val dots by controller.funnyAhhString.collectAsState()
     val optionsClicked by controller.optionsClicked.observeAsState()
     val context = LocalContext.current
@@ -89,7 +89,7 @@ fun Posts(
 
 
     val pullState = rememberPullRefreshState(
-        refreshing = isLoading!!,
+        refreshing = isLoading,
         onRefresh = { controller.scroll() },
         )
     BoxWithConstraints(
@@ -97,18 +97,15 @@ fun Posts(
             .pullRefresh(
                 pullState
             )
-            .rotate(180f)
     ) {
 
         val localwidth by rememberSaveable {
             mutableFloatStateOf(maxWidth.value)
         }
 
-
         val state: LazyListState = rememberLazyListState()
 
         LazyColumn(
-            reverseLayout = true,
             state = state,
             modifier = modifier
                 .width(Dp(localwidth))
@@ -127,8 +124,7 @@ fun Posts(
                 AnimatedVisibility(
                     visible = optionsClicked == it,
                     enter = slideInHorizontally() + expandVertically(),
-                    exit = slideOutHorizontally { it } + shrinkVertically(),
-                    modifier = Modifier.rotate(180f)) {
+                    exit = slideOutHorizontally { it } + shrinkVertically()) {
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -168,8 +164,7 @@ fun Posts(
 
                 AnimatedVisibility(
                     visible = seen,
-                    enter = slideInHorizontally() + expandVertically(),
-                    modifier = Modifier.rotate(180f)) {
+                    enter = slideInHorizontally() + expandVertically()) {
                     val isVisible by remember {
                         derivedStateOf {
                             (index == state.firstVisibleItemIndex
@@ -223,15 +218,14 @@ fun Posts(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .fillMaxHeight(0.3f)
-                        .rotate(180f)
                         .fillMaxWidth()) {
 
                     LaunchedEffect(key1 = true) {
-                        if (isLoading == false) {
+                        if (!isLoading) {
                             controller.scroll()
                         }
                     }
-                    if (isLoading == true) {
+                    if (isLoading) {
 
                         CircularProgressIndicator(
                             Modifier
@@ -275,7 +269,8 @@ fun Posts(
             }
 
         }
-        PullRefreshIndicator(refreshing = isLoading!!, state =pullState, modifier = Modifier
+
+        PullRefreshIndicator(refreshing = false, state =pullState, modifier = Modifier
             .align(
                 Alignment.TopCenter
             ))
