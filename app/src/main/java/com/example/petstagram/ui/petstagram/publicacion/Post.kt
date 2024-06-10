@@ -2,7 +2,11 @@
 
 package com.example.petstagram.publicacion
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.view.Gravity
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
@@ -41,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -61,6 +66,7 @@ import com.example.petstagram.like.Like
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.ui.petstagram.DisplayVideoFromPost
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CommentsSection
+import com.example.petstagram.ui.theme.Primary
 import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -234,16 +240,11 @@ fun PostSource(
         when (post.typeOfMedia) {
             "image" -> {
 
-                if (post.UIURL== Uri.EMPTY){
-                    LinearProgressIndicator(
-                        modifier
-                            .fillMaxWidth()
-                            .height(500.dp)
-                            .background(Color.Black),
-                        color = Secondary,
-                    )
-                }else
-                PostImg(modifier = modifier, post = post)
+                if (post.UIURL == Uri.EMPTY){
+                    CacheImg(modifier = modifier, post = post)
+                }else {
+                    PostImg(modifier = modifier, post = post)
+                }
 
             }
 
@@ -309,12 +310,40 @@ fun PostImg(modifier: Modifier, post: UIPost) {
             .fillMaxWidth(),
         model = post.UIURL,
         loading = {
-            CircularProgressIndicator(
-                Modifier
+            LinearProgressIndicator(
+                modifier
                     .fillMaxWidth()
-                    .height(400.dp)
-            )
-        },
+                    .height(500.dp)
+                    .background(Color.Black),
+                color = Secondary,
+            )        },
+        contentDescription = post.title,
+        contentScale = ContentScale.Crop
+    )
+}
+@Composable
+fun CacheImg(modifier: Modifier, post: UIPost) {
+
+    SubcomposeAsyncImage(
+        modifier = modifier
+            .fillMaxWidth(),
+        model = post.source,
+        loading = {
+            LinearProgressIndicator(
+                modifier
+                    .fillMaxWidth()
+                    .height(500.dp)
+                    .background(Color.Black),
+                color = Secondary,
+            )        },
+        error = {
+            LinearProgressIndicator(
+                modifier
+                    .fillMaxWidth()
+                    .height(500.dp)
+                    .background(Color.Black),
+                color = Secondary,
+            )        },
         contentDescription = post.title,
         contentScale = ContentScale.Crop
     )

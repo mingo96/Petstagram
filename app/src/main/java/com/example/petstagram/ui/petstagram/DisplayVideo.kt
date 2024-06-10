@@ -1,7 +1,11 @@
 package com.example.petstagram.ui.petstagram
 
+import android.content.Context
 import android.media.MediaMetadataRetriever
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -55,6 +59,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.petstagram.UiData.UIPost
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
@@ -214,9 +220,9 @@ fun DisplayVideoFromPost(
             .build()
     }
 
-
     //on launch set content and basic configuration
     LaunchedEffect(source) {
+
         mediaPlayer.setMediaItem(source.mediaItem)
         mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
         mediaPlayer.trackSelectionParameters =
