@@ -53,3 +53,7 @@ Caso parecido, el usuario entra antes de que haya nada, lo cual es un problema p
 ## Escritura y animaciones
 
 Resulta que si el foco de atención del teclado está sobre un cuadro de texto y animamos el cambio de pantalla, el foco no sabe donde apuntar, y "crashea"!, la solución fué vaciar el foco de atención a cada cambio de pestaña
+
+## Notificaciones
+
+Teniendo en cuenta que el usuario puede no querer notificaciones, se sustituyen con un mensaje por pantalla representando la notificación, pero solo con la app en primer plano
