@@ -229,3 +229,25 @@ La pantalla de publicaciones no tiene nada que no hayamos visto ya, abajo del to
 </div>
 
 La Pantalla de publicaciones guardadas es como la de categorías pero tomando las publicaciones que el usuario ha guardado, este también cuenta con una barra para filtrar por categoría
+
+<div>
+
+<figure><img src=".gitbook/assets/image.png" alt="" width="375"><figcaption><p>Comentario</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/69af830b-ff07-41f8-8677-3f88fc9a8c8e.jpg" alt="" width="375"><figcaption><p>Seguidor nuevo</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/ecddc5cd-0ccf-4bcb-a486-ece9fcc23514.jpg" alt="" width="375"><figcaption><p>Like nuevo</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption><p>Notificacion de nuevo post</p></figcaption></figure>
+
+</div>
+
+Notificaciones varias
+
+Estas dependen del dispositivo, cada una da a entender algo, que nos han comentado (muestra el comentario y una preview de la publicación) o dado like (muestra cuántos nuevos hay + preview de la publicación) a alguna publicación, que nos ha seguido alguien nuevo (nos dice quién y su foto de perfil) o si alguien o alguna mascota (en esa preferencia) que seguimos ha publicado algo nuevo (nos muestra el titulo y una preview de la publicación)
