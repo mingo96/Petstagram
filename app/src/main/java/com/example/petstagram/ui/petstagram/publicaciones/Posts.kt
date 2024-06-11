@@ -1,17 +1,17 @@
 package com.example.petstagram.publicaciones
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -20,15 +20,19 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -36,9 +40,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -51,7 +55,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
@@ -62,6 +65,8 @@ import com.example.petstagram.publicacion.Post
 import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
 import com.example.petstagram.ui.theme.Primary
+import com.example.petstagram.ui.theme.Secondary
+import kotlinx.coroutines.delay
 
 /**
  * publicaciones
@@ -69,7 +74,7 @@ import com.example.petstagram.ui.theme.Primary
  * This composable was generated from the UI Package 'publicaciones'.
  * Generated code; do not edit directly
  */
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun Posts(
     modifier: Modifier = Modifier,
@@ -80,8 +85,9 @@ fun Posts(
     val postsState by controller.posts.collectAsState()
     val isLoading by controller.isLoading.observeAsState(false)
     val dots by controller.funnyAhhString.collectAsState()
-    val optionsClicked by controller.optionsClicked.observeAsState()
+    val postSelected by controller.postSelectedForOptions.observeAsState()
     val context = LocalContext.current
+    val options by controller.optionsDisplayed.observeAsState(false)
 
     LaunchedEffect(key1 = Unit) {
         controller.startRollingDots()
@@ -91,23 +97,24 @@ fun Posts(
     val pullState = rememberPullRefreshState(
         refreshing = isLoading,
         onRefresh = { controller.scroll() },
-        )
+    )
     BoxWithConstraints(
-        Modifier
-            .pullRefresh(
-                pullState
-            )
+        Modifier.pullRefresh(
+            pullState
+        )
     ) {
 
         val localwidth by rememberSaveable {
             mutableFloatStateOf(maxWidth.value)
         }
+        val localHeight by rememberSaveable {
+            mutableFloatStateOf(maxHeight.value)
+        }
 
         val state: LazyListState = rememberLazyListState()
 
         LazyColumn(
-            state = state,
-            modifier = modifier
+            state = state, modifier = modifier
                 .width(Dp(localwidth))
                 .fillMaxHeight(1.0f)
                 .background(
@@ -121,8 +128,7 @@ fun Posts(
                     mutableStateOf(false)
                 }
 
-                AnimatedVisibility(
-                    visible = optionsClicked == it,
+                AnimatedVisibility(visible = postSelected == it,
                     enter = slideInHorizontally() + expandVertically(),
                     exit = slideOutHorizontally { it } + shrinkVertically()) {
                     Row(
@@ -163,14 +169,11 @@ fun Posts(
                 }
 
                 AnimatedVisibility(
-                    visible = seen,
-                    enter = slideInHorizontally() + expandVertically()) {
+                    visible = seen, enter = slideInHorizontally() + expandVertically()
+                ) {
                     val isVisible by remember {
                         derivedStateOf {
-                            (index == state.firstVisibleItemIndex
-                                    || index == state.firstVisibleItemIndex + 1
-                                    && postsState[state.firstVisibleItemIndex].typeOfMedia != "video")
-                                    && !state.isScrollInProgress
+                            (index == state.firstVisibleItemIndex || index == state.firstVisibleItemIndex + 1 && postsState[state.firstVisibleItemIndex].typeOfMedia != "video") && !state.isScrollInProgress
                         }
                     }
                     Post(
@@ -216,9 +219,11 @@ fun Posts(
             item {
 
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
                         .fillMaxHeight(0.3f)
-                        .fillMaxWidth()) {
+                        .fillMaxWidth()
+                ) {
 
                     LaunchedEffect(key1 = true) {
                         if (!isLoading) {
@@ -238,31 +243,94 @@ fun Posts(
                     } else {
                         if (navController != null) {
 
-                            if (postsState.isEmpty()){
-                                Text(text = "Prueba a deslizar hacia arriba!", color = Color.Black)
-                            }
-                            Text(
-                                text = "Prueba a publicar tú mismo!",
-                                color = Color.Black
-                            )
 
-                            BotonMas(modifier = Modifier
-                                .clickable {
-                                    navController.navigate("publicar")
-                                }
-                                .padding(vertical = 8.dp)) {
-                                CuadroSumar(
-                                    modifier = Modifier
-                                        .rowWeight(1.0f)
-                                        .columnWeight(1.0f)
+                            Icon(imageVector = if (!options)Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowUp,
+                                contentDescription = "display",
+                                Modifier.clickable { controller.toggleOptionsDisplayed() }.size(Dp(localHeight*0.1f)))
+
+                            AnimatedVisibility(
+                                visible = options,
+                                enter = expandVertically(animationSpec = tween(100)) + scaleIn(
+                                    animationSpec = tween(100)
+                                ),
+                                exit = shrinkVertically(animationSpec = tween(100)) + scaleOut(
+                                    animationSpec = tween(100)
                                 )
+                            ) {
+                                LaunchedEffect(key1 = Unit) {
+                                    delay(100)
+                                    state.animateScrollToItem(postsState.size + 1)
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+
+                                    Text(
+                                        text = "Prueba a publicar tú mismo!", color = Color.Black
+                                    )
+
+                                    BotonMas(modifier = Modifier
+                                        .clickable {
+                                            navController.navigate("publicar")
+                                        }
+                                        .padding(vertical = 8.dp)) {
+                                        CuadroSumar(
+                                            modifier = Modifier
+                                                .rowWeight(1.0f)
+                                                .columnWeight(1.0f)
+                                        )
+                                    }
+                                    FloatingActionButton(
+                                        onClick = { controller.scroll(false) },
+                                        Modifier.padding(8.dp),
+                                        containerColor = Secondary,
+                                        contentColor = Color.White
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.padding(8.dp)
+                                        ) {
+
+                                            Text(
+                                                text = "Ver más", color = Color.Black
+                                            )
+                                            Icon(
+                                                imageVector = Icons.Outlined.Refresh,
+                                                contentDescription = "updatea",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    }
+                                }
+
                             }
+
                         } else {
-                            Text(
-                                text = "No hay más publicaciones!",
-                                color = Color.Black,
-                                modifier = Modifier.padding(vertical = 50.dp)
-                            )
+                            Column(
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.height(height = Dp(localHeight*0.3f))
+                            ) {
+
+                                Text(
+                                    text = "No hay más publicaciones!",
+                                    color = Color.Black,
+                                )
+
+                                FloatingActionButton(
+                                    onClick = { controller.scroll(false) },
+                                    Modifier.padding(8.dp),
+                                    containerColor = Secondary,
+                                    contentColor = Color.White
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Refresh,
+                                        contentDescription = "updatea",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -270,10 +338,11 @@ fun Posts(
 
         }
 
-        PullRefreshIndicator(refreshing = false, state =pullState, modifier = Modifier
-            .align(
+        PullRefreshIndicator(
+            refreshing = false, state = pullState, modifier = Modifier.align(
                 Alignment.TopCenter
-            ))
+            )
+        )
 
 
     }

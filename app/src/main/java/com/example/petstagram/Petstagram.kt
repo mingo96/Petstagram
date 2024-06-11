@@ -214,7 +214,7 @@ class Petstagram : ComponentActivity() {
                                 publishViewModel.user = authViewModel.localProfile!!
 
                                 while (dataFetchViewModel.categories().isEmpty()){
-                                    delay(100)
+                                    delay(1000)
                                 }
                                 categoriesViewModel.fetchCategories()
                             }
@@ -329,6 +329,9 @@ class Petstagram : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            if (dataFetchViewModel.profile().id==""){
+                                dataFetchViewModel.startLoadingData(applicationContext)
+                            }
                             petCreationViewModel.selectedCategory = publishViewModel.category
 
                             LaunchedEffect(key1 = Unit){

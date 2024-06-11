@@ -28,9 +28,9 @@ import kotlinx.coroutines.launch
 
 abstract class GeneralController : ViewModel(), PostsUIController {
 
-    private val _optionsClicked: MutableLiveData<UIPost?> = MutableLiveData(null)
+    private val _postSelectedForOptions: MutableLiveData<UIPost?> = MutableLiveData(null)
 
-    override val optionsClicked: LiveData<UIPost?> = _optionsClicked
+    override val postSelectedForOptions: LiveData<UIPost?> = _postSelectedForOptions
 
     lateinit var base: DataFetchViewModel
 
@@ -89,6 +89,13 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override val likedPost: LiveData<UIPost?> = _likedPost
 
+    private val _optionsDisplayed = MutableLiveData(false)
+
+    override val optionsDisplayed: LiveData<Boolean> = _optionsDisplayed
+
+    override fun toggleOptionsDisplayed() {
+        _optionsDisplayed.value = !optionsDisplayed.value!!
+    }
     override fun animateVideoMode() {
         if (_videoMode.value == false)
 
@@ -211,14 +218,14 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     }
 
     override fun optionsClicked(post: UIPost) {
-        _optionsClicked.value = if (post != _optionsClicked.value)
+        _postSelectedForOptions.value = if (post != _postSelectedForOptions.value)
             post
         else
             null
     }
 
     override fun clearOptions() {
-        _optionsClicked.value = null
+        _postSelectedForOptions.value = null
     }
 
     override fun toggleStop() {

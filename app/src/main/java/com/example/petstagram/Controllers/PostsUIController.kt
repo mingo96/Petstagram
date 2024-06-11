@@ -2,7 +2,6 @@ package com.example.petstagram.Controllers
 
 import android.content.Context
 import android.media.MediaScannerConnection
-import android.media.MediaScannerConnection.OnScanCompletedListener
 import android.os.Environment
 import android.widget.Toast
 import androidx.core.net.toFile
@@ -20,7 +19,6 @@ import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
-import com.google.android.play.integrity.internal.f
 import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
@@ -32,7 +30,7 @@ interface PostsUIController : CommentsUIController {
 
     val isLoading: LiveData<Boolean>
 
-    val optionsClicked: LiveData<UIPost?>
+    val postSelectedForOptions: LiveData<UIPost?>
 
     var navController: NavHostController
 
@@ -48,7 +46,11 @@ interface PostsUIController : CommentsUIController {
 
     val likedPost: LiveData<UIPost?>
 
+    val optionsDisplayed : LiveData<Boolean>
+
     fun startRollingDots()
+
+    fun toggleOptionsDisplayed()
 
     fun scroll(generatedByScroll : Boolean = false)
 
@@ -91,7 +93,7 @@ interface PostsUIController : CommentsUIController {
 
     fun animateLike(post: UIPost)
 
-    fun reportPost(post: UIPost = optionsClicked.value!!, context: Context) {
+    fun reportPost(post: UIPost = postSelectedForOptions.value!!, context: Context) {
         if (!erasing && post.creatorUser!!.id == actualUser.id) {
             Toast.makeText(
                 context,
@@ -144,7 +146,7 @@ interface PostsUIController : CommentsUIController {
 
     fun deletePost(post: UIPost)
 
-    fun savePostResource(post: UIPost = optionsClicked.value!!, context: Context) {
+    fun savePostResource(post: UIPost = postSelectedForOptions.value!!, context: Context) {
         var destination = File("")
         try {
             var routeToDownloads =

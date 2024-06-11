@@ -56,8 +56,8 @@ class PetstagramNotificationsService() : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         val notification =
-            NotificationCompat.Builder(this, "petstagram_notifications").setContentTitle("")
-                .setContentText("").setSmallIcon(R.drawable.logo)
+            NotificationCompat.Builder(this, "petstagram_notifications").setContentTitle("Notificaciones de Petstagram")
+                .setContentText("Estamos esperando que alguien te vea").setSmallIcon(R.drawable.logo)
                 .setPriority(NotificationManager.IMPORTANCE_NONE).setAutoCancel(true)
                 .setTimeoutAfter(10)
                 .build()
@@ -79,10 +79,11 @@ class PetstagramNotificationsService() : Service() {
         snapshots = mutableListOf()
 
         val spare = intent?.getStringExtra("id").toString()
-        if (spare != "null"&&!spare.isNullOrBlank())
+        if (spare != "null"&& spare.isNotBlank()) {
             id = spare
 
-        prepareNotifications()
+            prepareNotifications()
+        }
 
         return super.onStartCommand(intent, flags, startId)
     }
@@ -114,6 +115,7 @@ class PetstagramNotificationsService() : Service() {
                     prepareNotifications()
                     return@addOnSuccessListener
                 }
+                Log.i("Alo", _notificationsChannel!!.user)
                 snapshots += db.collection("NotificationsChannels")
                     .document(_notificationsChannel!!.id).addSnapshotListener { value, error ->
                         if (value != null) {

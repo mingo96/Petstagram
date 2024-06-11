@@ -422,36 +422,6 @@ fun GoogleAuthButton(onClick: () -> Unit, text: String = "Iniciar con Google") {
 }
 
 @Composable
-fun LoginImage(modifier: Modifier = Modifier) {
-    RelayImage(
-        image = painterResource(R.drawable.login_image),
-        contentScale = ContentScale.Crop,
-        modifier = modifier
-            .padding(
-                paddingValues = PaddingValues(
-                    start = 0.0.dp, top = 0.0.dp, end = 0.0.dp, bottom = 484.0.dp
-                )
-            )
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
-    )
-}
-
-@Composable
-fun DiagonalRectangle(modifier: Modifier = Modifier) {
-    RelayVector(
-        vector = painterResource(R.drawable.diagonal_rectangle), modifier = modifier
-            .padding(
-                paddingValues = PaddingValues(
-                    start = 0.0.dp, top = 206.5.dp, end = 0.0.dp, bottom = 480.0.dp
-                )
-            )
-            .fillMaxWidth(1.0f)
-            .fillMaxHeight(1.0f)
-    )
-}
-
-@Composable
 fun WelcomeText(modifier: Modifier = Modifier, text: String = "") {
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
