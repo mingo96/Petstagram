@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -45,7 +43,6 @@ import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.perfil.FollowingText
 import com.example.petstagram.perfil.ProfilePicInstance
 import com.example.petstagram.perfilpropio.DataContainer
-import com.example.petstagram.perfilpropio.EditUsernameBackgroundCircle
 import com.example.petstagram.perfilpropio.EditUsernameButton
 import com.example.petstagram.perfilpropio.EditUsernameImage
 import com.example.petstagram.perfilpropio.EditUsernameImageContainer

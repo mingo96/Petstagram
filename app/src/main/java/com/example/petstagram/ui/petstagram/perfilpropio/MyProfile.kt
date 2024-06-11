@@ -204,8 +204,9 @@ fun MyProfile(
                     LazyRow(
                         state = scroll,
                         flingBehavior = flingBehavior,
-                        modifier = Modifier.width(width * 2)
-                            .height(height-60.dp-56.dp-48.dp),
+                        modifier = Modifier
+                            .width(width * 2)
+                            .height(height - 60.dp - 56.dp - 48.dp),
                     ) {
                         item {
 
@@ -364,7 +365,7 @@ fun YourUserName(
 ) {
 
     if (editing) OutlinedTextField(
-        placeholder = { if (added==" de tu mascota")Text(text = "Nombre de tu mascota") },
+        placeholder = { if (added == " de tu mascota") Text(text = "Nombre de tu mascota") },
         value = textValue.invoke(),
         onValueChange = changeText,
         textStyle = TextStyle(

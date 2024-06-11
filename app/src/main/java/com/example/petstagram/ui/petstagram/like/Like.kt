@@ -41,6 +41,7 @@ fun Like(
         Pressed.False -> TopLevelPulsadoFalse(modifier = modifier) {
             ImagenLikePulsadoFalse()
         }
+
         Pressed.True -> TopLevelPulsadoTrue(modifier = modifier) {
             ImagenLikePulsadoTrue()
         }
@@ -54,7 +55,9 @@ private fun LikePulsadoFalsePreview() {
         RelayContainer {
             Like(
                 pressed = Pressed.False,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -67,7 +70,9 @@ private fun LikePulsadoTruePreview() {
         RelayContainer {
             Like(
                 pressed = Pressed.True,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -78,7 +83,9 @@ fun ImagenLikePulsadoFalse(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.like_imagen_like),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(32.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(32.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -97,7 +104,9 @@ fun TopLevelPulsadoFalse(
         isStructured = false,
         radius = 16.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -120,6 +129,8 @@ fun TopLevelPulsadoTrue(
         isStructured = false,
         clip = Clip.Circle,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

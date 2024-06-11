@@ -1,15 +1,12 @@
 package com.example.petstagram.ui.petstagram.Pets
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -26,24 +23,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.petstagram.R
 import com.example.petstagram.UiData.Pet
-import com.example.petstagram.cuadroinfo.IntersectLine
 import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
 import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
 import com.example.petstagram.ui.theme.Secondary
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
-import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 
 @Composable
-fun PetList(modifier:Modifier= Modifier,
-            pets: List<Pet>,
-            onSelect: (Pet)->Unit = {},
-            onNewPet: (() -> Unit)? = null,
-            selected : Pet? = null){
+fun PetList(
+    modifier: Modifier = Modifier,
+    pets: List<Pet>,
+    onSelect: (Pet) -> Unit = {},
+    onNewPet: (() -> Unit)? = null,
+    selected: Pet? = null
+) {
 
-    PetListContainer (modifier){
+    PetListContainer(modifier) {
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -51,38 +48,46 @@ fun PetList(modifier:Modifier= Modifier,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(all = 16.dp)
         ) {
-            item(span = { GridItemSpan(2)}) {
+            item(span = { GridItemSpan(2) }) {
                 if (onNewPet != null) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
 
                         BotonMas(modifier = Modifier
                             .fillMaxWidth(0.7f)
                             .clickable {
                                 onNewPet()
-                            }
-                        ) {
+                            }) {
                             CuadroSumar(
                                 modifier = Modifier
                                     .rowWeight(1.0f)
                                     .columnWeight(1.0f)
                             )
                         }
-                        if (pets.isEmpty()){
+                        if (pets.isEmpty()) {
                             Text(text = "No hay mascotas!!")
                         }
                     }
-                }else{
-                    if (pets.isEmpty()){
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                } else {
+                    if (pets.isEmpty()) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
 
-                            Image(painter = painterResource(id = R.drawable.grillo), contentDescription ="grillo" )
+                            Image(
+                                painter = painterResource(id = R.drawable.grillo),
+                                contentDescription = "grillo"
+                            )
                             Text(text = "Parece que alguien necesita una mascota...")
                         }
                     }
                 }
 
             }
-            items(pets){pet->
+            items(pets) { pet ->
 
                 PetCard(pet = pet, onSelect = { onSelect(pet) }, selected = pet == selected)
 
@@ -98,15 +103,11 @@ fun PetList(modifier:Modifier= Modifier,
 
 @Composable
 fun PetListContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         mainAxisAlignment = MainAxisAlignment.Start,
         crossAxisAlignment = CrossAxisAlignment.Center,
@@ -116,18 +117,11 @@ fun PetListContainer(
             .fillMaxWidth(1.0f)
             .fillMaxHeight(1.0f)
             .border(
-                width = 4.dp,
-                Brush.verticalGradient(
-                    0.7f to Secondary,
-                    0.9f to Color.Transparent,
-                    1.0f to Color(
-                        alpha = 255,
-                        red = 35,
-                        green = 35,
-                        blue = 35
+                width = 4.dp, Brush.verticalGradient(
+                    0.7f to Secondary, 0.9f to Color.Transparent, 1.0f to Color(
+                        alpha = 255, red = 35, green = 35, blue = 35
                     )
-                ),
-                RoundedCornerShape(15.dp, 15.dp)
+                ), RoundedCornerShape(15.dp, 15.dp)
             )
     )
 }

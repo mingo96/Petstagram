@@ -46,22 +46,20 @@ interface PostsUIController : CommentsUIController {
 
     val likedPost: LiveData<UIPost?>
 
-    val optionsDisplayed : LiveData<Boolean>
+    val optionsDisplayed: LiveData<Boolean>
 
     fun startRollingDots()
 
     fun toggleOptionsDisplayed()
 
-    fun scroll(generatedByScroll : Boolean = false)
+    fun scroll(generatedByScroll: Boolean = false)
 
     fun likeOnPost(post: UIPost) {
         val newLike = Like(userId = actualUser.id)
         if (!post.likes.any { it.userId == actualUser.id }) {
 
             post.likes += newLike
-            db.collection("Posts")
-                .document(post.id)
-                .update("likes", FieldValue.arrayUnion(newLike))
+            db.collection("Posts").document(post.id).update("likes", FieldValue.arrayUnion(newLike))
 
             animateLike(post)
             if (actualUser.id != post.creatorUser!!.id) {
@@ -79,8 +77,7 @@ interface PostsUIController : CommentsUIController {
         } else {
 
             post.likes.removeIf { it.userId == actualUser.id }
-            db.collection("Posts")
-                .document(post.id)
+            db.collection("Posts").document(post.id)
                 .update("likes", FieldValue.arrayRemove(newLike))
 
             post.liked = Pressed.False
@@ -96,12 +93,10 @@ interface PostsUIController : CommentsUIController {
     fun reportPost(post: UIPost = postSelectedForOptions.value!!, context: Context) {
         if (!erasing && post.creatorUser!!.id == actualUser.id) {
             Toast.makeText(
-                context,
-                "Volver a pulsar este botón borrará la publicación",
-                Toast.LENGTH_LONG
+                context, "Volver a pulsar este botón borrará la publicación", Toast.LENGTH_LONG
             ).show()
             erasing = true
-            return;
+            return
         }
 
         if (erasing && post.creatorUser!!.id == actualUser.id) {
@@ -111,12 +106,12 @@ interface PostsUIController : CommentsUIController {
                 Toast.LENGTH_LONG
             ).show()
             deletePost(post)
-            return;
+            return
         }
 
         if (post.reports.any { it.user == actualUser.id }) {
             Toast.makeText(context, "Ya has reportado este post!", Toast.LENGTH_LONG).show()
-            return;
+            return
         }
 
         post.reports.add(Report().apply {
@@ -150,13 +145,12 @@ interface PostsUIController : CommentsUIController {
         var destination = File("")
         try {
             var routeToDownloads =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath+"/Petstagram/"
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/Petstagram/"
             if (!File(routeToDownloads).isDirectory) {
                 File(routeToDownloads).mkdir()
             }
             destination = File(
-                routeToDownloads,
-                post.id + "." + if (post.typeOfMedia == "video") "mp4" else "jpeg"
+                routeToDownloads, post.id + "." + if (post.typeOfMedia == "video") "mp4" else "jpeg"
             )
 
             if (!destination.createNewFile()) {
@@ -164,9 +158,11 @@ interface PostsUIController : CommentsUIController {
                 return
             }
 
-            post.UIURL.toFile().copyTo(destination,overwrite = true)
+            post.UIURL.toFile().copyTo(destination, overwrite = true)
 
-            MediaScannerConnection.scanFile(context, arrayOf<String>(routeToDownloads),
+            MediaScannerConnection.scanFile(
+                context,
+                arrayOf<String>(routeToDownloads),
                 null,
                 { path, uri -> })
 
@@ -179,9 +175,8 @@ interface PostsUIController : CommentsUIController {
     fun saveClicked(post: UIPost): Boolean {
 
         val newSaved = post.id
-        db.collection("SavedLists")
-            .whereEqualTo("userId", actualUser.id)
-            .get().addOnSuccessListener {
+        db.collection("SavedLists").whereEqualTo("userId", actualUser.id).get()
+            .addOnSuccessListener {
                 if (it.isEmpty) {
                     val newList = SavedList(userId = actualUser.id)
                     newList.postList.add(post.id)

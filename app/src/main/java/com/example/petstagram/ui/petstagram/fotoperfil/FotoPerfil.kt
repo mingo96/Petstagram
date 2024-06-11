@@ -31,12 +31,14 @@ import com.google.relay.compose.RelayImage
 @Composable
 fun FotoPerfilBase(
     modifier: Modifier = Modifier,
-    added :String= ""
+    added: String = ""
 ) {
     TopLevelSizeEnorme(modifier = modifier) {
-        ProfilePic(modifier = Modifier
-            .rowWeight(1.0f)
-            .columnWeight(1.0f), url = added)
+        ProfilePic(
+            modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f), url = added
+        )
     }
 }
 
@@ -54,10 +56,14 @@ fun FotoSizePeque(modifier: Modifier = Modifier, url: String) {
 
 @Composable
 fun ProfilePic(modifier: Modifier = Modifier, url: String) {
-    Row{
-        Box{
+    Row {
+        Box {
 
-            this@Row.AnimatedVisibility(visible = url.isBlank(), enter = expandVertically()+ expandHorizontally(), exit = shrinkVertically()+ shrinkHorizontally()) {
+            this@Row.AnimatedVisibility(
+                visible = url.isBlank(),
+                enter = expandVertically() + expandHorizontally(),
+                exit = shrinkVertically() + shrinkHorizontally()
+            ) {
                 RelayImage(
                     image = painterResource(R.drawable.hacer_clic),
                     contentScale = ContentScale.Crop,
@@ -67,16 +73,25 @@ fun ProfilePic(modifier: Modifier = Modifier, url: String) {
 
                 )
             }
-            this@Row.AnimatedVisibility(visible = url.isNotBlank(), enter = expandVertically()+ expandHorizontally(), exit = shrinkVertically()+ shrinkHorizontally()) {
+            this@Row.AnimatedVisibility(
+                visible = url.isNotBlank(),
+                enter = expandVertically() + expandHorizontally(),
+                exit = shrinkVertically() + shrinkHorizontally()
+            ) {
 
-                AsyncImage(model = url,
+                AsyncImage(
+                    model = url,
                     contentDescription = "profilePic",
                     modifier = modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
             }
 
-            this@Row.AnimatedVisibility(visible = url == "empty", enter = expandVertically()+ expandHorizontally(), exit = shrinkVertically()+ shrinkHorizontally()) {
+            this@Row.AnimatedVisibility(
+                visible = url == "empty",
+                enter = expandVertically() + expandHorizontally(),
+                exit = shrinkVertically() + shrinkHorizontally()
+            ) {
 
                 RelayImage(
                     image = painterResource(R.drawable.foto_perfil_foto),

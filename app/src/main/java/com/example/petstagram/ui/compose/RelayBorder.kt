@@ -134,6 +134,7 @@ fun Modifier.relayBorder(
                                 fillArea,
                                 strokeWidthPx
                             )
+
                         is Outline.Rounded ->
                             drawRoundRectBorder(
                                 borderCacheRef,
@@ -145,6 +146,7 @@ fun Modifier.relayBorder(
                                 strokeWidthPx,
                                 alignment
                             )
+
                         is Outline.Rectangle ->
                             drawRectBorder(
                                 brush,
@@ -181,7 +183,7 @@ private fun Ref<BorderCache>.obtain(): BorderCache =
  */
 private data class BorderCache(
     private var imageBitmap: ImageBitmap? = null,
-    private var canvas: androidx.compose.ui.graphics.Canvas? = null,
+    private var canvas: Canvas? = null,
     private var canvasDrawScope: CanvasDrawScope? = null,
     private var borderPath: Path? = null
 ) {
@@ -196,7 +198,7 @@ private data class BorderCache(
         // If we previously had allocated a full Argb888 ImageBitmap but are only requiring
         // an alpha mask, just re-use the same ImageBitmap instead of allocating a new one
         val compatibleConfig = targetImageBitmap?.config == ImageBitmapConfig.Argb8888 ||
-            config == targetImageBitmap?.config
+                config == targetImageBitmap?.config
         if (targetImageBitmap == null ||
             targetCanvas == null ||
             size.width > targetImageBitmap.width ||
@@ -210,7 +212,7 @@ private data class BorderCache(
             ).also {
                 imageBitmap = it
             }
-            targetCanvas = androidx.compose.ui.graphics.Canvas(targetImageBitmap).also {
+            targetCanvas = Canvas(targetImageBitmap).also {
                 canvas = it
             }
         }
@@ -390,11 +392,13 @@ private fun CacheDrawScope.drawRoundRectBorder(
                         )
                     }
                 }
+
                 fillArea -> {
                     // If the drawing area is smaller than the stroke being drawn
                     // drawn all around it just draw a filled in rounded rect
                     drawRoundRect(brush, cornerRadius = cornerRadius)
                 }
+
                 cornerRadius.x < halfStroke -> {
                     // If the corner radius is smaller than half of the stroke width
                     // then the interior curvature of the stroke will be a sharp edge
@@ -410,6 +414,7 @@ private fun CacheDrawScope.drawRoundRectBorder(
                         drawRoundRect(brush, cornerRadius = cornerRadius)
                     }
                 }
+
                 else -> {
                     // Otherwise draw a stroked rounded rect with the corner radius
                     // shrunk by half of the stroke width. This will ensure that the

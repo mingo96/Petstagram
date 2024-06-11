@@ -2,8 +2,6 @@ package com.example.petstagram.ViewModels
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

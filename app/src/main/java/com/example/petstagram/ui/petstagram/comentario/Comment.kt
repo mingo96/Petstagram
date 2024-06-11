@@ -51,7 +51,7 @@ import com.google.relay.compose.RelayVector
  * Generated code; do not edit directly
  */
 @Composable
-fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Boolean) {
+fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike: () -> Boolean) {
     val density: Density = LocalDensity.current
 
     val onEnter = slideInHorizontally {
@@ -72,12 +72,13 @@ fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Bool
 
 
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 8.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically){
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 FotoPerfilSizePeque(picture = comment.objectUser.profilePic)
 
                 CommentContent(
@@ -93,10 +94,12 @@ fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Bool
                 ) {
                     Row {
 
-                        Text(text = "${comment.likes.size}",
-                            style = TextStyle(color = Color.White, fontSize = 10.sp))
+                        Text(
+                            text = "${comment.likes.size}",
+                            style = TextStyle(color = Color.White, fontSize = 10.sp)
+                        )
                         LikePulsadoFalse(Modifier.clickable {
-                            locallyLiked = if(onLike.invoke())
+                            locallyLiked = if (onLike.invoke())
                                 Pressed.True
                             else
                                 Pressed.False
@@ -112,10 +115,10 @@ fun Comment(modifier: Modifier = Modifier, comment: UIComment, onLike : ()->Bool
                     exit = ExitTransition.None,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
-                    Row{
+                    Row {
                         Text(
                             text = "${comment.likes.size}",
-                            style = TextStyle(color = Color.White,fontSize = 10.sp)
+                            style = TextStyle(color = Color.White, fontSize = 10.sp)
                         )
                         LikePulsadoFalse(Modifier.clickable {
                             locallyLiked = if (onLike.invoke())
@@ -161,7 +164,7 @@ fun TopLine(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CommentContent(modifier: Modifier = Modifier, content : String) {
+fun CommentContent(modifier: Modifier = Modifier, content: String) {
     RelayText(
         content = content,
         color = Primary,

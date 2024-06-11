@@ -36,7 +36,11 @@ fun Opciones(modifier: Modifier = Modifier) {
 private fun OpcionesPreview() {
     MaterialTheme {
         RelayContainer {
-            Opciones(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            Opciones(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+            )
         }
     }
 }
@@ -46,7 +50,9 @@ fun ImagenOpciones(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.opciones_imagen_opciones),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(16.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(16.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -67,6 +73,8 @@ fun TopLevel(
             blue = 35
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

@@ -3,19 +3,16 @@ package com.example.petstagram.ui.petstagram.accesoaperfil
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ui.theme.Primary
-import com.google.relay.compose.Clip
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -44,7 +41,9 @@ fun ImagenPerfil(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.acceso_aperfil_imagen_perfil),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(80.0.dp).requiredHeight(80.0.dp),
+        modifier = modifier
+            .requiredWidth(80.0.dp)
+            .requiredHeight(80.0.dp),
     )
 }
 
@@ -53,7 +52,9 @@ fun ImagenGaleria(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.acceso_aperfil_imagen_galeria),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(91.0.dp).requiredHeight(80.0.dp),
+        modifier = modifier
+            .requiredWidth(91.0.dp)
+            .requiredHeight(80.0.dp),
     )
 }
 
@@ -62,7 +63,9 @@ fun ImagenPuerta(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.acceso_aperfil_imagen_puerta),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(80.0.dp).requiredHeight(80.0.dp),
+        modifier = modifier
+            .requiredWidth(80.0.dp)
+            .requiredHeight(80.0.dp),
     )
 }
 

@@ -68,8 +68,7 @@ fun DisplayVideoFromSource(
     val context = LocalContext.current
     //main controller
     val mediaPlayer = remember {
-        ExoPlayer.Builder(context)
-            .build()
+        ExoPlayer.Builder(context).build()
     }
 
     //on launch set content and basic configuration
@@ -94,10 +93,7 @@ fun DisplayVideoFromSource(
 
 
     AnimatedVisibility(
-        isVisible == null,
-        Modifier.zIndex(1F),
-        enter = scaleIn(),
-        exit = scaleOut()
+        isVisible == null, Modifier.zIndex(1F), enter = scaleIn(), exit = scaleOut()
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -116,20 +112,14 @@ fun DisplayVideoFromSource(
 
     }
     if (!mediaPlayer.isLoading) {
-        Box(modifier
-            .tappable(
-                onTap = {
-                    if (isVisible == true)
-                        mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
-                },
-                onDoubleTap = {
-                    onDoubleTap()
-                },
-                onLongPress = {
-                    onLongTap()
-                    mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
-                }
-            )) {
+        Box(modifier.tappable(onTap = {
+            if (isVisible == true) mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
+        }, onDoubleTap = {
+            onDoubleTap()
+        }, onLongPress = {
+            onLongTap()
+            mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
+        })) {
 
             AnimatedVisibility(
                 visible = isVisible == true,
@@ -146,8 +136,7 @@ fun DisplayVideoFromSource(
                             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
 
                         }
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.Gray)
                         .zIndex(0F)
@@ -170,8 +159,7 @@ fun DisplayVideoFromSource(
                     bitmap = bitmap!!.asImageBitmap(),
                     contentDescription = "primer frame",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
 
             }
@@ -203,8 +191,7 @@ fun DisplayVideoFromPost(
     val context = LocalContext.current
     //main controller
     val mediaPlayer = remember {
-        ExoPlayer.Builder(context)
-            .build()
+        ExoPlayer.Builder(context).build()
     }
 
     //on launch set content and basic configuration
@@ -256,10 +243,7 @@ fun DisplayVideoFromPost(
     }
 
     AnimatedVisibility(
-        isVisible == null,
-        Modifier.zIndex(1F),
-        enter = scaleIn(),
-        exit = scaleOut()
+        isVisible == null, Modifier.zIndex(1F), enter = scaleIn(), exit = scaleOut()
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -284,11 +268,15 @@ fun DisplayVideoFromPost(
     }
 
     if (!loading) {
-        Box(modifier
-            .animateContentSize(spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow))
-            .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 400.dp)
-            .tappable(
-                onTap = {
+        Box(
+            modifier
+                .animateContentSize(
+                    spring(
+                        Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow
+                    )
+                )
+                .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 400.dp)
+                .tappable(onTap = {
                     if (isVisible == true) {
                         mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                         onTap()
@@ -297,16 +285,14 @@ fun DisplayVideoFromPost(
                         onTap()
                         mediaPlayer.playWhenReady = true
                     }
-                },
-                onDoubleTap = {
+                }, onDoubleTap = {
                     onDoubleTap()
-                },
-                onLongPress = {
+                }, onLongPress = {
                     onLongTap()
                     mediaPlayer.playWhenReady = false
-                }
-            )
-            .zIndex(0f)) {
+                })
+                .zIndex(0f)
+        ) {
 
             AnimatedVisibility(
                 visible = isVisible == true,
@@ -326,8 +312,7 @@ fun DisplayVideoFromPost(
                             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
 
                         }
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.Gray)
                         .zIndex(0F)
@@ -345,8 +330,7 @@ fun DisplayVideoFromPost(
                     bitmap = bitmap!!.asImageBitmap(),
                     contentDescription = "primer frame",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
 
             }

@@ -17,13 +17,22 @@
 package com.google.relay.compose
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement as ComposeArrangement
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.LayoutScopeMarker
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -69,8 +78,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import java.util.Locale as JavaLocale
 import java.util.regex.Pattern
+import androidx.compose.foundation.layout.Arrangement as ComposeArrangement
+import java.util.Locale as JavaLocale
 
 // Wrapper for any Composable using the same core properties in a consistent
 // way.
@@ -241,8 +251,9 @@ fun RelayText(
             // (i.e. don't compress whitespace into a single space, swap
             // spaces for tabs, etc.)
             Case.Title -> WHITESPACE_INCLUDE_DELIMITERS.split(content)
-                .map { it.replaceFirstChar() { it.uppercase(JavaLocale.getDefault()) } }
+                .map { it.replaceFirstChar { it.uppercase(JavaLocale.getDefault()) } }
                 .joinToString("")
+
             else -> content
         }
     }
@@ -353,11 +364,13 @@ fun RelayVector(
 
         Layout(
             {},
-            Modifier.then(semantics).paint(
-                vector,
-                alignment = AbsoluteAlignment.TopLeft,
-                contentScale = ContentScale.None
-            )
+            Modifier
+                .then(semantics)
+                .paint(
+                    vector,
+                    alignment = AbsoluteAlignment.TopLeft,
+                    contentScale = ContentScale.None
+                )
         ) { _, constraints ->
             layout(constraints.minWidth, constraints.minHeight) {}
         }
@@ -421,16 +434,20 @@ fun RelayContainer(
                                 when (mainAxisAlignment) {
                                     MainAxisAlignment.Center ->
                                         Alignment.CenterHorizontally
+
                                     MainAxisAlignment.Start ->
                                         Alignment.Start
+
                                     MainAxisAlignment.End ->
                                         Alignment.End
                                     // SpaceEvenly, SpaceBetween, and SpaceAround are not valid
                                     // when item spacing is applied, so we make them Alignment.Center
                                     MainAxisAlignment.SpaceEvenly ->
                                         Alignment.CenterHorizontally
+
                                     MainAxisAlignment.SpaceBetween ->
                                         Alignment.CenterHorizontally
+
                                     MainAxisAlignment.SpaceAround ->
                                         Alignment.CenterHorizontally
                                 }
@@ -438,14 +455,19 @@ fun RelayContainer(
                         } else when (mainAxisAlignment) {
                             MainAxisAlignment.Center ->
                                 ComposeArrangement.Center
+
                             MainAxisAlignment.Start ->
                                 ComposeArrangement.Start
+
                             MainAxisAlignment.End ->
                                 ComposeArrangement.End
+
                             MainAxisAlignment.SpaceEvenly ->
                                 ComposeArrangement.SpaceEvenly
+
                             MainAxisAlignment.SpaceBetween ->
                                 ComposeArrangement.SpaceBetween
+
                             MainAxisAlignment.SpaceAround ->
                                 ComposeArrangement.SpaceAround
                         },
@@ -455,8 +477,10 @@ fun RelayContainer(
                         verticalAlignment = when (crossAxisAlignment) {
                             CrossAxisAlignment.Center ->
                                 Alignment.CenterVertically
+
                             CrossAxisAlignment.Start ->
                                 Alignment.Top
+
                             CrossAxisAlignment.End ->
                                 Alignment.Bottom
                             // TODO: Find a way to more accurately convey these
@@ -468,6 +492,7 @@ fun RelayContainer(
                         RowScopeInstance.content()
                     }
                 }
+
                 RelayContainerArrangement.Column -> {
                     val verticalScrollModifier =
                         if (scrollable) it
@@ -486,16 +511,20 @@ fun RelayContainer(
                                 when (mainAxisAlignment) {
                                     MainAxisAlignment.Center ->
                                         Alignment.CenterVertically
+
                                     MainAxisAlignment.Start ->
                                         Alignment.Top
+
                                     MainAxisAlignment.End ->
                                         Alignment.Bottom
                                     // SpaceEvenly, SpaceBetween, and SpaceAround are not valid
                                     // when item spacing is applied, so we make them Alignment.Center
                                     MainAxisAlignment.SpaceEvenly ->
                                         Alignment.CenterVertically
+
                                     MainAxisAlignment.SpaceBetween ->
                                         Alignment.CenterVertically
+
                                     MainAxisAlignment.SpaceAround ->
                                         Alignment.CenterVertically
                                 }
@@ -503,22 +532,29 @@ fun RelayContainer(
                         } else when (mainAxisAlignment) {
                             MainAxisAlignment.Center ->
                                 ComposeArrangement.Center
+
                             MainAxisAlignment.Start ->
                                 ComposeArrangement.Top
+
                             MainAxisAlignment.End ->
                                 ComposeArrangement.Bottom
+
                             MainAxisAlignment.SpaceEvenly ->
                                 ComposeArrangement.SpaceEvenly
+
                             MainAxisAlignment.SpaceBetween ->
                                 ComposeArrangement.SpaceBetween
+
                             MainAxisAlignment.SpaceAround ->
                                 ComposeArrangement.SpaceAround
                         },
                         horizontalAlignment = when (crossAxisAlignment) {
                             CrossAxisAlignment.Center ->
                                 Alignment.CenterHorizontally
+
                             CrossAxisAlignment.Start ->
                                 Alignment.Start
+
                             CrossAxisAlignment.End ->
                                 Alignment.End
                             // TODO: Find a way to more accurately convey these
@@ -542,7 +578,7 @@ fun RelayContainer(
 }
 
 // Painter that draws nothing.
-class EmptyPainter() : Painter() {
+class EmptyPainter : Painter() {
     override val intrinsicSize: Size get() = Size.Unspecified
     override fun DrawScope.onDraw() {}
 }
@@ -652,6 +688,7 @@ fun getShape(clip: Clip = Clip.None, radius: Double): Shape {
                 )
             )
         }
+
         Clip.Oval -> CircleShape
         else -> RoundedCornerShape(radius.dp)
     }

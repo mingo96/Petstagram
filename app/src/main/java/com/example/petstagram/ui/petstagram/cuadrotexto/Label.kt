@@ -56,46 +56,84 @@ fun Label(
 ) {
     when (variation) {
         Variation.UserName -> TopLevelVariacionNombreUsuario(modifier = modifier) {
-            TextoNombreUsuarioVariacionNombreUsuario(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f), added)
+            TextoNombreUsuarioVariacionNombreUsuario(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f), added
+            )
         }
+
         Variation.Petstagram -> TopLevelVariacionBienvenida(modifier = modifier) {
             TextoBienvenidaVariacionBienvenida(modifier = Modifier.rowWeight(1.0f))
         }
+
         Variation.YourProfile -> TopLevelVariacionTuPerfil(modifier = modifier) {
             TextoTuPerfilVariacionTuPerfil(modifier = Modifier.rowWeight(1.0f), added)
         }
+
         Variation.User -> TopLevelVariacionUsuario(modifier = modifier) {
             TextoEmailVariacionUsuario(modifier = Modifier.rowWeight(1.0f))
         }
+
         Variation.YourPosts -> TopLevelVariacionTusPublicaciones(modifier = modifier) {
             TextoTusPublicacionesVariacionTusPublicaciones(modifier = Modifier.rowWeight(1.0f))
         }
+
         Variation.Password -> TopLevelVariacionClave(modifier = modifier) {
             TextoClaveVariacionClave(modifier = Modifier.rowWeight(1.0f))
         }
+
         Variation.CategoryPosts -> TopLevelVariacionPublicacionesCategoria(modifier = modifier) {
-            TextoPubCategoriaVariacionPublicacionesCategoria(modifier = Modifier.rowWeight(1.0f), added)
+            TextoPubCategoriaVariacionPublicacionesCategoria(
+                modifier = Modifier.rowWeight(1.0f),
+                added
+            )
         }
+
         Variation.Register -> TopLevelVariacionRegistro(modifier = modifier) {
             TextoRegistroVariacionRegistro(modifier = Modifier.rowWeight(1.0f))
         }
+
         Variation.Login -> TopLevelVariacionInicioSesion(modifier = modifier) {
             TextoInicioSesionVariacionInicioSesion(modifier = Modifier.rowWeight(1.0f))
         }
+
         Variation.CreatePost -> TopLevelVariacionCrearPublicacion(modifier = modifier) {
-            TextoCrearPublicacionVariacionCrearPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            TextoCrearPublicacionVariacionCrearPublicacion(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+            )
         }
+
         Variation.SelectResource -> TopLevelVariacionSeleccionarRecurso(modifier = modifier) {
-            TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            TextoSeleccionarRecursoVariacionSeleccionarRecurso(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
+            )
         }
+
         Variation.PostTitle -> TopLevelVariacionTituloPublicacion(modifier = modifier) {
-            PostTitle(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f), added  )
+            PostTitle(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f), added)
         }
+
         Variation.PostCategory -> TopLevelVariacionCategoriaPublicacion(modifier = modifier) {
-            TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            TextoCategoriaPublicacionVariacionCategoriaPublicacion(
+                modifier = Modifier
+                    .rowWeight(
+                        1.0f
+                    )
+                    .columnWeight(1.0f)
+            )
         }
+
         Variation.Publish -> TopLevelVariacionPublicar(modifier = modifier) {
-            TextoPublicarVariacionPublicar(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            TextoPublicarVariacionPublicar(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
     }
 }
@@ -284,7 +322,10 @@ private fun CuadroTextoVariacionPublicarPreview() {
 }
 
 @Composable
-fun TextoNombreUsuarioVariacionNombreUsuario(modifier: Modifier = Modifier, nombreusuario : String = "") {
+fun TextoNombreUsuarioVariacionNombreUsuario(
+    modifier: Modifier = Modifier,
+    nombreusuario: String = ""
+) {
     RelayText(
         content = "Perfil de $nombreusuario",
         fontSize = 20.0.sp,
@@ -299,10 +340,12 @@ fun TextoNombreUsuarioVariacionNombreUsuario(modifier: Modifier = Modifier, nomb
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -329,10 +372,12 @@ fun TextoBienvenidaVariacionBienvenida(modifier: Modifier = Modifier) {
         fontFamily = inter,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -365,7 +410,7 @@ fun TopLevelVariacionBienvenida(
 }
 
 @Composable
-fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier, added : String = "") {
+fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier, added: String = "") {
     RelayText(
         content = added.ifBlank { "Tu perfil" },
         fontSize = 20.0.sp,
@@ -373,10 +418,12 @@ fun TextoTuPerfilVariacionTuPerfil(modifier: Modifier = Modifier, added : String
         fontWeight = FontWeight.Bold,
         height = 1.2102272033691406.em,
         maxLines = 2,
-        modifier = modifier.wrapContentWidth().wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .wrapContentWidth()
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -416,10 +463,12 @@ fun TextoEmailVariacionUsuario(modifier: Modifier = Modifier) {
         fontFamily = inter,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -458,10 +507,12 @@ fun TextoTusPublicacionesVariacionTusPublicaciones(modifier: Modifier = Modifier
         fontFamily = inter,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -502,10 +553,12 @@ fun TextoClaveVariacionClave(modifier: Modifier = Modifier) {
         fontFamily = inter,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -552,10 +605,12 @@ fun TextoPubCategoriaVariacionPublicacionesCategoria(modifier: Modifier = Modifi
         height = 1.2102272245619032.em,
         fontWeight = FontWeight(800.0.toInt()),
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -581,10 +636,12 @@ fun TextoRegistroVariacionRegistro(modifier: Modifier = Modifier) {
         fontFamily = inter,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -624,10 +681,12 @@ fun TextoInicioSesionVariacionInicioSesion(modifier: Modifier = Modifier) {
         fontFamily = inter,
         height = 1.2102272033691406.em,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -675,10 +734,13 @@ fun TextoCrearPublicacionVariacionCrearPublicacion(modifier: Modifier = Modifier
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -693,7 +755,9 @@ fun TopLevelVariacionCrearPublicacion(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -713,10 +777,14 @@ fun TextoSeleccionarRecursoVariacionSeleccionarRecurso(modifier: Modifier = Modi
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        ).padding(8.dp)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
+            .padding(8.dp)
     )
 }
 
@@ -737,12 +805,14 @@ fun TopLevelVariacionSeleccionarRecurso(
         itemSpacing = 10.0,
         radius = 50.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
 @Composable
-fun PostTitle(modifier: Modifier = Modifier, title : String) {
+fun PostTitle(modifier: Modifier = Modifier, title: String) {
     RelayText(
         content = title,
         fontSize = 12.0.sp,
@@ -757,10 +827,12 @@ fun PostTitle(modifier: Modifier = Modifier, title : String) {
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.wrapContentWidth(
-            unbounded = false,
-            align = Alignment.Start
-        ).padding(8.dp)
+        modifier = modifier
+            .wrapContentWidth(
+                unbounded = false,
+                align = Alignment.Start
+            )
+            .padding(8.dp)
     )
 }
 
@@ -781,7 +853,9 @@ fun TopLevelVariacionTituloPublicacion(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -801,10 +875,13 @@ fun TextoCategoriaPublicacionVariacionCategoriaPublicacion(modifier: Modifier = 
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -825,7 +902,9 @@ fun TopLevelVariacionCategoriaPublicacion(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -845,10 +924,13 @@ fun TextoPublicarVariacionPublicar(modifier: Modifier = Modifier) {
         fontWeight = FontWeight(700.0.toInt()),
         overflow = TextOverflow.Ellipsis,
         maxLines = -1,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -869,6 +951,8 @@ fun TopLevelVariacionPublicar(
         itemSpacing = 10.0,
         radius = 5.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

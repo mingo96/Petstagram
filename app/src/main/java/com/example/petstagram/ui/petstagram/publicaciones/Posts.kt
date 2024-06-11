@@ -1,7 +1,6 @@
 package com.example.petstagram.publicaciones
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
@@ -9,10 +8,9 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -64,8 +62,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.petstagram.Controllers.PostsUIController
 import com.example.petstagram.publicacion.Post
-import com.example.petstagram.ui.petstagram.seccioncomentarios.BotonMas
-import com.example.petstagram.ui.petstagram.seccioncomentarios.CuadroSumar
 import com.example.petstagram.ui.theme.Primary
 import com.example.petstagram.ui.theme.Secondary
 import kotlinx.coroutines.delay
@@ -121,7 +117,8 @@ fun Posts(
                 .fillMaxHeight(1.0f)
                 .background(
                     Primary,
-                )
+                ),
+            verticalArrangement = Arrangement.Top
         ) {
 
 

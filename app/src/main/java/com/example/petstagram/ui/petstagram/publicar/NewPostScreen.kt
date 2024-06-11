@@ -177,11 +177,12 @@ fun NewPostScreen(
                                     context, uriObserver!!
                                 )?.startsWith("image") == true
                             ) {
-                                SubcomposeAsyncImage(modifier = modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        sourceSelecter.launch("*/*")
-                                    },
+                                SubcomposeAsyncImage(
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            sourceSelecter.launch("*/*")
+                                        },
                                     model = uriObserver,
                                     loading = {
                                         CircularProgressIndicator(
@@ -244,7 +245,8 @@ fun NewPostScreen(
             enter = expandVertically { it } + slideInVertically { it },
             exit = shrinkVertically { it } + slideOutVertically { it }) {
 
-            PetList(pets = pets,
+            PetList(
+                pets = pets,
                 onSelect = {
                     viewModel.selectPet(it)
                     viewModel.togglePetsVisibility()

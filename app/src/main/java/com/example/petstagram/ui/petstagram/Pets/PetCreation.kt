@@ -118,15 +118,14 @@ fun PetCreation(viewModel: PetCreationViewModel, navController: NavHostControlle
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .height(height - 60.dp)
+                modifier = Modifier.height(height - 60.dp)
             ) {
 
                 item {
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .height(height.times(0.06f)+24.dp)
+                            .height(height.times(0.06f) + 24.dp)
                             .padding(top = 24.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically

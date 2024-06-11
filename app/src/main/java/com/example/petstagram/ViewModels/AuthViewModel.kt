@@ -47,7 +47,7 @@ class AuthViewModel : ViewModel() {
     /**`true` if the info button has been clicked 10 seconds ago or less*/
     private val _helpDisplayed = MutableLiveData(false)
 
-    val userIsNew by mutableStateOf(auth.currentUser==null)
+    val userIsNew by mutableStateOf(auth.currentUser == null)
 
     /**visible version of [_helpDisplayed]*/
     val helpDisplayed: LiveData<Boolean> = _helpDisplayed
@@ -94,39 +94,36 @@ class AuthViewModel : ViewModel() {
             auth.signInWithEmailAndPassword(user, password).addOnCompleteListener { task ->
 
                 if (task.isSuccessful) {
-                    db.collection("Users").whereEqualTo("mail", user).get()
-                        .addOnSuccessListener {
-                            val user = it.first().toObject(Profile::class.java)
-                            onSuccess.invoke()
-                            _state.value = AuthUiState.Success(user)
-                            localProfile = user
+                    db.collection("Users").whereEqualTo("mail", user).get().addOnSuccessListener {
+                        val user = it.first().toObject(Profile::class.java)
+                        onSuccess.invoke()
+                        _state.value = AuthUiState.Success(user)
+                        localProfile = user
 
-                            db.collection("NotificationsChannels").whereEqualTo("user", user.id)
-                                .get().addOnSuccessListener {
-                                    if (it.isEmpty) {
-                                        createNotificationsChannel(localProfile!!)
-                                    }
+                        db.collection("NotificationsChannels").whereEqualTo("user", user.id).get()
+                            .addOnSuccessListener {
+                                if (it.isEmpty) {
+                                    createNotificationsChannel(localProfile!!)
                                 }
-                            context.stopService(
-                                Intent(
-                                    context, PetstagramNotificationsService::class.java
-                                )
+                            }
+                        context.stopService(
+                            Intent(
+                                context, PetstagramNotificationsService::class.java
                             )
+                        )
 
-                            context.startForegroundService(
-                                Intent(
-                                    context, PetstagramNotificationsService::class.java
-                                ).putExtra(
-                                    "id",
-                                    localProfile!!.id
-                                )
+                        context.startForegroundService(
+                            Intent(
+                                context, PetstagramNotificationsService::class.java
+                            ).putExtra(
+                                "id", localProfile!!.id
                             )
+                        )
 
-                        }
+                    }
                 } else {
                     _state.value = AuthUiState.Error
-                    Toast.makeText(context, "credenciales incorrectos", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(context, "credenciales incorrectos", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -155,8 +152,7 @@ class AuthViewModel : ViewModel() {
                     }
                 } else {
                     _state.value = AuthUiState.Error
-                    Toast.makeText(context, "credenciales no válidos", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(context, "credenciales no válidos", Toast.LENGTH_SHORT).show()
                 }
 
             }
@@ -226,8 +222,7 @@ class AuthViewModel : ViewModel() {
                                 Intent(
                                     context, PetstagramNotificationsService::class.java
                                 ).putExtra(
-                                    "id",
-                                    localProfile!!.id
+                                    "id", localProfile!!.id
                                 )
                             )
                         }
@@ -236,7 +231,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    private fun createNotificationsChannel(profile: Profile, onComplete : ()->Unit={}) {
+    private fun createNotificationsChannel(profile: Profile, onComplete: () -> Unit = {}) {
         val notificationChannel = NotificationChannel(profile.id)
         db.collection("NotificationsChannels").add(notificationChannel).addOnSuccessListener {
             notificationChannel.id = it.id
@@ -269,8 +264,7 @@ class AuthViewModel : ViewModel() {
                     context.stopService(Intent(context, PetstagramNotificationsService::class.java))
                     context.startForegroundService(
                         Intent(context, PetstagramNotificationsService::class.java).putExtra(
-                            "id",
-                            localProfile!!.id
+                            "id", localProfile!!.id
                         )
                     )
 
@@ -342,8 +336,7 @@ class AuthViewModel : ViewModel() {
                                 Intent(
                                     context, PetstagramNotificationsService::class.java
                                 ).putExtra(
-                                    "id",
-                                    localProfile!!.id
+                                    "id", localProfile!!.id
                                 )
                             )
                         }

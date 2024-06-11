@@ -1,17 +1,17 @@
 package com.example.petstagram.UiData
 
-class Profile (
+class Profile(
     /**id of the auth of this user*/
-    var authId :String= "",
+    var authId: String = "",
     /**id of this document in the DB*/
-    var id :String= "",
+    var id: String = "",
     /**mail of the user, still not used*/
-    var mail : String = "",
+    var mail: String = "",
     /**username of the user*/
-    var userName :String= "",
+    var userName: String = "",
     /**url of the photo for this account*/
-    var profilePic : String = "empty",
-    var reportScore : Double = 1.0,
-    var followers : List<String> = emptyList(),
-    var notificationChannel : String = ""
+    var profilePic: String = "empty",
+    var reportScore: Double = 1.0,
+    var followers: List<String> = emptyList(),
+    var notificationChannel: String = ""
 )

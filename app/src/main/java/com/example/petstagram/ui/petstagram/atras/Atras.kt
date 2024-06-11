@@ -46,7 +46,9 @@ fun Atras(modifier: Modifier = Modifier) {
 private fun AtrasPreview() {
     MaterialTheme {
         RelayContainer {
-            Atras(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            Atras(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
     }
 }
@@ -56,7 +58,9 @@ fun ImagenAtras(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.atras_imagen_atras),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(40.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(40.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -76,6 +80,8 @@ fun TopLevel(
             blue = 35
         ),
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

@@ -5,24 +5,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.ViewModels.CategoriesViewModel
-import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.Categories
+import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerScope
@@ -47,16 +41,20 @@ fun CategoriesMenu(
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val height = maxHeight
         TopLevel(modifier = modifier) {
-            TopBarInstance(modifier = Modifier
-                .rowWeight(1.0f)
-                .height(180.dp),
+            TopBarInstance(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .height(180.dp),
                 navController = navController,
-                onExit = onExit)
-            CategoriesInstance(modifier = Modifier
-                .rowWeight(1.0f)
-                .height(height-60.dp),
+                onExit = onExit
+            )
+            CategoriesInstance(
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .height(height - 60.dp),
                 navController = navController,
-                categoryViewModel = viewModel)
+                categoryViewModel = viewModel
+            )
         }
     }
 
@@ -64,14 +62,26 @@ fun CategoriesMenu(
 
 /**top bar with which you can move in the app*/
 @Composable
-fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostController, onExit : ()->Unit) {
-    TopBar(modifier = modifier.fillMaxWidth(1.0f),navController = navController, variant = Variant.WithMenu, onExit = onExit)
+fun TopBarInstance(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    onExit: () -> Unit
+) {
+    TopBar(
+        modifier = modifier.fillMaxWidth(1.0f),
+        navController = navController,
+        variant = Variant.WithMenu,
+        onExit = onExit
+    )
 }
 
 /**esthetic bar (for now)*/
 @Composable
 fun BarraTipoNotificacion(modifier: Modifier = Modifier, navController: NavHostController) {
-    BarraDeSeleccionDeTipoDePublicacion(modifier = modifier.fillMaxWidth(1.0f),navController = navController)
+    BarraDeSeleccionDeTipoDePublicacion(
+        modifier = modifier.fillMaxWidth(1.0f),
+        navController = navController
+    )
 }
 
 /**instantiates categories from [categoryViewModel]*/
@@ -82,9 +92,11 @@ fun CategoriesInstance(
     categoryViewModel: CategoriesViewModel
 ) {
 
-    Categories(modifier = modifier.fillMaxWidth(),
+    Categories(
+        modifier = modifier.fillMaxWidth(),
         navController = navController,
-        categoryViewModel= categoryViewModel)
+        categoryViewModel = categoryViewModel
+    )
 
 }
 

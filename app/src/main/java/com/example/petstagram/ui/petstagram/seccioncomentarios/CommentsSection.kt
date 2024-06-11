@@ -75,38 +75,42 @@ fun CommentsSection(
         CommentsTopSection(modifier = Modifier.rowWeight(1.0f)) {
             if (!commenting!!) {
 
-                if (commentList!!.isEmpty()){
-                    CommentContent(content = "Parece que nadie ha comentado aún, sé el primero!",
+                if (commentList!!.isEmpty()) {
+                    CommentContent(
+                        content = "Parece que nadie ha comentado aún, sé el primero!",
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
                             .wrapContentHeight(
-                                align = Alignment.CenterVertically,
-                                unbounded = true
+                                align = Alignment.CenterVertically, unbounded = true
                             )
-                            .padding(end = 16.dp))
-                }else
-                    CommentsTitle(userName = post.creatorUser!!.userName)
-            }
-            else{
-                OutlinedTextField(value = content!!,
-                    onValueChange = {controller.textChange(it)},
+                            .padding(end = 16.dp)
+                    )
+                } else CommentsTitle(userName = post.creatorUser!!.userName)
+            } else {
+                OutlinedTextField(
+                    value = content!!,
+                    onValueChange = { controller.textChange(it) },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .wrapContentHeight(
-                            align = Alignment.CenterVertically,
-                            unbounded = true
+                            align = Alignment.CenterVertically, unbounded = true
                         )
-                        .padding(end = 16.dp)
-                    ,
-                    label = { Text(text = "Introduce tu comentario", style = TextStyle(fontSize = 12.sp))},
+                        .padding(end = 16.dp),
+                    label = {
+                        Text(
+                            text = "Introduce tu comentario", style = TextStyle(fontSize = 12.sp)
+                        )
+                    },
                     shape = RoundedCornerShape(30),
                     textStyle = TextStyle(color = Color.White, lineHeight = 1.em),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.DarkGray,
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.White,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.DarkGray,
+                        unfocusedContainerColor = Color.DarkGray,
+                        disabledContainerColor = Color.DarkGray,
                         focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.Gray
+                        unfocusedIndicatorColor = Color.Gray,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color.White
                     )
                 )
             }
@@ -119,10 +123,12 @@ fun CommentsSection(
                     } else {
                         if (content!!.length >= 200) {
                             Toast
-                                .makeText(context, "Comentario demasiado largo", Toast.LENGTH_SHORT)
+                                .makeText(
+                                    context, "Comentario demasiado largo", Toast.LENGTH_SHORT
+                                )
                                 .show()
                         } else if (content!!.isNotEmpty()) {
-                            controller.comment( post)
+                            controller.comment(post)
                         } else {
                             Toast
                                 .makeText(context, "Comentario vacío", Toast.LENGTH_SHORT)
@@ -139,10 +145,12 @@ fun CommentsSection(
         }
         Comentarios(modifier = Modifier.rowWeight(1.0f)) {
 
-            for (i in commentList!!){
-                Comment( modifier = Modifier.clickable { navigateToUser(i.user) },comment = i, onLike = {
-                    controller.likeOnComment(i)
-                })
+            for (i in commentList!!) {
+                Comment(modifier = Modifier.clickable { navigateToUser(i.user) },
+                    comment = i,
+                    onLike = {
+                        controller.likeOnComment(i)
+                    })
             }
         }
     }
@@ -150,14 +158,11 @@ fun CommentsSection(
 
 
 @Composable
-fun CommentsTitle(modifier: Modifier = Modifier, userName : String) {
+fun CommentsTitle(modifier: Modifier = Modifier, userName: String) {
     RelayText(
         content = "Comentarios de la publicación de $userName",
         color = Color(
-            alpha = 255,
-            red = 255,
-            green = 255,
-            blue = 255
+            alpha = 255, red = 255, green = 255, blue = 255
         ),
         height = 1.4285714721679688.em,
         letterSpacing = 0.10000000149011612.sp,
@@ -167,8 +172,7 @@ fun CommentsTitle(modifier: Modifier = Modifier, userName : String) {
             .fillMaxWidth(0.7f)
             .requiredHeight(40.0.dp)
             .wrapContentHeight(
-                align = Alignment.CenterVertically,
-                unbounded = true
+                align = Alignment.CenterVertically, unbounded = true
             )
             .padding(end = 16.dp)
     )
@@ -176,54 +180,33 @@ fun CommentsTitle(modifier: Modifier = Modifier, userName : String) {
 
 @Composable
 fun CuadroSumar(modifier: Modifier = Modifier) {
-    Text(text = "+",
-        style = TextStyle(
-            fontSize = 40.sp,
-            fontWeight = FontWeight(500.0.toInt())
-        ),modifier = modifier)
+    Text(
+        text = "+", style = TextStyle(
+            fontSize = 40.sp, fontWeight = FontWeight(500.0.toInt())
+        ), modifier = modifier
+    )
 }
 
 @Composable
 fun BotonMas(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
-        ),
-        arrangement = RelayContainerArrangement.Row,
-        padding = PaddingValues(
-            start = 8.0.dp,
-            top = 0.0.dp,
-            end = 8.0.dp,
-            bottom = 0.0.dp
-        ),
-        itemSpacing = 8.0,
-        radius = 15.0,
-        strokeWidth = 1.0,
-        strokeColor = Color(
-            alpha = 50,
-            red = 0,
-            green = 0,
-            blue = 0
-        ),
-        content = content,
-        modifier = modifier
-            .wrapContentHeight(
-                align = Alignment.CenterVertically,
-                unbounded = false
-            )
+            alpha = 255, red = 225, green = 196, blue = 1
+        ), arrangement = RelayContainerArrangement.Row, padding = PaddingValues(
+            start = 8.0.dp, top = 0.0.dp, end = 8.0.dp, bottom = 0.0.dp
+        ), itemSpacing = 8.0, radius = 15.0, strokeWidth = 1.0, strokeColor = Color(
+            alpha = 50, red = 0, green = 0, blue = 0
+        ), content = content, modifier = modifier.wrapContentHeight(
+            align = Alignment.CenterVertically, unbounded = false
+        )
     )
 }
 
 @Composable
 fun CommentsTopSection(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
@@ -234,15 +217,14 @@ fun CommentsTopSection(
         content = content,
         modifier = modifier
             .fillMaxWidth(1.0f)
-            .wrapContentHeight(unbounded = true,align = Alignment.CenterVertically)
+            .wrapContentHeight(unbounded = true, align = Alignment.CenterVertically)
     )
 }
 
 
 @Composable
 fun Comentarios(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         mainAxisAlignment = MainAxisAlignment.Start,
@@ -256,22 +238,15 @@ fun Comentarios(
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 0,
-            green = 0,
-            blue = 0
+            alpha = 255, red = 0, green = 0, blue = 0
         ),
         mainAxisAlignment = MainAxisAlignment.Start,
         padding = PaddingValues(
-            start = 8.0.dp,
-            top = 16.0.dp,
-            end = 8.0.dp,
-            bottom = 0.0.dp
+            start = 8.0.dp, top = 16.0.dp, end = 8.0.dp, bottom = 0.0.dp
         ),
         radius = 20.0,
         itemSpacing = 16.0,
@@ -280,13 +255,9 @@ fun TopLevel(
             .fillMaxHeight(1.0f)
 
             .border(
-                width = 4.dp,
-                Brush.verticalGradient(
-                    0.7f to Secondary,
-                    0.9f to Color.Transparent,
-                    1.0f to Color.Transparent
-                ),
-                RoundedCornerShape(15.dp, 15.dp)
+                width = 4.dp, Brush.verticalGradient(
+                    0.7f to Secondary, 0.9f to Color.Transparent, 1.0f to Color.Transparent
+                ), RoundedCornerShape(15.dp, 15.dp)
             )
     )
 }

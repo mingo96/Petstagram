@@ -52,13 +52,17 @@ fun Category(
                 },
                 contentDescription = category.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().clickable {
-                    viewModel.selectedCategory = category
-                    navController.navigate("publicaciones")
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        viewModel.selectedCategory = category
+                        navController.navigate("publicaciones")
+                    }
             )
         }
-        Buttons(modifier = Modifier.rowWeight(1.0f).padding(top=8.dp)) {
+        Buttons(modifier = Modifier
+            .rowWeight(1.0f)
+            .padding(top = 8.dp)) {
             PostsAccessButton(modifier = Modifier
                 .rowWeight(1.0f)
                 .columnWeight(1.0f)
@@ -74,9 +78,11 @@ fun Category(
                     viewModel.selectedCategory = category
                     navController.navigate("publicar")
                 }) {
-                AddText(modifier = Modifier
-                    .rowWeight(1.0f)
-                    .columnWeight(1.0f))
+                AddText(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)
+                )
             }
         }
     }
@@ -88,7 +94,7 @@ fun ListedCategory(
     category: Category,
     onSelected: () -> Unit = {},
     selected: Boolean
-){
+) {
 
     TopLevel(modifier.clickable { onSelected() }, selected = selected) {
         ImageContainer(modifier = Modifier.rowWeight(1.0f)) {
@@ -101,11 +107,14 @@ fun ListedCategory(
                 contentScale = ContentScale.Crop
             )
         }
-        Row (modifier = Modifier
-            .fillMaxWidth()
-            .requiredWidth(40.dp).padding(top = 8.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .requiredWidth(40.dp)
+                .padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center){
+            horizontalArrangement = Arrangement.Center
+        ) {
             CategoryName(texto = category.name, selected = selected)
         }
     }
@@ -119,7 +128,7 @@ fun CategoryName(modifier: Modifier = Modifier, texto: String, selected: Boolean
         content = texto.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
         fontSize = 20.0.sp,
         fontFamily = inter,
-        color = if(selected) Color.Black else Color.White,
+        color = if (selected) Color.Black else Color.White,
         height = 1.2102272033691406.em,
         fontWeight = FontWeight(800.0.toInt()),
         overflow = TextOverflow.Ellipsis,
@@ -282,7 +291,7 @@ fun Buttons(
 @Composable
 fun TopLevel(
     modifier: Modifier = Modifier,
-    selected : Boolean = false,
+    selected: Boolean = false,
     content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(

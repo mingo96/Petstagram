@@ -275,7 +275,7 @@ class BoxChildData(
         val otherModifier = other as? BoxChildData ?: return false
 
         return alignment == otherModifier.alignment &&
-            matchParentSize == otherModifier.matchParentSize
+                matchParentSize == otherModifier.matchParentSize
     }
 
     override fun hashCode(): Int {

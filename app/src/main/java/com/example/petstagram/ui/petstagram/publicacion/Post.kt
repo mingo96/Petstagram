@@ -1,4 +1,3 @@
-
 package com.example.petstagram.publicacion
 
 import android.net.Uri
@@ -72,8 +71,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun Post(
-    modifier: Modifier = Modifier, post: UIPost,
-    controller: PostsUIController, isVisible: Boolean
+    modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController, isVisible: Boolean
 ) {
     var commentsDisplayed by rememberSaveable {
         mutableStateOf(false)
@@ -94,34 +92,25 @@ fun Post(
         CuadroInfoInstance(
             modifier = Modifier
                 .rowWeight(1.0f)
-                .zIndex(1F),
-            post = post,
-            controller = controller
+                .zIndex(1F), post = post, controller = controller
         )
 
         PostSource(
             modifier = Modifier
                 .zIndex(0F)
                 .rowWeight(1.0f)
-                .heightIn(100.dp, 500.dp)
-                .tappable(
-                    onDoubleTap = {
-                        controller.likeOnPost(post)
-                        likes.value = post.likes.size
-                    }),
-            controller = controller,
-            post = post,
-            likes = likes,
-            isVisible = isVisible
+                .heightIn(100.dp, 450.dp)
+                .tappable(onDoubleTap = {
+                    controller.likeOnPost(post)
+                    likes.value = post.likes.size
+                }), controller = controller, post = post, likes = likes, isVisible = isVisible
         )
 
-        PostDownBar(
-            controller = controller,
+        PostDownBar(controller = controller,
             added = post,
             likes = likes,
             saved = saved,
-            tapOnComments = { commentsDisplayed = !commentsDisplayed }
-        )
+            tapOnComments = { commentsDisplayed = !commentsDisplayed })
 
         if (commentsDisplayed) {
             Dialog(
@@ -131,14 +120,12 @@ fun Post(
                         delay(300)
                         commentsDisplayed = !commentsDisplayed
                     }
-                },
-                properties = DialogProperties(
+                }, properties = DialogProperties(
                     dismissOnBackPress = true,
                     dismissOnClickOutside = true,
                     usePlatformDefaultWidth = false
                 )
-            )
-            {
+            ) {
 
                 //on open, set display animation to true
                 LaunchedEffect(Unit) {
@@ -146,33 +133,30 @@ fun Post(
                 }
 
                 //animations
-                AnimatedVisibility(
-                    visible = commentsDisplayed && animationDisplayer,
+                AnimatedVisibility(visible = commentsDisplayed && animationDisplayer,
                     enter = fadeIn() + expandVertically { it } + slideInVertically { it },
-                    exit = fadeOut() + shrinkVertically { it } + slideOutVertically { it }
-                ) {
+                    exit = fadeOut() + shrinkVertically { it } + slideOutVertically { it }) {
                     //align bottom
 
                     val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
                     dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
 
-                    CommentsSection(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.7f),
+                    CommentsSection(modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f),
 
-                        controller = controller,
-                        post = post,
-                        navigateToUser = {
+                        controller = controller, post = post, navigateToUser = {
                             coroutine.launch {
                                 animationDisplayer = false
                                 delay(300)
                                 commentsDisplayed = !commentsDisplayed
                             }
-                            controller.navController.navigate(if (controller.actualUser.id == it) "perfilPropio" else {
-                                ProfileObserverViewModel.staticProfile.id = it
-                                "perfilAjeno"
-                            })
+                            controller.navController.navigate(
+                                if (controller.actualUser.id == it) "perfilPropio" else {
+                                    ProfileObserverViewModel.staticProfile.id = it
+                                    "perfilAjeno"
+                                }
+                            )
                         }
                         //postComment = onComment,
                         //commentLiked = onCommentLiked
@@ -192,9 +176,7 @@ fun Post(
 
 @Composable
 fun CuadroInfoInstance(
-    modifier: Modifier = Modifier,
-    post: UIPost,
-    controller: PostsUIController? = null
+    modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController? = null
 ) {
     TopPostLimit(
         modifier = modifier
@@ -227,8 +209,7 @@ fun PostSource(
             exit = exit
         ) {
             Like(
-                pressed = Pressed.True,
-                modifier = Modifier
+                pressed = Pressed.True, modifier = Modifier
                     .size(150.dp)
                     .zIndex(10F)
             )
@@ -237,9 +218,9 @@ fun PostSource(
         when (post.typeOfMedia) {
             "image" -> {
 
-                if (post.UIURL == Uri.EMPTY){
+                if (post.UIURL == Uri.EMPTY) {
                     CacheImg(modifier = modifier, post = post)
-                }else {
+                } else {
                     PostImg(modifier = modifier, post = post)
                 }
 
@@ -250,24 +231,22 @@ fun PostSource(
                 val videoModeAnimation by controller.videoMode.observeAsState(false)
                 val videoIsRunningAnimation by controller.videoIsRunning.observeAsState()
 
-                if (post.mediaItem != MediaItem.EMPTY)
-                    DisplayVideoFromPost(
-                        source = post,
-                        modifier = modifier,
-                        onTap = {
-                            controller.animatePause()
-                        },
-                        onDoubleTap = {
-                            controller.likeOnPost(post)
-                            likes!!.value = post.likes.size
-                        },
-                        onLongTap = {
-                            controller.toggleStop()
-                            controller.animateVideoMode()
-                        },
-                        isVisible = if (videoModeAnimation) null else isVisible && !videoStopped,
-                        isRunning = videoIsRunningAnimation
-                    )
+                if (post.mediaItem != MediaItem.EMPTY) DisplayVideoFromPost(source = post,
+                    modifier = modifier,
+                    onTap = {
+                        controller.animatePause()
+                    },
+                    onDoubleTap = {
+                        controller.likeOnPost(post)
+                        likes!!.value = post.likes.size
+                    },
+                    onLongTap = {
+                        controller.toggleStop()
+                        controller.animateVideoMode()
+                    },
+                    isVisible = if (videoModeAnimation) null else isVisible && !videoStopped,
+                    isRunning = videoIsRunningAnimation
+                )
                 else
 
                     LinearProgressIndicator(
@@ -303,53 +282,44 @@ fun DefaultImg() {
 fun PostImg(modifier: Modifier, post: UIPost) {
 
     SubcomposeAsyncImage(
-        modifier = modifier
-            .fillMaxWidth(),
-        model = post.UIURL,
-        loading = {
+        modifier = modifier.fillMaxWidth(), model = post.UIURL, loading = {
             LinearProgressIndicator(
                 modifier
                     .fillMaxWidth()
                     .height(500.dp)
                     .background(Color.Black),
                 color = Secondary,
-            )        },
-        contentDescription = post.title,
-        contentScale = ContentScale.Crop
+            )
+        }, contentDescription = post.title, contentScale = ContentScale.Crop
     )
 }
+
 @Composable
 fun CacheImg(modifier: Modifier, post: UIPost) {
 
-    SubcomposeAsyncImage(
-        modifier = modifier
-            .fillMaxWidth(),
-        model = post.source,
-        loading = {
-            LinearProgressIndicator(
-                modifier
-                    .fillMaxWidth()
-                    .height(500.dp)
-                    .background(Color.Black),
-                color = Secondary,
-            )        },
-        error = {
-            LinearProgressIndicator(
-                modifier
-                    .fillMaxWidth()
-                    .height(500.dp)
-                    .background(Color.Black),
-                color = Secondary,
-            )        },
-        contentDescription = post.title,
-        contentScale = ContentScale.Crop
+    SubcomposeAsyncImage(modifier = modifier.fillMaxWidth(), model = post.source, loading = {
+        LinearProgressIndicator(
+            modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .background(Color.Black),
+            color = Secondary,
+        )
+    }, error = {
+        LinearProgressIndicator(
+            modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .background(Color.Black),
+            color = Secondary,
+        )
+    }, contentDescription = post.title, contentScale = ContentScale.Crop
     )
 }
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color.Black,

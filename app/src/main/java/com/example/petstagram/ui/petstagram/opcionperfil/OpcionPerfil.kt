@@ -22,8 +22,7 @@ import com.google.relay.compose.RelayText
 
 // Design to select for OpcionPerfil
 enum class LeSigue {
-    No,
-    Si
+    No, Si
 }
 
 /**
@@ -34,28 +33,24 @@ enum class LeSigue {
  */
 @Composable
 fun OpcionPerfil(
-    modifier: Modifier = Modifier,
-    leSigue: LeSigue = LeSigue.No
+    modifier: Modifier = Modifier, leSigue: LeSigue = LeSigue.No
 ) {
     when (leSigue) {
         LeSigue.No -> TopLevelLeSigueNo(modifier = modifier) {
             TextoSeguirLeSigueNo(
                 modifier = Modifier.boxAlign(
-                    alignment = Alignment.Center,
-                    offset = DpOffset(
-                        x = 0.0.dp,
-                        y = 0.0.dp
+                    alignment = Alignment.Center, offset = DpOffset(
+                        x = 0.0.dp, y = 0.0.dp
                     )
                 )
             )
         }
+
         LeSigue.Si -> TopLevelLeSigueSi(modifier = modifier) {
             TextoDejarSeguirLeSigueSi(
                 modifier = Modifier.boxAlign(
-                    alignment = Alignment.Center,
-                    offset = DpOffset(
-                        x = 0.0.dp,
-                        y = 0.0.dp
+                    alignment = Alignment.Center, offset = DpOffset(
+                        x = 0.0.dp, y = 0.0.dp
                     )
                 )
             )
@@ -69,8 +64,9 @@ private fun OpcionPerfilLeSigueNoPreview() {
     MaterialTheme {
         RelayContainer {
             OpcionPerfil(
-                leSigue = LeSigue.No,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                leSigue = LeSigue.No, modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -82,8 +78,9 @@ private fun OpcionPerfilLeSigueSiPreview() {
     MaterialTheme {
         RelayContainer {
             OpcionPerfil(
-                leSigue = LeSigue.Si,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                leSigue = LeSigue.Si, modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -98,36 +95,27 @@ fun TextoSeguirLeSigueNo(modifier: Modifier = Modifier) {
         height = 1.210227279663086.em,
         fontWeight = FontWeight(800.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(264.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(264.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically, unbounded = true
+            )
     )
 }
 
 @Composable
 fun TopLevelLeSigueNo(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
-        ),
-        isStructured = false,
-        radius = 6.0,
-        strokeWidth = 2.0,
-        strokeColor = Color(
-            alpha = 38,
-            red = 0,
-            green = 0,
-            blue = 0
-        ),
-        content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+            alpha = 255, red = 225, green = 196, blue = 1
+        ), isStructured = false, radius = 6.0, strokeWidth = 2.0, strokeColor = Color(
+            alpha = 38, red = 0, green = 0, blue = 0
+        ), content = content, modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -140,35 +128,26 @@ fun TextoDejarSeguirLeSigueSi(modifier: Modifier = Modifier) {
         height = 1.210227279663086.em,
         fontWeight = FontWeight(800.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(264.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(264.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically, unbounded = true
+            )
     )
 }
 
 @Composable
 fun TopLevelLeSigueSi(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 225,
-            green = 196,
-            blue = 1
-        ),
-        isStructured = false,
-        radius = 6.0,
-        strokeWidth = 2.0,
-        strokeColor = Color(
-            alpha = 38,
-            red = 0,
-            green = 0,
-            blue = 0
-        ),
-        content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+            alpha = 255, red = 225, green = 196, blue = 1
+        ), isStructured = false, radius = 6.0, strokeWidth = 2.0, strokeColor = Color(
+            alpha = 38, red = 0, green = 0, blue = 0
+        ), content = content, modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

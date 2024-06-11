@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.petstagram.atras.Atras
 import com.example.petstagram.R
+import com.example.petstagram.atras.Atras
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
@@ -51,8 +51,16 @@ fun BarraDeSeleccionDeTipoDePublicacion(
     when (seleccionado) {
         Seleccionado.Publicaciones -> TopLevelSeleccionadoPublicaciones(modifier = modifier) {
             PublicacionSelccionadoSeleccionadoPublicaciones {
-                IconoSeleccionadoSeleccionadoPublicaciones(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)) {
-                    IconoSeleccionadoPublicaciones(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+                IconoSeleccionadoSeleccionadoPublicaciones(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)
+                ) {
+                    IconoSeleccionadoPublicaciones(
+                        modifier = Modifier
+                            .rowWeight(1.0f)
+                            .columnWeight(1.0f)
+                    )
                 }
                 PublicacionesSeleccionadoPublicaciones(
                     modifier = Modifier.boxAlign(
@@ -77,6 +85,7 @@ fun BarraDeSeleccionDeTipoDePublicacion(
             }
             AtrasAtras(Modifier.clickable { navController.navigateUp() })
         }
+
         Seleccionado.Adopcion -> TopLevelSeleccionadoAdopcion(modifier = modifier) {
             PublicacionNoSeleccionadoSeleccionadoAdopcion {
                 PublicacionesSeleccionadoAdopcion(
@@ -90,8 +99,16 @@ fun BarraDeSeleccionDeTipoDePublicacion(
                 )
             }
             AdopcionSeleccionadoSeleccionadoAdopcion {
-                IconoSeleccionadoSeleccionadoAdopcion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)) {
-                    IconoSeleccionadoAdopcion(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+                IconoSeleccionadoSeleccionadoAdopcion(
+                    modifier = Modifier
+                        .rowWeight(1.0f)
+                        .columnWeight(1.0f)
+                ) {
+                    IconoSeleccionadoAdopcion(
+                        modifier = Modifier
+                            .rowWeight(1.0f)
+                            .columnWeight(1.0f)
+                    )
                 }
                 AdopcionSeleccionadoAdopcion(
                     modifier = Modifier.boxAlign(
@@ -109,19 +126,21 @@ fun BarraDeSeleccionDeTipoDePublicacion(
 }
 
 
-
 @Composable
 fun IconoSeleccionadoPublicaciones(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.barra_de_seleccion_de_tipo_de_publicacion_icono),
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 2.2734375.dp,
-                top = 3.7266845703125.dp,
-                end = 1.9998960494995117.dp,
-                bottom = 3.333314895629883.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 2.2734375.dp,
+                    top = 3.7266845703125.dp,
+                    end = 1.9998960494995117.dp,
+                    bottom = 3.333314895629883.dp
+                )
             )
-        ).fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -134,14 +153,17 @@ fun IconoSeleccionadoSeleccionadoPublicaciones(
         isStructured = false,
         clipToParent = false,
         content = content,
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 9.0.dp,
-                top = 8.0.dp,
-                end = 112.0.dp,
-                bottom = 8.0.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 9.0.dp,
+                    top = 8.0.dp,
+                    end = 112.0.dp,
+                    bottom = 8.0.dp
+                )
             )
-        ).fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -153,10 +175,13 @@ fun PublicacionesSeleccionadoPublicaciones(modifier: Modifier = Modifier) {
         letterSpacing = 0.10000000149011612.sp,
         fontWeight = FontWeight(500.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(96.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(96.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -174,7 +199,10 @@ fun PublicacionSelccionadoSeleccionadoPublicaciones(
         ),
         isStructured = false,
         content = content,
-        modifier = modifier.requiredWidth(137.0.dp).requiredHeight(32.0.dp).clip(RoundedCornerShape(40.dp,0.dp,0.dp,40.dp))
+        modifier = modifier
+            .requiredWidth(137.0.dp)
+            .requiredHeight(32.0.dp)
+            .clip(RoundedCornerShape(40.dp, 0.dp, 0.dp, 40.dp))
     )
 }
 
@@ -192,10 +220,13 @@ fun AdopcionSeleccionadoPublicaciones(modifier: Modifier = Modifier) {
         letterSpacing = 0.10000000149011612.sp,
         fontWeight = FontWeight(500.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(104.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(104.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -220,13 +251,17 @@ fun AdopcionNoSeleccionadoSeleccionadoPublicaciones(
             blue = 255
         ),
         content = content,
-        modifier = modifier.requiredWidth(104.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(104.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
 @Composable
 fun AtrasAtras(modifier: Modifier = Modifier) {
-    Atras(modifier = modifier.requiredWidth(56.0.dp).requiredHeight(48.0.dp))
+    Atras(modifier = modifier
+        .requiredWidth(56.0.dp)
+        .requiredHeight(48.0.dp))
 }
 
 @Composable
@@ -263,10 +298,13 @@ fun PublicacionesSeleccionadoAdopcion(modifier: Modifier = Modifier) {
         letterSpacing = 0.10000000149011612.sp,
         fontWeight = FontWeight(500.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(104.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(104.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -291,7 +329,9 @@ fun PublicacionNoSeleccionadoSeleccionadoAdopcion(
             blue = 255
         ),
         content = content,
-        modifier = modifier.requiredWidth(104.0.dp).requiredHeight(32.0.dp)
+        modifier = modifier
+            .requiredWidth(104.0.dp)
+            .requiredHeight(32.0.dp)
     )
 }
 
@@ -299,14 +339,17 @@ fun PublicacionNoSeleccionadoSeleccionadoAdopcion(
 fun IconoSeleccionadoAdopcion(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.barra_de_seleccion_de_tipo_de_publicacion_icono1),
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 2.2733154296875.dp,
-                top = 3.7266845703125.dp,
-                end = 2.0000181198120117.dp,
-                bottom = 3.333314895629883.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 2.2733154296875.dp,
+                    top = 3.7266845703125.dp,
+                    end = 2.0000181198120117.dp,
+                    bottom = 3.333314895629883.dp
+                )
             )
-        ).fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -319,14 +362,17 @@ fun IconoSeleccionadoSeleccionadoAdopcion(
         isStructured = false,
         clipToParent = false,
         content = content,
-        modifier = modifier.padding(
-            paddingValues = PaddingValues(
-                start = 9.0.dp,
-                top = 8.0.dp,
-                end = 112.0.dp,
-                bottom = 8.0.dp
+        modifier = modifier
+            .padding(
+                paddingValues = PaddingValues(
+                    start = 9.0.dp,
+                    top = 8.0.dp,
+                    end = 112.0.dp,
+                    bottom = 8.0.dp
+                )
             )
-        ).fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -338,10 +384,13 @@ fun AdopcionSeleccionadoAdopcion(modifier: Modifier = Modifier) {
         letterSpacing = 0.10000000149011612.sp,
         fontWeight = FontWeight(500.0.toInt()),
         maxLines = -1,
-        modifier = modifier.requiredWidth(96.0.dp).requiredHeight(32.0.dp).wrapContentHeight(
-            align = Alignment.CenterVertically,
-            unbounded = true
-        )
+        modifier = modifier
+            .requiredWidth(96.0.dp)
+            .requiredHeight(32.0.dp)
+            .wrapContentHeight(
+                align = Alignment.CenterVertically,
+                unbounded = true
+            )
     )
 }
 
@@ -359,7 +408,10 @@ fun AdopcionSeleccionadoSeleccionadoAdopcion(
         ),
         isStructured = false,
         content = content,
-        modifier = modifier.requiredWidth(137.0.dp).requiredHeight(32.0.dp).clip(RoundedCornerShape(0.dp,40.dp,40.dp,0.dp))
+        modifier = modifier
+            .requiredWidth(137.0.dp)
+            .requiredHeight(32.0.dp)
+            .clip(RoundedCornerShape(0.dp, 40.dp, 40.dp, 0.dp))
     )
 }
 

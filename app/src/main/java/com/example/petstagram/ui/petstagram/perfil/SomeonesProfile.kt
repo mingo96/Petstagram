@@ -145,8 +145,9 @@ fun SomeonesProfile(
                     LazyRow(
                         state = scroll,
                         flingBehavior = flingBehavior,
-                        modifier = Modifier.width(width * 2)
-                            .height(height-60.dp-56.dp-48.dp),
+                        modifier = Modifier
+                            .width(width * 2)
+                            .height(height - 60.dp - 56.dp - 48.dp),
                     ) {
                         item {
 

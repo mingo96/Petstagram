@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,9 +51,7 @@ import com.google.relay.compose.ScrollAnchor
 /**UI screen to display a [Category] posts*/
 @Composable
 fun SavedPosts(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    viewModel: SavedPostsViewModel
+    modifier: Modifier = Modifier, navController: NavHostController, viewModel: SavedPostsViewModel
 ) {
     //starts loading when entering
     LaunchedEffect(viewModel) {
@@ -79,8 +76,7 @@ fun SavedPosts(
             TopBarInstance(
                 modifier = Modifier
                     .rowWeight(1.0f)
-                    .height(180.dp),
-                navController = navController
+                    .height(180.dp), navController = navController
             )
 
             Column(
@@ -95,8 +91,7 @@ fun SavedPosts(
                         .fillMaxWidth()
                         .height(56.dp)
                         .padding(horizontal = 8.dp)
-                )
-                {
+                ) {
                     items(categories) { i ->
                         CategoryDisplay(category = i, click = { viewModel.selectCategory(i) })
                     }
@@ -130,8 +125,7 @@ fun SavedPosts(
                 }
 
                 PostsInstance(
-                    modifier = Modifier
-                        .height(height.times(if (viewModel.statedCategory == null) 0.825f else 0.773f)),
+                    modifier = Modifier.height(height.times(if (viewModel.statedCategory == null) 0.825f else 0.773f)),
                     viewModel = viewModel
                 )
             }
@@ -155,16 +149,12 @@ fun CategoryDisplay(category: Category, click: () -> Unit) {
         RelayContainer(
             modifier = Modifier
                 .fillMaxHeight(0.7f)
-                .padding(top = 4.dp),
-            radius = 6.0
+                .padding(top = 4.dp), radius = 6.0
         ) {
             SubcomposeAsyncImage(
-                model = category.categoryImage,
-                loading = {
+                model = category.categoryImage, loading = {
                     CircularProgressIndicator()
-                },
-                contentDescription = category.name,
-                contentScale = ContentScale.Crop
+                }, contentDescription = category.name, contentScale = ContentScale.Crop
             )
         }
 
@@ -190,9 +180,7 @@ fun TopBarInstance(modifier: Modifier = Modifier, navController: NavHostControll
 @Composable
 fun CategoryText(modifier: Modifier = Modifier, added: String) {
     Label(
-        variation = Variation.CategoryPosts,
-        modifier = modifier,
-        added = added
+        variation = Variation.CategoryPosts, modifier = modifier, added = added
     )
 }
 
@@ -200,23 +188,17 @@ fun CategoryText(modifier: Modifier = Modifier, added: String) {
 @Composable
 fun PostsInstance(modifier: Modifier = Modifier, viewModel: SavedPostsViewModel) {
     Posts(
-        modifier = modifier
-            .fillMaxWidth(1.0f),
-        controller = viewModel
+        modifier = modifier.fillMaxWidth(1.0f), controller = viewModel
     )
 }
 
 @Composable
 fun TopLevel(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
         mainAxisAlignment = MainAxisAlignment.End,
         scrollAnchor = ScrollAnchor.End,

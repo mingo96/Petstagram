@@ -16,10 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
-import com.example.petstagram.ui.petstagram.accesoaperfil.AccesoAperfil
 import com.example.petstagram.atras.Atras
+import com.example.petstagram.ui.petstagram.accesoaperfil.AccesoAperfil
 import com.example.petstagram.ui.theme.Primary
-import com.google.relay.compose.BorderAlignment
 import com.google.relay.compose.CrossAxisAlignment
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer

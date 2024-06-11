@@ -33,10 +33,15 @@ fun Guardar(
 ) {
     when (savePressed) {
         SavePressed.No -> TopLevelGuardarPulsadoNo(modifier = modifier) {
-            ImagenGuardarGuardarPulsadoNo(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            ImagenGuardarGuardarPulsadoNo(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
+
         SavePressed.Si -> TopLevelGuardarPulsadoSi(modifier = modifier) {
-            ImagenGuardarGuardarPulsadoSi(modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f))
+            ImagenGuardarGuardarPulsadoSi(modifier = Modifier
+                .rowWeight(1.0f)
+                .columnWeight(1.0f))
         }
     }
 }
@@ -48,7 +53,9 @@ private fun GuardarGuardarPulsadoNoPreview() {
         RelayContainer {
             Guardar(
                 savePressed = SavePressed.No,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -61,7 +68,9 @@ private fun GuardarGuardarPulsadoSiPreview() {
         RelayContainer {
             Guardar(
                 savePressed = SavePressed.Si,
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -72,7 +81,9 @@ fun ImagenGuardarGuardarPulsadoNo(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.guardar_imagen_guardar_modified),
         contentScale = ContentScale.Crop,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -91,7 +102,9 @@ fun TopLevelGuardarPulsadoNo(
         isStructured = false,
         radius = 4.5,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -100,7 +113,9 @@ fun ImagenGuardarGuardarPulsadoSi(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.guardar_imagen_guardar_modified),
         contentScale = ContentScale.Crop,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }
 
@@ -114,6 +129,8 @@ fun TopLevelGuardarPulsadoSi(
         isStructured = false,
         radius = 4.5,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

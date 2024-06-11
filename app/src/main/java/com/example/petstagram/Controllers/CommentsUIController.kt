@@ -35,16 +35,16 @@ interface CommentsUIController {
 
             comment.likes += newLike
             db.collection("Comments").document(comment.id).update(
-                    "likes", FieldValue.arrayUnion(newLike)
-                )
+                "likes", FieldValue.arrayUnion(newLike)
+            )
             comment.liked = Pressed.True
             true
         } else {
 
             comment.likes.removeIf { it.userId == actualUser.id }
             db.collection("Comments").document(comment.id).update(
-                    "likes", FieldValue.arrayRemove(newLike)
-                )
+                "likes", FieldValue.arrayRemove(newLike)
+            )
             comment.liked = Pressed.False
 
             false

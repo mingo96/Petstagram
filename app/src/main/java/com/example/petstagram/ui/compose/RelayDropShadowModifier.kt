@@ -16,15 +16,15 @@
 
 package com.google.relay.compose
 
-import android.graphics.BlendMode as androidBlendMode
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.*
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import android.graphics.BlendMode as androidBlendMode
 
 // Modifier that allows a rectangular drop shadow to be applied to a Composable.
 //

@@ -1,7 +1,6 @@
 package com.example.petstagram.loginenmovil
 
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,7 +47,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -65,8 +62,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.AuthViewModel
-import com.example.petstagram.cuadrotexto.Label
-import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.data.AuthUiState
 import com.example.petstagram.perfilpropio.StateSelector
@@ -80,8 +75,6 @@ import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
 import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
-import com.google.relay.compose.RelayImage
-import com.google.relay.compose.RelayVector
 import kotlinx.coroutines.delay
 
 /**
@@ -117,12 +110,16 @@ fun PhoneLogin(
             try {
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                viewModel.signInWithGoogleCredential(credential = credential, context = context, onLogin = {
-                    navController.navigate("categorias")
-                }, onRegister = {
-                    focusManager.clearFocus(true)
-                    navController.navigate("añadirMascota")
-                })
+                viewModel.signInWithGoogleCredential(
+                    credential = credential,
+                    context = context,
+                    onLogin = {
+                        navController.navigate("categorias")
+                    },
+                    onRegister = {
+                        focusManager.clearFocus(true)
+                        navController.navigate("añadirMascota")
+                    })
             } catch (e: Exception) {
                 Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
             }
@@ -230,24 +227,28 @@ fun PhoneLogin(
                         )
 
                         val helpDisplayed by viewModel.helpDisplayed.observeAsState(false)
-                        AnimatedVisibility(visible = helpDisplayed||viewModel.userIsNew) {
+                        AnimatedVisibility(visible = helpDisplayed || viewModel.userIsNew) {
                             var color by remember {
-                                mutableStateOf(Color(red = 0,
-                                    green = 164, blue = 0, alpha = 255))
+                                mutableStateOf(
+                                    Color(
+                                        red = 0,
+                                        green = 164, blue = 0, alpha = 255
+                                    )
+                                )
                             }
                             LaunchedEffect(key1 = Unit) {
                                 var upOrDown = true
-                                while (!helpDisplayed){
+                                while (!helpDisplayed) {
                                     if (upOrDown) {
                                         color = color.copy(red = color.red + 0.05f)
-                                        if (color.red>=0.9){
+                                        if (color.red >= 0.9) {
                                             upOrDown = false
                                             delay(1000)
                                         }
-                                    }else{
+                                    } else {
                                         color = color.copy(red = color.red - 0.05f)
 
-                                        if (color.red<=0.1){
+                                        if (color.red <= 0.1) {
                                             upOrDown = true
                                             delay(1000)
                                         }
@@ -448,7 +449,10 @@ fun WelcomeText(modifier: Modifier = Modifier, text: String = "") {
 /**just some in-out text field, not too much to see (logic wise)*/
 @Composable
 fun UserText(
-    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit,focusChange:()->Unit={}
+    modifier: Modifier = Modifier,
+    textAccess: () -> String,
+    changeText: (String) -> Unit,
+    focusChange: () -> Unit = {}
 ) {
     TextField(
         label = { Text("Correo", color = Primary) },
@@ -476,7 +480,10 @@ fun UserText(
 /**just some in-out text field, password formatted, not too much to see (logic wise)*/
 @Composable
 fun PasswordText(
-    modifier: Modifier = Modifier, textAccess: () -> String, changeText: (String) -> Unit, send : ()->Unit = {}
+    modifier: Modifier = Modifier,
+    textAccess: () -> String,
+    changeText: (String) -> Unit,
+    send: () -> Unit = {}
 ) {
     TextField(
         label = { Text("Contraseña", color = Primary) },
@@ -516,6 +523,7 @@ fun myTextFieldColors(): TextFieldColors {
         cursorColor = Primary
     )
 }
+
 @Composable
 fun TopLevel(
     modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit

@@ -28,25 +28,29 @@ import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 
 @Composable
-fun PetCard(modifier: Modifier = Modifier, pet: Pet, onSelect: () -> Unit = {}, selected : Boolean = false) {
+fun PetCard(
+    modifier: Modifier = Modifier, pet: Pet, onSelect: () -> Unit = {}, selected: Boolean = false
+) {
 
-    PetContainer(
-        modifier
-        .clickable(onClickLabel = "vas a seleccionar a ${pet.name}") { onSelect() }
-    ) {
+    PetContainer(modifier.clickable(onClickLabel = "vas a seleccionar a ${pet.name}") { onSelect() }) {
 
-        BoxWithConstraints() {
+        BoxWithConstraints {
 
             PhotoContainer(
                 Modifier
                     .height(maxWidth)
-                    .width(maxWidth)) {
+                    .width(maxWidth)
+            ) {
                 ProfilePic(url = pet.profilePic)
             }
         }
 
         NameContainer(selected = selected) {
-            Text(text = pet.name, modifier = Modifier.padding(horizontal = 8.dp), color = if (selected)Color.Black else Color.White)
+            Text(
+                text = pet.name,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                color = if (selected) Color.Black else Color.White
+            )
         }
 
     }
@@ -56,8 +60,7 @@ fun PetCard(modifier: Modifier = Modifier, pet: Pet, onSelect: () -> Unit = {}, 
 
 @Composable
 fun PetContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
 
@@ -72,10 +75,8 @@ fun PetContainer(
             .fillMaxHeight(1.0f)
             .background(
                 Brush.verticalGradient(
-                    0.0f to Primary,
-                    1.0f to Color.Transparent
-                ),
-                RoundedCornerShape(15.dp)
+                    0.0f to Primary, 1.0f to Color.Transparent
+                ), RoundedCornerShape(15.dp)
             )
             .padding(8.dp)
     )
@@ -83,21 +84,16 @@ fun PetContainer(
 
 @Composable
 fun PhotoContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable RelayContainerScope.() -> Unit
+    modifier: Modifier = Modifier, content: @Composable RelayContainerScope.() -> Unit
 ) {
     RelayContainer(
         backgroundColor = Color(
-            alpha = 255,
-            red = 217,
-            green = 217,
-            blue = 217
+            alpha = 255, red = 217, green = 217, blue = 217
         ),
         isStructured = false,
         radius = 200.0,
         content = content,
-        modifier = modifier
-            .border(4.dp, Color.Black, RoundedCornerShape(100))
+        modifier = modifier.border(4.dp, Color.Black, RoundedCornerShape(100))
     )
 }
 
@@ -109,10 +105,7 @@ fun NameContainer(
 ) {
     RelayContainer(
         backgroundColor = if (selected) Color.White else Color(
-            alpha = 255,
-            red = 35,
-            green = 35,
-            blue = 35
+            alpha = 255, red = 35, green = 35, blue = 35
         ),
 
         mainAxisAlignment = MainAxisAlignment.Center,
@@ -124,9 +117,7 @@ fun NameContainer(
             .wrapContentHeight()
             .wrapContentWidth()
             .border(
-                width = 1.0.dp,
-                color = Color.Gray,
-                shape = RoundedCornerShape(20)
+                width = 1.0.dp, color = Color.Gray, shape = RoundedCornerShape(20)
             )
     )
 }

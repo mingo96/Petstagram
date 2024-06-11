@@ -29,10 +29,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.petstagram.ViewModels.AuthViewModel
 import com.example.petstagram.ViewModels.CategoriesViewModel
 import com.example.petstagram.ViewModels.DataFetchViewModel
-import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PetCreationViewModel
 import com.example.petstagram.ViewModels.PetObserverViewModel
+import com.example.petstagram.ViewModels.PostsViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.ViewModels.SavedPostsViewModel
@@ -51,7 +51,6 @@ import com.example.petstagram.visualizarcategoria.DisplayCategory
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.selects.whileSelect
 
 class Petstagram : ComponentActivity() {
 
@@ -81,12 +80,10 @@ class Petstagram : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val notificationChannel= NotificationChannel(
-            "petstagram_notifications",
-            "Petstagram",
-            NotificationManager.IMPORTANCE_HIGH
+        val notificationChannel = NotificationChannel(
+            "petstagram_notifications", "Petstagram", NotificationManager.IMPORTANCE_HIGH
         )
-        val notificationManager=getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)
 
 
@@ -118,14 +115,9 @@ class Petstagram : ComponentActivity() {
 
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(
-                        alpha = 255,
-                        red = 35,
-                        green = 35,
-                        blue = 35
-                    ),
-                    contentColor = Color.White
+                    modifier = Modifier.fillMaxSize(), color = Color(
+                        alpha = 255, red = 35, green = 35, blue = 35
+                    ), contentColor = Color.White
                 ) {
                     val navController = rememberNavController()
 
@@ -153,8 +145,7 @@ class Petstagram : ComponentActivity() {
                     val focusManager = LocalFocusManager.current
 
                     NavHost(navController = navController, startDestination = start) {
-                        composable(
-                            "pantallaCarga",
+                        composable("pantallaCarga",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
@@ -170,7 +161,7 @@ class Petstagram : ComponentActivity() {
                                 dataFetchViewModel.startLoadingData(applicationContext)
                                 publishViewModel.user = authViewModel.localProfile!!
 
-                                while (dataFetchViewModel.categories().isEmpty()){
+                                while (dataFetchViewModel.categories().isEmpty()) {
                                     delay(100)
                                 }
 
@@ -183,14 +174,13 @@ class Petstagram : ComponentActivity() {
                                 moveTaskToBack(true)
                             }
                         }
-                        composable(
-                            "login",
+                        composable("login",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
                             ownProfileViewModel.clean()
                             dataFetchViewModel.clear()
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
@@ -198,8 +188,7 @@ class Petstagram : ComponentActivity() {
                             PhoneLogin(navController = navController, viewModel = authViewModel)
 
                         }
-                        composable(
-                            "categorias",
+                        composable("categorias",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
@@ -213,13 +202,13 @@ class Petstagram : ComponentActivity() {
                                 dataFetchViewModel.startLoadingData(applicationContext)
                                 publishViewModel.user = authViewModel.localProfile!!
 
-                                while (dataFetchViewModel.categories().isEmpty()){
+                                while (dataFetchViewModel.categories().isEmpty()) {
                                     delay(1000)
                                 }
                                 categoriesViewModel.fetchCategories()
                             }
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
@@ -230,19 +219,17 @@ class Petstagram : ComponentActivity() {
 
                             focusManager.clearFocus(true)
                             CategoriesMenu(
-                                navController = navController,
-                                viewModel = categoriesViewModel
-                            ){
+                                navController = navController, viewModel = categoriesViewModel
+                            ) {
                                 moveTaskToBack(true)
                             }
 
                         }
-                        composable(
-                            "publicaciones",
+                        composable("publicaciones",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
@@ -250,52 +237,46 @@ class Petstagram : ComponentActivity() {
 
                             focusManager.clearFocus(true)
                             DisplayCategory(
-                                navController = navController,
-                                viewModel = postsViewModel
+                                navController = navController, viewModel = postsViewModel
                             )
 
                         }
-                        composable(
-                            "publicar",
+                        composable("publicar",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             publishViewModel.user = authViewModel.localProfile!!
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
                             focusManager.clearFocus(true)
                             NewPostScreen(
-                                navController = navController,
-                                viewModel = publishViewModel
+                                navController = navController, viewModel = publishViewModel
                             )
 
                         }
-                        composable(
-                            "perfilPropio",
+                        composable("perfilPropio",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
                             ownProfileViewModel.selfId = authViewModel.localProfile!!.id
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
                             focusManager.clearFocus(true)
                             MyProfile(
-                                navController = navController,
-                                viewModel = ownProfileViewModel
+                                navController = navController, viewModel = ownProfileViewModel
                             )
                         }
-                        composable(
-                            "perfilAjeno",
+                        composable("perfilAjeno",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
@@ -303,16 +284,14 @@ class Petstagram : ComponentActivity() {
                             profileObserverViewModel.selfId = authViewModel.localProfile!!.id
 
                             SomeonesProfile(
-                                navController = navController,
-                                viewModel = profileObserverViewModel
+                                navController = navController, viewModel = profileObserverViewModel
                             )
                         }
-                        composable(
-                            "mascota",
+                        composable("mascota",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
@@ -320,44 +299,39 @@ class Petstagram : ComponentActivity() {
                             petObserverViewModel.selfId = authViewModel.localProfile!!.id
 
                             PetProfile(
-                                navController = navController,
-                                viewModel = petObserverViewModel
+                                navController = navController, viewModel = petObserverViewModel
                             )
                         }
-                        composable(
-                            "añadirMascota",
+                        composable("añadirMascota",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
-                            if (dataFetchViewModel.profile().id==""){
+                            if (dataFetchViewModel.profile().id == "") {
                                 dataFetchViewModel.startLoadingData(applicationContext)
                             }
                             petCreationViewModel.selectedCategory = publishViewModel.category
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
                             focusManager.clearFocus(true)
                             PetCreation(
-                                viewModel = petCreationViewModel,
-                                navController = navController
+                                viewModel = petCreationViewModel, navController = navController
                             )
                         }
-                        composable(
-                            "guardadas",
+                        composable("guardadas",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
                             savedPostsViewModel.actualUser = authViewModel.localProfile!!
 
-                            LaunchedEffect(key1 = Unit){
+                            LaunchedEffect(key1 = Unit) {
 
                                 focusManager.clearFocus(true)
                             }
                             focusManager.clearFocus(true)
                             SavedPosts(
-                                navController = navController,
-                                viewModel = savedPostsViewModel
+                                navController = navController, viewModel = savedPostsViewModel
                             )
 
                         }
@@ -374,10 +348,8 @@ class Petstagram : ComponentActivity() {
     private fun askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.POST_NOTIFICATIONS
-            ) ==
-            PackageManager.PERMISSION_GRANTED
+                this, android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
 
             PetstagramNotificationGenerator.hasPermission = true

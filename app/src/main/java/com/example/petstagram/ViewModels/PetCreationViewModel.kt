@@ -48,9 +48,9 @@ class PetCreationViewModel : ViewModel() {
 
     private val _dots = MutableStateFlow("")
 
-    val dots :StateFlow<String> = _dots
+    val dots: StateFlow<String> = _dots
 
-    var selectedCategory : Category? by mutableStateOf(null)
+    var selectedCategory: Category? by mutableStateOf(null)
 
     fun startLoading() {
 
@@ -68,20 +68,17 @@ class PetCreationViewModel : ViewModel() {
             _categories.value += newRound - _categories.value.toSet()
 
             _dots.stateIn(
-                viewModelScope,
-                started = SharingStarted.WhileSubscribed(10000),
-                0
-            )
-                .collect{
-                    _dots.value = when(_dots.value){
-                        "."->".."
-                        ".."->"..."
-                        "..."->""
-                        else ->"."
-                    }
-                    delay(500)
-
+                viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
+            ).collect {
+                _dots.value = when (_dots.value) {
+                    "." -> ".."
+                    ".." -> "..."
+                    "..." -> ""
+                    else -> "."
                 }
+                delay(500)
+
+            }
         }
 
     }
@@ -100,7 +97,7 @@ class PetCreationViewModel : ViewModel() {
         pet.category = newCategory
     }
 
-    fun send(context: Context,onSuccess: () -> Unit = {}) {
+    fun send(context: Context, onSuccess: () -> Unit = {}) {
 
         if (validate()) {
             try {
@@ -114,19 +111,16 @@ class PetCreationViewModel : ViewModel() {
                         .addOnSuccessListener {
                             storageRef.child("/ProfilePictures/${pet.id}").downloadUrl.addOnSuccessListener { uri ->
                                 pet.profilePic = uri.toString()
-                                db.collection("Pets")
-                                    .document(pet.id)
-                                    .update(
-                                        mapOf(
-                                            Pair("id", pet.id),
-                                            Pair("profilePic", pet.profilePic)
-                                        )
+                                db.collection("Pets").document(pet.id).update(
+                                    mapOf(
+                                        Pair("id", pet.id), Pair("profilePic", pet.profilePic)
                                     )
+                                )
                                 sending = false
                                 onSuccess()
 
                                 pet = Pet()
-                                name=""
+                                name = ""
                                 _resource.value = Uri.EMPTY
                                 sending = false
                             }
@@ -137,8 +131,8 @@ class PetCreationViewModel : ViewModel() {
                 Log.e("ERRRRRRRORRRR", e.message.orEmpty())
             }
 
-        }else{
-            Toast.makeText(context,"Revisa la informacion dada", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Revisa la informacion dada", Toast.LENGTH_SHORT).show()
 
         }
 

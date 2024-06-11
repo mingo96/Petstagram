@@ -96,6 +96,7 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     override fun toggleOptionsDisplayed() {
         _optionsDisplayed.value = !optionsDisplayed.value!!
     }
+
     override fun animateVideoMode() {
         if (_videoMode.value == false)
 
@@ -121,12 +122,11 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override fun animateLike(post: UIPost) {
 
-        if (_likedPost.value == null)
-            viewModelScope.launch {
-                _likedPost.value = post
-                delay(500)
-                _likedPost.value = null
-            }
+        if (_likedPost.value == null) viewModelScope.launch {
+            _likedPost.value = post
+            delay(500)
+            _likedPost.value = null
+        }
 
     }
 
@@ -136,11 +136,8 @@ abstract class GeneralController : ViewModel(), PostsUIController {
             _funnyAhhString
                 //we make it so it doesnt load more if we get out of the app
                 .stateIn(
-                    viewModelScope,
-                    started = SharingStarted.WhileSubscribed(10000),
-                    0
-                )
-                .collect {
+                    viewModelScope, started = SharingStarted.WhileSubscribed(10000), 0
+                ).collect {
                     _funnyAhhString.value = when (_funnyAhhString.value) {
                         "." -> ".."
                         ".." -> "..."
@@ -171,14 +168,14 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
                                 result.add(comment)
                             }.continueWith {
-                            loadingComments = false
-                        }
+                                loadingComments = false
+                            }
 
                     }
                 }
             while (loadingComments) delay(100)
 
-            _commentContent.value=""
+            _commentContent.value = ""
             _actualComments.value = result
 
         }
@@ -188,13 +185,15 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     override fun deletePost(post: UIPost) {
 
         db.collection("Posts").document(post.id).delete()
-        db.collection("SavedLists").whereArrayContains("postList", post.id).get().addOnSuccessListener {
-            for (doc in it.documents){
-                db.collection("SavedLists").document(doc.id).update("postList", FieldValue.arrayRemove(post.id))
+        db.collection("SavedLists").whereArrayContains("postList", post.id).get()
+            .addOnSuccessListener {
+                for (doc in it.documents) {
+                    db.collection("SavedLists").document(doc.id)
+                        .update("postList", FieldValue.arrayRemove(post.id))
+                }
             }
-        }
         storageRef.child("PostImages").child(post.id).delete()
-        _posts.value-=post
+        _posts.value -= post
     }
 
     override fun commentingToggle() {
@@ -218,10 +217,8 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     }
 
     override fun optionsClicked(post: UIPost) {
-        _postSelectedForOptions.value = if (post != _postSelectedForOptions.value)
-            post
-        else
-            null
+        _postSelectedForOptions.value = if (post != _postSelectedForOptions.value) post
+        else null
     }
 
     override fun clearOptions() {

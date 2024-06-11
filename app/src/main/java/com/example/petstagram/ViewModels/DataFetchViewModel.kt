@@ -1,15 +1,10 @@
 package com.example.petstagram.ViewModels
 
 import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.media.MediaMetadataRetriever
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
@@ -19,14 +14,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.UiData.Notification
-import com.example.petstagram.UiData.NotificationChannel
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
-import com.example.petstagram.UiData.TypeOfNotification
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
 import com.example.petstagram.guardar.SavePressed
@@ -258,8 +250,7 @@ class DataFetchViewModel : ViewModel() {
 
     /**gets one post given its id*/
     private fun individualPostFetch(
-        id: String,
-        laterOn: (Uri, Boolean) -> Unit = { uri, isvideo -> }
+        id: String, laterOn: (Uri, Boolean) -> Unit = { uri, isvideo -> }
     ) {
         try {
 
@@ -461,8 +452,7 @@ class DataFetchViewModel : ViewModel() {
 
     /**given a JSON, parses it to a [Post] and prepares it to be displayed*/
     private fun bootUpPost(
-        postJson: DocumentSnapshot,
-        laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
+        postJson: DocumentSnapshot, laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
     ) {
 
         val castedPost = postJson.toObject(UIPost::class.java)!!
@@ -489,8 +479,7 @@ class DataFetchViewModel : ViewModel() {
     }
 
     private fun loadResource(
-        castedPost: UIPost,
-        laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
+        castedPost: UIPost, laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
     ) {
         try {
 
@@ -583,9 +572,9 @@ class DataFetchViewModel : ViewModel() {
         return _profiles.find { it.id == id }!!
     }
 
-    fun getPet(id: String):Pet{
+    fun getPet(id: String): Pet {
         fetchPostsFromPet(id)
-        return _pets.find { it.id==id }!!
+        return _pets.find { it.id == id }!!
     }
 
     /**stops all current processes*/
@@ -637,12 +626,14 @@ class DataFetchViewModel : ViewModel() {
 
 fun isConnectedToInternet(context: Context): Boolean {
     var isConnected = false
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
 
     if (connectivityManager != null) {
         val network = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(network)
-        isConnected = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        isConnected =
+            capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
     return isConnected

@@ -6,5 +6,5 @@ interface ProfileInteractor {
 
     fun unFollow()
 
-    fun followers():Int
+    fun followers(): Int
 }

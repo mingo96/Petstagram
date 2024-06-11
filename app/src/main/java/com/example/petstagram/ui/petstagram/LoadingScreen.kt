@@ -24,10 +24,7 @@ fun LoadingScreen() {
             .fillMaxSize()
             .background(
                 Color(
-                    alpha = 255,
-                    red = 35,
-                    green = 35,
-                    blue = 35
+                    alpha = 255, red = 35, green = 35, blue = 35
                 )
             ),
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
