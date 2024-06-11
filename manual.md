@@ -251,3 +251,31 @@ La Pantalla de publicaciones guardadas es como la de categorías pero tomando la
 Notificaciones varias
 
 Estas dependen del dispositivo, cada una da a entender algo, que nos han comentado (muestra el comentario y una preview de la publicación) o dado like (muestra cuántos nuevos hay + preview de la publicación) a alguna publicación, que nos ha seguido alguien nuevo (nos dice quién y su foto de perfil) o si alguien o alguna mascota (en esa preferencia) que seguimos ha publicado algo nuevo (nos muestra el titulo y una preview de la publicación)
+
+<div>
+
+<figure><img src=".gitbook/assets/image (42).png" alt=""><figcaption><p>Modo reducido</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/48ed872f-98d1-452b-b67a-e8d8a2a8c469.jpg" alt=""><figcaption><p>Modo amplio</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/3eca03d2-abe9-45a7-ab3a-66220bb92700.jpg" alt=""><figcaption><p>Pausando</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/cff3b23d-5a18-4901-b90b-b76e02e83f13.jpg" alt=""><figcaption><p>Reproduciendo</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/61129663-40f2-4747-a839-5cf724905449.jpg" alt=""><figcaption><p>Cambiando modo</p></figcaption></figure>
+
+</div>
+
+Interacción con videos
+
+El doble tap sigue funcionando como like, pero, para ahorrar recursos y por comodidad del usuario, solo se podrá reproducir el primer video que esté en pantalla, y solo mientras no se esté deslizando, de mientras, todos los videos serán sustituidos por su primer frame, podemos pararlos dandole un toque, lo mismo para reproducirlos
+
+Adicionalmente, se ha añadido un modo solo imágen, el cual funciona manteniendo pulsado, este hace que no se reproduzca ningún video, hasta que hagamos tap o mantengamos pulsado algun video
