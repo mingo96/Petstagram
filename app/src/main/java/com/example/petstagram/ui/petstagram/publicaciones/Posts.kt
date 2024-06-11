@@ -11,6 +11,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -30,6 +31,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Refresh
@@ -74,7 +76,7 @@ import kotlinx.coroutines.delay
  * This composable was generated from the UI Package 'publicaciones'.
  * Generated code; do not edit directly
  */
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Posts(
     modifier: Modifier = Modifier,
@@ -244,9 +246,11 @@ fun Posts(
                         if (navController != null) {
 
 
-                            Icon(imageVector = if (!options)Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowUp,
+                            Icon(imageVector = if (!options) Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowUp,
                                 contentDescription = "display",
-                                Modifier.clickable { controller.toggleOptionsDisplayed() }.size(Dp(localHeight*0.1f)))
+                                Modifier
+                                    .clickable { controller.toggleOptionsDisplayed() }
+                                    .size(Dp(localHeight * 0.1f)))
 
                             AnimatedVisibility(
                                 visible = options,
@@ -255,53 +259,47 @@ fun Posts(
                                 ),
                                 exit = shrinkVertically(animationSpec = tween(100)) + scaleOut(
                                     animationSpec = tween(100)
-                                )
+                                ),
+                                modifier = Modifier.padding(bottom = 16.dp)
                             ) {
                                 LaunchedEffect(key1 = Unit) {
                                     delay(100)
                                     state.animateScrollToItem(postsState.size + 1)
                                 }
-                                Column(
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-
-                                    Text(
-                                        text = "Prueba a publicar tú mismo!", color = Color.Black
-                                    )
-
-                                    BotonMas(modifier = Modifier
-                                        .clickable {
-                                            navController.navigate("publicar")
-                                        }
-                                        .padding(vertical = 8.dp)) {
-                                        CuadroSumar(
-                                            modifier = Modifier
-                                                .rowWeight(1.0f)
-                                                .columnWeight(1.0f)
-                                        )
-                                    }
                                     FloatingActionButton(
-                                        onClick = { controller.scroll(false) },
-                                        Modifier.padding(8.dp),
+                                        onClick = {
+                                            navController.navigate("publicar")
+                                        },
+                                        modifier = Modifier.fillMaxWidth(0.3333f),
                                         containerColor = Secondary,
                                         contentColor = Color.White
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.padding(8.dp)
-                                        ) {
-
-                                            Text(
-                                                text = "Ver más", color = Color.Black
-                                            )
-                                            Icon(
-                                                imageVector = Icons.Outlined.Refresh,
-                                                contentDescription = "updatea",
-                                                tint = Color.White
-                                            )
-                                        }
+                                        Icon(
+                                            imageVector = Icons.Outlined.Add,
+                                            contentDescription = "add",
+                                            tint = Color.Black
+                                        )
                                     }
+
+                                    FloatingActionButton(
+                                        onClick = { controller.scroll(false) },
+                                        modifier = Modifier.fillMaxWidth(0.5f),
+                                        containerColor = Secondary,
+                                        contentColor = Color.White
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Refresh,
+                                            contentDescription = "updatea",
+                                            tint = Color.Black
+                                        )
+
+                                    }
+
                                 }
 
                             }
@@ -310,7 +308,7 @@ fun Posts(
                             Column(
                                 verticalArrangement = Arrangement.SpaceEvenly,
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.height(height = Dp(localHeight*0.3f))
+                                modifier = Modifier.height(height = Dp(localHeight * 0.3f))
                             ) {
 
                                 Text(

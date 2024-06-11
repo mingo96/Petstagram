@@ -56,6 +56,7 @@ fun PetList(modifier:Modifier= Modifier,
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
 
                         BotonMas(modifier = Modifier
+                            .fillMaxWidth(0.7f)
                             .clickable {
                                 onNewPet()
                             }

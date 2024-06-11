@@ -1,12 +1,7 @@
 package com.example.petstagram.ui.petstagram
 
-import android.content.Context
 import android.media.MediaMetadataRetriever
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.animateContentSize
@@ -16,10 +11,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,18 +47,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.example.petstagram.UiData.UIPost
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.relay.compose.tappable
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
-@kotlin.OptIn(ExperimentalFoundationApi::class)
-@OptIn(UnstableApi::class)
 @Composable
 fun DisplayVideoFromSource(
     source: MediaItem,
@@ -128,15 +117,15 @@ fun DisplayVideoFromSource(
     }
     if (!mediaPlayer.isLoading) {
         Box(modifier
-            .combinedClickable(
-                onClick = {
+            .tappable(
+                onTap = {
                     if (isVisible == true)
                         mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                 },
-                onDoubleClick = {
+                onDoubleTap = {
                     onDoubleTap()
                 },
-                onLongClick = {
+                onLongPress = {
                     onLongTap()
                     mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                 }
@@ -200,8 +189,6 @@ fun DisplayVideoFromSource(
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
-@kotlin.OptIn(ExperimentalFoundationApi::class)
-@OptIn(UnstableApi::class)
 @Composable
 fun DisplayVideoFromPost(
     source: UIPost,
@@ -300,8 +287,8 @@ fun DisplayVideoFromPost(
         Box(modifier
             .animateContentSize(spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow))
             .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 400.dp)
-            .combinedClickable(
-                onClick = {
+            .tappable(
+                onTap = {
                     if (isVisible == true) {
                         mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                         onTap()
@@ -311,10 +298,10 @@ fun DisplayVideoFromPost(
                         mediaPlayer.playWhenReady = true
                     }
                 },
-                onDoubleClick = {
+                onDoubleTap = {
                     onDoubleTap()
                 },
-                onLongClick = {
+                onLongPress = {
                     onLongTap()
                     mediaPlayer.playWhenReady = false
                 }

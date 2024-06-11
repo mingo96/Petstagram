@@ -111,6 +111,7 @@ fun CommentsSection(
                 )
             }
             BotonMas(modifier = Modifier
+                .fillMaxWidth(0.7f)
                 .columnWeight(1.0f)
                 .clickable {
                     if (commenting == false) {
@@ -212,7 +213,6 @@ fun BotonMas(
         ),
         content = content,
         modifier = modifier
-            .fillMaxWidth(0.7f)
             .wrapContentHeight(
                 align = Alignment.CenterVertically,
                 unbounded = false
