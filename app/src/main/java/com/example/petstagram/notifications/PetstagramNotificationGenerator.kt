@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
@@ -99,16 +100,27 @@ class PetstagramNotificationGenerator(
                 .allowHardware(false) // Disable hardware bitmaps.
                 .build()
 
-            val result = (imageLoader.execute(request) as SuccessResult).drawable
-            val bitmap = (result as BitmapDrawable).bitmap
+            try {
 
-            val customNotification = NotificationCompat.Builder(context, "petstagram_notifications")
-                .setContentTitle(title).setContentText(content).setSmallIcon(R.drawable.logo)
-                .setStyle(
-                    NotificationCompat.BigPictureStyle().bigPicture(bitmap)
-                ).build()
+                val result = (imageLoader.execute(request) as SuccessResult).drawable
+                val bitmap = (result as BitmapDrawable).bitmap
 
-            notificationManager.notify(counter, customNotification)
+                val customNotification = NotificationCompat.Builder(context, "petstagram_notifications")
+                    .setContentTitle(title).setContentText(content).setSmallIcon(R.drawable.logo)
+                    .setStyle(
+                        NotificationCompat.BigPictureStyle().bigPicture(bitmap)
+                    ).build()
+
+                notificationManager.notify(counter, customNotification)
+            }catch (e:Exception){
+                val customNotification = NotificationCompat.Builder(context, "petstagram_notifications")
+                    .setContentTitle(title).setContentText(content).setSmallIcon(R.drawable.logo)
+                    .setStyle(
+                        NotificationCompat.BigPictureStyle().bigPicture(BitmapFactory.decodeResource(context.resources, R.drawable.foto_perfil_foto))
+                    ).build()
+
+                notificationManager.notify(counter, customNotification)
+            }
 
         }
         counter++

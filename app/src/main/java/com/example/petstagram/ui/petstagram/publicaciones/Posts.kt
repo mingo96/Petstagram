@@ -121,7 +121,6 @@ fun Posts(
             verticalArrangement = Arrangement.Top
         ) {
 
-
             itemsIndexed(postsState) { index, it ->
                 var seen by rememberSaveable {
                     mutableStateOf(false)

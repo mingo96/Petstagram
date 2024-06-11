@@ -220,9 +220,10 @@ class PetstagramNotificationsService : Service() {
                 val found = it.toObject<UIPost>()!!
 
                 getSourceAndNotify(found) { bitmap ->
+                    val conteo = newLikes.count { it.notificationText == i }
                     notificationService.showNotSoBasicNotification(
                         "A la gente le gusta tu post!",
-                        content = "tienes ${newLikes.count { it.notificationText == i }} nuevos likes",
+                        content = "tienes $conteo nuevo"+(if (conteo>1) "s" else "") +" like" + if (conteo>1)"s" else "",
                         bitmap
                     )
                 }

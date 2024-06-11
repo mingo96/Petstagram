@@ -187,6 +187,7 @@ class PublishViewModel : ViewModel() {
 
                     storageRef.child("PostImages/${doc.id}").downloadUrl.addOnSuccessListener {
                         db.collection("Posts").document(doc.id).update("source", it.toString())
+                        newPost.id = doc.id
                         postTitle = "Titulo Publicacion"
                         _resource.value = Uri.EMPTY
                         _isSendingInfo.value = false
@@ -212,7 +213,7 @@ class PublishViewModel : ViewModel() {
             sender = user.id,
             userName = user.userName,
             type = TypeOfNotification.NewPost,
-            notificationText = newPost.title
+            notificationText = newPost.id +"="+postTitle
         )
         user.followers.forEach { follower ->
             db.collection("NotificationsChannels").whereEqualTo("user", follower).get()
@@ -221,6 +222,19 @@ class PublishViewModel : ViewModel() {
                         .update("notifications", FieldValue.arrayUnion(newNotification))
 
                 }
+
+        }
+
+        if (newPost.uiPet!= null) newNotification.userName = newPost.uiPet!!.name
+        newPost.uiPet?.followers?.forEach { follower ->
+            if (follower !in user.followers) {
+                db.collection("NotificationsChannels").whereEqualTo("user", follower).get()
+                    .addOnSuccessListener {
+                        db.collection("NotificationsChannels").document(it.documents[0].id)
+                            .update("notifications", FieldValue.arrayUnion(newNotification))
+
+                    }
+            }
 
         }
     }
@@ -279,9 +293,12 @@ class PublishViewModel : ViewModel() {
         if (pet != selectedPet) {
             selectedPet = pet
             newPost.pet = pet.id
+            newPost.uiPet = pet
         } else {
             selectedPet = null
             newPost.pet = ""
+
+            newPost.uiPet = null
         }
     }
 
