@@ -57,3 +57,5 @@ Resulta que si el foco de atención del teclado está sobre un cuadro de texto y
 ## Notificaciones
 
 Teniendo en cuenta que el usuario puede no querer notificaciones, se sustituyen con un mensaje por pantalla representando la notificación, pero solo con la app en primer plano
+
+A modo de medida de seguridad, al cerrar el proceso se limpian los observadores, ya que al no hacerlo habían casos en los que se duplicaban y generaban el doble de notificaciones

@@ -279,3 +279,5 @@ Interacción con videos
 El doble tap sigue funcionando como like, pero, para ahorrar recursos y por comodidad del usuario, solo se podrá reproducir el primer video que esté en pantalla, y solo mientras no se esté deslizando, de mientras, todos los videos serán sustituidos por su primer frame, podemos pararlos dandole un toque, lo mismo para reproducirlos
 
 Adicionalmente, se ha añadido un modo solo imágen, el cual funciona manteniendo pulsado, este hace que no se reproduzca ningún video, hasta que hagamos tap o mantengamos pulsado algun video
+
+También, pensando en videos más largos, se ha pensado en un modo amplio, este funciona tocando el botón vacío de arriba a la izquierda, y hace el contenedor del video más grande, por si las limitaciones base hacen que parte del video no se vea

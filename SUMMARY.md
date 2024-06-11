@@ -11,7 +11,7 @@
   * [Interfaz de creacion de publicacion](prototipado-de-la-aplicacion/interfaz-de-creacion-de-publicacion.md)
   * [Barra superior](prototipado-de-la-aplicacion/barra-superior.md)
   * [Publicaciones](prototipado-de-la-aplicacion/publicaciones.md)
-* [Diseño funcional](diseno-funcional/README.md)
+* [Diseño funcional](diseno-funcional.md)
   * [Diagrama entidad-relación](diseno-funcional/diagrama-entidad-relacion.md)
   * [Diagrama de casos de uso](diseno-funcional/diagrama-de-casos-de-uso.md)
 * [Desarrollo de la aplicación](desarrollo-de-la-aplicacion.md)
