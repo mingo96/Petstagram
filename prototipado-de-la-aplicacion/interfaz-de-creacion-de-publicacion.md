@@ -4,24 +4,18 @@ description: En esta le damos los medios al usuario para crear una publicación
 
 # Interfaz de creacion de publicacion
 
-<div>
+{% embed url="https://www.figma.com/design/tFlHZXuruiJuxNDn7hJvRu/Petstagram?node-id=307-1085&t=Kjp177SZcw2I1zo1-0" %}
 
-<figure><img src="../.gitbook/assets/af30b4d5-9c96-4403-9abe-bf805faa5e2d.jpg" alt=""><figcaption><p>aun no hemos seleccionado recurso</p></figcaption></figure>
+En esta pantalla podremos subir publicaciones, seleccionando título, recurso y mascota
 
- 
+El cuadro de texto se irá actualizando simultaneamente en el cuadro y en la preview
 
-<figure><img src="../.gitbook/assets/2404b7f5-23fb-477b-b378-eda58e069735.jpg" alt=""><figcaption><p>no hemos seleccionado nada</p></figcaption></figure>
+El recurso se selecciona pulsando la imagen "Click", pero si decidimos cambiarlo solo necesitaremos volver a tocarlo en caso de las imágenes, y tocarlo 2 veces en caso de los vídeos
 
- 
+Al pulsar "Seleccion de mascotas" nos saldrá un slider que nos puede ser familiar, para seleccionar la mascota a la que el post está seleccionado
 
-<figure><img src="../.gitbook/assets/0b12c1dc-16bf-424a-a81a-3bf1d9ec70e0.jpg" alt=""><figcaption><p>recurso seleccionado</p></figcaption></figure>
-
- 
-
-<figure><img src="../.gitbook/assets/50288301-9b10-4d92-b203-c1486ff234e2.jpg" alt=""><figcaption><p>tipo de archivo no válido</p></figcaption></figure>
-
-</div>
-
-Aqui tenemos un campo de input de texto para el título y un boton para seleccionar recurso
+Si intentamos subir sin mascota, al primer intento nos sacará el slider de mascota con el mensaje de "no has seleccionado ninguna mascota, ¿estás seguro?", si lo ignoramos y volvemos a darle a publicar se subirá como post nuestro y de nadie más
 
 Al seleccionar recurso el usuario puede no seleccionar nada o incluso seleccionar algo que no sea video o audio, en cuyo caso se notificará al usuario y no le dejará hacer la publicación
+
+Posterior a pulsar "Publicar" nos saldrá un dialogo que nos impedirá hacer nada hasta que se termine, este nos indicará con una línea, cuánto llevamos de progreso, y cuánto tiempo mas o menos queda

@@ -4,20 +4,8 @@ description: En esta identificamos quien está usando la app (o lo registramos)
 
 # Interfaz de autenticación del usuario
 
-<div>
+{% embed url="https://www.figma.com/design/tFlHZXuruiJuxNDn7hJvRu/Petstagram?node-id=138-5268&t=Kjp177SZcw2I1zo1-0" %}
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption><p>Base</p></figcaption></figure>
+Esta pestaña nos recibe con lo requerido para autentificarnos, dos cuadros de texto para correo y contraseña, o en caso de preferirlo, iniciar con Google
 
- 
-
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption><p>Mientras autentifica</p></figcaption></figure>
-
- 
-
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption><p>Cuando no es válido</p></figcaption></figure>
-
-</div>
-
-Esta pestaña contiene dos cuadros de texto en los cuales el usuario pondrá sus datos
-
-Según elija registrarse o iniciar sesión, se validarán los datos presentes en pantalla, en caso de que no sean válidos o directamente incorrectos se le informará por pantalla
+Los dos botones de arriba cambian las acciones del botón de "terminado", además de que en la propia app podemos enviar desde el teclado sin pulsar el botón

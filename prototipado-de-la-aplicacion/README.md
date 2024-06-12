@@ -19,10 +19,10 @@ El flujo es bastante libre, sería tal que así
       3. Perfil de mascota
          1. Barra superior
       4. Comentarios
+   3. Añadir publicacion
+      1. Registro de mascota
 
 ## Componentes sueltos relevantes
 
 * Barra superior (contiene enlaces a categorías, perfil propio, guardados y Autenticación)
-  * Guardadas
-
-## Las siguientes pestañas están desactualizadas, hasta el punto 15 del desarrollo
+* Publicaciones
