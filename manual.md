@@ -214,9 +214,19 @@ Las pantallas de perfil de mascota son algo simples, si es propia puedes editar 
 
 Mismo funcionamiento que perfil propio, solo que sin poder editar, y pudiendo seguir al usuario, hay un pequeño easter egg, en caso de que el usuario decida no subir mascota
 
-<figure><img src=".gitbook/assets/image (39).png" alt=""><figcaption><p>Pantalla de publicaciones</p></figcaption></figure>
+<div>
 
-La pantalla de publicaciones no tiene nada que no hayamos visto ya, abajo del todo tendremos un acceso a la pantalla de publicar
+<figure><img src=".gitbook/assets/image (43).png" alt=""><figcaption><p>Botones ocultos</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/de4562e6-682e-4fe1-93ae-03bedd2aba86.jpg" alt=""><figcaption><p>Botones abiertos</p></figcaption></figure>
+
+</div>
+
+La pantalla de publicaciones no tiene nada que no hayamos visto ya, abajo del todo tendremos un  botón que da acceso a un boton que da acceso a la pantalla de publicar y un botón para intenta cargar más publicaciones (no suele ser necesario de usar)
+
+Esto se repite de forma consistente en todas las columnas de posts
 
 <div>
 

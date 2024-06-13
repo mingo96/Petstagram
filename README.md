@@ -1,6 +1,6 @@
 # Introducción y objetivos
 
-### enlace al tango de uso : https://app.tango.us/app/workflow/29ee75e0-2282-4781-b86b-0d192eff22fa enlace al gitbook : https://app.gitbook.com/invite/k1f4oe40ecDSxbAIIK5M/g9RyGcoKcOEKb3MS9YmL
+### enlace al gitbook : https://app.gitbook.com/invite/k1f4oe40ecDSxbAIIK5M/g9RyGcoKcOEKb3MS9YmL
 
 ### description: Idea original y tecnologías usadas
 
