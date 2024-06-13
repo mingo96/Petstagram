@@ -4,6 +4,10 @@ description: Explicación de componentes
 
 # Prototipado de la aplicación
 
+Enlace al proyecto en figma : [https://www.figma.com/design/tFlHZXuruiJuxNDn7hJvRu/Petstagram?m=auto\&t=rUac13Sn2FywKpXX-6](https://www.figma.com/design/tFlHZXuruiJuxNDn7hJvRu/Petstagram?m=auto\&t=rUac13Sn2FywKpXX-6)
+
+{% embed url="https://www.figma.com/design/tFlHZXuruiJuxNDn7hJvRu/Petstagram?m=auto&t=rUac13Sn2FywKpXX-6" %}
+
 El flujo es bastante libre, sería tal que así
 
 1. Autenticación del usuario (saltada si ya está autenticado)

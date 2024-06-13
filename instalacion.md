@@ -17,3 +17,5 @@ Si buscamos ejecutar desde el propio proyecto, necesitaremos insertar el archivo
 Si queremos asegurarnos de que el login de google funciona en modo debug necesitaremos especificar que la firma que usemos está registrada en el servidor de firebase
 
 Por motivos de seguridad esta clave no es proporcionada en el proyecto, tampoco la del propio apk
+
+El apk está en el archivo /app/release/app-release.apk, es la versión release, por lo que rendirá muchisimo mejor que si ejecutamos el proyecto, sobre todo las animaciones
