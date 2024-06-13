@@ -303,7 +303,7 @@ class PublishViewModel : ViewModel() {
 
 fun Long.parseToTime(): String {
 
-    if (this<=0) return "Terminando..."
+    if (this<=0) return "terminando..."
     val hours = TimeUnit.SECONDS.toHours(this)
     val minutes = TimeUnit.SECONDS.toMinutes(this) % 60
     val seconds = this % 60
