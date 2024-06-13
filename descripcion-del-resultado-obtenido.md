@@ -27,3 +27,4 @@ description: Funcionalidades logradas
   * Animaciones para interacciones
 * Display de las publicaciones guardadas, filtrando, o no, por especie
 * Notificaciones en primer y segundo plano
+* Busqueda de perfiles

@@ -31,6 +31,7 @@ Concepto inspirado en redes sociales tipicas como Instagram
 * Pestaña para mostrar perfiles ajenos, mostrando publicaciones y mascotas
 * Pestaña para perfiles de mascota, mostrando publicaciones
 * Sistema de notificaciones por comentarios, likes, follows o nuevas publicaciones de seguidos
+* Buscado de perfiles
 
 ### Objetivos no implementados (a futuro)
 
