@@ -47,7 +47,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -135,18 +134,23 @@ fun MyProfile(
 
     val scroll = rememberLazyListState()
 
+    //coroutine scope for comments animations
     val scope = rememberCoroutineScope()
 
     val followersDisplayed by viewModel.profilesDisplayed.collectAsState()
 
-    if (followersDisplayed){
+    if (followersDisplayed) {
         Dialog(onDismissRequest = { viewModel.toggleProfilesDisplayed() }) {
             val profiles by viewModel.profiles.collectAsState()
-            LazyColumn(){
+            LazyColumn() {
                 item {
-                    Text(text = "Seguidores", modifier = Modifier.padding(8.dp).fillMaxWidth())
+                    Text(
+                        text = "Seguidores", modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    )
                 }
-                items(profiles){
+                items(profiles) {
                     val followers by remember { mutableStateOf(it.followers) }
                     SearchedProfile(text = it.userName,
                         pic = it.profilePic,
@@ -156,6 +160,7 @@ fun MyProfile(
                                 viewModel.toggleProfilesDisplayed()
                                 navController.navigate("perfilPropio")
                             } else {
+                                //navigate to profile
                                 ProfileObserverViewModel.staticProfile.id = it.id
                                 viewModel.toggleProfilesDisplayed()
                                 navController.navigate("perfilAjeno")
@@ -208,7 +213,10 @@ fun MyProfile(
                                 modifier = Modifier.padding(8.dp)
                             ) {
 
-                                FollowingText(modifier = Modifier.clickable { viewModel.toggleProfilesDisplayed() }, personal = true) {
+                                FollowingText(
+                                    modifier = Modifier.clickable { viewModel.toggleProfilesDisplayed() },
+                                    personal = true
+                                ) {
                                     viewModel.actualUser.followers.size
                                 }
                                 EditUsernameButton(Modifier.clickable {
@@ -232,10 +240,10 @@ fun MyProfile(
                         Modifier
                             .height(56.dp)
                             .fillMaxWidth(), state = state, onClick = {
-                        scope.launch {
-                            scroll.animateScrollToItem(it)
-                        }
-                    })
+                            scope.launch {
+                                scroll.animateScrollToItem(it)
+                            }
+                        })
                 }
 
                 item {
@@ -449,8 +457,7 @@ fun StateSelector(
     text2: String = "Mascotas"
 ) {
     SingleChoiceSegmentedButtonRow(
-        modifier
-            .padding(horizontal = 16.dp)
+        modifier.padding(horizontal = 16.dp)
     ) {
         SegmentedButton(
             selected = state,

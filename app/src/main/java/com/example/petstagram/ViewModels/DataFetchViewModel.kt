@@ -441,7 +441,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    /**given a JSON, parses it to a [Post] and prepares it to be displayed*/
+    /**given a JSON, parses it to a [UIPost] and prepares it to be displayed*/
     private fun bootUpPost(
         postJson: DocumentSnapshot, laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
     ) {
@@ -469,6 +469,7 @@ class DataFetchViewModel : ViewModel() {
 
     }
 
+    /**given a [UIPost] prepares it to be displayed*/
     private fun loadResource(
         castedPost: UIPost, laterOn: (Uri, Boolean) -> Unit = { uri, isVideo -> }
     ) {
@@ -559,6 +560,7 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    /**gets all profiles with the given name, if not found, gets 10 more*/
     private fun fetchProfilesFromName(name:String){
         db.collection("Users").limit((_profiles.size+10).toLong()).get().addOnSuccessListener {
             if (!it.isEmpty){
@@ -583,12 +585,14 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
-    fun fetchProfile(id:String){
+    /**gets a profile given its id*/
+    private fun fetchProfile(id:String){
         db.collection("Users").document(id).get().addOnSuccessListener {
             _profiles.add(it.toObject(Profile::class.java)!!)
         }
     }
 
+    /**gets a profile info*/
     fun getUser(id: String): Profile? {
         fetchProfile(id)
         fetchPetsFromUser(id)
@@ -596,6 +600,7 @@ class DataFetchViewModel : ViewModel() {
         return _profiles.find { it.id == id }
     }
 
+    /**gets a pet given its id*/
     fun getPet(id: String): Pet {
         fetchPostsFromPet(id)
         return _pets.find { it.id == id }!!
@@ -647,6 +652,7 @@ class DataFetchViewModel : ViewModel() {
         ids = emptyList()
     }
 
+    /**searches for users with the given name*/
     fun search(value: String): List<Profile> {
 
         fetchProfilesFromName(value)
@@ -654,6 +660,7 @@ class DataFetchViewModel : ViewModel() {
         return _profiles.filter { it.userName.contains(value, true) && it.id!= profile().id }
     }
 
+    /**follows a profile and notifies it*/
     fun follow(profile: Profile) {
 
         db.collection("Users").document(profile.id).update("followers",  FieldValue.arrayUnion(_selfProfile.id))
@@ -666,6 +673,7 @@ class DataFetchViewModel : ViewModel() {
             .update("notifications", FieldValue.arrayUnion(newNotification))
     }
 
+    /**unfollows a profile*/
     fun unfollow(id: String) {
 
         db.collection("Users").document(id).update("followers",  FieldValue.arrayRemove(_selfProfile.id))

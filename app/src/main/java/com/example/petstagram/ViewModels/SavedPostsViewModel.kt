@@ -10,10 +10,13 @@ import kotlinx.coroutines.launch
 
 class SavedPostsViewModel : GeneralController() {
 
+    /**selected category*/
     var statedCategory: Category? = null
 
+    /**all categories*/
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
 
+    /**ui version of [_categories]*/
     val categories: StateFlow<List<Category>> = _categories
 
     fun startLoadingPosts() {
@@ -34,6 +37,7 @@ class SavedPostsViewModel : GeneralController() {
                 val end = base.postsFromSaved()
 
                 for (post in end - _posts.value.toSet()) {
+                    //ignore IDE error, it thinks data from name doesnt change
                     if (statedCategory == null || post.category!!.name == statedCategory!!.name) {
                         _posts.value += post
                         delay(500)
@@ -53,7 +57,7 @@ class SavedPostsViewModel : GeneralController() {
     fun selectCategory(category: Category?) {
         statedCategory = if (category == statedCategory) null
         else category
-        _posts.value =
+        _posts.value = //ignore IDE error, it thinks data from name doesnt change
             _posts.value.filter { statedCategory == null || it.category!!.name == statedCategory!!.name }
 
     }

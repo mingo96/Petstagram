@@ -58,6 +58,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.PublishViewModel
 import com.example.petstagram.ViewModels.getMimeType
+import com.example.petstagram.ViewModels.parseToTime
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadroinfo.DeadPostDownBar
@@ -119,7 +120,7 @@ fun NewPostScreen(
                 progress = { viewModel.progress() })
             Text(text = loadingText)
             Text(
-                text = "Tiempo estimado : ${viewModel.estimated}", textAlign = TextAlign.Center
+                text = "Tiempo estimado : ${viewModel.estimated.parseToTime()}", textAlign = TextAlign.Center
             )
         }
     }

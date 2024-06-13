@@ -96,7 +96,7 @@ class PublishViewModel : ViewModel() {
 
     private var start: Date? by mutableStateOf(null)
 
-    var estimated: String by mutableStateOf("calculando")
+    var estimated: Long by mutableLongStateOf(1L)
 
 
     /**changes [postTitle]
@@ -176,11 +176,11 @@ class PublishViewModel : ViewModel() {
                     }
                     actual = it.bytesTransferred
                     total = it.totalByteCount
+
                     val timeElapsed =
                         TimeUnit.MILLISECONDS.toSeconds(Date.from(Instant.now()).time - start!!.time)
                     val total = (1 * timeElapsed / progress()).toInt() - timeElapsed
-                    estimated = total.parseToTime()
-
+                    estimated = total
 
                 }.addOnSuccessListener {
                     db.collection("Posts").document(doc.id).update("id", doc.id)
@@ -197,17 +197,24 @@ class PublishViewModel : ViewModel() {
                     }
 
                 }
+                startCountDown()
             }
         }
 
     }
 
-    private fun getBitmapFromUri(uri: Uri, context: Context): Bitmap? {
-        return context.contentResolver.openInputStream(uri)?.use { inputStream ->
-            BitmapFactory.decodeStream(inputStream)
+    private fun startCountDown() {
+
+        viewModelScope.launch{
+            while (total != actual) {
+
+                estimated-=1
+                delay(1000)
+            }
         }
     }
 
+    /**notifies the followers of the new [Post]*/
     private fun notifyFollowers() {
         val newNotification = Notification(
             sender = user.id,
@@ -237,25 +244,6 @@ class PublishViewModel : ViewModel() {
             }
 
         }
-    }
-
-    private fun Long.parseToTime(): String {
-
-        val hours = TimeUnit.SECONDS.toHours(this)
-        val minutes = TimeUnit.SECONDS.toMinutes(this) % 60
-        val seconds = this % 60
-        var spare = ""
-        if (hours >= 1) spare += "$hours hora" + if (hours > 1) "s " else ""
-
-        if (minutes >= 1) spare += "$minutes minuto" + if (minutes > 1) "s " else ""
-
-        try {
-
-            if (seconds >= 1) spare += "$seconds segundo" + if (seconds > 1) "s" else "" else spare =
-                spare.substring(0, spare.length - 1)
-        } catch (e: Exception) {
-        }
-        return spare
     }
 
     /**simply sends the file in [_resource]
@@ -311,4 +299,24 @@ class PublishViewModel : ViewModel() {
         return result
     }
 
+}
+
+fun Long.parseToTime(): String {
+
+    if (this<=0) return "Terminando..."
+    val hours = TimeUnit.SECONDS.toHours(this)
+    val minutes = TimeUnit.SECONDS.toMinutes(this) % 60
+    val seconds = this % 60
+    var spare = ""
+    if (hours >= 1) spare += "$hours hora" + if (hours > 1) "s " else " "
+
+    if (minutes >= 1) spare += "$minutes minuto" + if (minutes > 1) "s " else " "
+
+    try {
+
+        if (seconds >= 1) spare += "$seconds segundo" + if (seconds > 1) "s" else "" else spare =
+            spare.substring(0, spare.length - 1)
+    } catch (e: Exception) {
+    }
+    return spare
 }
