@@ -30,9 +30,21 @@ La primera vez que entremos el cuadro de texto de explicación sale solo y va ca
 
 El proceso de autenticación, ya sea con correo o con Google, es simple, escribiendo a mano el correo podemos enviar del tirón desde el teclado, o desde el botón de check, con google simplemente pulsamos y elegimos cuenta, habrá una breve carga de datos
 
-<figure><img src=".gitbook/assets/image (22).png" alt="" width="375"><figcaption><p>Pantalla principal</p></figcaption></figure>
+<div>
 
-Una vez registrados (o iniciemos la app una vez autenticados), veremos esta pantalla, que nos deja entrar a las distintas categorías que hay registradas en el momento, así como crear publicaciones en estas
+<figure><img src=".gitbook/assets/image (44).png" alt=""><figcaption><p>Estado base</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/86c769b6-ddba-4309-b917-03e0f6bae3e4.jpg" alt=""><figcaption><p>Buscando perfiles</p></figcaption></figure>
+
+ 
+
+<figure><img src=".gitbook/assets/348a7a3a-0899-475d-bd24-f4c1929b5559.jpg" alt=""><figcaption><p>Perfiles encontrados</p></figcaption></figure>
+
+</div>
+
+Una vez registrados (o iniciemos la app una vez autenticados), veremos esta pantalla, que nos deja, o bien, entrar a las distintas categorías que hay registradas en el momento, así como crear publicaciones en estas, o, buscar gente por su nombre de usuario, mientras escribamos irá esperando a que dejemos de escribir por un segundo para buscar los resultados, aunque también podemos hacerlo a mano con el botón, una vez los encuentre los mostrará en un Slider, podemos seguir, dejar de seguir, o entrar al perfil tocando su nombre/foto
 
 <div>
 
@@ -46,9 +58,13 @@ Una vez registrados (o iniciemos la app una vez autenticados), veremos esta pant
 
 <figure><img src=".gitbook/assets/image (28).png" alt="" width="375"><figcaption><p>Perfil nuevo, en caso de los de google toma su foto de google</p></figcaption></figure>
 
+ 
+
+<figure><img src=".gitbook/assets/00a24cbd-7754-4f36-b72f-2bae75bcf203.jpg" alt="" width="375"><figcaption><p>Viendo los seguidores</p></figcaption></figure>
+
 </div>
 
-En la pantalla de perfil propio podemos ver la información del usuario, así como editarla, para cambiar entre publicaciones y mascotas podemos tanto pulsar el botón del referido o deslizar horizontalmente
+En la pantalla de perfil propio podemos ver la información del usuario, así como editarla, para cambiar entre publicaciones y mascotas podemos tanto pulsar el botón del referido o deslizar horizontalmente, además, si pulsamos en "Te siguen" veremos nuestros seguidores uno por uno, y al pulsar en su nombre o foto podremos entrar a su perfil
 
 <div>
 
