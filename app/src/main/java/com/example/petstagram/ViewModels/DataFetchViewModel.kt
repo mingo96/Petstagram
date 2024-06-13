@@ -583,7 +583,14 @@ class DataFetchViewModel : ViewModel() {
         }
     }
 
+    fun fetchProfile(id:String){
+        db.collection("Users").document(id).get().addOnSuccessListener {
+            _profiles.add(it.toObject(Profile::class.java)!!)
+        }
+    }
+
     fun getUser(id: String): Profile? {
+        fetchProfile(id)
         fetchPetsFromUser(id)
         postsFromUser(id)
         return _profiles.find { it.id == id }
