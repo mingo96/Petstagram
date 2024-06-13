@@ -75,6 +75,9 @@ Entrega inicial del proyecto
 29. Implementación de servicio para notificaciones, ahora es ajeno a la interfaz y funciona con la app cerrada/segundo plano también
 30. Cambiar forma de descarga permanente de recursos, ahora es reflejada en la galería del movil, y sin hacer descarga, ya que el archivo debemos tenerlo de antes
 31. Cambios varios en interfaz
+32. Uso de memoria caché para imágenes (al no tener conexión se intentan recuperar de la caché de peticiones)
+33. Implementación del buscador de perfiles
+34. Implementación de dialogo de seguidores del usuario
 
 ## Dificultades encontradas
 
