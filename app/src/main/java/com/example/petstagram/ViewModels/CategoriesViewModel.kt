@@ -8,10 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
-import com.example.petstagram.UiData.Notification
 import com.example.petstagram.UiData.Profile
-import com.example.petstagram.UiData.TypeOfNotification
-import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +49,9 @@ class CategoriesViewModel : ViewModel() {
             }
             userid = base.profile().id
 
+            search()
+            delay(5000)
+            search()
         }
     }
 
@@ -72,12 +72,11 @@ class CategoriesViewModel : ViewModel() {
     }
 
     fun search() {
-        if (_searchText.value!!.isNotEmpty())
-            _profiles.value = base.search(searchText.value!!)
+        _profiles.value = base.search(searchText.value!!).sortedBy { it.userName }
 
     }
 
-    fun follow(it: Profile){
+    fun follow(it: Profile) {
 
         if (!it.followers.contains(userid)) {
 

@@ -1,7 +1,13 @@
 package com.example.petstagram.ui.petstagram.perfiles
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +24,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -30,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.navigation.NavController
@@ -40,6 +48,7 @@ import com.example.petstagram.loginenmovil.myTextFieldColors
 import com.example.petstagram.ui.theme.Primary
 import com.example.petstagram.ui.theme.Secondary
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileSearch(
     modifier: Modifier = Modifier, viewModel: CategoriesViewModel, navController: NavController
@@ -58,24 +67,56 @@ fun ProfileSearch(
             writeText = { viewModel.setSearchText(it) },
             search = { viewModel.search() })
 
-        LazyColumn(modifier = Modifier.background(Color.Black)) {
-            items(profiles) {
+        LazyColumn(
+            modifier = Modifier
+                .background(Color.Black)
+                .animateContentSize(
+                    tween(500)
+                )
+        ) {
+            items(profiles, key = { it.id }) { it ->
                 var followers by remember { mutableStateOf(it.followers) }
-                SearchedProfile(text = it.userName,
-                    pic = it.profilePic,
-                    following = viewModel.userid in followers,
-                    onClick = {
-                        if (it.id == viewModel.userid) {
-                            navController.navigate("perfilPropio")
-                        } else {
-                            ProfileObserverViewModel.staticProfile.id = it.id
-                            navController.navigate("perfilAjeno")
-                        }
-                    }) {
-                    viewModel.follow(it)
-                    followers = it.followers
+                Column(
+                    modifier = Modifier.animateItemPlacement(
+                        spring(
+                            dampingRatio = Spring.DampingRatioLowBouncy,
+                            stiffness = Spring.StiffnessLow,
+                            visibilityThreshold = IntOffset.VisibilityThreshold.times(2f)
+                        )
+                    )
+                ) {
+                    SearchedProfile(text = it.userName,
+                        pic = it.profilePic,
+                        following = viewModel.userid in followers,
+                        onClick = {
+                            if (it.id == viewModel.userid) {
+                                navController.navigate("perfilPropio")
+                            } else {
+                                ProfileObserverViewModel.staticProfile.id = it.id
+                                navController.navigate("perfilAjeno")
+                            }
+                        }) {
+                        viewModel.follow(it)
+                        followers = it.followers
+                    }
+                    Divider(color = Color.White, thickness = 1.dp)
                 }
-                Divider(color = Color.White, thickness = 1.dp)
+            }
+            if (profiles.isEmpty()){
+                item {
+                    if (text.isNotBlank()) {
+
+                        Text(text = "No hay resultados")
+                    }else{
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            color = Primary
+                        )
+                        Text(text = "Cargando")
+                    }
+                }
             }
         }
 
@@ -141,7 +182,12 @@ fun SearchedProfile(
             modifier = Modifier.clickable { onClick() }) {
 
             FotoPerfilSizePeque(picture = pic)
-            Text(text, color = Secondary, fontSize = 4.em, maxLines = 1)
+            Text(
+                if (text.length > 16 && onFollow != null) text.substring(0, 16) + "..." else text,
+                color = Secondary,
+                fontSize = 4.em,
+                maxLines = 1
+            )
         }
         if (onFollow != null) Box(contentAlignment = Alignment.CenterEnd) {
             androidx.compose.animation.AnimatedVisibility(
