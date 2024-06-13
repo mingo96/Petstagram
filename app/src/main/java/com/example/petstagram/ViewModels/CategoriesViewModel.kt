@@ -72,7 +72,8 @@ class CategoriesViewModel : ViewModel() {
     }
 
     fun search() {
-        if (_searchText.value!!.isNotEmpty()) _profiles.value = base.search(searchText.value!!)
+        if (_searchText.value!!.isNotEmpty())
+            _profiles.value = base.search(searchText.value!!)
 
     }
 

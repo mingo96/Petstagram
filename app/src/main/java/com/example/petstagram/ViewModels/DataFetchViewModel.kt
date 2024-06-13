@@ -562,26 +562,32 @@ class DataFetchViewModel : ViewModel() {
 
     /**gets all profiles with the given name, if not found, gets 10 more*/
     private fun fetchProfilesFromName(name:String){
-        db.collection("Users").limit((_profiles.size+10).toLong()).get().addOnSuccessListener {
-            if (!it.isEmpty){
-                for (profilejson in it.documents){
-                    if (profilejson.id !in _profiles.map { it.id }) {
-                        val newUser = profilejson.toObject(Profile::class.java)!!
-                        _profiles.add(newUser)
+        viewModelScope.launch {
+            while (alreadyLoading){
+                delay(100)
+            }
+            alreadyLoading = true
+            db.collection("Users").limit((_profiles.size+10).toLong()).get().addOnSuccessListener {
+                if (!it.isEmpty){
+                    for (profilejson in it.documents){
+                        if (profilejson.id !in _profiles.map { it.id }) {
+                            val newUser = profilejson.toObject(Profile::class.java)!!
+                            _profiles.add(newUser)
+                        }
                     }
                 }
-            }
-        }
+            }.continueWith { alreadyLoading=false }
 
-        db.collection("Users").whereEqualTo("userName",name).get().addOnSuccessListener {
-            if (!it.isEmpty){
-                for (profilejson in it.documents){
-                    if (profilejson.id !in _profiles.map { it.id }) {
-                        val newUser = profilejson.toObject(Profile::class.java)!!
-                        _profiles.add(newUser)
+            db.collection("Users").whereEqualTo("userName",name).get().addOnSuccessListener {
+                if (!it.isEmpty){
+                    for (profilejson in it.documents){
+                        if (profilejson.id !in _profiles.map { it.id }) {
+                            val newUser = profilejson.toObject(Profile::class.java)!!
+                            _profiles.add(newUser)
+                        }
                     }
                 }
-            }
+            }.continueWith { alreadyLoading = false }
         }
     }
 
@@ -657,7 +663,7 @@ class DataFetchViewModel : ViewModel() {
 
         fetchProfilesFromName(value)
 
-        return _profiles.filter { it.userName.contains(value, true) && it.id!= profile().id }
+        return _profiles.filter { it.userName.contains(value, true) && it.id!= profile().id }.distinctBy { it.id }
     }
 
     /**follows a profile and notifies it*/

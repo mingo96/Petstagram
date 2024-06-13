@@ -2,6 +2,7 @@ package com.example.petstagram.ViewModels
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -109,6 +110,9 @@ class OwnProfileViewModel : GeneralController() {
                 if (it.isEmpty) {
                     //case there's not someone with that username, we push the Update the username
                     pushNewUserName()
+                    Toast.makeText(context, "Cambiando nombre", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context, "Nombre ya en uso", Toast.LENGTH_SHORT).show()
                 }
                 _isEditing.value = false
             }
