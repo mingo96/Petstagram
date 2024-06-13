@@ -53,9 +53,9 @@ class ProfileObserverViewModel : GeneralController(), ProfileInteractor {
         if (!_isLoading.value!!) {
             viewModelScope.launch {
 
-                _observedProfile.value = base.getUser(staticProfile.id)
+                _observedProfile.value = base.getUser(staticProfile.id)!!
 
-                _follow.value = _observedProfile.value.followers.contains(_selfProfile.value.id)
+                _follow.value = _observedProfile.value.followers.contains(base.profile().id)
 
                 _isLoading.value = true
 

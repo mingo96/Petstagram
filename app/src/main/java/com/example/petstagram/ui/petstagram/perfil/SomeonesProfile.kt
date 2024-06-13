@@ -133,7 +133,7 @@ fun SomeonesProfile(
                     val state by remember {
                         derivedStateOf { scroll.firstVisibleItemIndex == 0 }
                     }
-                    StateSelector(Modifier.height(56.dp), state = state, onClick = {
+                    StateSelector(Modifier.height(56.dp).fillMaxWidth(), state = state, onClick = {
                         scope.launch {
                             scroll.animateScrollToItem(it)
                         }

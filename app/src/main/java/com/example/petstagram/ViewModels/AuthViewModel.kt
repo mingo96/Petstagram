@@ -352,4 +352,8 @@ class AuthViewModel : ViewModel() {
     fun startLoading() {
         _state.value = AuthUiState.IsLoading
     }
+
+    fun stopLoading() {
+        _state.value = AuthUiState.Error
+    }
 }

@@ -51,6 +51,17 @@ class OwnProfileViewModel : GeneralController() {
     /**visible version of [_resource]*/
     val resource: LiveData<String> = _resource
 
+    private val _profiles = MutableStateFlow<List<Profile>>(emptyList())
+
+    val profiles: StateFlow<List<Profile>> = _profiles
+
+    private val _profilesDisplayed = MutableStateFlow<Boolean>(false)
+
+    val profilesDisplayed: StateFlow<Boolean> = _profilesDisplayed
+
+    fun toggleProfilesDisplayed(){
+        _profilesDisplayed.value = !_profilesDisplayed.value
+    }
 
     /**gets executed once, tells [_posts] to keep collecting info from [db]
      * also orders content and sets [indexesOfPosts] for more if needed*/
@@ -157,6 +168,18 @@ class OwnProfileViewModel : GeneralController() {
 
                     _selfProfile.value = base.profile()
                     _resource.value = _selfProfile.value.profilePic
+                    for (i in _selfProfile.value.followers){
+                        base.getUser(i)
+                    }
+                    while (base.alreadyLoading)
+                        delay(100)
+
+                    for (i in _selfProfile.value.followers){
+                        val spare = base.getUser(i)
+                        if (spare != null && spare.id !in _profiles.value.map { it.id }){
+                            _profiles.value += spare
+                        }
+                    }
                     delay(15000)
                 }
 

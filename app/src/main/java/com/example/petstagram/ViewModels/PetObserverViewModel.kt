@@ -126,6 +126,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                 while (base.alreadyLoading) {
                     delay(100)
                 }
+                _follow.value = _observedPet.value.followers.contains(selfId)
 
                 val endPosts = base.postsFromPet(_observedPet.value)
 
@@ -170,7 +171,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                     _selfProfile.value = base.profile()
                     actualUser = base.profile()
 
-                    val newOwner = base.getUser(staticPet.owner)
+                    val newOwner = base.getUser(staticPet.owner)!!
                     if (newOwner.id != _selfProfile.value.id) {
                         _petsOwner.value = newOwner
                     }

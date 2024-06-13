@@ -3,10 +3,17 @@ package com.example.petstagram.ViewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Notification
+import com.example.petstagram.UiData.Profile
+import com.example.petstagram.UiData.TypeOfNotification
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,6 +31,17 @@ class CategoriesViewModel : ViewModel() {
     /**selected [Category]*/
     var selectedCategory: Category by mutableStateOf(Category())
 
+    private val _profiles = MutableLiveData<List<Profile>>()
+
+    val profiles: LiveData<List<Profile>> = _profiles
+
+    private val _searchText = MutableLiveData("")
+
+    val searchText: LiveData<String> = _searchText
+
+    var userid by mutableStateOf("")
+        private set
+
     /**gets executed once at Launch, tells [_categories] to keep collecting info from [base]*/
     fun fetchCategories() {
         viewModelScope.launch {
@@ -32,6 +50,7 @@ class CategoriesViewModel : ViewModel() {
             for (i in end) {
                 if (i.name !in _categories.value.map { it.name }) _categories.value += i
             }
+            userid = base.profile().id
 
         }
     }
@@ -39,6 +58,34 @@ class CategoriesViewModel : ViewModel() {
     /**stops loading*/
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()
+    }
+
+    fun setSearchText(it: String) {
+        viewModelScope.launch {
+            _searchText.value = it
+            delay(1000)
+            if (_searchText.value == it) {
+                search()
+                stopLoading()
+            }
+        }
+    }
+
+    fun search() {
+        if (_searchText.value!!.isNotEmpty()) _profiles.value = base.search(searchText.value!!)
+
+    }
+
+    fun follow(it: Profile){
+
+        if (!it.followers.contains(userid)) {
+
+            base.follow(it)
+            it.followers += userid
+        } else {
+            base.unfollow(it.id)
+            it.followers -= userid
+        }
     }
 
 }

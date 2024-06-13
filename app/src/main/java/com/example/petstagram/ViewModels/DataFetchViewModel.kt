@@ -14,17 +14,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import com.example.petstagram.UiData.Category
+import com.example.petstagram.UiData.Notification
 import com.example.petstagram.UiData.Pet
 import com.example.petstagram.UiData.Post
 import com.example.petstagram.UiData.Profile
 import com.example.petstagram.UiData.Report
 import com.example.petstagram.UiData.SavedList
+import com.example.petstagram.UiData.TypeOfNotification
 import com.example.petstagram.UiData.UIPost
 import com.example.petstagram.UiData.UISavedList
 import com.example.petstagram.guardar.SavePressed
 import com.example.petstagram.like.Pressed
 import com.example.petstagram.notifications.PetstagramNotificationGenerator
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -150,7 +153,7 @@ class DataFetchViewModel : ViewModel() {
                             }
                         }
 
-                        if (newVal !in _profiles) _profiles.add(newVal)
+                        if (newVal.id !in _profiles.map { it.id }) _profiles.add(newVal)
                         updateReportScore()
                         keepUpWithPosts()
                         alreadyLoading = false
@@ -181,18 +184,6 @@ class DataFetchViewModel : ViewModel() {
                     }
                 }
             }
-    }
-
-    private fun getUser(user: String, afterFetch: (String) -> Unit = {}) {
-        if (user !in _profiles.map { it.id }) {
-            db.collection("Users").document(user).get().addOnSuccessListener {
-                val newVal = it.toObject(Profile::class.java)!!
-                _profiles.add(newVal)
-                afterFetch(newVal.userName)
-            }
-        } else {
-            afterFetch("")
-        }
     }
 
     /**gets our actual report score for [_selfProfile]*/
@@ -467,7 +458,7 @@ class DataFetchViewModel : ViewModel() {
             loadPet(castedPost)
         }
 
-        if (castedPost.creatorUser !in _profiles) _profiles.add(castedPost.creatorUser!!)
+        if (castedPost.creatorUser!!.id !in _profiles.map { it.id }) _profiles.add(castedPost.creatorUser!!)
 
         //download to a temporary file
         loadResource(castedPost, laterOn)
@@ -554,6 +545,7 @@ class DataFetchViewModel : ViewModel() {
     /**gets all pets from given user
      * @param id id of the user, if not given its [_selfProfile]'s*/
     private fun fetchPetsFromUser(id: String = _selfProfile.id) {
+        alreadyLoading = true
         db.collection("Pets").whereEqualTo("owner", id).get().addOnSuccessListener {
             if (!it.isEmpty) {
                 for (petJson in it.documents) {
@@ -562,14 +554,39 @@ class DataFetchViewModel : ViewModel() {
                         _pets.add(newPet)
                     }
                 }
+                alreadyLoading = false
             }
         }
     }
 
-    fun getUser(id: String): Profile {
+    private fun fetchProfilesFromName(name:String){
+        db.collection("Users").limit((_profiles.size+10).toLong()).get().addOnSuccessListener {
+            if (!it.isEmpty){
+                for (profilejson in it.documents){
+                    if (profilejson.id !in _profiles.map { it.id }) {
+                        val newUser = profilejson.toObject(Profile::class.java)!!
+                        _profiles.add(newUser)
+                    }
+                }
+            }
+        }
+
+        db.collection("Users").whereEqualTo("userName",name).get().addOnSuccessListener {
+            if (!it.isEmpty){
+                for (profilejson in it.documents){
+                    if (profilejson.id !in _profiles.map { it.id }) {
+                        val newUser = profilejson.toObject(Profile::class.java)!!
+                        _profiles.add(newUser)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUser(id: String): Profile? {
         fetchPetsFromUser(id)
         postsFromUser(id)
-        return _profiles.find { it.id == id }!!
+        return _profiles.find { it.id == id }
     }
 
     fun getPet(id: String): Pet {
@@ -621,6 +638,30 @@ class DataFetchViewModel : ViewModel() {
         _posts = mutableListOf()
 
         ids = emptyList()
+    }
+
+    fun search(value: String): List<Profile> {
+
+        fetchProfilesFromName(value)
+
+        return _profiles.filter { it.userName.contains(value, true) && it.id!= profile().id }
+    }
+
+    fun follow(profile: Profile) {
+
+        db.collection("Users").document(profile.id).update("followers",  FieldValue.arrayUnion(_selfProfile.id))
+
+        val newNotification = Notification(
+            sender = profile().id, userName = profile().userName, type = TypeOfNotification.Follow
+        )
+
+        db.collection("NotificationsChannels").document(profile.notificationChannel)
+            .update("notifications", FieldValue.arrayUnion(newNotification))
+    }
+
+    fun unfollow(id: String) {
+
+        db.collection("Users").document(id).update("followers",  FieldValue.arrayRemove(_selfProfile.id))
     }
 }
 

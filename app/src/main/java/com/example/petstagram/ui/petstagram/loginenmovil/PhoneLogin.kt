@@ -121,7 +121,8 @@ fun PhoneLogin(
                         navController.navigate("añadirMascota")
                     })
             } catch (e: Exception) {
-                Toast.makeText(context, "AYUDA", Toast.LENGTH_SHORT).show()
+                viewModel.stopLoading()
+                Toast.makeText(context, "Cuenta no valida", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -180,6 +181,7 @@ fun PhoneLogin(
             }
 
             StateSelector(
+                modifier = Modifier.fillMaxWidth(),
                 state = !registering, onClick = {
                     viewModel.toggleAuthType()
                     focusManager.clearFocus(true)
