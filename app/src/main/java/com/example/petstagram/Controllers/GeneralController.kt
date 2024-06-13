@@ -81,9 +81,9 @@ abstract class GeneralController : ViewModel(), PostsUIController {
 
     override val videoMode: LiveData<Boolean> = _videoMode
 
-    private val _videoIsRunning: MutableLiveData<Boolean?> = MutableLiveData(false)
+    private val _pauseAnimationState: MutableLiveData<Boolean?> = MutableLiveData(false)
 
-    override val videoIsRunning: LiveData<Boolean?> = _videoIsRunning
+    override val pauseAnimationState: LiveData<Boolean?> = _pauseAnimationState
 
     private val _likedPost = MutableLiveData<UIPost?>(null)
 
@@ -110,12 +110,12 @@ abstract class GeneralController : ViewModel(), PostsUIController {
     }
 
     override fun animatePause() {
-        if (_videoIsRunning.value != null) {
+        if (_pauseAnimationState.value != null) {
             viewModelScope.launch {
-                val spare = _videoIsRunning.value!!
-                _videoIsRunning.value = null
+                val spare = _pauseAnimationState.value!!
+                _pauseAnimationState.value = null
                 delay(1000)
-                _videoIsRunning.value = !spare
+                _pauseAnimationState.value = !spare
             }
         }
     }

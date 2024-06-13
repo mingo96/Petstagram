@@ -231,6 +231,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    /**creates a new [NotificationChannel] for the user, executes [onComplete] when done*/
     private fun createNotificationsChannel(profile: Profile, onComplete: () -> Unit = {}) {
         val notificationChannel = NotificationChannel(profile.id)
         db.collection("NotificationsChannels").add(notificationChannel).addOnSuccessListener {
@@ -243,6 +244,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    /**updates the profile copy that is in every post with the new [Profile]*/
     private fun updateProfileFromPosts(profile: Profile) {
         db.collection("Posts").whereEqualTo("creatorUser.id", profile.id).get()
             .addOnSuccessListener {
@@ -252,14 +254,14 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    /**function to recover the [Profile] given that we have the [auth] from last time*/
+    /**function to recover the [Profile] given that we have the [auth] from last time
+     * Launches notifications service*/
     fun loadUserFromAuth(context: Context, onFail: () -> Unit = {}) {
         db.collection("Users").whereEqualTo("authId", auth.currentUser!!.uid).get()
             .addOnSuccessListener {
                 try {
 
                     val user = it.first().toObject(Profile::class.java)
-                    Log.i(user.authId, auth.currentUser!!.uid)
                     localProfile = user
                     context.stopService(Intent(context, PetstagramNotificationsService::class.java))
                     context.startForegroundService(
@@ -309,7 +311,11 @@ class AuthViewModel : ViewModel() {
                                 context,
                                 authUser.user!!.photoUrl.toString()
                             ) {
+                                //login is most definitely gonna be go to main menu
                                 onLogin()
+                                //register is most definitely gonna be go to pet registration
+                                //this is done so the user is redirected to the pet registration,
+                                //but if he presses back, he goes to main menu
                                 onRegister()
 
                             }

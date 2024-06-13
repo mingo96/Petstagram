@@ -97,6 +97,7 @@ fun PhotoContainer(
     )
 }
 
+/**if (selected) Color.White else black*/
 @Composable
 fun NameContainer(
     modifier: Modifier = Modifier,

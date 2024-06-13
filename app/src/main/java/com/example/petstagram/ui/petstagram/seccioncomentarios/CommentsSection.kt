@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,13 +41,7 @@ import com.google.relay.compose.RelayContainerArrangement
 import com.google.relay.compose.RelayContainerScope
 import com.google.relay.compose.RelayText
 
-/**
- * Seccion de comentarios
- *
- * This composable was generated from the UI Package 'seccion_comentarios'.
- * Generated code; do not edit directly
- */
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun CommentsSection(
     modifier: Modifier = Modifier,
@@ -103,15 +98,7 @@ fun CommentsSection(
                     },
                     shape = RoundedCornerShape(30),
                     textStyle = TextStyle(color = Color.White, lineHeight = 1.em),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.DarkGray,
-                        unfocusedContainerColor = Color.DarkGray,
-                        disabledContainerColor = Color.DarkGray,
-                        focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.Gray,
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.White
-                    )
+                    colors = commentTextFieldColors()
                 )
             }
             BotonMas(modifier = Modifier
@@ -154,6 +141,19 @@ fun CommentsSection(
             }
         }
     }
+}
+
+@Composable
+fun commentTextFieldColors(): TextFieldColors {
+    return TextFieldDefaults.colors(
+        focusedContainerColor = Color.DarkGray,
+        unfocusedContainerColor = Color.DarkGray,
+        disabledContainerColor = Color.DarkGray,
+        focusedIndicatorColor = Color.Gray,
+        unfocusedIndicatorColor = Color.Gray,
+        focusedLabelColor = Color.White,
+        unfocusedLabelColor = Color.White
+    )
 }
 
 

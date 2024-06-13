@@ -49,6 +49,7 @@ fun PetList(
             modifier = Modifier.padding(all = 16.dp)
         ) {
             item(span = { GridItemSpan(2) }) {
+                //if onNewPet is not null, show a button to add a new pet
                 if (onNewPet != null) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,7 +82,7 @@ fun PetList(
                                 painter = painterResource(id = R.drawable.grillo),
                                 contentDescription = "grillo"
                             )
-                            Text(text = "Parece que alguien necesita una mascota...")
+                            Text(text = "Parece que alguien necesita una mascota ...")
                         }
                     }
                 }

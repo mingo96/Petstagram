@@ -17,8 +17,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -70,11 +68,12 @@ class Petstagram : ComponentActivity() {
 
                 // Get new FCM registration token
                 val token = task.result
+                // We have notifications permission
                 PetstagramNotificationGenerator.hasPermission = true
 
             })
         } else {
-            Toast.makeText(this, "Po no hay notificaciones, shulo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No habrá servicio de notifiaciones", Toast.LENGTH_SHORT).show()
             PetstagramNotificationGenerator.hasPermission = false
         }
     }
@@ -82,12 +81,12 @@ class Petstagram : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // channel gets created
         val notificationChannel = NotificationChannel(
             "petstagram_notifications", "Petstagram", NotificationManager.IMPORTANCE_HIGH
         )
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)
-
 
         val authViewModel: AuthViewModel by viewModels()
         val categoriesViewModel: CategoriesViewModel by viewModels()
@@ -100,6 +99,7 @@ class Petstagram : ComponentActivity() {
         val profileObserverViewModel: ProfileObserverViewModel by viewModels()
         val petObserverViewModel: PetObserverViewModel by viewModels()
 
+        // Bassic assignments for the viewModels
         postsViewModel.base = dataFetchViewModel
         categoriesViewModel.base = dataFetchViewModel
         ownProfileViewModel.base = dataFetchViewModel
@@ -110,10 +110,10 @@ class Petstagram : ComponentActivity() {
         petObserverViewModel.base = dataFetchViewModel
 
         askNotificationPermission()
+        // force portrait mode
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             PetstagramConLogicaTheme {
-
 
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -129,21 +129,25 @@ class Petstagram : ComponentActivity() {
                     profileObserverViewModel.navController = navController
                     petObserverViewModel.navController = navController
 
+                    // If already logged in, go to the main screen
                     val start = if (authViewModel.auth.currentUser == null) {
                         "login"
                     } else {
                         "pantallaCarga"
                     }
 
+                    // If already logged in, load the user
                     if (start == "pantallaCarga") {
                         authViewModel.loadUserFromAuth(applicationContext)
                     }
 
+                    // Screen transitions
                     val onEnter = slideInHorizontally { -it } + scaleIn()
                     val onExit = slideOutHorizontally {
                         it
                     } + scaleOut()
 
+                    // Focus manager to avoid transition crash
                     val focusManager = LocalFocusManager.current
 
                     NavHost(navController = navController, startDestination = start) {
@@ -152,6 +156,7 @@ class Petstagram : ComponentActivity() {
                             exitTransition = { onExit }) {
 
 
+                            // wait till user is logged in, set his data to the viewModels, navigate to main menu
                             LaunchedEffect(key1 = Unit) {
 
                                 while (authViewModel.localProfile == null) {
@@ -172,6 +177,7 @@ class Petstagram : ComponentActivity() {
                             focusManager.clearFocus(true)
                             LoadingScreen()
 
+                            // On back, get out of the app
                             BackHandler {
                                 moveTaskToBack(true)
                             }
@@ -194,6 +200,7 @@ class Petstagram : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            // wait till user is logged in, set his data to the viewModels, load categories
                             LaunchedEffect(key1 = true) {
                                 while (authViewModel.localProfile == null) {
                                     delay(100)
@@ -235,6 +242,7 @@ class Petstagram : ComponentActivity() {
 
                                 focusManager.clearFocus(true)
                             }
+                            // stated category is the selected category from categories viewmodel
                             postsViewModel.statedCategory = categoriesViewModel.selectedCategory
 
                             focusManager.clearFocus(true)
@@ -247,6 +255,8 @@ class Petstagram : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            // stated category is the selected category from categories viewmodel
+                            // user is the local profile
                             publishViewModel.category = categoriesViewModel.selectedCategory
                             publishViewModel.user = authViewModel.localProfile!!
 
@@ -263,6 +273,8 @@ class Petstagram : ComponentActivity() {
                         composable("perfilPropio",
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
+
+                            //user id is the local profile id
                             ownProfileViewModel.selfId = authViewModel.localProfile!!.id
 
                             LaunchedEffect(key1 = Unit) {
@@ -283,6 +295,8 @@ class Petstagram : ComponentActivity() {
                                 focusManager.clearFocus(true)
                             }
                             focusManager.clearFocus(true)
+
+                            //user id is the id of the user
                             profileObserverViewModel.selfId = authViewModel.localProfile!!.id
 
                             SomeonesProfile(
@@ -298,6 +312,8 @@ class Petstagram : ComponentActivity() {
                                 focusManager.clearFocus(true)
                             }
                             focusManager.clearFocus(true)
+
+                            //user id is the id of the user
                             petObserverViewModel.selfId = authViewModel.localProfile!!.id
 
                             PetProfile(
@@ -308,9 +324,12 @@ class Petstagram : ComponentActivity() {
                             enterTransition = { onEnter },
                             exitTransition = { onExit }) {
 
+                            //if the user is not logged in, we just registered, start loading everything
                             if (dataFetchViewModel.profile().id == "") {
                                 dataFetchViewModel.startLoadingData(applicationContext)
                             }
+
+                            //category is the selected category from publish viewmodel
                             petCreationViewModel.selectedCategory = publishViewModel.category
 
                             LaunchedEffect(key1 = Unit) {

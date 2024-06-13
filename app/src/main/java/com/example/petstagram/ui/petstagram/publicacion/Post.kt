@@ -64,32 +64,36 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * publicacion
- *
- * This composable was generated from the UI Package 'publicacion'.
- * Generated code; do not edit directly
+ * Post
+ * using a controller to control the post
+ * and the Vision of it as a boolean
  */
 @Composable
 fun Post(
     modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController, isVisible: Boolean
 ) {
+    /**spare variable for comments animation*/
     var commentsDisplayed by rememberSaveable {
         mutableStateOf(false)
     }
 
+    /**spare variable for comments animation*/
     val coroutine = rememberCoroutineScope()
 
+    /**spare variable for comments animation*/
     var animationDisplayer by rememberSaveable {
         mutableStateOf(false)
     }
 
+    /**spare variable to control the number of likes in a way that causes a recomposition*/
     val likes = MutableLiveData(post.likes.size)
 
+    /**spare variable to control if the post is saved in a way that causes a recomposition*/
     val saved = MutableLiveData(post.saved)
 
     TopLevel(modifier = modifier) {
 
-        CuadroInfoInstance(
+        PostTopBar(
             modifier = Modifier
                 .rowWeight(1.0f)
                 .zIndex(1F), post = post, controller = controller
@@ -175,7 +179,7 @@ fun Post(
 }
 
 @Composable
-fun CuadroInfoInstance(
+fun PostTopBar(
     modifier: Modifier = Modifier, post: UIPost, controller: PostsUIController? = null
 ) {
     TopPostLimit(
@@ -187,6 +191,7 @@ fun CuadroInfoInstance(
     )
 }
 
+/**displays the post image or video*/
 @Composable
 fun PostSource(
     modifier: Modifier = Modifier,
@@ -195,10 +200,12 @@ fun PostSource(
     likes: MutableLiveData<Int>? = null,
     isVisible: Boolean
 ) {
+    //animations
     val enter = scaleIn() + fadeIn() + slideInVertically { it }
     val exit = scaleOut() + fadeOut() + slideOutVertically()
 
     Box(contentAlignment = Alignment.Center) {
+        //like animation holder
         val likedPost by controller.likedPost.observeAsState()
         AnimatedVisibility(
             visible = likedPost == post,
@@ -218,6 +225,7 @@ fun PostSource(
         when (post.typeOfMedia) {
             "image" -> {
 
+                //if file is not downloaded tries to load from cache
                 if (post.UIURL == Uri.EMPTY) {
                     CacheImg(modifier = modifier, post = post)
                 } else {
@@ -227,9 +235,12 @@ fun PostSource(
             }
 
             "video" -> {
+                /**represents if the video is stopped*/
                 val videoStopped by controller.videoStopped.observeAsState(false)
+                /**represents if the video mode is image or video*/
                 val videoModeAnimation by controller.videoMode.observeAsState(false)
-                val videoIsRunningAnimation by controller.videoIsRunning.observeAsState()
+                /**spare variable to control the video animation, when null, the animation is being displayed*/
+                val pauseAnimationState by controller.pauseAnimationState.observeAsState()
 
                 if (post.mediaItem != MediaItem.EMPTY) DisplayVideoFromPost(source = post,
                     modifier = modifier,
@@ -238,14 +249,16 @@ fun PostSource(
                     },
                     onDoubleTap = {
                         controller.likeOnPost(post)
+                        //we call this so UI recomposes
                         likes!!.value = post.likes.size
                     },
                     onLongTap = {
                         controller.toggleStop()
                         controller.animateVideoMode()
                     },
+                    //when videoModeAnimation is null animation is displayed, else it has normal use
                     isVisible = if (videoModeAnimation) null else isVisible && !videoStopped,
-                    isRunning = videoIsRunningAnimation
+                    pauseAnimationState = pauseAnimationState
                 )
                 else
 
@@ -259,6 +272,7 @@ fun PostSource(
 
             }
 
+            //rare case bad post got loaded
             else -> {
                 DefaultImg()
             }

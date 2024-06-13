@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +32,6 @@ import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.categorias.Categories
 import com.example.petstagram.perfilpropio.StateSelector
-import com.example.petstagram.ui.petstagram.barradeselecciondetipodepublicacion.BarraDeSeleccionDeTipoDePublicacion
 import com.example.petstagram.ui.petstagram.perfiles.ProfileSearch
 import com.google.relay.compose.MainAxisAlignment
 import com.google.relay.compose.RelayContainer
@@ -59,7 +57,9 @@ fun CategoriesMenu(
 
     val scroll = rememberLazyListState()
 
+    /**used to scroll between items*/
     val scope = rememberCoroutineScope()
+
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val height = maxHeight
         val width = maxWidth
@@ -68,9 +68,7 @@ fun CategoriesMenu(
         ) {
 
             TopBarInstance(
-                modifier = Modifier.height(180.dp),
-                navController = navController,
-                onExit = onExit
+                modifier = Modifier.height(180.dp), navController = navController, onExit = onExit
             )
 
             val state by remember {
@@ -83,7 +81,9 @@ fun CategoriesMenu(
             ) {
 
                 StateSelector(
-                    Modifier.height(56.dp).width(width-56.dp), state = state, onClick = {
+                    Modifier
+                        .height(56.dp)
+                        .width(width - 56.dp), state = state, onClick = {
                         scope.launch {
                             scroll.animateScrollToItem(it)
                         }
@@ -100,17 +100,20 @@ fun CategoriesMenu(
 
             }
 
+            //Makes it so the scroll doesnt stop between items
             val flingBehavior = rememberSnapFlingBehavior(lazyListState = scroll)
+
             LazyRow(
                 state = scroll,
                 flingBehavior = flingBehavior,
                 modifier = Modifier
                     .width(width * 2)
-                    .height(height - 60.dp - 56.dp-8.dp)
+                    .height(height - 60.dp - 56.dp - 8.dp)
             ) {
                 item {
                     CategoriesInstance(
-                        modifier = Modifier.fillMaxHeight()
+                        modifier = Modifier
+                            .fillMaxHeight()
                             .width(width),
                         navController = navController,
                         categoryViewModel = viewModel
@@ -119,7 +122,8 @@ fun CategoriesMenu(
                 item {
                     ProfileSearch(
                         viewModel = viewModel,
-                        modifier = Modifier.fillMaxHeight()
+                        modifier = Modifier
+                            .fillMaxHeight()
                             .width(width),
                         navController = navController
                     )

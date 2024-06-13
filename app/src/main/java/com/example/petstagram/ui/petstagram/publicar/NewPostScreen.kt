@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -65,7 +66,7 @@ import com.example.petstagram.cuadroinfo.DeadPostDownBar
 import com.example.petstagram.cuadrotexto.Label
 import com.example.petstagram.cuadrotexto.Variation
 import com.example.petstagram.cuadrotexto.inter
-import com.example.petstagram.publicacion.CuadroInfoInstance
+import com.example.petstagram.publicacion.PostTopBar
 import com.example.petstagram.ui.petstagram.DisplayVideoFromSource
 import com.example.petstagram.ui.petstagram.Pets.PetList
 import com.google.relay.compose.MainAxisAlignment
@@ -162,15 +163,17 @@ fun NewPostScreen(
                                 .fillMaxWidth()
                         ) {
 
-                            CuadroInfoInstance(
+                            PostTopBar(
                                 post = viewModel.newPost, modifier = Modifier.zIndex(1F)
                             )
                             if (getMimeType(context, uriObserver!!)?.startsWith("video") == true) {
+                                //if uriObserver changes this will change too, not just remember
                                 val source = remember {
-                                    MediaItem.fromUri(uriObserver!!)
+                                    derivedStateOf {MediaItem.fromUri(uriObserver!!)}
                                 }
+
                                 DisplayVideoFromSource(
-                                    source = source, onDoubleTap = {
+                                    source = source.value, onDoubleTap = {
                                         sourceSelecter.launch("*/*")
                                     }, modifier = modifier
                                 )

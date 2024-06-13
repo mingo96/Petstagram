@@ -39,7 +39,7 @@ class CategoriesViewModel : ViewModel() {
     var userid by mutableStateOf("")
         private set
 
-    /**gets executed once at Launch, tells [_categories] to keep collecting info from [base]*/
+    /**gets executed once at Launch, gets the categories from [base]*/
     fun fetchCategories() {
         viewModelScope.launch {
 
@@ -55,11 +55,12 @@ class CategoriesViewModel : ViewModel() {
         }
     }
 
-    /**stops loading*/
+    /**stops all sub-coroutines*/
     fun stopLoading() {
         viewModelScope.coroutineContext.cancelChildren()
     }
 
+    /**edit text, waits a second, if text is the same, search*/
     fun setSearchText(it: String) {
         viewModelScope.launch {
             _searchText.value = it

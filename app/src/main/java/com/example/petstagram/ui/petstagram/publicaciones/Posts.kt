@@ -10,7 +10,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -33,9 +32,6 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -67,10 +63,8 @@ import com.example.petstagram.ui.theme.Secondary
 import kotlinx.coroutines.delay
 
 /**
- * publicaciones
- *
- * This composable was generated from the UI Package 'publicaciones'.
- * Generated code; do not edit directly
+ * Posts
+ * uses a PostController to get the posts and interact with them
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -80,11 +74,20 @@ fun Posts(
     navController: NavController? = null
 ) {
 
+    /**posts*/
     val postsState by controller.posts.collectAsState()
+
+    /**loading state*/
     val isLoading by controller.isLoading.observeAsState(false)
+
+    /**dots for loading dialog*/
     val dots by controller.funnyAhhString.collectAsState()
+
+    /**post whese options are displayed*/
     val postSelected by controller.postSelectedForOptions.observeAsState()
     val context = LocalContext.current
+
+    /**bottom buttons are displayed*/
     val options by controller.optionsDisplayed.observeAsState(false)
 
     LaunchedEffect(key1 = Unit) {
@@ -92,14 +95,7 @@ fun Posts(
     }
 
 
-    val pullState = rememberPullRefreshState(
-        refreshing = isLoading,
-        onRefresh = { controller.scroll() },
-    )
     BoxWithConstraints(
-        Modifier.pullRefresh(
-            pullState
-        )
     ) {
 
         val localwidth by rememberSaveable {
@@ -117,11 +113,11 @@ fun Posts(
                 .fillMaxHeight(1.0f)
                 .background(
                     Primary,
-                ),
-            verticalArrangement = Arrangement.Top
+                ), verticalArrangement = Arrangement.Top
         ) {
 
             itemsIndexed(postsState) { index, it ->
+                /**spare variable to display animation*/
                 var seen by rememberSaveable {
                     mutableStateOf(false)
                 }
@@ -169,6 +165,8 @@ fun Posts(
                 AnimatedVisibility(
                     visible = seen, enter = slideInHorizontally() + expandVertically()
                 ) {
+                    //this post is visible if we are not scrolling AND it is the first item in screen
+                    // OR if it is the last item in screen and the one above is not a video
                     val isVisible by remember {
                         derivedStateOf {
                             (index == state.firstVisibleItemIndex || index == state.firstVisibleItemIndex + 1 && postsState[state.firstVisibleItemIndex].typeOfMedia != "video") && !state.isScrollInProgress
@@ -183,37 +181,12 @@ fun Posts(
                         isVisible = isVisible
                     )
                 }
+                /**when displayed, display animation, if this is not done animation is not displayed*/
                 LaunchedEffect(key1 = seen) {
                     seen = true
                 }
             }
-            //item{
-            //    Column {
-//
-            //        for (post in postsState) {
-//
-            //            var seen by rememberSaveable {
-            //                mutableStateOf(false)
-            //            }
-//
-            //            AnimatedVisibility(visible = seen, enter = slideInHorizontally { it }) {
-//
-            //                Post(
-            //                    modifier = Modifier
-            //                        .width(Dp(localwidth))
-            //                        .padding(vertical = 4.dp),
-            //                    post = post,
-            //                    controller = controller
-            //                )
-            //            }
-            //            LaunchedEffect(key1 = seen) {
-            //                seen = true
-            //            }
-            //        }
-            //    }
-            //}
-            //item {
-            //}
+            /**bottom buttons, when displayed, ask [controller] for more posts*/
             item {
 
                 Column(
@@ -283,7 +256,7 @@ fun Posts(
                                     }
 
                                     FloatingActionButton(
-                                        onClick = { controller.scroll(false) },
+                                        onClick = { controller.scroll(true) },
                                         modifier = Modifier.fillMaxWidth(0.5f),
                                         containerColor = Secondary,
                                         contentColor = Color.White
@@ -331,12 +304,6 @@ fun Posts(
             }
 
         }
-
-        PullRefreshIndicator(
-            refreshing = false, state = pullState, modifier = Modifier.align(
-                Alignment.TopCenter
-            )
-        )
 
 
     }

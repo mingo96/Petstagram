@@ -35,6 +35,7 @@ import java.time.Instant
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
+/**answers the question to the type of file of the given URI*/
 fun getMimeType(context: Context, uri: Uri): String? {
     val contentResolver: ContentResolver = context.contentResolver
     return contentResolver.getType(uri)

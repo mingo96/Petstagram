@@ -75,6 +75,7 @@ fun ProfileSearch(
                 )
         ) {
             items(profiles, key = { it.id }) { it ->
+                //we need this because the profile item is not state-reactive
                 var followers by remember { mutableStateOf(it.followers) }
                 Column(
                     modifier = Modifier.animateItemPlacement(
@@ -102,12 +103,15 @@ fun ProfileSearch(
                     Divider(color = Color.White, thickness = 1.dp)
                 }
             }
-            if (profiles.isEmpty()){
+            if (profiles.isEmpty()) {
                 item {
+                    //if no results and text is in search bar
                     if (text.isNotBlank()) {
 
                         Text(text = "No hay resultados")
-                    }else{
+                    }
+                    //if no results and no text in search bar, it will automatically load some
+                    else {
                         LinearProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -182,6 +186,7 @@ fun SearchedProfile(
             modifier = Modifier.clickable { onClick() }) {
 
             FotoPerfilSizePeque(picture = pic)
+            //limit the amount of characters to 16 in case we have the follow button too
             Text(
                 if (text.length > 16 && onFollow != null) text.substring(0, 16) + "..." else text,
                 color = Secondary,

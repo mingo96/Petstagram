@@ -44,9 +44,7 @@ class PetstagramNotificationsService : Service() {
 
     private val storageRef = Firebase.storage.reference
 
-    companion object {
-        var id: String = ""
-    }
+    private var id: String = ""
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -59,7 +57,6 @@ class PetstagramNotificationsService : Service() {
                 .setTimeoutAfter(10)
                 .build()
         startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-
 
         val notificationChannel = android.app.NotificationChannel(
             "petstagram_notifications",
@@ -79,7 +76,11 @@ class PetstagramNotificationsService : Service() {
         if (spare != "null" && spare.isNotBlank()) {
             id = spare
 
-            prepareNotifications()
+            try {
+
+                prepareNotifications()
+            }catch (_:Exception){
+            }
         }
 
         return super.onStartCommand(intent, flags, startId)

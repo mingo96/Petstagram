@@ -19,7 +19,6 @@ interface CommentsUIController {
     /**Firebase FireStore reference*/
     val db: FirebaseFirestore
 
-
     var storageRef: StorageReference
 
     val actualComments: LiveData<List<UIComment>>
@@ -29,6 +28,7 @@ interface CommentsUIController {
     var commenting: LiveData<Boolean>
 
     var commentContent: LiveData<String>
+
     fun likeOnComment(comment: UIComment): Boolean {
         val newLike = Like(userId = actualUser.id)
         return if (comment.likes.find { it.userId == actualUser.id } == null) {
@@ -60,6 +60,7 @@ interface CommentsUIController {
 
     fun clearComments()
 
+    /**comment and notify the user*/
     fun comment(post: UIPost) {
         val newComment = Comment(
             id = "",

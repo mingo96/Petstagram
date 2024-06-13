@@ -62,6 +62,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.petstagram.R
 import com.example.petstagram.ViewModels.AuthViewModel
+import com.example.petstagram.ViewModels.DataFetchViewModel
+import com.example.petstagram.ViewModels.isConnectedToInternet
 import com.example.petstagram.cuadrotexto.inter
 import com.example.petstagram.data.AuthUiState
 import com.example.petstagram.perfilpropio.StateSelector
@@ -85,7 +87,6 @@ import kotlinx.coroutines.delay
 fun PhoneLogin(
     modifier: Modifier = Modifier, navController: NavHostController, viewModel: AuthViewModel
 ) {
-
 
     val focusManager = LocalFocusManager.current
 
@@ -128,18 +129,24 @@ fun PhoneLogin(
         }
 
     val onGoogleClick = {
-        viewModel.startLoading()
-        val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
-        val options = GoogleSignInOptions.Builder(
-            GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken(token).requestEmail().build()
-        val googleSignInClient = GoogleSignIn.getClient(context, options)
-        googleSignInClient.signOut()
-        launcher.launch(googleSignInClient.signInIntent)
+        if(isConnectedToInternet(context)) {
 
+            viewModel.startLoading()
+            val token = "750182229870-5m2rv6tlkg0j97n0jjoc5fpqd345rssg.apps.googleusercontent.com"
+            val options = GoogleSignInOptions.Builder(
+                GoogleSignInOptions.DEFAULT_SIGN_IN
+            ).requestIdToken(token).requestEmail().build()
+            val googleSignInClient = GoogleSignIn.getClient(context, options)
+            googleSignInClient.signOut()
+            launcher.launch(googleSignInClient.signInIntent)
+
+        }else{
+            Toast.makeText(context, "No hay conexión a internet", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
+    //loading, dialog that blocks everything
     if (state == AuthUiState.IsLoading) {
         Dialog(onDismissRequest = { }) {
             Column(
@@ -239,7 +246,10 @@ fun PhoneLogin(
                                 )
                             }
                             LaunchedEffect(key1 = Unit) {
+                                /**direction the color is going*/
                                 var upOrDown = true
+                                // if this loop starts, it means the user is new, we gotta get his attention to read the text
+                                // start changing the colours
                                 while (!helpDisplayed) {
                                     if (upOrDown) {
                                         color = color.copy(red = color.red + 0.05f)

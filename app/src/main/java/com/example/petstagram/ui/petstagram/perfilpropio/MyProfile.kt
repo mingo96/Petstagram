@@ -65,6 +65,7 @@ import com.example.petstagram.R
 import com.example.petstagram.ViewModels.OwnProfileViewModel
 import com.example.petstagram.ViewModels.PetObserverViewModel
 import com.example.petstagram.ViewModels.ProfileObserverViewModel
+import com.example.petstagram.ViewModels.getMimeType
 import com.example.petstagram.barrasuperior.TopBar
 import com.example.petstagram.barrasuperior.Variant
 import com.example.petstagram.cuadrotexto.Label
@@ -115,7 +116,7 @@ fun MyProfile(
     /**external activity that returns the local uri of the file the user selects*/
     val sourceSelector =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null && uri != Uri.EMPTY) {
+            if (uri != null && uri != Uri.EMPTY && getMimeType(thisContext, uri)?.contains("image") == true) {
                 viewModel.setResource(uri, thisContext)
             } else Toast.makeText(thisContext, "selección vacía", Toast.LENGTH_SHORT).show()
         }
@@ -140,6 +141,7 @@ fun MyProfile(
     val followersDisplayed by viewModel.profilesDisplayed.collectAsState()
 
     if (followersDisplayed) {
+        //show followers
         Dialog(onDismissRequest = { viewModel.toggleProfilesDisplayed() }) {
             val profiles by viewModel.profiles.collectAsState()
             LazyColumn() {
@@ -446,7 +448,7 @@ fun YourUserName(
 }
 
 
-/**pass-by function to call a [Label], not much to see (logic-wise)*/
+/**Two buttons that have the stated text, and on click execute a function with a 1 or 2 as parameter*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StateSelector(

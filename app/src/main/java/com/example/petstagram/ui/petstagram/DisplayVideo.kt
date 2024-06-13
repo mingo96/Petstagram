@@ -2,6 +2,7 @@ package com.example.petstagram.ui.petstagram
 
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.animateContentSize
@@ -47,6 +48,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
@@ -55,6 +57,7 @@ import com.google.relay.compose.tappable
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
+@OptIn(UnstableApi::class)
 @Composable
 fun DisplayVideoFromSource(
     source: MediaItem,
@@ -177,6 +180,7 @@ fun DisplayVideoFromSource(
 
 /**function that uses [ExoPlayer] to display a video given an Uri in string format
  * works for local files and urls*/
+@OptIn(UnstableApi::class)
 @Composable
 fun DisplayVideoFromPost(
     source: UIPost,
@@ -184,7 +188,7 @@ fun DisplayVideoFromPost(
     onDoubleTap: () -> Unit = {},
     onLongTap: () -> Unit = {},
     isVisible: Boolean? = true,
-    isRunning: Boolean?,
+    pauseAnimationState: Boolean?,
     onTap: () -> Unit
 ) {
 
@@ -201,11 +205,12 @@ fun DisplayVideoFromPost(
         mediaPlayer.repeatMode = Player.REPEAT_MODE_ALL
         mediaPlayer.trackSelectionParameters =
             mediaPlayer.trackSelectionParameters.buildUpon().setMaxVideoFrameRate(60)
-                .setMaxVideoSize(500, 400).build()
+                .setMaxVideoSize(500, 600).build()
         mediaPlayer.prepare()
 
     }
 
+    //get the 1st frame
     val retriever = MediaMetadataRetriever()
     retriever.setDataSource(context, source.UIURL)
     val bitmap by remember {
@@ -221,8 +226,9 @@ fun DisplayVideoFromPost(
         }
     }
 
+    //we see this when animation state is null and visibility is not null
     AnimatedVisibility(
-        isRunning == null && isVisible != null,
+        pauseAnimationState == null && isVisible != null,
         Modifier.zIndex(1F),
         enter = scaleIn(),
         exit = scaleOut()
@@ -242,6 +248,7 @@ fun DisplayVideoFromPost(
 
     }
 
+    //we see this when visibility is null, video mode is changing
     AnimatedVisibility(
         isVisible == null, Modifier.zIndex(1F), enter = scaleIn(), exit = scaleOut()
     ) {
@@ -275,12 +282,15 @@ fun DisplayVideoFromPost(
                         Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow
                     )
                 )
-                .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 400.dp)
+                .heightIn(0.dp, if (isFullScreen) Dp.Infinity else 350.dp)
                 .tappable(onTap = {
+                    //on tap, if it is visible, just play or pause
                     if (isVisible == true) {
                         mediaPlayer.playWhenReady = !mediaPlayer.playWhenReady
                         onTap()
-                    } else {
+                    }
+                    //if it is not visible, we are in video mode, so we need to long tap to unlock video
+                    else {
                         onLongTap()
                         onTap()
                         mediaPlayer.playWhenReady = true
@@ -318,6 +328,8 @@ fun DisplayVideoFromPost(
                         .zIndex(0F)
                 )
             }
+
+            //when it is not visible, we show the first frame
             AnimatedVisibility(
                 visible = isVisible == false || isVisible == null,
                 exit = fadeOut(animationSpec = tween(1000)),
@@ -335,6 +347,7 @@ fun DisplayVideoFromPost(
 
             }
 
+            //swaps between full size and stated size
             Checkbox(
                 checked = isFullScreen, onCheckedChange = {
                     isFullScreen = !isFullScreen
@@ -344,6 +357,7 @@ fun DisplayVideoFromPost(
             )
         }
     } else {
+        //if still loading show a progress bar
         LinearProgressIndicator(
             modifier
                 .fillMaxWidth()
