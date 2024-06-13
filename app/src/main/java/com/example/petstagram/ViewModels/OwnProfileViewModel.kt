@@ -59,7 +59,7 @@ class OwnProfileViewModel : GeneralController() {
 
     val profilesDisplayed: StateFlow<Boolean> = _profilesDisplayed
 
-    fun toggleProfilesDisplayed(){
+    fun toggleProfilesDisplayed() {
         _profilesDisplayed.value = !_profilesDisplayed.value
     }
 
@@ -109,9 +109,8 @@ class OwnProfileViewModel : GeneralController() {
                 if (it.isEmpty) {
                     //case there's not someone with that username, we push the Update the username
                     pushNewUserName()
-                } else
-                //case someone already has this name, we show it with a toast
-                    _isEditing.value = false
+                }
+                _isEditing.value = false
             }
         }
     }
@@ -120,6 +119,7 @@ class OwnProfileViewModel : GeneralController() {
     private fun pushNewUserName() {
         if (userName != _selfProfile.value.userName) {
             _selfProfile.value.userName = userName
+            db.collection("Users").document(_selfProfile.value.id).update("userName", userName)
             base.updateProfileToPosts(_selfProfile.value)
             fetchPosts()
         }
@@ -168,15 +168,14 @@ class OwnProfileViewModel : GeneralController() {
 
                     _selfProfile.value = base.profile()
                     _resource.value = _selfProfile.value.profilePic
-                    for (i in _selfProfile.value.followers){
+                    for (i in _selfProfile.value.followers) {
                         base.getUser(i)
                     }
-                    while (base.alreadyLoading)
-                        delay(100)
+                    while (base.alreadyLoading) delay(100)
 
-                    for (i in _selfProfile.value.followers){
+                    for (i in _selfProfile.value.followers) {
                         val spare = base.getUser(i)
-                        if (spare != null && spare.id !in _profiles.value.map { it.id }){
+                        if (spare != null && spare.id !in _profiles.value.map { it.id }) {
                             _profiles.value += spare
                         }
                     }
