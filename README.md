@@ -1,7 +1,5 @@
 # Introducción y objetivos
 
-{% embed url="https://app.gitbook.com/invite/k1f4oe40ecDSxbAIIK5M/g9RyGcoKcOEKb3MS9YmL" %}
-
 ### Descripción: Idea original y tecnologías usadas
 
 ## Introducción y objetivos
