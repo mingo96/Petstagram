@@ -229,6 +229,7 @@ class PetObserverViewModel : GeneralController(), ProfileInteractor {
                 .addOnSuccessListener {
                     storageRef.child("/ProfilePictures/${_observedPet.value.id}").downloadUrl.addOnSuccessListener {
                         _observedPet.value.profilePic = it.toString()
+                        _resource.value = it.toString()
                         db.collection("Pets").document(_observedPet.value.id)
                             .update("profilePic", it.toString())
 

@@ -98,6 +98,7 @@ class PublishViewModel : ViewModel() {
     private var start: Date? by mutableStateOf(null)
 
     var estimated: Long by mutableLongStateOf(1L)
+        private set
 
 
     /**changes [postTitle]
@@ -170,6 +171,7 @@ class PublishViewModel : ViewModel() {
         viewModelScope.launch {
 
             _isSendingInfo.value = true
+            startCountDown()
             db.collection("Posts").add(newPost.basePost()).addOnSuccessListener { doc ->
                 pushResource(doc.id).addOnProgressListener {
                     if (start == null) {
@@ -198,7 +200,6 @@ class PublishViewModel : ViewModel() {
                     }
 
                 }
-                startCountDown()
             }
         }
 
@@ -207,7 +208,7 @@ class PublishViewModel : ViewModel() {
     private fun startCountDown() {
 
         viewModelScope.launch{
-            while (total != actual) {
+            while (true) {
 
                 estimated-=1
                 delay(1000)
